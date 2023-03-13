@@ -20,6 +20,10 @@
             <name>Szymon Ziemecki</name>
             <id>236709</id>
         </developer>
+        <developer>
+            <name>Mateusz Strzelecki</name>
+            <id>236665</id>
+        </developer>
     </developers>
 
     <properties>
