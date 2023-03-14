@@ -36,6 +36,10 @@
             <name>Oskar Trela</name>
             <id>236677</id>
         </developer>
+        <developer>
+            <name>Piotr Skonieczny</name>
+            <id>236649</id>
+        </developer>
     </developers>
 
     <properties>
