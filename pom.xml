@@ -24,6 +24,10 @@
             <name>Mateusz Strzelecki</name>
             <id>236665</id>
         </developer>
+        <developer>
+            <name>Szymon Zakrzewski</name>
+            <id>236707</id>
+        </developer>
     </developers>
 
     <properties>
