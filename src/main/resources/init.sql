@@ -1,0 +1,16 @@
+--ssbd06admin
+GRANT ALL ON SCHEMA public TO ssbd06admin;
+
+--ssbd06mok
+GRANT SELECT,INSERT,UPDATE ON TABLE account TO ssbd06mok;
+GRANT SELECT,INSERT,UPDATE ON TABLE account_details TO ssbd06mok;
+GRANT SELECT,INSERT,UPDATE ON TABLE administrator TO ssbd06mok;
+GRANT SELECT,INSERT,UPDATE ON TABLE owner TO ssbd06mok;
+GRANT SELECT,INSERT,UPDATE ON TABLE facility_manager TO ssbd06mok;
+GRANT SELECT,INSERT,UPDATE ON TABLE role TO ssbd06mok;
+
+--ssbd06auth
+GRANT SELECT ON TABLE account TO ssbd06auth;
+GRANT SELECT ON TABLE role TO ssbd06auth;
+GRANT SELECT ON TABLE account TO ssbd06auth;
+GRANT SELECT ON TABLE role TO ssbd06auth;

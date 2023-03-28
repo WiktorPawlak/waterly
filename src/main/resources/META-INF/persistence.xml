@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="3.0"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
 
-<persistence-unit name="default" transaction-type="JTA">
+    <persistence-unit name="adminPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:app/jdbc/ssbd06admin</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <properties>
-            <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform" />
+            <property name="hibernate.transaction.jta.platform"
+                      value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
             <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="jakarta.persistence.sql-load-script-source" value="init.sql"/>
         </properties>
     </persistence-unit>
+
+    <persistence-unit name="mokPU" transaction-type="JTA">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:app/jdbc/ssbd06mok</jta-data-source>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.AccountDetails</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Account</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Role</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.FacilityManager</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Owner</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Administrator</class>
+
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="hibernate.transaction.jta.platform"
+                      value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
+        </properties>
+    </persistence-unit>
+
+    <persistence-unit name="authPU" transaction-type="JTA">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:app/jdbc/ssbd06mok</jta-data-source>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Account</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Role</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.FacilityManager</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Owner</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Administrator</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="hibernate.transaction.jta.platform"
+                      value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
+        </properties>
+    </persistence-unit>
+
+    <persistence-unit name="molPU" transaction-type="JTA">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="hibernate.transaction.jta.platform"
+                      value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
+        </properties>
+    </persistence-unit>
+
 </persistence>
