@@ -7,27 +7,27 @@ import jakarta.persistence.PersistenceContext;
 
 @DataSourceDefinition(name = "java:app/jdbc/ssbd06admin",
         className = "org.postgresql.ds.PGSimpleDataSource",
-        url = "jdbc:postgresql://10.31.206.4:5432/ssbd06",
+        url = "${ENV=DB_URL:jdbc:postgresql://localhost:5432/ssbd06}",
         user = "ssbd06admin",
-        password = "admin12345"
+        password = "${ENV=DB_ADMIN_PASSWORD:12345}"
 )
 @DataSourceDefinition(name = "java:app/jdbc/ssbd06mok",
         className = "org.postgresql.ds.PGSimpleDataSource",
-        url = "jdbc:postgresql://10.31.206.4:5432/ssbd06",
+        url = "${ENV=DB_URL:jdbc:postgresql://localhost:5432/ssbd06}",
         user = "ssbd06mok",
-        password = "mok12345"
+        password = "${ENV=DB_MOK_PASSWORD:12345}"
 )
 @DataSourceDefinition(name = "java:app/jdbc/ssbd06auth",
         className = "org.postgresql.ds.PGSimpleDataSource",
-        url = "jdbc:postgresql://10.31.206.4:5432/ssbd06",
+        url = "${ENV=DB_URL:jdbc:postgresql://localhost:5432/ssbd06}",
         user = "ssbd06auth",
-        password = "auth12345"
+        password = "${ENV=DB_AUTH_PASSWORD:12345}"
 )
 @DataSourceDefinition(name = "java:app/jdbc/ssbd06mol",
         className = "org.postgresql.ds.PGSimpleDataSource",
-        url = "jdbc:postgresql://10.31.206.4:5432/ssbd06",
+        url = "${ENV=DB_URL:jdbc:postgresql://localhost:5432/ssbd06}",
         user = "ssbd06mol",
-        password = "mol12345"
+        password = "${ENV=DB_MOL_PASSWORD:12345}"
 )
 @Stateless
 public class JDBCConfig {
