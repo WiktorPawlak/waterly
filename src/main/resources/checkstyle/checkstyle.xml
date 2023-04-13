@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <property name="severity" value="warning"/>
+
+    <module name="LineLength">
+        <property name="max" value="160"/>
+        <property name="tabWidth" value="4"/>
+        <message key="maxLineLen" value="Line is longer than {0,number,integer} characters. [40]"/>
+    </module>
+
+    <module name="TreeWalker">
+        <property name="tabWidth" value="4"/>
+
+        <module name="ConstantName">
+            <message key="name.invalidPattern" value="Constant name ''{0}'' must match pattern ''{1}''. [18]"/>
+        </module>
+        <module name="LocalFinalVariableName">
+            <message key="name.invalidPattern" value="Name ''{0}'' must match pattern ''{1}''. [19]"/>
+        </module>
+        <module name="LocalVariableName">
+            <message key="name.invalidPattern" value="Name ''{0}'' must match pattern ''{1}''. [19]"/>
+        </module>
+        <module name="MemberName">
+            <message key="name.invalidPattern" value="Name ''{0}'' must match pattern ''{1}''. [19]"/>
+        </module>
+        <module name="MethodName">
+            <message key="name.invalidPattern" value="Name ''{0}'' must match pattern ''{1}''. [20]"/>
+            <message key="method.name.equals.class.name" value="Method Name ''{0}'' must not equal the enclosing class name. [20]"/>
+        </module>
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+            <message key="name.invalidPattern" value="Name ''{0}'' must match pattern ''{1}''. [15]"/>
+        </module>
+        <module name="ParameterName">
+            <message key="name.invalidPattern" value="Name ''{0}'' must match pattern ''{1}''. [19]"/>
+        </module>
+        <module name="StaticVariableName">
+            <message key="name.invalidPattern" value="Name ''{0}'' must match pattern ''{1}''. [19]"/>
+        </module>
+        <module name="TypeName">
+            <message key="name.invalidPattern" value="Name ''{0}'' must match pattern ''{1}''. [16]"/>
+        </module>
+        <module name="UnusedImports">
+            <message key="import.unused" value="Unused import - {0}. [11]"/>
+        </module>
+        <module name="RedundantImport">
+            <message key="import.same" value="Redundant import from the same package - {0}. [11]"/>
+            <message key="import.duplicate" value="Duplicate import to line {0,number,integer} - {1}. [11]"/>
+            <message key="import.lang" value="Redundant import from the java.lang package - {0}. [11]"/>
+        </module>
+        <module name="AvoidStarImport">
+            <message key="import.avoidStar" value="Using the ''.*'' form of import should be avoided - {0}. [10]"/>
+        </module>
+        <module name="ImportOrder">
+            <property name="severity" value="info"/>
+            <property name="option" value="top"/>
+            <property name="groups" value="java,javax,org,com"/>
+            <property name="separated" value="true"/>
+            <message key="import.ordering" value="Wrong order for ''{0}'' import. [9]"/>
+            <message key="import.separation" value="''{0}'' should be separated from previous imports. [9]"/>
+        </module>
+        <module name="MethodLength">
+            <property name="max" value="200"/>
+            <message key="maxLen.method" value="Method length is {0,number,integer} lines (max allowed is {1,number,integer}). [90]"/>
+        </module>
+        <module name="EmptyForIteratorPad">
+            <message key="ws.followed" value="''{0}'' is followed by whitespace. [44]"/>
+            <message key="ws.notFollowed" value="''{0}'' is not followed by whitespace. [44]"/>
+        </module>
+        <module name="MethodParamPad">
+            <message key="ws.preceded" value="''{0}'' is preceded with whitespace. [44]"/>
+            <message key="line.previous" value="''{0}'' should be on the previous line. [44]"/>
+        </module>
+        <module name="NoWhitespaceAfter">
+            <property name="tokens" value="ARRAY_INIT,BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
+            <message key="ws.followed" value="''{0}'' is followed by whitespace. [44]"/>
+        </module>
+        <module name="NoWhitespaceBefore">
+            <message key="ws.preceded" value="''{0}'' is preceded with whitespace. [44]"/>
+        </module>
+        <module name="ParenPad">
+            <message key="ws.followed" value="''{0}'' is followed by whitespace. [44]"/>
+            <message key="ws.preceded" value="''{0}'' is preceded with whitespace. [44]"/>
+        </module>
+        <module name="ModifierOrder">
+            <message key="mod.order" value="''{0}'' modifier out of order with the JLS suggestions. [66]"/>
+            <message key="annotation.order" value="''{0}'' annotation modifier does not preceed non-annotation modifiers. [66]"/>
+        </module>
+        <module name="RedundantModifier">
+            <message key="redundantModifier" value="Redundant ''{0}'' modifier. [67]"/>
+        </module>
+        <module name="AvoidNestedBlocks">
+            <message key="block.nested" value="Avoid nested blocks. [70]"/>
+        </module>
+        <module name="EmptyBlock">
+            <message key="block.empty" value="Empty {0} block. [69]"/>
+            <message key="block.noStmt" value="Must have at least one statement. Empty blocks must not be used. [69]"/>
+        </module>
+        <module name="LeftCurly">
+            <message key="line.previous" value="''{0}'' should be on the previous line. [68,76,78,81]"/>
+        </module>
+        <module name="NeedBraces">
+            <message key="needBraces" value="''{0}'' construct must use '''{}'''s. [68]"/>
+        </module>
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
+        <module name="HiddenField">
+            <property name="ignoreConstructorParameter" value="true"/>
+            <property name="ignoreSetter" value="true"/>
+            <message key="hidden.field" value="''{0}'' hides a field. [62]"/>
+        </module>
+        <module name="InnerAssignment">
+            <message key="assignment.inner.avoid" value="Inner assignments must be avoided. [87]"/>
+        </module>
+        <module name="MagicNumber">
+            <property name="ignoreAnnotation" value="true"/><!-- Ignore magic numbers in annotation declarations. -->
+            <property name="ignoreHashCodeMethod" value="true"/><!-- Ignore magic numbers in hashCode method. -->
+            <property name="ignoreFieldDeclaration" value="true"/><!-- Ignore magic numbers in in field declarations. -->
+            <message key="magic.number"
+                     value="''{0}'' is a magic number. Numbers other than -1, 0, 1 and 2 can be considered declared as named constants instead. [92]"/>
+        </module>
+        <module name="MissingSwitchDefault">
+            <message key="missing.switch.default" value="switch without &quot;default&quot; clause. [81]"/>
+        </module>
+        <module name="SimplifyBooleanExpression">
+            <message key="simplify.expression" value="Expression can be simplified. [73]"/>
+        </module>
+        <module name="SimplifyBooleanReturn">
+            <message key="simplify.boolreturn" value="Conditional logic can be removed. [84]"/>
+        </module>
+        <module name="VisibilityModifier">
+            <property name="packageAllowed" value="true"/>
+            <property name="protectedAllowed" value="true"/>
+            <message key="variable.notPrivate" value="Variable ''{0}'' should be private and have accessor methods. [85]"/>
+        </module>
+        <module name="ArrayTypeStyle">
+            <message key="array.type.style"
+                     value="Array brackets at illegal position. Array specifiers must be attached to the type (Java-style) not the variable (C-style). [64]"/>
+        </module>
+        <module name="FinalParameters">
+            <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH"/>
+            <message key="final.parameter" value="Parameter {0} should be final. [88]"/>
+        </module>
+        <module name="UpperEll">
+            <message key="upperEll"
+                     value="Should use uppercase &quot;L&quot;. The lower case letter &quot;l&quot; looks a lot like the digit &quot;1&quot;. [94]"/>
+        </module>
+        <module name="PackageDeclaration">
+            <message key="missing.package.declaration" value="Missing package declaration. [8]"/>
+            <message key="package.dir.mismatch" value="Package declaration does not match directory ''{0}''. [8]"/>
+        </module>
+        <module name="DeclarationOrder">
+            <message key="declaration.order.constructor" value="Constructor definition in wrong order. [12]"/>
+            <message key="declaration.order.access" value="Variable access definition in wrong order. [12]"/>
+            <message key="declaration.order.instance" value="Instance variable definition in wrong order. [12]"/>
+            <message key="declaration.order.method" value="Method definition in wrong order. [12]"/>
+            <message key="declaration.order.static" value="Static variable definition in wrong order. [12]"/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="^\s*,.*$"/>
+            <property name="message" value="Comma &quot;,&quot; starts the line. Break lines after comma, not before it. [41]"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="^.*\t.*$"/>
+            <property name="message" value="Special characters like TAB must be avoided. Use spaces instead. [42]"/>
+        </module>
+        <module name="EmptyForInitializerPad">
+            <message key="ws.preceded" value="''{0}'' is preceded with whitespace. [44]"/>
+            <message key="ws.notPreceded" value="''{0}'' is not preceded with whitespace. [44]"/>
+        </module>
+        <module name="StringLiteralEquality">
+            <message key="string.literal.equality" value="Literal Strings should be compared using equals(), not ''{0}''. [98]"/>
+        </module>
+        <module name="OneStatementPerLine">
+            <message key="multiple.statements.line" value="Each line must contain at most one statement. [65]"/>
+        </module>
+        <module name="MultipleVariableDeclarations">
+            <message key="multiple.variable.declarations.comma" value="Each variable declaration must be in its own statement. [61]"/>
+            <message key="multiple.variable.declarations" value="Only one variable definition per line allowed. [61]"/>
+        </module>
+        <module name="BooleanExpressionComplexity">
+            <property name="max" value="10"/>
+            <message key="booleanExpressionComplexity"
+                     value="Boolean expression complexity is {0,number,integer} (max allowed is {1,number,integer}). [73]"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="^\s*do\s*\{\.*$"/>
+            <property name="message" value="The use of do-while loops must be avoided. Use while loops instead. [80]"/>
+        </module>
+        <module name="DefaultComesLast">
+            <message key="default.comes.last" value="Default should be last label in the switch. [81]"/>
+        </module>
+        <module name="FallThrough">
+            <message key="fall.through.last" value="Fall through from the last branch of the switch statement. [81]"/>
+            <message key="fall.through" value="Fall through from previous branch of the switch statement. [81]"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="^\s*(case|default).*\s+:.*$"/>
+            <property name="message"
+                      value="In switch: case and default statements, there must not be a white space before the colon (“:”) character. [44]"/>
+        </module>
+        <module name="GenericWhitespace">
+            <message key="ws.followed" value="''{0}'' is followed by whitespace. [44]"/>
+            <message key="ws.illegalFollow" value="''{0}'' is followed by an illegal character. [44]"/>
+            <message key="ws.preceded" value="''{0}'' is preceded with whitespace. [44]"/>
+            <message key="ws.notPreceded" value="''{0}'' is not preceded with whitespace. [44]"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="[^\s\*]\s+$"/>
+            <property name="message" value="Line has trailing spaces. Trailing spaces must be avoided. [45]"/>
+        </module>
+        <module name="EqualsAvoidNull">
+            <message key="equals.avoid.null" value="String literal expressions should be on the left side of an equals comparison. [98]"/>
+        </module>
+        <module name="ExplicitInitialization">
+            <message key="explicit.init" value="Variable ''{0}'' explicitly initialized to ''{1}'' (default value for its type). [60]"/>
+        </module>
+        <module name="NestedForDepth">
+            <property name="max" value="4"/>
+            <message key="nested.for.depth" value="Nested for depth is {0,number,integer} (max allowed is {1,number,integer}). [71]"/>
+        </module>
+        <module name="NestedIfDepth">
+            <property name="max" value="4"/>
+            <message key="nested.if.depth" value="Nested if-else depth is {0,number,integer} (max allowed is {1,number,integer}). [71]"/>
+        </module>
+        <module name="NestedTryDepth">
+            <property name="max" value="4"/>
+            <message key="nested.try.depth" value="Nested try depth is {0,number,integer} (max allowed is {1,number,integer}). [71]"/>
+        </module>
+        <module name="ParameterNumber">
+            <message key="maxParam" value="More than {0,number,integer} parameters. [89]"/>
+        </module>
+
+        <!-- Enables excluding code blocks from Checkstyle audits with a pair of dedicated comments. -->
+        <module name="SuppressionCommentFilter"/>
+
+        <!-- Enables excluding single line of code from Checkstyle audits with a dedicated comment. -->
+        <module name="SuppressWithNearbyCommentFilter">
+            <property name="commentFormat" value="CHECKSTYLE\:SUPPRESS"/>
+        </module>
+
+        <!-- Make the @SuppressWarnings annotations available to Checkstyle. -->
+        <module name="SuppressWarningsHolder"/>
+    </module>
+
+    <!-- Filter out Checkstyle warnings that have been suppressed with the @SuppressWarnings annotation. -->
+    <module name="SuppressWarningsFilter"/>
+
+    <module name="FileLength">
+        <message key="maxLen.file" value="File length is {0,number,integer} lines (max allowed is {1,number,integer}). [4]"/>
+    </module>
+
+    <!-- Filter that handles global suppressions (based on XML configuration file). -->
+    <!-- No filter definition for default distribution. -->
+
+</module>

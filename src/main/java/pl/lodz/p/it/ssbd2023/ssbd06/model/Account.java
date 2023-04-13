@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -12,9 +14,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Entity
 @Getter

@@ -17,7 +17,7 @@ import lombok.Setter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "role")
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "permissionlevel")
 @Getter
 @NoArgsConstructor
 public class Role extends AbstractEntity {
@@ -25,7 +25,7 @@ public class Role extends AbstractEntity {
     @NotNull
     @Size(min = 5, max = 16)
     @Column(updatable = false, insertable = false)
-    private String role;
+    private String permissionLevel;
 
     @NotNull
     @Setter

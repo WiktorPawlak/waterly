@@ -1,12 +1,18 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.model;
 
-import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.YearMonth;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-import java.time.YearMonth;
 
 @Entity
 @Table(

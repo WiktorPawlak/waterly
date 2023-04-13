@@ -1,14 +1,19 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import static jakarta.persistence.CascadeType.REFRESH;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static jakarta.persistence.CascadeType.REFRESH;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(
@@ -30,6 +35,6 @@ public class WaterMeterCheck extends AbstractEntity {
     private boolean managerAuthored;
     @NotNull
     @ManyToOne(cascade = REFRESH)
-    @JoinColumn(name ="water_meter_id", nullable = false)
+    @JoinColumn(name = "water_meter_id", nullable = false)
     private WaterMeter waterMeter;
 }

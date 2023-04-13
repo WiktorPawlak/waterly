@@ -1,13 +1,15 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-
-import java.math.BigDecimal;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Table(name = "usage_report")
 public class UsageReport extends AbstractEntity {
     @NotNull
