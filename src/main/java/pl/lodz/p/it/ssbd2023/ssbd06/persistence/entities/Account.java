@@ -31,7 +31,8 @@ import lombok.Setter;
         @Index(name = "account_details_idx", columnList = "account_details_id")
 })
 @NamedQueries({
-        @NamedQuery(name = "Account.findByLogin", query = "select a from Account a where a.login = :login")
+        @NamedQuery(name = "Account.findByLogin", query = "select a from Account a where a.login = :login"),
+        @NamedQuery(name = "Account.findByWaitingAccountDetailsUpdates_Id", query = "select a from Account a where a.waitingAccountDetails.id = :id")
 })
 @NoArgsConstructor
 public class Account extends AbstractEntity {
@@ -55,10 +56,17 @@ public class Account extends AbstractEntity {
     private AccountState accountState;
     @NotNull
     @JoinColumn(name = "account_details_id")
-    @OneToOne(fetch = LAZY, cascade = {PERSIST, MERGE})
+    @Setter
+    @OneToOne(optional = false, fetch = LAZY, cascade = {PERSIST, MERGE})
     private AccountDetails accountDetails;
     @NotNull
     @OneToOne(cascade = {PERSIST, MERGE}, mappedBy = "account", orphanRemoval = true)
     private AuthInfo authInfo;
 
+    @JoinColumn(name = "waiting_account_details")
+    @Setter
+    @OneToOne(fetch = LAZY, cascade = {PERSIST, MERGE})
+    private AccountDetails waitingAccountDetails;
+
+    //TODO we can add updates history?
 }

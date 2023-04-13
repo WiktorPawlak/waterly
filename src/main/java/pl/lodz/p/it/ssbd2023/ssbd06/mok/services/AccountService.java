@@ -9,6 +9,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.NotificationsProvider;
 
@@ -66,6 +67,46 @@ public class AccountService {
             this.changeAccountActiveStatus(account.getId(), false);
             accountActivationTimer.scheduleAccountActivation(account.getId());
         }
+
+        accountFacade.update(account);
+    }
+
+    @PermitAll
+    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) {
+        Account account = accountFacade.findByLogin(login);
+        String currentAccountEmail = account.getAccountDetails().getEmail();
+
+        if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {
+            updateAccountDetails(accountDetails, account);
+        } else {
+            account.setWaitingAccountDetails(accountDetails);
+            accountFacade.update(account);
+            notificationsProvider.notifyWaitingAccountDetailsUpdate(account.getId());
+        }
+    }
+
+    @PermitAll
+    public void resendEmailToAcceptAccountDetailsUpdate(final String login) {
+        Account account = accountFacade.findByLogin(login);
+
+        notificationsProvider.notifyWaitingAccountDetailsUpdate(account.getId());
+    }
+
+    public void acceptAccountDetailsUpdate(final long id) {
+        Account account = accountFacade.findByWaitingAccountDetailsId(id);
+
+        account.setAccountDetails(account.getWaitingAccountDetails());
+        account.setWaitingAccountDetails(null);
+
+        accountFacade.update(account);
+    }
+
+    private void updateAccountDetails(final AccountDetails newAccountDetails, final Account account) {
+        AccountDetails currentAccountDetails = account.getAccountDetails();
+
+        currentAccountDetails.setFirstName(newAccountDetails.getFirstName());
+        currentAccountDetails.setLastName(newAccountDetails.getLastName());
+        currentAccountDetails.setPhoneNumber(newAccountDetails.getPhoneNumber());
 
         accountFacade.update(account);
     }

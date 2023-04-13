@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,11 +15,13 @@ import lombok.Setter;
 @Table(name = "account_details")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class AccountDetails extends AbstractEntity {
 
     @NotNull
-    @Size(min = 5, max = 50)
+    @Size(min = 5, max = 320)
     @Column(unique = true)
     private String email;
     @NotNull

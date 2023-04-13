@@ -21,4 +21,10 @@ public class EmailNotificationsImpl implements NotificationsProvider {
     public void notifySuccessfulAdminAuthentication(final LocalDateTime authenticationDate, final String login, final String ipAddress) {
         //TODO implement
     }
+
+    @Override
+    public void notifyWaitingAccountDetailsUpdate(final long id) {
+        //TODO implement
+    }
+
 }

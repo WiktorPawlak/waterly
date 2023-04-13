@@ -34,4 +34,12 @@ public class AccountFacade extends AbstractFacade<Account> {
         accountTypedQuery.setParameter("login", login);
         return accountTypedQuery.getSingleResult();
     }
+
+    @PermitAll
+    public Account findByWaitingAccountDetailsId(final long id) {
+        TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByWaitingAccountDetailsUpdates_Id", Account.class);
+        accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
+        accountTypedQuery.setParameter("id", id);
+        return accountTypedQuery.getSingleResult();
+    }
 }

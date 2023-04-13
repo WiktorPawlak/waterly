@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import jakarta.annotation.security.DeclareRoles;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.AuthenticationException;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
@@ -31,7 +30,7 @@ public class AuthenticationFilter implements HttpAuthenticationMechanism {
             final HttpServletRequest httpServletRequest,
             final HttpServletResponse httpServletResponse,
             final HttpMessageContext httpMessageContext
-    ) throws AuthenticationException {
+    ) {
 
         String token = httpServletRequest.getHeader(AUTHORIZATION);
         if (validateToken(token)) {
@@ -41,7 +40,7 @@ public class AuthenticationFilter implements HttpAuthenticationMechanism {
                 return httpMessageContext.notifyContainerAboutLogin(jwt.login(), jwt.roles());
             } catch (final Exception e) {
                 log.log(Level.SEVERE, "Could not set user authentication in security context: " + e.getMessage());
-                throw new AuthenticationException("Could not set user authentication in security context: " + e.getMessage());
+                return httpMessageContext.responseUnauthorized();
             }
         } else if (!httpMessageContext.isProtected()) {
             return httpMessageContext.doNothing();

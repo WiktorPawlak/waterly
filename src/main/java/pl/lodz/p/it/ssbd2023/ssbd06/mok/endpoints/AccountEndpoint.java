@@ -9,8 +9,10 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.NotificationsProvider;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 
 @LocalBean
 @Stateless
@@ -19,6 +21,9 @@ public class AccountEndpoint {
 
     @Inject
     private AccountService accountService;
+
+    @Inject
+    private AuthenticatedAccount authenticatedAccount;
 
     @Inject
     private NotificationsProvider notificationsProvider;
@@ -34,14 +39,31 @@ public class AccountEndpoint {
     }
 
     @PermitAll
+    public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) {
+
+        accountService.updateOwnAccountDetails(authenticatedAccount.getLogin(), updateAccountDetailsDto.toDomain());
+    }
+
+    @PermitAll
     public void saveSuccessfulAuthAttempt(final LocalDateTime authenticationDate, final String login, final String ipAddress) {
         accountService.updateSuccessfulAuthInfo(authenticationDate, login, ipAddress);
-        //todo send this email only to admin - waiting for Matino's implementation of AuthenticatedAccount with securityContext
-        notificationsProvider.notifySuccessfulAdminAuthentication(authenticationDate, login, ipAddress);
+
+        if (authenticatedAccount.isAdmin()) {
+            notificationsProvider.notifySuccessfulAdminAuthentication(authenticationDate, login, ipAddress);
+        }
     }
 
     @PermitAll
     public void saveFailedAuthAttempt(final LocalDateTime authenticationDate, final String login) {
         accountService.updateFailedAuthInfo(authenticationDate, login);
+    }
+
+    public void acceptAccountDetailsUpdate(final long id) {
+        accountService.acceptAccountDetailsUpdate(id);
+    }
+
+    @PermitAll
+    public void resendEmailToAcceptAccountDetailsUpdate() {
+        accountService.resendEmailToAcceptAccountDetailsUpdate(authenticatedAccount.getLogin());
     }
 }

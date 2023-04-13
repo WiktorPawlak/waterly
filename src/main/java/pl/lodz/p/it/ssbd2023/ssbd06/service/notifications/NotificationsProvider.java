@@ -7,4 +7,6 @@ public interface NotificationsProvider {
     void notifyAccountActiveStatusChanged(long id);
 
     void notifySuccessfulAdminAuthentication(LocalDateTime authenticationDate, String login, String ipAddress);
+
+    void notifyWaitingAccountDetailsUpdate(long id);
 }
