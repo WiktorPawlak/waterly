@@ -18,6 +18,7 @@ public class AccountDetails extends AbstractEntity {
 
     @NotNull
     @Size(min = 5, max = 50)
+    @Column(unique = true)
     private String email;
     @NotNull
     @Size(min = 2, max = 50)
