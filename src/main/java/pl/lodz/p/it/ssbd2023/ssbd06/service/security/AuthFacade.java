@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade.CAUGHT_EXCEPTION;
 

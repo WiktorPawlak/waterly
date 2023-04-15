@@ -3,7 +3,6 @@ package pl.lodz.p.it.ssbd2023.ssbd06.persistence;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.annotation.security.DenyAll;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
@@ -12,7 +11,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@DenyAll
 public abstract class AbstractFacade<T> {
 
     public static final String CAUGHT_EXCEPTION = "Caught exception";

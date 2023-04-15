@@ -57,5 +57,8 @@ public class Account extends AbstractEntity {
     @JoinColumn(name = "account_details_id")
     @OneToOne(fetch = LAZY, cascade = {PERSIST, MERGE})
     private AccountDetails accountDetails;
+    @NotNull
+    @OneToOne(cascade = {PERSIST, MERGE}, mappedBy = "account", orphanRemoval = true)
+    private AuthInfo authInfo;
 
 }

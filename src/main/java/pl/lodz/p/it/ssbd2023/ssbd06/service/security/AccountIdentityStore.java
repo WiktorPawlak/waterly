@@ -9,7 +9,6 @@ import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import lombok.extern.slf4j.Slf4j;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AuthFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 

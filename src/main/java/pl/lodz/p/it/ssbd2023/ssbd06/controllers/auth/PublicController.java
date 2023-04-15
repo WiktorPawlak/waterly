@@ -3,42 +3,61 @@ package pl.lodz.p.it.ssbd2023.ssbd06.controllers.auth;
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
+import java.time.LocalDateTime;
+
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AccountIdentityStore;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.JwtProvider;
 
+
+@Slf4j
 @Path(value = "/public")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PublicController {
 
     @Inject
-    JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
     @Inject
-    AccountIdentityStore accountIdentityStore;
+    private AccountIdentityStore accountIdentityStore;
+    @Context
+    private HttpServletRequest httpServletRequest;
+    @Inject
+    private AccountEndpoint accountEndpoint;
 
     @POST
     @Path("/login")
-    public Response login(@Valid final Credentials credentials) {
+    public Response login(@NotNull @Valid final Credentials credentials) {
+        Response response;
         CredentialValidationResult validationResult = accountIdentityStore.validate(credentials);
 
-        if (validationResult.getStatus() == VALID) {
-            return Response.ok(jwtProvider.createToken(
-                    validationResult.getCallerPrincipal().getName(),
-                    validationResult.getCallerGroups()
-            )).build();
+        if (validationResult.getStatus() != VALID || !accountEndpoint.checkAccountActive(credentials.getLogin())) {
+            accountEndpoint.saveFailedAuthAttempt(LocalDateTime.now(), credentials.getLogin());
+            response = Response.status(UNAUTHORIZED)
+                    .entity(new ErrorResponse("Wrong login or password"))
+                    .build();
         } else {
-            return Response.status(UNAUTHORIZED).entity(new ErrorResponse("Wrong login or password")).build();
+            accountEndpoint.saveSuccessfulAuthAttempt(LocalDateTime.now(), credentials.getLogin(), httpServletRequest.getRemoteAddr());
+            log.info("User {} authenticated with IP {}", credentials.getLogin(), httpServletRequest.getRemoteAddr());
+            response = Response.ok()
+                    .entity(jwtProvider.createToken(validationResult))
+                    .build();
         }
 
+        return response;
     }
 }

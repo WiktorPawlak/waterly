@@ -23,6 +23,7 @@
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.FacilityManager</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Administrator</class>
@@ -41,6 +42,7 @@
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.FacilityManager</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Administrator</class>
@@ -57,6 +59,7 @@
         <jta-data-source>java:app/jdbc/ssbd06mol</jta-data-source>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice</class>

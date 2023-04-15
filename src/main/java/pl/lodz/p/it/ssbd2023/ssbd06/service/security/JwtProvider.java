@@ -3,7 +3,6 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -13,6 +12,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import lombok.RequiredArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
@@ -31,13 +31,13 @@ public class JwtProvider {
     @Property("jwt.key")
     private String jwtKey;
 
-    public String createToken(final String login, final Set<String> roles) {
+    public String createToken(final CredentialValidationResult validationResult) {
         Instant now = Instant.now();
         return JWT.create()
                 .withIssuedAt(now)
                 .withIssuer(issuer)
-                .withJWTId(login)
-                .withClaim(ROLES_CLAIM_NAME, new ArrayList<>(roles))
+                .withJWTId(validationResult.getCallerPrincipal().getName())
+                .withClaim(ROLES_CLAIM_NAME, new ArrayList<>(validationResult.getCallerGroups()))
                 .withExpiresAt(now.plusSeconds(expirationTime))
                 .sign(signingAlgorithm());
     }
