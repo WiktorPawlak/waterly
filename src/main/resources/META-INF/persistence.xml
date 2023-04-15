@@ -20,12 +20,12 @@
     <persistence-unit name="mokPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:app/jdbc/ssbd06mok</jta-data-source>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.AccountDetails</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Account</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Role</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.FacilityManager</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Owner</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Administrator</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.FacilityManager</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Administrator</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
@@ -38,12 +38,12 @@
     <persistence-unit name="authPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:app/jdbc/ssbd06auth</jta-data-source>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Account</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.AccountDetails</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Role</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.FacilityManager</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Owner</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Administrator</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.FacilityManager</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Administrator</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>
@@ -55,17 +55,17 @@
     <persistence-unit name="molPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:app/jdbc/ssbd06mol</jta-data-source>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Account</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Role</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Apartment</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Bill</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Invoice</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.Tariff</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.UsageReport</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.WaterMeter</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.WaterMeterCheck</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.WaterMeterType</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.model.WaterUsageStats</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.UsageReport</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterCheck</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType</class>
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>
