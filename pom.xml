@@ -54,6 +54,7 @@
         <lombok.version>1.18.26</lombok.version>
         <java-jwt.version>4.4.0</java-jwt.version>
         <vavr.version>0.10.4</vavr.version>
+        <bCryptVer>0.10.2</bCryptVer>
     </properties>
 
     <dependencies>
@@ -105,6 +106,11 @@
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
             <version>${vavr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>at.favre.lib</groupId>
+            <artifactId>bcrypt</artifactId>
+            <version>${bCryptVer}</version>
         </dependency>
     </dependencies>
 

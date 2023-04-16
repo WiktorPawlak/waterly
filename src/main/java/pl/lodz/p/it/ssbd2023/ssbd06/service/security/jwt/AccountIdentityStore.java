@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt;
 
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.CONFIRMED;
@@ -9,13 +9,20 @@ import java.util.stream.Collectors;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
+import jakarta.security.enterprise.identitystore.PasswordHash;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 @Stateless
 public class AccountIdentityStore {
 
     private final Logger log = Logger.getLogger(getClass().getName());
+
+    @Inject
+    @BCryptHash
+    private PasswordHash hashProvider;
 
     @Inject
     private AuthFacade authFacade;
@@ -41,8 +48,7 @@ public class AccountIdentityStore {
     }
 
     private boolean isPasswordValid(final String credentialPassword, final String accountPassword) {
-        //TODO password hash
-        return credentialPassword.equals(accountPassword);
+        return hashProvider.verify(credentialPassword.toCharArray(), accountPassword);
     }
 
     private boolean isAccountActive(final Account account) {

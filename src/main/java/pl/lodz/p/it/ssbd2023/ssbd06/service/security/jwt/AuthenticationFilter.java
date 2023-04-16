@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt;
 
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;

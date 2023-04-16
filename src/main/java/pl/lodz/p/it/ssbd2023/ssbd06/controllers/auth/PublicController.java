@@ -19,9 +19,9 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AccountIdentityStore;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.Credentials;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.JwtProvider;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.AccountIdentityStore;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.JwtProvider;
 
 
 @Path(value = "/public")

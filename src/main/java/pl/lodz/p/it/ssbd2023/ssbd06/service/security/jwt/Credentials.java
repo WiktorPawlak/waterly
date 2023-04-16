@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
