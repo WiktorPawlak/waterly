@@ -18,6 +18,8 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -31,6 +33,10 @@ import lombok.Setter;
 @Table(name = "role", indexes = {
         @Index(name = "role_account_idx", columnList = "account_id")
 })
+@NamedQueries({
+        @NamedQuery(name = "Role.findByAccountAndPermissionLevel",
+                query = "select r from Role r where r.account = :account and r.permissionLevel = :permissionLevel"),
+})
 @Getter
 @NoArgsConstructor
 public class Role extends AbstractEntity {
@@ -38,10 +44,6 @@ public class Role extends AbstractEntity {
     @Size(min = 5, max = 16)
     @Column(updatable = false, insertable = false, name = "permission_level")
     private String permissionLevel;
-
-    @NotNull
-    @Setter
-    private boolean active = true;
 
     @NotNull
     @JoinColumn(name = "account_id", referencedColumnName = "id", updatable = false)
@@ -55,7 +57,7 @@ public class Role extends AbstractEntity {
                 Case($(FACILITY_MANAGER), new FacilityManager()),
                 Case($(OWNER), new Owner()),
                 Case($(), () -> {
-                    throw new IllegalArgumentException("No such permission");
+                    throw new IllegalArgumentException("No such permission: " + role);
                 }));
     }
 }

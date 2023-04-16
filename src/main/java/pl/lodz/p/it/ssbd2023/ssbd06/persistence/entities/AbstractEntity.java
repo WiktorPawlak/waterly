@@ -41,6 +41,7 @@ abstract class AbstractEntity implements Serializable {
 
     @UpdateTimestamp
     @Column(name = "updated_on")
+    @Setter
     private LocalDateTime updatedOn;
 
     @OneToOne

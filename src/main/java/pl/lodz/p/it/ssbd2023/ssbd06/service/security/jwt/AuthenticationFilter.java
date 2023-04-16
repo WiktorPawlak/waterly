@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import jakarta.annotation.security.DeclareRoles;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
@@ -18,7 +18,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageCont
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@ApplicationScoped
+@RequestScoped
 @DeclareRoles({ADMINISTRATOR, OWNER, FACILITY_MANAGER})
 public class AuthenticationFilter implements HttpAuthenticationMechanism {
 

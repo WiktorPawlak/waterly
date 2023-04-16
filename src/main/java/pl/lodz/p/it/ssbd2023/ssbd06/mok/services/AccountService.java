@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
@@ -10,8 +11,10 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationForbiddenException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
@@ -27,6 +30,8 @@ public class AccountService {
 
     @Inject
     private AccountFacade accountFacade;
+    @Inject
+    private RoleFacade roleFacade;
     @Inject
     private NotificationsProvider notificationsProvider;
     @Inject
@@ -133,39 +138,54 @@ public class AccountService {
     }
 
     @PermitAll
-    public void addRoleToAccount(final long id, final String role) {
+    public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) {
         var account = accountFacade.findById(id);
         if (isModifyingAnotherUser(account)) {
-            performGrantPermissionOperations().accept(account, role);
-            notificationsProvider.notifyRoleGranted(account.getId(), role);
+            switch (editAccountRolesDto.getOperation()) {
+                case GRANT -> editAccountRolesDto.getRoles().forEach(roleToGrant -> performGrantPermissionOperation().accept(account, roleToGrant));
+                case REVOKE -> editAccountRolesDto.getRoles().forEach(roleToRevoke -> performRevokePermissionOperation().accept(account, roleToRevoke));
+                default -> throw new UnsupportedOperationException("Unsupported operation");
+            }
         } else {
             throw new OperationForbiddenException("Forbidden operation");
         }
     }
 
     @PermitAll
-    private BiConsumer<Account, String> performGrantPermissionOperations() {
+    private BiConsumer<Account, String> performGrantPermissionOperation() {
         return (account, role) -> {
             Set<Role> accountRoles = account.getRoles();
             Role roleToAdd = Role.valueOf(role);
-            checkUserHasRole(role, accountRoles, roleToAdd);
-            roleToAdd.setAccount(account);
-            roleToAdd.setActive(true);
-            roleToAdd.setCreatedBy(account);
-            accountRoles.add(roleToAdd);
-            accountFacade.update(account);
+            if (!checkUserHasRole(account, role)) {
+                roleToAdd.setAccount(account);
+                roleToAdd.setCreatedBy(account);
+                accountRoles.add(roleToAdd);
+                accountFacade.update(account);
+                notificationsProvider.notifyRoleGranted(account.getId(), role);
+            }
         };
     }
 
-    private void checkUserHasRole(final String role, final Set<Role> accountRoles, final Role roleToAdd) {
-        accountRoles.stream().filter(accountRole -> accountRole
-                        .getClass()
-                        .equals(roleToAdd.getClass()))
-                .findAny()
-                .ifPresent(optRole -> {
-                    log.info("Account already has granted " + role + " role");
-                    throw new IllegalArgumentException("Account already has granted " + role + " role");
-                });
+    @PermitAll
+    private BiConsumer<Account, String> performRevokePermissionOperation() {
+        return (account, role) -> {
+            Set<Role> accountRoles = account.getRoles();
+            Optional<Role> roleToRemove = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
+            removePermission(account, role, accountRoles, roleToRemove);
+        };
+    }
+
+    private void removePermission(final Account account, final String role, final Set<Role> accountRoles, final Optional<Role> roleToRemove) {
+        roleToRemove.ifPresentOrElse(optRole -> {
+            accountRoles.remove(optRole);
+            accountFacade.update(account);
+            roleFacade.delete(optRole);
+            notificationsProvider.notifyRoleRevoked(account.getId(), role);
+        }, () -> log.info("Account has no granted " + role + " role"));
+    }
+
+    private boolean checkUserHasRole(final Account account, final String role) {
+        return roleFacade.findRoleByAccountAndPermissionLevel(account, role).isPresent();
     }
 
     private boolean isModifyingAnotherUser(final Account account) {

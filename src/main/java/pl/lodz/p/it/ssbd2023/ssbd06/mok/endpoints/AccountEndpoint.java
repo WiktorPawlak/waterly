@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -12,6 +14,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.PasswordHash;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
@@ -44,7 +47,7 @@ public class AccountEndpoint {
         return accountService.checkAccountActive(login);
     }
 
-    @RolesAllowed("ADMINISTRATOR")
+    @RolesAllowed(ADMINISTRATOR)
     public void changeAccountActiveStatus(final long id, final boolean active) {
         accountService.changeAccountActiveStatus(id, active);
     }
@@ -91,8 +94,8 @@ public class AccountEndpoint {
         accountService.resendEmailToAcceptAccountDetailsUpdate(authenticatedAccount.getLogin());
     }
 
-    @RolesAllowed("ADMINISTRATOR")
-    public void addRoleToAccount(final long id, final String role) {
-        accountService.addRoleToAccount(id, role);
+    @RolesAllowed(ADMINISTRATOR)
+    public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) {
+        accountService.editAccountRoles(id, editAccountRolesDto);
     }
 }

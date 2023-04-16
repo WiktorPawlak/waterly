@@ -32,4 +32,9 @@ public class EmailNotificationsImpl implements NotificationsProvider {
         //TODO
     }
 
+    @Override
+    public void notifyRoleRevoked(final long id, final String roleToRevoke) {
+        //TODO
+    }
+
 }

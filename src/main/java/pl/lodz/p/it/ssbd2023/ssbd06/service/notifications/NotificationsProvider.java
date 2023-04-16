@@ -11,4 +11,6 @@ public interface NotificationsProvider {
     void notifyWaitingAccountDetailsUpdate(long id);
 
     void notifyRoleGranted(long id, String role);
+
+    void notifyRoleRevoked(long id, String roleToRevoke);
 }

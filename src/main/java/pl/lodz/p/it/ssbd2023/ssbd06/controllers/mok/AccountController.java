@@ -3,10 +3,12 @@ package pl.lodz.p.it.ssbd2023.ssbd06.controllers.mok;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -20,10 +22,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
@@ -36,7 +38,7 @@ public class AccountController {
     @Inject
     private AccountEndpoint accountEndpoint;
 
-    @RolesAllowed("ADMINISTRATOR")
+    @RolesAllowed(ADMINISTRATOR)
     @PUT
     @Path("/{id}/active")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -45,7 +47,7 @@ public class AccountController {
         return Response.ok().build();
     }
 
-    @RolesAllowed({"OWNER", "FACILITY_MANAGER", "ADMINISTRATOR"})
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     @PUT
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -61,7 +63,7 @@ public class AccountController {
         return Response.status(NO_CONTENT).build();
     }
 
-    @RolesAllowed({"OWNER", "FACILITY_MANAGER", "ADMINISTRATOR"})
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     @POST
     @Path("self/account-details/resend-accept-email")
     public Response resendEmailToAcceptAccountDetailsUpdate() {
@@ -69,12 +71,12 @@ public class AccountController {
         return Response.status(OK).build();
     }
 
-    @RolesAllowed("ADMINISTRATOR")
+    @RolesAllowed(ADMINISTRATOR)
     @PUT
     @Path("/{id}/roles")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addRoleToAccount(@PathParam("id") final long id, @QueryParam("role") final String role) {
-        accountEndpoint.addRoleToAccount(id, role.toUpperCase());
+    public Response editAccountRoles(@PathParam("id") final long id, @NotNull @Valid final EditAccountRolesDto editAccountRolesDto) {
+        accountEndpoint.editAccountRoles(id, editAccountRolesDto);
         return Response.ok().build();
     }
 
@@ -83,12 +85,16 @@ public class AccountController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeOwnPassword(@NotNull final AccountPasswordDto accountPasswordDto)
             throws IdenticalPasswordsException, UnmatchedPasswordsException {
-        Set<ConstraintViolation<AccountPasswordDto>> violation = validator.validate(accountPasswordDto);
-        List<String> errors = violation.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
-        if (!violation.isEmpty()) {
+        List<String> errors = validateAndGetConstraintsErrors(accountPasswordDto);
+        if (!errors.isEmpty()) {
             return Response.status(BAD_REQUEST).entity(errors).build();
         }
         accountEndpoint.changeOwnAccountPassword(accountPasswordDto);
         return Response.ok().build();
+    }
+
+    private <T> List<String> validateAndGetConstraintsErrors(T object) {
+        Set<ConstraintViolation<T>> violation = validator.validate(object);
+        return violation.stream().map(ConstraintViolation::getMessage).toList();
     }
 }

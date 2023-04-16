@@ -42,4 +42,5 @@ public class AccountFacade extends AbstractFacade<Account> {
         accountTypedQuery.setParameter("id", id);
         return accountTypedQuery.getSingleResult();
     }
+
 }
