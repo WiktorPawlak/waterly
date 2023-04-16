@@ -1,6 +1,9 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,7 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @ApplicationScoped
-@DeclareRoles({"ADMINISTRATOR", "OWNER", "FACILITY_MANAGER"})
+@DeclareRoles({ADMINISTRATOR, OWNER, FACILITY_MANAGER})
 public class AuthenticationFilter implements HttpAuthenticationMechanism {
 
     private final Logger log = Logger.getLogger(getClass().getName());

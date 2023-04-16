@@ -12,6 +12,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
@@ -54,5 +55,14 @@ public class AccountController {
     public Response resendEmailToAcceptAccountDetailsUpdate() {
         accountEndpoint.resendEmailToAcceptAccountDetailsUpdate();
         return Response.status(OK).build();
+    }
+
+    @RolesAllowed("ADMINISTRATOR")
+    @PUT
+    @Path("/{id}/roles")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addRoleToAccount(@PathParam("id") final long id, @QueryParam("role") final String role) {
+        accountEndpoint.addRoleToAccount(id, role.toUpperCase());
+        return Response.ok().build();
     }
 }

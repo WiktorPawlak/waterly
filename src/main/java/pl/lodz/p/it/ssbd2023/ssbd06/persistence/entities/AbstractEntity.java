@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
@@ -15,6 +16,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
 abstract class AbstractEntity implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Version
@@ -34,6 +36,7 @@ abstract class AbstractEntity implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "created_by", updatable = false)
+    @Setter
     private Account createdBy;
 
     @UpdateTimestamp

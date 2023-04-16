@@ -9,4 +9,6 @@ public interface NotificationsProvider {
     void notifySuccessfulAdminAuthentication(LocalDateTime authenticationDate, String login, String ipAddress);
 
     void notifyWaitingAccountDetailsUpdate(long id);
+
+    void notifyRoleGranted(long id, String role);
 }

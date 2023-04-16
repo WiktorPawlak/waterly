@@ -5,8 +5,8 @@ import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,7 +46,8 @@ public class Account extends AbstractEntity {
     private String password;
     @NotNull
     @OneToMany(fetch = LAZY, cascade = {PERSIST, MERGE, REMOVE}, mappedBy = "account")
-    private Collection<Role> roles = new ArrayList<>();
+    @Setter
+    private Set<Role> roles = new HashSet<>();
     @NotNull
     @Setter
     private boolean active;

@@ -66,4 +66,9 @@ public class AccountEndpoint {
     public void resendEmailToAcceptAccountDetailsUpdate() {
         accountService.resendEmailToAcceptAccountDetailsUpdate(authenticatedAccount.getLogin());
     }
+
+    @RolesAllowed("ADMINISTRATOR")
+    public void addRoleToAccount(final long id, final String role) {
+        accountService.addRoleToAccount(id, role);
+    }
 }

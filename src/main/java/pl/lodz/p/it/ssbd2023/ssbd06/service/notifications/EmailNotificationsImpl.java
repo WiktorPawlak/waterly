@@ -27,4 +27,9 @@ public class EmailNotificationsImpl implements NotificationsProvider {
         //TODO implement
     }
 
+    @Override
+    public void notifyRoleGranted(final long id, final String role) {
+        //TODO
+    }
+
 }

@@ -11,7 +11,7 @@ public class AuthenticatedAccount {
     private SecurityContext securityContext;
 
     public String getLogin() {
-        return securityContext.getCallerPrincipal().getName();
+        return securityContext.getCallerPrincipal() == null ? "GUEST" : securityContext.getCallerPrincipal().getName();
     }
 
     public boolean isAdmin() {
