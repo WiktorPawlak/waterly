@@ -24,7 +24,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.validators.HashedPassword;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 
 @Entity
 @Getter
@@ -43,6 +43,7 @@ public class Account extends AbstractEntity {
     @Column(unique = true, updatable = false)
     private String login;
     @NotNull
+    @Setter
     @Column(nullable = false, length = 60)
     @HashedPassword
     private String password;

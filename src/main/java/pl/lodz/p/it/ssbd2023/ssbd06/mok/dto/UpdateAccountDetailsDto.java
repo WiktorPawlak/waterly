@@ -4,11 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.validators.Email;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.validators.FirstName;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.validators.LastName;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.validators.PhoneNumber;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.FirstName;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.LastName;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PhoneNumber;
 
 @Data
 @NoArgsConstructor

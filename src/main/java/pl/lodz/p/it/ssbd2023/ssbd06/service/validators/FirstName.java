@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.validators;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.validators;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
@@ -15,11 +15,11 @@ import jakarta.validation.constraints.Size;
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
-@Size(min = 8, max = 9, message = "minimal 8 characters and maximal 9 characters")
-@Pattern(regexp = ValidationRegex.PHONE_NUMBER, message = "must contain only numbers")
-public @interface PhoneNumber {
+@Size(min = 2, max = 50, message = "minimal 2 characters and maximal 50 characters")
+@Pattern(regexp = ValidationRegex.FIRST_NAME, message = "must contain only letters")
+public @interface FirstName {
 
-    String message() default "Tel number is invalid";
+    String message() default "First name is invalid";
 
     Class<?>[] groups() default {};
 

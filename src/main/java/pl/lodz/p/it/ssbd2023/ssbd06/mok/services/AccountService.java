@@ -82,6 +82,17 @@ public class AccountService {
     }
 
     @PermitAll
+    public Account findByLogin(final String login) {
+        return accountFacade.findByLogin(login);
+    }
+
+    @PermitAll
+    public void changePassword(final Account account, final String hashedPassword) {
+        account.setPassword(hashedPassword);
+        accountFacade.update(account);
+    }
+
+    @PermitAll
     public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) {
         Account account = accountFacade.findByLogin(login);
         String currentAccountEmail = account.getAccountDetails().getEmail();

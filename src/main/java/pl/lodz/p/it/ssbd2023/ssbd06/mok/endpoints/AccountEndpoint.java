@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -9,10 +10,16 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.identitystore.PasswordHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.NotificationsProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 @LocalBean
 @Stateless
@@ -27,6 +34,10 @@ public class AccountEndpoint {
 
     @Inject
     private NotificationsProvider notificationsProvider;
+
+    @Inject
+    @BCryptHash
+    private PasswordHash hashProvider;
 
     @PermitAll
     public boolean checkAccountActive(final String login) {
@@ -56,6 +67,19 @@ public class AccountEndpoint {
     @PermitAll
     public void saveFailedAuthAttempt(final LocalDateTime authenticationDate, final String login) {
         accountService.updateFailedAuthInfo(authenticationDate, login);
+    }
+
+    @RolesAllowed({"ADMINISTRATOR", "OWNER", "FACILITY_MANAGER"})
+    public void changeOwnAccountPassword(final AccountPasswordDto accountPasswordDto) throws IdenticalPasswordsException, UnmatchedPasswordsException {
+        Account account = accountService.findByLogin(authenticatedAccount.getLogin());
+        if (!hashProvider.verify(accountPasswordDto.getOldPassword().toCharArray(), account.getPassword())) {
+            throw UnmatchedPasswordsException.unmatchedPasswordsException();
+        }
+        if (Objects.equals(accountPasswordDto.getNewPassword(), accountPasswordDto.getOldPassword())) {
+            throw IdenticalPasswordsException.identicalPasswordsException();
+        }
+        var hashedNewPassword = hashProvider.generate(accountPasswordDto.getNewPassword().toCharArray());
+        accountService.changePassword(account, hashedNewPassword);
     }
 
     public void acceptAccountDetailsUpdate(final long id) {

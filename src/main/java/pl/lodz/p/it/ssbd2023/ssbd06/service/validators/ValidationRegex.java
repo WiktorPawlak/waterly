@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.validators;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.validators;
 
 public class ValidationRegex {
 

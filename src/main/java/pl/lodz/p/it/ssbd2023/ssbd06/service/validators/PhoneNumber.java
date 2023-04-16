@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.validators;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.validators;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
@@ -9,15 +9,17 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
-@Size(min = 60, max = 60, message = "Password hash must consist of exactly 60 characters")
-public @interface HashedPassword {
+@Size(min = 8, max = 9, message = "minimal 8 characters and maximal 9 characters")
+@Pattern(regexp = ValidationRegex.PHONE_NUMBER, message = "must contain only numbers")
+public @interface PhoneNumber {
 
-    String message() default "Password hash is invalid";
+    String message() default "Tel number is invalid";
 
     Class<?>[] groups() default {};
 
