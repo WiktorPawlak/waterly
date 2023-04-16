@@ -4,6 +4,7 @@ import static jakarta.security.enterprise.identitystore.CredentialValidationResu
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 import java.time.LocalDateTime;
+import java.util.logging.Logger;
 
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
@@ -17,18 +18,18 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lombok.extern.slf4j.Slf4j;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AccountIdentityStore;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.JwtProvider;
 
 
-@Slf4j
 @Path(value = "/public")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PublicController {
+
+    private final Logger log = Logger.getLogger(getClass().getName());
 
     @Inject
     private JwtProvider jwtProvider;
@@ -52,12 +53,11 @@ public class PublicController {
                     .build();
         } else {
             accountEndpoint.saveSuccessfulAuthAttempt(LocalDateTime.now(), credentials.getLogin(), httpServletRequest.getRemoteAddr());
-            log.info("User {} authenticated with IP {}", credentials.getLogin(), httpServletRequest.getRemoteAddr());
+            log.info("User " + credentials.getLogin() + " authenticated with IP " + httpServletRequest.getRemoteAddr());
             response = Response.ok()
                     .entity(jwtProvider.createToken(validationResult))
                     .build();
         }
-
         return response;
     }
 }

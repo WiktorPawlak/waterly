@@ -2,6 +2,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import jakarta.annotation.security.DeclareRoles;
@@ -13,12 +15,12 @@ import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticat
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ApplicationScoped
 @DeclareRoles({"ADMINISTRATOR", "OWNER", "FACILITY_MANAGER"})
 public class AuthenticationFilter implements HttpAuthenticationMechanism {
+
+    private final Logger log = Logger.getLogger(getClass().getName());
 
     @Inject
     private JwtProvider jwtProvider;
@@ -38,7 +40,7 @@ public class AuthenticationFilter implements HttpAuthenticationMechanism {
 
                 return httpMessageContext.notifyContainerAboutLogin(jwt.login(), jwt.roles());
             } catch (final Exception e) {
-                log.error("Could not set user authentication in security context: " + e.getMessage());
+                log.log(Level.SEVERE, "Could not set user authentication in security context: " + e.getMessage());
                 throw new AuthenticationException("Could not set user authentication in security context: " + e.getMessage());
             }
         } else if (!httpMessageContext.isProtected()) {

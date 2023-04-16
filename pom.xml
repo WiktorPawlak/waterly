@@ -52,7 +52,6 @@
         <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
         <postgres.version>42.5.4</postgres.version>
         <lombok.version>1.18.26</lombok.version>
-        <slf4j.version>2.0.7</slf4j.version>
         <java-jwt.version>4.4.0</java-jwt.version>
     </properties>
 
@@ -100,11 +99,6 @@
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>${java-jwt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
     </dependencies>

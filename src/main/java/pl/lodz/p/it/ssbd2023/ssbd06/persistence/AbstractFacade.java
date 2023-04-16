@@ -2,18 +2,18 @@ package pl.lodz.p.it.ssbd2023.ssbd06.persistence;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public abstract class AbstractFacade<T> {
 
     public static final String CAUGHT_EXCEPTION = "Caught exception";
+    private final Logger log = Logger.getLogger(getClass().getName());
     private final Class<T> clazz;
 
     protected AbstractFacade(final Class<T> clazz) {
@@ -29,7 +29,7 @@ public abstract class AbstractFacade<T> {
             return entity;
         } catch (final PersistenceException e) {
             // placeholder till someone will implement custom exceptions
-            log.info(CAUGHT_EXCEPTION, e);
+            log.info(CAUGHT_EXCEPTION + e);
             throw new RuntimeException();
         }
     }
@@ -40,7 +40,7 @@ public abstract class AbstractFacade<T> {
             getEntityManager().flush();
             return mergedEnt;
         } catch (final PersistenceException e) {
-            log.info(CAUGHT_EXCEPTION, e);
+            log.info(CAUGHT_EXCEPTION + e);
             throw new RuntimeException();
         }
     }
@@ -50,7 +50,7 @@ public abstract class AbstractFacade<T> {
             getEntityManager().remove(getEntityManager().merge(entity));
             getEntityManager().flush();
         } catch (final PersistenceException e) {
-            log.info(CAUGHT_EXCEPTION, e);
+            log.info(CAUGHT_EXCEPTION + e);
             throw new RuntimeException();
         }
     }
@@ -59,7 +59,7 @@ public abstract class AbstractFacade<T> {
         try {
             return Optional.ofNullable(getEntityManager().find(clazz, id)).orElseThrow(EntityNotFoundException::new);
         } catch (final PersistenceException e) {
-            log.info(CAUGHT_EXCEPTION, e);
+            log.info(CAUGHT_EXCEPTION + e);
             throw new RuntimeException();
         }
     }
@@ -71,7 +71,7 @@ public abstract class AbstractFacade<T> {
             cq.select(cq.from(clazz));
             return getEntityManager().createQuery(cq).getResultList();
         } catch (final PersistenceException e) {
-            log.info(CAUGHT_EXCEPTION, e);
+            log.info(CAUGHT_EXCEPTION + e);
             throw new RuntimeException();
         }
     }

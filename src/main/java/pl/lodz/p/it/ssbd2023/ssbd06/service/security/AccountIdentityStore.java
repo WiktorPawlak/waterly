@@ -3,18 +3,20 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.CONFIRMED;
 
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
-import lombok.extern.slf4j.Slf4j;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 
-@Slf4j
 @Stateless
 public class AccountIdentityStore {
+
+    private final Logger log = Logger.getLogger(getClass().getName());
+
     @Inject
     private AuthFacade authFacade;
 
