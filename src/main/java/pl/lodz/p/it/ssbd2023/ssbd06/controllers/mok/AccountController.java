@@ -28,8 +28,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
 
 @Path("/accounts")
 public class AccountController {
@@ -84,7 +83,8 @@ public class AccountController {
     @PUT
     @Path("/{id}/roles")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response editAccountRoles(@PathParam("id") final long id, @NotNull @Valid final EditAccountRolesDto editAccountRolesDto) {
+    public Response editAccountRoles(@PathParam("id") final long id, @NotNull @Valid final EditAccountRolesDto editAccountRolesDto)
+            throws ApplicationBaseException {
         accountEndpoint.editAccountRoles(id, editAccountRolesDto);
         return Response.ok().build();
     }
@@ -93,7 +93,7 @@ public class AccountController {
     @Path("/self/password")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeOwnPassword(@NotNull final AccountPasswordDto accountPasswordDto)
-            throws IdenticalPasswordsException, UnmatchedPasswordsException {
+            throws ApplicationBaseException {
         List<String> errors = validateAndGetConstraintsErrors(accountPasswordDto);
         if (!errors.isEmpty()) {
             return Response.status(BAD_REQUEST).entity(errors).build();
@@ -102,7 +102,7 @@ public class AccountController {
         return Response.ok().build();
     }
 
-    private <T> List<String> validateAndGetConstraintsErrors(T object) {
+    private <T> List<String> validateAndGetConstraintsErrors(final T object) {
         Set<ConstraintViolation<T>> violation = validator.validate(object);
         return violation.stream().map(ConstraintViolation::getMessage).toList();
     }

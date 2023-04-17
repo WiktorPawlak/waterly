@@ -23,25 +23,25 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.exceptions.EmailSender
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class EmailSenderProviderImpl implements EmailSenderProvider {
 
-    private static final Logger log = Logger.getLogger(EmailNotificationsImpl.class.getName());
+    private final Logger log = Logger.getLogger(EmailNotificationsImpl.class.getName());
 
     @Inject
     private EmailConfig emailConfig;
 
     @Override
-    public void sendEmail(String to, String subject, String body) {
+    public void sendEmail(final String to, final String subject, final String body) {
         try {
             Message message = prepareMail(to, subject, body);
             Transport.send(message);
             log.info("Email sent successfully");
-        } catch (UnsupportedEncodingException | MessagingException e) {
+        } catch (final UnsupportedEncodingException | MessagingException e) {
             String errorMsg = "Error occurred during email sending";
             log.info(errorMsg);
             throw new EmailSenderException(errorMsg, e);
         }
     }
 
-    private Message prepareMail(String to, String subject, String body) throws MessagingException, UnsupportedEncodingException {
+    private Message prepareMail(final String to, final String subject, final String body) throws MessagingException, UnsupportedEncodingException {
         Message message = new MimeMessage(prepareSession());
         message.setFrom(new InternetAddress(emailConfig.getUsername(), emailConfig.getSenderName()));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));

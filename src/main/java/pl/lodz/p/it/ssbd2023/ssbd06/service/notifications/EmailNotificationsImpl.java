@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.notifications;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.ejb.Stateless;
@@ -28,12 +29,12 @@ public class EmailNotificationsImpl implements NotificationsProvider {
     }
 
     @Override
-    public void notifyRoleGranted(final long id, final String role) {
+    public void notifyRoleGranted(final long id, final Set<String> role) {
         //TODO
     }
 
     @Override
-    public void notifyRoleRevoked(final long id, final String roleToRevoke) {
+    public void notifyRoleRevoked(final long id, final Set<String> roleToRevoke) {
         //TODO
     }
 

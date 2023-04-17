@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.notifications;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public interface NotificationsProvider {
 
@@ -10,7 +11,7 @@ public interface NotificationsProvider {
 
     void notifyWaitingAccountDetailsUpdate(long id);
 
-    void notifyRoleGranted(long id, String role);
+    void notifyRoleGranted(long id, Set<String> rolesToAdd);
 
-    void notifyRoleRevoked(long id, String roleToRevoke);
+    void notifyRoleRevoked(long id, Set<String> rolesToRevoke);
 }

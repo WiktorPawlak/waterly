@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Permission;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +18,7 @@ public class EditAccountRolesDto {
     private Operation operation;
 
     @NotNull
-    private Set<String> roles;
+    private Set<@Permission String> roles;
 
     public enum Operation {
         GRANT,

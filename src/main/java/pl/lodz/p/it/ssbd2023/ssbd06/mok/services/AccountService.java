@@ -5,7 +5,6 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTR
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
@@ -16,7 +15,10 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationForbiddenException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ForbiddenOperationException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
@@ -130,54 +132,59 @@ public class AccountService {
     }
 
     @PermitAll
-    public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) {
+    public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) throws ApplicationBaseException {
         var account = accountFacade.findById(id);
         if (isModifyingAnotherUser(account)) {
             switch (editAccountRolesDto.getOperation()) {
-                case GRANT -> editAccountRolesDto.getRoles().forEach(roleToGrant -> performGrantPermissionOperation().accept(account, roleToGrant));
-                case REVOKE -> editAccountRolesDto.getRoles().forEach(roleToRevoke -> performRevokePermissionOperation().accept(account, roleToRevoke));
-                default -> throw new UnsupportedOperationException("Unsupported operation");
+                case GRANT -> grantPermissions(editAccountRolesDto, account);
+                case REVOKE -> revokePermissions(editAccountRolesDto, account);
+                default -> throw new OperationUnsupportedException("Unsupported operation");
             }
         } else {
-            throw new OperationForbiddenException("Forbidden operation");
+            throw new ForbiddenOperationException("Forbidden operation");
         }
     }
 
-    @PermitAll
-    private BiConsumer<Account, String> performGrantPermissionOperation() {
-        return (account, role) -> {
-            Set<Role> accountRoles = account.getRoles();
-            Role roleToAdd = Role.valueOf(role);
-            if (!checkUserHasRole(account, role)) {
-                roleToAdd.setAccount(account);
-                roleToAdd.setCreatedBy(account);
-                accountRoles.add(roleToAdd);
-                accountFacade.update(account);
-                notificationsProvider.notifyRoleGranted(account.getId(), role);
-            }
-        };
+    private void revokePermissions(final EditAccountRolesDto editAccountRolesDto, final Account account) throws ApplicationBaseException {
+        for (String roleToRevoke : editAccountRolesDto.getRoles()) {
+            performRevokePermissionOperation(account, roleToRevoke);
+        }
+
+        accountFacade.update(account);
+        notificationsProvider.notifyRoleRevoked(account.getId(), editAccountRolesDto.getRoles());
     }
 
-    @PermitAll
-    private BiConsumer<Account, String> performRevokePermissionOperation() {
-        return (account, role) -> {
-            Set<Role> accountRoles = account.getRoles();
-            Optional<Role> roleToRemove = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
-            removePermission(account, role, accountRoles, roleToRemove);
-        };
+    private void grantPermissions(final EditAccountRolesDto editAccountRolesDto, final Account account) throws ApplicationBaseException {
+        for (String roleToGrant : editAccountRolesDto.getRoles()) {
+            performGrantPermissionOperation(account, roleToGrant);
+        }
+
+        accountFacade.update(account);
+        notificationsProvider.notifyRoleGranted(account.getId(), editAccountRolesDto.getRoles());
     }
 
-    private void removePermission(final Account account, final String role, final Set<Role> accountRoles, final Optional<Role> roleToRemove) {
-        roleToRemove.ifPresentOrElse(optRole -> {
-            accountRoles.remove(optRole);
-            accountFacade.update(account);
-            roleFacade.delete(optRole);
-            notificationsProvider.notifyRoleRevoked(account.getId(), role);
-        }, () -> log.info("Account has no granted " + role + " role"));
+    private void performGrantPermissionOperation(final Account account, final String role) throws ApplicationBaseException {
+        Set<Role> accountRoles = account.getRoles();
+        Optional<Role> foundRole = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
+        if (foundRole.isPresent()) {
+            log.info("Account has already granted " + role + " role");
+            throw new CannotModifyPermissionsException("Account has already granted " + role + " role");
+        }
+        Role roleToAdd = Role.valueOf(role);
+        roleToAdd.setAccount(account);
+        roleToAdd.setCreatedBy(account);
+        accountRoles.add(roleToAdd);
     }
 
-    private boolean checkUserHasRole(final Account account, final String role) {
-        return roleFacade.findRoleByAccountAndPermissionLevel(account, role).isPresent();
+    private void performRevokePermissionOperation(final Account account, final String role) throws ApplicationBaseException {
+        Set<Role> accountRoles = account.getRoles();
+        Optional<Role> roleToRemove = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
+        if (roleToRemove.isEmpty()) {
+            log.info("Account has no granted " + role + " role");
+            throw new CannotModifyPermissionsException("Account has no granted " + role + " role");
+        }
+        accountRoles.remove(roleToRemove.get());
+        roleFacade.delete(roleToRemove.get());
     }
 
     private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) {

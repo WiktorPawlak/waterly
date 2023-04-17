@@ -16,6 +16,7 @@ import jakarta.security.enterprise.identitystore.PasswordHash;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
@@ -78,13 +79,13 @@ public class AccountEndpoint {
     }
 
     @RolesAllowed({"ADMINISTRATOR", "OWNER", "FACILITY_MANAGER"})
-    public void changeOwnAccountPassword(final AccountPasswordDto accountPasswordDto) throws IdenticalPasswordsException, UnmatchedPasswordsException {
+    public void changeOwnAccountPassword(final AccountPasswordDto accountPasswordDto) throws ApplicationBaseException {
         Account account = accountService.findByLogin(authenticatedAccount.getLogin());
         if (!hashProvider.verify(accountPasswordDto.getOldPassword().toCharArray(), account.getPassword())) {
-            throw UnmatchedPasswordsException.unmatchedPasswordsException();
+            throw new UnmatchedPasswordsException();
         }
         if (Objects.equals(accountPasswordDto.getNewPassword(), accountPasswordDto.getOldPassword())) {
-            throw IdenticalPasswordsException.identicalPasswordsException();
+            throw new IdenticalPasswordsException();
         }
         var hashedNewPassword = hashProvider.generate(accountPasswordDto.getNewPassword().toCharArray());
         accountService.changePassword(account, hashedNewPassword);
@@ -100,7 +101,7 @@ public class AccountEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) {
+    public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) throws ApplicationBaseException {
         accountService.editAccountRoles(id, editAccountRolesDto);
     }
 }
