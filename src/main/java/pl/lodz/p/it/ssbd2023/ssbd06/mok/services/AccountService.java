@@ -13,6 +13,8 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.identitystore.PasswordHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
@@ -23,10 +25,12 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.NotificationsProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
@@ -44,6 +48,9 @@ public class AccountService {
     private AccountActivationTimer accountActivationTimer;
     @Inject
     private AuthenticatedAccount authenticatedAccount;
+    @Inject
+    @BCryptHash
+    private PasswordHash hashProvider;
 
     @Inject
     @Property("auth.attempts")
@@ -218,6 +225,19 @@ public class AccountService {
 
     private boolean isModifyingAnotherUser(final Account account) {
         return !account.getLogin().equals(authenticatedAccount.getLogin());
+    }
+
+    @PermitAll
+    public void registerUser(final AccountDto account) {
+        var accountDetails = new AccountDetails(account.getEmail(), account.getFirstName(),
+                account.getLastName(), account.getPhoneNumber());
+        var authInfo = new AuthInfo();
+        var hashedPassword = hashProvider.generate(account.getPassword().toCharArray());
+        var accountEntity = new Account(account.getLogin(), hashedPassword,
+                accountDetails, authInfo);
+        authInfo.setAccount(accountEntity);
+        accountEntity.setAuthInfo(authInfo);
+        accountFacade.create(accountEntity);
     }
 
 }

@@ -11,11 +11,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Password;
 @NoArgsConstructor
 public class AccountPasswordDto {
 
-    @NotNull
+    @NotNull(message = "oldPassword cannot be null")
     @Password
     private String oldPassword;
 
-    @NotNull
+    @NotNull(message = "newPassword cannot be null")
     @Password
     private String newPassword;
 }

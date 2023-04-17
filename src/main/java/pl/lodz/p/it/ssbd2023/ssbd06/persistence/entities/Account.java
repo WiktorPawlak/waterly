@@ -55,6 +55,7 @@ public class Account extends AbstractEntity {
     @NotNull
     @Setter
     private boolean active;
+    @Setter
     @NotNull
     @Column(name = "account_state")
     @Enumerated(EnumType.STRING)
@@ -64,6 +65,7 @@ public class Account extends AbstractEntity {
     @Setter
     @OneToOne(optional = false, fetch = LAZY, cascade = {PERSIST, MERGE})
     private AccountDetails accountDetails;
+    @Setter
     @NotNull
     @OneToOne(cascade = {PERSIST, MERGE}, mappedBy = "account", orphanRemoval = true)
     private AuthInfo authInfo;
@@ -74,4 +76,14 @@ public class Account extends AbstractEntity {
     private AccountDetails waitingAccountDetails;
 
     //TODO we can add updates history?
+
+    public Account(final String login, final String password, final AccountDetails accountDetails,
+                   final AuthInfo authInfo) {
+        this.login = login;
+        this.password = password;
+        this.active = false;
+        this.accountDetails = accountDetails;
+        this.authInfo = authInfo;
+        this.accountState = AccountState.TO_CONFIRM;
+    }
 }

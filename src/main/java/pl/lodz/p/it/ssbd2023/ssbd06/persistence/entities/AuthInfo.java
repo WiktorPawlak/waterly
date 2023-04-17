@@ -48,8 +48,8 @@ public class AuthInfo extends AbstractEntity {
     @JoinColumn(name = "account_id", nullable = false, updatable = false, unique = true)
     private Account account;
 
-    public AuthInfo(final Account account, final int incorrectAuthCount) {
+    public AuthInfo(final Account account) {
         this.account = account;
-        this.incorrectAuthCount = incorrectAuthCount;
+        this.incorrectAuthCount = 0;
     }
 }

@@ -16,4 +16,6 @@ public class ValidationRegex {
     public static final String PHONE_NUMBER = "^[0-9]*$";
 
     public static final String PERMISSION = "^(?i)(ADMINISTRATOR|FACILITY_MANAGER|OWNER)$";
+
+    public static final String LOGIN = "^[a-zA-Z0-9._-]*$";
 }

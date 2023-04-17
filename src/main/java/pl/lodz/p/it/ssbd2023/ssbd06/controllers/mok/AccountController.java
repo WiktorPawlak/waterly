@@ -1,21 +1,17 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.controllers.mok;
 
-import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
-import java.util.List;
-import java.util.Set;
+import java.util.logging.Logger;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -24,6 +20,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
@@ -32,7 +29,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
 
 @Path("/accounts")
 public class AccountController {
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+    private final Logger log = Logger.getLogger(getClass().getName());
 
     @Inject
     private AccountEndpoint accountEndpoint;
@@ -94,16 +92,17 @@ public class AccountController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeOwnPassword(@NotNull final AccountPasswordDto accountPasswordDto)
             throws ApplicationBaseException {
-        List<String> errors = validateAndGetConstraintsErrors(accountPasswordDto);
-        if (!errors.isEmpty()) {
-            return Response.status(BAD_REQUEST).entity(errors).build();
-        }
         accountEndpoint.changeOwnAccountPassword(accountPasswordDto);
         return Response.ok().build();
     }
 
-    private <T> List<String> validateAndGetConstraintsErrors(final T object) {
-        Set<ConstraintViolation<T>> violation = validator.validate(object);
-        return violation.stream().map(ConstraintViolation::getMessage).toList();
+    @POST
+    @Path("/register")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @PermitAll
+    public Response registerAccount(@NotNull @Valid final AccountDto account) {
+        accountEndpoint.registerUser(account);
+        log.info("Registering account: " + account);
+        return Response.ok().build();
     }
 }

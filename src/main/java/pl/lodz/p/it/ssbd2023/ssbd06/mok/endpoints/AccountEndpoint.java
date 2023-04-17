@@ -13,6 +13,7 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.PasswordHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
@@ -56,6 +57,11 @@ public class AccountEndpoint {
     @RolesAllowed(ADMINISTRATOR)
     public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) {
         accountService.updateAccountDetails(id, updateAccountDetailsDto.toDomain());
+    }
+
+    @PermitAll
+    public void registerUser(final AccountDto account) {
+        accountService.registerUser(account);
     }
 
     @PermitAll
