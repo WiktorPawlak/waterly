@@ -52,6 +52,11 @@ public class AccountEndpoint {
         accountService.changeAccountActiveStatus(id, active);
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) {
+        accountService.updateAccountDetails(id, updateAccountDetailsDto.toDomain());
+    }
+
     @PermitAll
     public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) {
 

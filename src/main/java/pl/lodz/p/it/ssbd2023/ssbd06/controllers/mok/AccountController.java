@@ -56,6 +56,15 @@ public class AccountController {
         return Response.status(NO_CONTENT).build();
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateAccountDetails(@PathParam("id") final long id, @Valid @NotNull final UpdateAccountDetailsDto updateAccountDetailsDto) {
+        accountEndpoint.updateAccountDetails(id, updateAccountDetailsDto);
+        return Response.status(NO_CONTENT).build();
+    }
+
     @PUT
     @Path("/account-details/{id}/accept")
     public Response acceptAccountDetailsUpdate(@PathParam("id") final long id) {

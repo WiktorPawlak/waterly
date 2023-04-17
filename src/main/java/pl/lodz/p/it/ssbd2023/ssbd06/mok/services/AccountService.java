@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
@@ -7,11 +9,13 @@ import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationForbiddenException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
@@ -86,6 +90,12 @@ public class AccountService {
         accountFacade.update(account);
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    public void updateAccountDetails(final long id, final AccountDetails accountDetails) {
+        Account account = accountFacade.findById(id);
+        addAccountDetailsToUpdate(account, accountDetails);
+    }
+
     @PermitAll
     public Account findByLogin(final String login) {
         return accountFacade.findByLogin(login);
@@ -100,15 +110,7 @@ public class AccountService {
     @PermitAll
     public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) {
         Account account = accountFacade.findByLogin(login);
-        String currentAccountEmail = account.getAccountDetails().getEmail();
-
-        if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {
-            updateAccountDetails(accountDetails, account);
-        } else {
-            account.setWaitingAccountDetails(accountDetails);
-            accountFacade.update(account);
-            notificationsProvider.notifyWaitingAccountDetailsUpdate(account.getId());
-        }
+        addAccountDetailsToUpdate(account, accountDetails);
     }
 
     @PermitAll
@@ -123,16 +125,6 @@ public class AccountService {
 
         account.setAccountDetails(account.getWaitingAccountDetails());
         account.setWaitingAccountDetails(null);
-
-        accountFacade.update(account);
-    }
-
-    private void updateAccountDetails(final AccountDetails newAccountDetails, final Account account) {
-        AccountDetails currentAccountDetails = account.getAccountDetails();
-
-        currentAccountDetails.setFirstName(newAccountDetails.getFirstName());
-        currentAccountDetails.setLastName(newAccountDetails.getLastName());
-        currentAccountDetails.setPhoneNumber(newAccountDetails.getPhoneNumber());
 
         accountFacade.update(account);
     }
@@ -186,6 +178,35 @@ public class AccountService {
 
     private boolean checkUserHasRole(final Account account, final String role) {
         return roleFacade.findRoleByAccountAndPermissionLevel(account, role).isPresent();
+    }
+
+    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) {
+        String currentAccountEmail = account.getAccountDetails().getEmail();
+
+        accountFacade.findByEmail(accountDetails.getEmail()).ifPresent(it -> {
+            log.info("Account details update error: account with email" + accountDetails.getEmail() + "already exist" + account.getId());
+            throw new AccountAlreadyExist("Account already exist with email: " + accountDetails.getEmail());
+        });
+
+        if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {
+            updateAccountDetails(accountDetails, account);
+            log.info("Account details updated: " + account.getId());
+        } else {
+            account.setWaitingAccountDetails(accountDetails);
+            accountFacade.update(account);
+            notificationsProvider.notifyWaitingAccountDetailsUpdate(account.getId());
+            log.info("Added account details waiting for accept: " + account.getId());
+        }
+    }
+
+    private void updateAccountDetails(final AccountDetails newAccountDetails, final Account account) {
+        AccountDetails currentAccountDetails = account.getAccountDetails();
+
+        currentAccountDetails.setFirstName(newAccountDetails.getFirstName());
+        currentAccountDetails.setLastName(newAccountDetails.getLastName());
+        currentAccountDetails.setPhoneNumber(newAccountDetails.getPhoneNumber());
+
+        accountFacade.update(account);
     }
 
     private boolean isModifyingAnotherUser(final Account account) {
