@@ -9,7 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @Entity
 @Table(name = "account_details")
 @Getter
@@ -32,7 +34,7 @@ public class AccountDetails extends AbstractEntity {
     private String lastName;
     @NotNull
     @Size(min = 8, max = 9)
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
     public AccountDetails(final String email, final String firstName, final String lastName, final String phoneNumber) {

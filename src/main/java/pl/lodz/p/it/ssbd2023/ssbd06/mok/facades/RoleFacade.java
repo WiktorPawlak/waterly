@@ -12,7 +12,9 @@ import jakarta.persistence.TypedQuery;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
+@Monitored
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class RoleFacade extends AbstractFacade<Role> {

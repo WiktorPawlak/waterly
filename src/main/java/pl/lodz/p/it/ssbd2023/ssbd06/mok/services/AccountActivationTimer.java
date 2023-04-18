@@ -31,11 +31,11 @@ public class AccountActivationTimer {
     private void execute(Timer timer) {
         long userId = (long) timer.getInfo();
         accountService.changeAccountActiveStatus(userId, true);
-        log.info("Ban period has expired. User with id" + userId + " has been reactivated.");
+        log.info(() -> "Ban period has expired. User with id" + userId + " has been reactivated.");
     }
 
     public void scheduleAccountActivation(final long id) {
         timerService.createSingleActionTimer(TimeUnit.HOURS.toMillis(authBanPeriod), new TimerConfig(id, true));
-        log.info("Ban period has started for user with id" + id + ". It will last for" + authBanPeriod + " hours.");
+        log.info(() -> "Ban period has started for user with id" + id + ". It will last for" + authBanPeriod + " hours.");
     }
 }

@@ -14,7 +14,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @Entity
 @Table(
         name = "water_meter_check",
@@ -33,6 +35,7 @@ public class WaterMeterCheck extends AbstractEntity {
     @NotNull
     @Column(nullable = false)
     private boolean managerAuthored;
+    @ToString.Exclude
     @NotNull
     @ManyToOne(cascade = REFRESH)
     @JoinColumn(name = "water_meter_id", nullable = false)

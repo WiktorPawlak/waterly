@@ -18,7 +18,6 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -26,17 +25,17 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "permission_level")
 @Table(name = "role", indexes = {
         @Index(name = "role_account_idx", columnList = "account_id")
 })
-@NamedQueries({
-        @NamedQuery(name = "Role.findByAccountAndPermissionLevel",
-                query = "select r from Role r where r.account = :account and r.permissionLevel = :permissionLevel"),
-})
+@NamedQuery(name = "Role.findByAccountAndPermissionLevel",
+        query = "select r from Role r where r.account = :account and r.permissionLevel = :permissionLevel")
 @Getter
 @NoArgsConstructor
 public class Role extends AbstractEntity {
@@ -45,6 +44,7 @@ public class Role extends AbstractEntity {
     @Column(updatable = false, insertable = false, name = "permission_level")
     private String permissionLevel;
 
+    @ToString.Exclude
     @NotNull
     @JoinColumn(name = "account_id", referencedColumnName = "id", updatable = false)
     @ManyToOne(optional = false, fetch = LAZY, cascade = PERSIST)

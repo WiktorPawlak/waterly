@@ -17,7 +17,9 @@ import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @NoArgsConstructor
 @Getter
 @MappedSuperclass
@@ -34,6 +36,7 @@ abstract class AbstractEntity implements Serializable {
     @Column(name = "created_on", updatable = false, nullable = false)
     private LocalDateTime createdOn;
 
+    @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "created_by", updatable = false)
     @Setter
@@ -44,6 +47,7 @@ abstract class AbstractEntity implements Serializable {
     @Setter
     private LocalDateTime updatedOn;
 
+    @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "updated_by")
     private Account updatedBy;

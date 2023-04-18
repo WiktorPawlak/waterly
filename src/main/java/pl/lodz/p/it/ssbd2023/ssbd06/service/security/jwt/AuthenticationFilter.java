@@ -5,7 +5,6 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTR
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -42,7 +41,7 @@ public class AuthenticationFilter implements HttpAuthenticationMechanism {
 
                 return httpMessageContext.notifyContainerAboutLogin(jwt.login(), jwt.roles());
             } catch (final Exception e) {
-                log.log(Level.SEVERE, "Could not set user authentication in security context: " + e.getMessage());
+                log.severe(() -> "Could not set user authentication in security context: " + e.getMessage());
                 return httpMessageContext.responseUnauthorized();
             }
         } else if (!httpMessageContext.isProtected()) {

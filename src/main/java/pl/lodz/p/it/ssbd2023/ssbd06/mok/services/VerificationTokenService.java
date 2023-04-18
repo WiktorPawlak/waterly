@@ -33,13 +33,13 @@ public class VerificationTokenService {
     private String expirationTimeInHours;
 
     @PermitAll
-    public boolean verifyTokenAffiliation(String token, String login) {
+    public boolean verifyTokenAffiliation(final String token, final String login) {
         VerificationToken verificationToken = verificationTokenFacade.findByToken(token);
         return Objects.equals(verificationToken.getAccount().getLogin(), login);
     }
 
     @PermitAll
-    public VerificationToken createToken(Account account) {
+    public VerificationToken createToken(final Account account) {
         VerificationToken token = VerificationToken.builder()
                 .account(account)
                 .expiryDate(prepareExpirationDate())

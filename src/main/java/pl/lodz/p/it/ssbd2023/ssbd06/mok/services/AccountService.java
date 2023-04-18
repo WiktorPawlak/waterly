@@ -29,9 +29,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
+@Monitored
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AccountService {
@@ -174,7 +176,7 @@ public class AccountService {
         Set<Role> accountRoles = account.getRoles();
         Optional<Role> foundRole = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
         if (foundRole.isPresent()) {
-            log.info("Account has already granted " + role + " role");
+            log.info(() -> "Account has already granted " + role + " role");
             throw new CannotModifyPermissionsException("Account has already granted " + role + " role");
         }
         Role roleToAdd = Role.valueOf(role);
@@ -187,7 +189,7 @@ public class AccountService {
         Set<Role> accountRoles = account.getRoles();
         Optional<Role> roleToRemove = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
         if (roleToRemove.isEmpty()) {
-            log.info("Account has no granted " + role + " role");
+            log.info(() -> "Account has no granted " + role + " role");
             throw new CannotModifyPermissionsException("Account has no granted " + role + " role");
         }
         accountRoles.remove(roleToRemove.get());

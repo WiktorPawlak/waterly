@@ -9,7 +9,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @Entity
 @Table(name = "tariff")
 @Getter

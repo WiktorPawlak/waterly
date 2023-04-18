@@ -20,7 +20,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @Entity
 @Table(
         name = "water_meter",
@@ -42,6 +44,7 @@ public class WaterMeter extends AbstractEntity {
     private BigDecimal expectedUsage;
     @Column(nullable = false)
     private boolean active;
+    @ToString.Exclude
     @OneToMany(mappedBy = "waterMeter", fetch = LAZY)
     private List<WaterMeterCheck> waterMeterChecks = new ArrayList<>();
     @NotNull
@@ -49,6 +52,7 @@ public class WaterMeter extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private WaterMeterType type;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "apartment_id", foreignKey = @ForeignKey(name = "water_meter_apartment_fk"))
     private Apartment apartment;

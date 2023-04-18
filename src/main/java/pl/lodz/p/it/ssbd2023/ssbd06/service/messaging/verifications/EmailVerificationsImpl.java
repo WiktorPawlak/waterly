@@ -13,7 +13,7 @@ public class EmailVerificationsImpl implements VerificationsProvider {
 
     // TODO: Going to be generalized in SSBD202306-66
     @Override
-    public void sendVerificationToken(VerificationToken token) {
+    public void sendVerificationToken(final VerificationToken token) {
         String email = token.getAccount().getAccountDetails().getEmail();
         emailSenderProvider.sendEmail(email, "TOPIC", "MESSAGE\n" + "url?token=" + token.getToken());
     }

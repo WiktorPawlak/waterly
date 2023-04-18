@@ -13,7 +13,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @Entity
 @Table(
         name = "water_usage_stats",
@@ -23,6 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class WaterUsageStats extends AbstractEntity {
+    @ToString.Exclude
     @NotNull
     @ManyToOne
     @JoinColumn(name = "apartment_id", nullable = false, foreignKey = @ForeignKey(name = "water_usage_stats_apartment_fk"))

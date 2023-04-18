@@ -15,7 +15,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @Entity
 @Table(
         name = "apartment",
@@ -30,14 +32,17 @@ public class Apartment extends AbstractEntity {
     @Column
     private BigDecimal area;
 
+    @ToString.Exclude
     @NotNull
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "apartment", fetch = FetchType.LAZY)
     private List<WaterUsageStats> waterUsageStats = new ArrayList<>();
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "apartment", fetch = FetchType.LAZY)
     private List<WaterMeter> waterMeters = new ArrayList<>();
 }

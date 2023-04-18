@@ -1,7 +1,5 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
-import java.util.logging.Logger;
-
 import jakarta.annotation.security.PermitAll;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
@@ -30,7 +28,7 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
     }
 
     @PermitAll
-    public VerificationToken findByToken(String token) {
+    public VerificationToken findByToken(final String token) {
         TypedQuery<VerificationToken> verificationTokenTypedQuery = em.createNamedQuery("VerificationToken.findByToken", VerificationToken.class);
         verificationTokenTypedQuery.setFlushMode(FlushModeType.COMMIT);
         verificationTokenTypedQuery.setParameter("token", token);

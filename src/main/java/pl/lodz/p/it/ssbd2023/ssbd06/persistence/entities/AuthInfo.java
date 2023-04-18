@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -17,11 +16,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@NamedQueries({
-        @NamedQuery(name = "AuthInfo.findByAccountId",
-                query = "SELECT auth_info FROM AuthInfo auth_info WHERE auth_info.account.id = :id")
-})
+@ToString(callSuper = true)
+@NamedQuery(name = "AuthInfo.findByAccountId",
+        query = "SELECT auth_info FROM AuthInfo auth_info WHERE auth_info.account.id = :id")
 @Entity
 @Table(name = "auth_info", indexes = {
         @Index(name = "auth_info_idx", columnList = "account_id")}
@@ -43,6 +42,7 @@ public class AuthInfo extends AbstractEntity {
     @Column(name = "incorrect_auth_count", nullable = false)
     private int incorrectAuthCount;
 
+    @ToString.Exclude
     @NotNull
     @OneToOne(cascade = {REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false, updatable = false, unique = true)

@@ -90,7 +90,7 @@ public class AccountController {
     @PUT
     @Path("/self/password")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response changeOwnPassword(@NotNull final AccountPasswordDto accountPasswordDto)
+    public Response changeOwnPassword(@NotNull @Valid final AccountPasswordDto accountPasswordDto)
             throws ApplicationBaseException {
         accountEndpoint.changeOwnAccountPassword(accountPasswordDto);
         return Response.ok().build();
@@ -102,7 +102,7 @@ public class AccountController {
     @PermitAll
     public Response registerAccount(@NotNull @Valid final AccountDto account) {
         accountEndpoint.registerUser(account);
-        log.info("Registering account: " + account);
+        log.info(() -> "Registering account: " + account);
         return Response.ok().build();
     }
 }
