@@ -17,6 +17,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
@@ -25,6 +26,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 @Monitored
@@ -57,17 +59,17 @@ public class AccountEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) {
+    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExist {
         accountService.updateAccountDetails(id, updateAccountDetailsDto.toDomain());
     }
 
-    @PermitAll
+    @OnlyGuest
     public void registerUser(final AccountDto account) {
         accountService.registerUser(account);
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) {
+    public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExist {
 
         accountService.updateOwnAccountDetails(authenticatedAccount.getLogin(), updateAccountDetailsDto.toDomain());
     }
@@ -99,6 +101,7 @@ public class AccountEndpoint {
         accountService.changePassword(account, hashedNewPassword);
     }
 
+    @PermitAll
     public void acceptAccountDetailsUpdate(final long id) {
         accountService.acceptAccountDetailsUpdate(id);
     }

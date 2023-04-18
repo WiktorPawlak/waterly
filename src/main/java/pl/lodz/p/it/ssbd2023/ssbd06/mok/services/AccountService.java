@@ -31,6 +31,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 @Monitored
@@ -102,7 +103,7 @@ public class AccountService {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void updateAccountDetails(final long id, final AccountDetails accountDetails) {
+    public void updateAccountDetails(final long id, final AccountDetails accountDetails) throws AccountAlreadyExist {
         Account account = accountFacade.findById(id);
         addAccountDetailsToUpdate(account, accountDetails);
     }
@@ -119,7 +120,7 @@ public class AccountService {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) {
+    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) throws AccountAlreadyExist {
         Account account = accountFacade.findByLogin(login);
         addAccountDetailsToUpdate(account, accountDetails);
     }
@@ -192,13 +193,15 @@ public class AccountService {
         roleToRemove.ifPresent(optRole -> optRole.setActive(false));
     }
 
-    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) {
+    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) throws AccountAlreadyExist {
         String currentAccountEmail = account.getAccountDetails().getEmail();
 
-        accountFacade.findByEmail(accountDetails.getEmail()).ifPresent(it -> {
+        Optional<Account> optionalAccount = accountFacade.findByEmail(accountDetails.getEmail());
+
+        if (optionalAccount.isPresent()) {
             log.info("Account details update error: account with email" + accountDetails.getEmail() + "already exist" + account.getId());
             throw new AccountAlreadyExist("Account already exist with email: " + accountDetails.getEmail());
-        });
+        }
 
         if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {
             updateAccountDetails(accountDetails, account);
@@ -225,7 +228,7 @@ public class AccountService {
         return !account.getLogin().equals(authenticatedAccount.getLogin());
     }
 
-    @PermitAll
+    @OnlyGuest
     public void registerUser(final AccountDto account) {
         var accountDetails = new AccountDetails(account.getEmail(), account.getFirstName(),
                 account.getLastName(), account.getPhoneNumber());

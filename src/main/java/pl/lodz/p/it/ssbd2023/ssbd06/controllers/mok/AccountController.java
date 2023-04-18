@@ -25,7 +25,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 
 @Path("/accounts")
 public class AccountController {
@@ -48,7 +50,7 @@ public class AccountController {
     @PUT
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateOwnAccountDetails(@Valid @NotNull final UpdateAccountDetailsDto updateAccountDetailsDto) {
+    public Response updateOwnAccountDetails(@Valid @NotNull final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExist {
         accountEndpoint.updateOwnAccountDetails(updateAccountDetailsDto);
         return Response.status(NO_CONTENT).build();
     }
@@ -57,11 +59,13 @@ public class AccountController {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateAccountDetails(@PathParam("id") final long id, @Valid @NotNull final UpdateAccountDetailsDto updateAccountDetailsDto) {
+    public Response updateAccountDetails(@PathParam("id") final long id, @Valid @NotNull final UpdateAccountDetailsDto updateAccountDetailsDto)
+            throws AccountAlreadyExist {
         accountEndpoint.updateAccountDetails(id, updateAccountDetailsDto);
         return Response.status(NO_CONTENT).build();
     }
 
+    @PermitAll
     @PUT
     @Path("/account-details/{id}/accept")
     public Response acceptAccountDetailsUpdate(@PathParam("id") final long id) {
@@ -96,10 +100,10 @@ public class AccountController {
         return Response.ok().build();
     }
 
+    @OnlyGuest
     @POST
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
-    @PermitAll
     public Response registerAccount(@NotNull @Valid final AccountDto account) {
         accountEndpoint.registerUser(account);
         log.info(() -> "Registering account: " + account);

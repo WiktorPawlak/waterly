@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.controllers.auth;
+package pl.lodz.p.it.ssbd2023.ssbd06.controllers.response;
 
 import java.util.List;
 

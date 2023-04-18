@@ -34,7 +34,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 })
 @NamedQuery(name = "Account.findByLogin", query = "select a from Account a where a.login = :login")
 @NamedQuery(name = "Account.findByWaitingAccountDetailsUpdates_Id", query = "select a from Account a where a.waitingAccountDetails.id = :id")
-@NamedQuery(name = "Account.findByAccountDetails_Email", query = "select a from Account a where a.accountDetails.email = :email")
+@NamedQuery(name = "Account.findByAccountDetails_Email",
+        query = "select a from Account a where a.accountDetails.email = :email or a.waitingAccountDetails.email = :email")
 @NoArgsConstructor
 public class Account extends AbstractEntity {
 

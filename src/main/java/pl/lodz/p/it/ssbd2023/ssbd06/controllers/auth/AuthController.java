@@ -18,16 +18,18 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.response.ErrorResponse;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.AccountIdentityStore;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.JwtProvider;
 
 
-@Path(value = "/public")
+@Path(value = "/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class PublicController {
+public class AuthController {
 
     private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -40,6 +42,7 @@ public class PublicController {
     @Inject
     private AccountEndpoint accountEndpoint;
 
+    @OnlyGuest
     @POST
     @Path("/login")
     public Response login(@NotNull @Valid final Credentials credentials) {

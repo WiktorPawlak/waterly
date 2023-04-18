@@ -1,8 +1,14 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions;
 
-public class AccountAlreadyExist extends RuntimeException {
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
+
+import jakarta.ws.rs.core.Response;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.response.ErrorResponse;
+
+public class AccountAlreadyExist extends ApplicationBaseException {
+
     public AccountAlreadyExist(final String message) {
-        super(message);
+        super(Response.status(CONFLICT).entity(new ErrorResponse(message)).build());
     }
 
 }
