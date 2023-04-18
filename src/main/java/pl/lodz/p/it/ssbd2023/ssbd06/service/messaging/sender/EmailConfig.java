@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.email;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

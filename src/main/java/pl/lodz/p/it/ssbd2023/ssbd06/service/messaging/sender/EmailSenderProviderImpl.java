@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.email;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
@@ -16,8 +16,8 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.EmailNotificationsImpl;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.notifications.exceptions.EmailSenderException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.EmailNotificationsImpl;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.exceptions.EmailSenderException;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)

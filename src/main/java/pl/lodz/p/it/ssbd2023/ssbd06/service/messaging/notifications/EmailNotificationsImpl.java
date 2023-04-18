@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.service.notifications;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications;
 
 import java.time.LocalDateTime;
 import java.util.Set;

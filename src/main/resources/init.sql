@@ -19,11 +19,13 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE owner TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE facility_manager TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE role TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE ON TABLE auth_info TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE ON TABLE verification_token TO ssbd06mok;
 
 GRANT SELECT, INSERT, UPDATE ON TABLE account_details_id_seq TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE ON TABLE account_id_seq TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE ON TABLE auth_info_id_seq TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE ON TABLE role_id_seq TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE ON TABLE verification_token_id_seq TO ssbd06mok;
 
 --ssbd06mol
 GRANT SELECT ON TABLE account TO ssbd06mol;
