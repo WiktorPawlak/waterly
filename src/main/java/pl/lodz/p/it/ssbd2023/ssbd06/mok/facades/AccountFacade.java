@@ -23,6 +23,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 public class AccountFacade extends AbstractFacade<Account> {
 
     private final Logger log = Logger.getLogger(getClass().getName());
+
     @PersistenceContext(unitName = "mokPU")
     private EntityManager em;
 

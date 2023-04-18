@@ -26,6 +26,7 @@ import lombok.ToString;
 abstract class AbstractEntity implements Serializable {
 
     @Id
+    @Column(updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 

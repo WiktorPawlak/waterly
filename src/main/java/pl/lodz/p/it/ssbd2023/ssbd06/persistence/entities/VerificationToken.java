@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -20,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString
+@ToString(callSuper = true)
 @Entity
 @Table(
         name = "verification_token",
@@ -28,9 +27,7 @@ import lombok.ToString;
                 @Index(name = "account_idx", columnList = "account_id")
         }
 )
-@NamedQueries({
-        @NamedQuery(name = "VerificationToken.findByToken", query = "select v from VerificationToken v where v.token = :token")
-})
+@NamedQuery(name = "VerificationToken.findByToken", query = "select v from VerificationToken v where v.token = :token")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -40,6 +37,7 @@ public class VerificationToken extends AbstractEntity {
     @Column(name = "token", nullable = false, unique = true)
     private String token;
 
+    @ToString.Exclude
     @NotNull
     @OneToOne(cascade = {REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false, updatable = false)

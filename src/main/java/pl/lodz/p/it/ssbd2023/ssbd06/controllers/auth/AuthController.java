@@ -49,7 +49,7 @@ public class AuthController {
         Response response;
         CredentialValidationResult validationResult = accountIdentityStore.validate(credentials);
 
-        if (validationResult.getStatus() != VALID || !accountEndpoint.checkAccountActive(credentials.getLogin())) {
+        if (validationResult.getStatus() != VALID) {
             accountEndpoint.saveFailedAuthAttempt(LocalDateTime.now(), credentials.getLogin());
             response = Response.status(UNAUTHORIZED)
                     .entity(new ErrorResponse("Wrong login or password"))

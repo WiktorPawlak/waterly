@@ -31,7 +31,7 @@ public class AccountIdentityStore {
         try {
             Account account = authFacade.findByLogin(credential.getLogin());
 
-            if (isPasswordValid(credential.getPassword(), account.getPassword()) && isAccountActive(account)) {
+            if (isPasswordValid(credential.getPassword(), account.getPassword()) && canAuthenticate(account)) {
                 return new CredentialValidationResult(
                         account.getLogin(),
                         account.getRoles().stream().filter(Role::isActive).map(Role::getPermissionLevel).collect(Collectors.toSet())
@@ -51,7 +51,7 @@ public class AccountIdentityStore {
         return hashProvider.verify(credentialPassword.toCharArray(), accountPassword);
     }
 
-    private boolean isAccountActive(final Account account) {
+    private boolean canAuthenticate(final Account account) {
         //TODO może jakiś exception który będzie mówił że towje konto jest jeszcze nie zakceptowane
         return account.isActive() && account.getAccountState() == CONFIRMED;
     }

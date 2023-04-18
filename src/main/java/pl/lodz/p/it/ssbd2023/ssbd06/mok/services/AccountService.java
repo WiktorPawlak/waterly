@@ -94,7 +94,7 @@ public class AccountService {
         accountAuthInfo.setIncorrectAuthCount(authAttemptsCount + 1);
         accountAuthInfo.setLastIncorrectAuth(authenticationDate);
 
-        if (++authAttemptsCount == authAttempts) {
+        if (++authAttemptsCount == authAttempts && account.isActive()) {
             this.changeAccountActiveStatus(account.getId(), false);
             accountActivationTimer.scheduleAccountActivation(account.getId());
         }

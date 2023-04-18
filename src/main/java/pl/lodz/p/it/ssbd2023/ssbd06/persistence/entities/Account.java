@@ -41,7 +41,7 @@ public class Account extends AbstractEntity {
 
     @NotNull
     @Size(min = 3, max = 50)
-    @Column(unique = true, updatable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     private String login;
     @ToString.Exclude
     @NotNull

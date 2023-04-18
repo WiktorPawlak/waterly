@@ -48,11 +48,6 @@ public class AccountEndpoint {
     @BCryptHash
     private PasswordHash hashProvider;
 
-    @PermitAll
-    public boolean checkAccountActive(final String login) {
-        return accountService.checkAccountActive(login);
-    }
-
     @RolesAllowed(ADMINISTRATOR)
     public void changeAccountActiveStatus(final long id, final boolean active) {
         accountService.changeAccountActiveStatus(id, active);
