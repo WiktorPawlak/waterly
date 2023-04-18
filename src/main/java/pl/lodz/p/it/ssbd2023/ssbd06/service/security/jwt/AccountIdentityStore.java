@@ -34,7 +34,7 @@ public class AccountIdentityStore {
             if (isPasswordValid(credential.getPassword(), account.getPassword()) && isAccountActive(account)) {
                 return new CredentialValidationResult(
                         account.getLogin(),
-                        account.getRoles().stream().map(Role::getPermissionLevel).collect(Collectors.toSet())
+                        account.getRoles().stream().filter(Role::isActive).map(Role::getPermissionLevel).collect(Collectors.toSet())
                 );
             } else {
                 log.info("Invalid authentication: Wrong password or account is not active");

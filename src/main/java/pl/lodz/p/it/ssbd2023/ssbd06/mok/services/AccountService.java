@@ -173,27 +173,23 @@ public class AccountService {
     }
 
     private void performGrantPermissionOperation(final Account account, final String role) throws ApplicationBaseException {
-        Set<Role> accountRoles = account.getRoles();
         Optional<Role> foundRole = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
-        if (foundRole.isPresent()) {
+        if (foundRole.isPresent() && (foundRole.get().isActive())) {
             log.info(() -> "Account has already granted " + role + " role");
             throw new CannotModifyPermissionsException("Account has already granted " + role + " role");
+
         }
-        Role roleToAdd = Role.valueOf(role);
-        roleToAdd.setAccount(account);
-        roleToAdd.setCreatedBy(account);
-        accountRoles.add(roleToAdd);
+        foundRole.ifPresent(optRole -> optRole.setActive(true));
     }
 
     private void performRevokePermissionOperation(final Account account, final String role) throws ApplicationBaseException {
-        Set<Role> accountRoles = account.getRoles();
         Optional<Role> roleToRemove = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
-        if (roleToRemove.isEmpty()) {
+        if (roleToRemove.isPresent() && (!roleToRemove.get().isActive())) {
             log.info(() -> "Account has no granted " + role + " role");
             throw new CannotModifyPermissionsException("Account has no granted " + role + " role");
+
         }
-        accountRoles.remove(roleToRemove.get());
-        roleFacade.delete(roleToRemove.get());
+        roleToRemove.ifPresent(optRole -> optRole.setActive(false));
     }
 
     private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) {
@@ -239,6 +235,13 @@ public class AccountService {
                 accountDetails, authInfo);
         authInfo.setAccount(accountEntity);
         accountEntity.setAuthInfo(authInfo);
+        Set<Role> roles = Set.of(Role.valueOf("ADMINISTRATOR"),
+                Role.valueOf("FACILITY_MANAGER"), Role.valueOf("OWNER"));
+        roles.forEach(role -> {
+            role.setActive(false);
+            role.setAccount(accountEntity);
+        });
+        accountEntity.setRoles(roles);
         accountFacade.create(accountEntity);
     }
 

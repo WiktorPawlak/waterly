@@ -51,6 +51,11 @@ public class Role extends AbstractEntity {
     @Setter
     private Account account;
 
+    @NotNull
+    @Setter
+    @Column(name = "active")
+    private boolean active;
+
     public static Role valueOf(final String role) {
         return Match(role).of(
                 Case($(ADMINISTRATOR), new Administrator()),
