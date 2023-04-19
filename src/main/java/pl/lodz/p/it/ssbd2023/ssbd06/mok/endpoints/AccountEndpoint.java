@@ -64,6 +64,11 @@ public class AccountEndpoint {
     }
 
     @PermitAll
+    public void confirmRegistration(final String token) throws ApplicationBaseException {
+        accountService.confirmRegistration(token);
+    }
+
+    @PermitAll
     public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExist {
 
         accountService.updateOwnAccountDetails(authenticatedAccount.getLogin(), updateAccountDetailsDto.toDomain());

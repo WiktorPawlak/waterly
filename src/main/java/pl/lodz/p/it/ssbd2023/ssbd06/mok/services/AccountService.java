@@ -1,5 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_CONFIRM;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 
 import java.time.LocalDateTime;
@@ -21,14 +22,17 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ForbiddenOperationException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.verifications.VerificationsProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
@@ -47,6 +51,12 @@ public class AccountService {
     private RoleFacade roleFacade;
     @Inject
     private NotificationsProvider notificationsProvider;
+    @Inject
+    private VerificationsProvider verificationsProvider;
+    @Inject
+    private VerificationTokenService verificationTokenService;
+    @Inject
+    private AccountVerificationTimer accountVerificationTimer;
     @Inject
     private AccountActivationTimer accountActivationTimer;
     @Inject
@@ -155,6 +165,15 @@ public class AccountService {
         }
     }
 
+    @PermitAll
+    public void removeInactiveNotConfirmedAccount(final long id) {
+        // TODO: fix account deletion
+//        Account account = accountFacade.findById(id);
+//        if (account != null && !account.isActive() && Objects.equals(account.getAccountState(), NOT_CONFIRMED)) {
+//            accountFacade.delete(account);
+//        }
+    }
+
     private void revokePermissions(final EditAccountRolesDto editAccountRolesDto, final Account account) throws ApplicationBaseException {
         for (String roleToRevoke : editAccountRolesDto.getRoles()) {
             performRevokePermissionOperation(account, roleToRevoke);
@@ -229,7 +248,32 @@ public class AccountService {
     }
 
     @OnlyGuest
-    public void registerUser(final AccountDto account) {
+    public void registerUser(final AccountDto accountDto) {
+        Account accountEntity = prepareAccountEntity(accountDto);
+        Account persistedAccountEntity = accountFacade.create(accountEntity);
+
+        VerificationToken token = verificationTokenService.createToken(persistedAccountEntity);
+        accountVerificationTimer.scheduleAccountDeletion(persistedAccountEntity.getId());
+
+        verificationsProvider.sendVerificationToken(token);
+    }
+
+    @PermitAll
+    public void confirmRegistration(final String token) throws ApplicationBaseException {
+        VerificationToken verificationToken = verificationTokenService.findToken(token);
+        if (verificationToken == null) {
+            throw new TokenNotFoundException();
+        }
+        Account account = verificationToken.getAccount();
+        accountVerificationTimer.cancelAccountDeletion(account.getId());
+
+        account.setActive(true);
+        account.getAuthInfo().setIncorrectAuthCount(0);
+        account.setAccountState(TO_CONFIRM);
+        accountFacade.update(account);
+    }
+
+    private Account prepareAccountEntity(final AccountDto account) {
         var accountDetails = new AccountDetails(account.getEmail(), account.getFirstName(),
                 account.getLastName(), account.getPhoneNumber());
         var authInfo = new AuthInfo();
@@ -245,7 +289,8 @@ public class AccountService {
             role.setAccount(accountEntity);
         });
         accountEntity.setRoles(roles);
-        accountFacade.create(accountEntity);
+
+        return accountEntity;
     }
 
 }

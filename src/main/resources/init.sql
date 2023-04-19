@@ -58,6 +58,6 @@ INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incor
 -- add test FACILITY MANGER password jantes123
 INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on) VALUES (nextval('account_details_id_seq'), 0, 'tomdut@gmail.com', 'Tom', 'Dut', '666666666', now(), now());
 INSERT INTO public.account (id, version, active, login, password, account_state, account_details_id, created_on, updated_on) VALUES (nextval('account_id_seq'), 0, true, 'tomdut', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'CONFIRMED', 3, now(), now());
-INSERT INTO public.role (permission_level, id, version, account_id, created_on, updated_on) VALUES ('OWNER', nextval('role_id_seq'), 0, 3, now(), now());
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('OWNER', nextval('role_id_seq'), true, 0, 3, now(), now());
 INSERT INTO public.facility_manager (id) VALUES (3);
 INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id) VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 3);

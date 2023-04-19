@@ -4,7 +4,6 @@ import static java.util.Calendar.HOUR_OF_DAY;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 import jakarta.annotation.security.PermitAll;
@@ -33,9 +32,8 @@ public class VerificationTokenService {
     private String expirationTimeInHours;
 
     @PermitAll
-    public boolean verifyTokenAffiliation(final String token, final String login) {
-        VerificationToken verificationToken = verificationTokenFacade.findByToken(token);
-        return Objects.equals(verificationToken.getAccount().getLogin(), login);
+    public VerificationToken findToken(final String token) {
+        return verificationTokenFacade.findByToken(token);
     }
 
     @PermitAll

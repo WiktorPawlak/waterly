@@ -1,0 +1,51 @@
+package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.Timeout;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerConfig;
+import jakarta.ejb.TimerService;
+import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
+
+@Stateless
+public class AccountVerificationTimer {
+
+    private final Logger log = Logger.getLogger(getClass().getName());
+
+    @Resource
+    private TimerService timerService;
+    @Inject
+    private AccountService accountService;
+
+    @Inject
+    @Property("verification.token.expirationTimeInHours")
+    private int expirationTimeInHours;
+
+    @Timeout
+    @SuppressWarnings("checkstyle:FinalParameters")
+    private void execute(Timer timer) {
+        long userId = (long) timer.getInfo();
+        accountService.removeInactiveNotConfirmedAccount(userId);
+        log.info("Account " + userId + " deletion period has expired. Account with id " + userId + " has been deleted.");
+    }
+
+    public void scheduleAccountDeletion(final long id) {
+        timerService.createSingleActionTimer(TimeUnit.HOURS.toMillis(expirationTimeInHours), new TimerConfig(id, true));
+        log.info("Account " + id + " will be deleted in " + expirationTimeInHours + " hours unless it is verified with token");
+    }
+
+    public void cancelAccountDeletion(final long id) {
+        for (Timer timer : timerService.getTimers()) {
+            if (Objects.equals(timer.getInfo(), id)) {
+                timer.cancel();
+                log.info("Account " + id + " scheduled deletion canceled");
+            }
+        }
+    }
+}

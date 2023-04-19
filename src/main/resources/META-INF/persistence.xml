@@ -63,19 +63,7 @@
     <persistence-unit name="molPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:app/jdbc/ssbd06mol</jta-data-source>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.UsageReport</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterCheck</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType</class>
-        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats</class>
-        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <properties>
             <property name="hibernate.transaction.jta.platform"

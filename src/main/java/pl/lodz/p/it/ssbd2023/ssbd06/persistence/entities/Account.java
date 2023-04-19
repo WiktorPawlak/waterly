@@ -89,6 +89,6 @@ public class Account extends AbstractEntity {
         this.active = false;
         this.accountDetails = accountDetails;
         this.authInfo = authInfo;
-        this.accountState = AccountState.TO_CONFIRM;
+        this.accountState = AccountState.NOT_CONFIRMED;
     }
 }
