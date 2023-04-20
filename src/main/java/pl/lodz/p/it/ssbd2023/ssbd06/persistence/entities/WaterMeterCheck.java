@@ -38,6 +38,6 @@ public class WaterMeterCheck extends AbstractEntity {
     @ToString.Exclude
     @NotNull
     @ManyToOne(cascade = REFRESH)
-    @JoinColumn(name = "water_meter_id", nullable = false)
+    @JoinColumn(name = "water_meter_id", nullable = false, updatable = false)
     private WaterMeter waterMeter;
 }

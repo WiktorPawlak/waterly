@@ -22,7 +22,7 @@ public abstract class AbstractFacade<T> {
 
     protected abstract EntityManager getEntityManager();
 
-    public T create(final T entity) {
+    protected T create(final T entity) {
         try {
             getEntityManager().persist(entity);
             getEntityManager().flush();
@@ -34,7 +34,7 @@ public abstract class AbstractFacade<T> {
         }
     }
 
-    public T update(final T entity) {
+    protected T update(final T entity) {
         try {
             T mergedEnt = getEntityManager().merge(entity);
             getEntityManager().flush();
@@ -45,7 +45,7 @@ public abstract class AbstractFacade<T> {
         }
     }
 
-    public void delete(final T entity) {
+    protected void delete(final T entity) {
         try {
             getEntityManager().remove(getEntityManager().merge(entity));
             getEntityManager().flush();
@@ -55,7 +55,7 @@ public abstract class AbstractFacade<T> {
         }
     }
 
-    public T findById(final Long id) {
+    protected T findById(final Long id) {
         try {
             return Optional.ofNullable(getEntityManager().find(clazz, id)).orElseThrow(EntityNotFoundException::new);
         } catch (final PersistenceException e) {
@@ -64,7 +64,7 @@ public abstract class AbstractFacade<T> {
         }
     }
 
-    public List<T> findAll() {
+    protected List<T> findAll() {
         try {
             CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
             CriteriaQuery<T> cq = cb.createQuery(clazz);

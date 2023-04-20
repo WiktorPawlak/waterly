@@ -37,25 +37,25 @@ import lombok.ToString;
 public class Bill extends AbstractEntity {
     @Column(nullable = false)
     private LocalDate date;
-    @Column()
+    @Column
     private BigDecimal balance;
     @ToString.Exclude
     @NotNull
     @ManyToOne(cascade = REFRESH, fetch = LAZY)
-    @JoinColumn(name = "apartment_id", nullable = false, foreignKey = @ForeignKey(name = "bill_apartment_fk"))
+    @JoinColumn(name = "apartment_id", updatable = false, nullable = false, foreignKey = @ForeignKey(name = "bill_apartment_fk"))
     private Apartment apartment;
     @ToString.Exclude
     @NotNull
     @ManyToOne(cascade = REFRESH, fetch = LAZY)
-    @JoinColumn(name = "owner_id", nullable = false, foreignKey = @ForeignKey(name = "bill_owner_Fk"))
+    @JoinColumn(name = "owner_id", updatable = false, nullable = false, foreignKey = @ForeignKey(name = "bill_owner_Fk"))
     private Owner owner;
     @ToString.Exclude
     @NotNull
     @OneToOne(cascade = {PERSIST, MERGE, REFRESH})
-    @JoinColumn(name = "advance_usage", nullable = false, foreignKey = @ForeignKey(name = "bill_advance_usage"))
+    @JoinColumn(name = "advance_usage", updatable = false, nullable = false, foreignKey = @ForeignKey(name = "bill_advance_usage"))
     private UsageReport advanceUsage;
     @ToString.Exclude
     @OneToOne(cascade = {PERSIST, MERGE, REFRESH})
-    @JoinColumn(name = "real_usage", foreignKey = @ForeignKey(name = "bill_real_usage_fk"))
+    @JoinColumn(name = "real_usage", updatable = false, foreignKey = @ForeignKey(name = "bill_real_usage_fk"))
     private UsageReport realUsage;
 }

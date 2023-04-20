@@ -27,6 +27,12 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
         return em;
     }
 
+    @Override
+    @PermitAll
+    public VerificationToken create(final VerificationToken entity) {
+        return super.create(entity);
+    }
+
     @PermitAll
     public VerificationToken findByToken(final String token) {
         TypedQuery<VerificationToken> verificationTokenTypedQuery = em.createNamedQuery("VerificationToken.findByToken", VerificationToken.class);

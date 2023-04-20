@@ -32,8 +32,27 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     @Override
+    @PermitAll
     protected EntityManager getEntityManager() {
         return em;
+    }
+
+    @Override
+    @PermitAll
+    public Account create(final Account entity) {
+        return super.create(entity);
+    }
+
+    @Override
+    @PermitAll
+    public Account update(final Account entity) {
+        return super.update(entity);
+    }
+
+    @Override
+    @PermitAll
+    public Account findById(final Long id) {
+        return super.findById(id);
     }
 
     @PermitAll

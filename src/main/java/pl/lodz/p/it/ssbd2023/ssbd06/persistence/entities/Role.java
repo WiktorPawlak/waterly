@@ -40,8 +40,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Role extends AbstractEntity {
 
+    @NotNull
     @Size(min = 5, max = 16)
-    @Column(updatable = false, insertable = false, name = "permission_level")
+    @Column(nullable = false, updatable = false, insertable = false, name = "permission_level")
     private String permissionLevel;
 
     @ToString.Exclude

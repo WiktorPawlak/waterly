@@ -48,7 +48,7 @@ public class WaterMeter extends AbstractEntity {
     @OneToMany(mappedBy = "waterMeter", fetch = LAZY)
     private List<WaterMeterCheck> waterMeterChecks = new ArrayList<>();
     @NotNull
-    @Column
+    @Column(updatable = false)
     @Enumerated(EnumType.STRING)
     private WaterMeterType type;
 

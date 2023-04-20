@@ -30,7 +30,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 @Entity
 @Getter
 @Table(name = "account", indexes = {
-        @Index(name = "account_details_idx", columnList = "account_details_id")
+        @Index(name = "account_details_idx", columnList = "account_details_id"),
+        @Index(name = "account_waiting_details_idx", columnList = "waiting_account_details_id")
 })
 @NamedQuery(name = "Account.findByLogin", query = "select a from Account a where a.login = :login")
 @NamedQuery(name = "Account.findByWaitingAccountDetailsUpdates_Id", query = "select a from Account a where a.waitingAccountDetails.id = :id")
@@ -63,10 +64,10 @@ public class Account extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private AccountState accountState;
     @ToString.Exclude
-    @NotNull
-    @JoinColumn(name = "account_details_id")
     @Setter
+    @NotNull
     @OneToOne(optional = false, fetch = LAZY, cascade = {PERSIST, MERGE, REMOVE})
+    @JoinColumn(name = "account_details_id")
     private AccountDetails accountDetails;
     @ToString.Exclude
     @Setter
@@ -75,7 +76,7 @@ public class Account extends AbstractEntity {
     private AuthInfo authInfo;
 
     @ToString.Exclude
-    @JoinColumn(name = "waiting_account_details")
+    @JoinColumn(name = "waiting_account_details_id")
     @Setter
     @OneToOne(fetch = LAZY, cascade = {PERSIST, MERGE, REMOVE})
     private AccountDetails waitingAccountDetails;
