@@ -10,6 +10,7 @@ import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.PasswordHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthFacade;
@@ -40,9 +41,8 @@ public class AccountIdentityStore {
                 log.info("Invalid authentication: Wrong password or account is not active");
                 return INVALID_RESULT;
             }
-        } catch (final Exception e) {
-            //TODO adjust exception when custom exception will be introduce
-            log.info("Invalid authentication: Account not found");
+        } catch (final ApplicationBaseException e) {
+            log.info("Invalid authentication:" + e.getMessage());
             return INVALID_RESULT;
         }
     }

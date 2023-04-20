@@ -6,26 +6,21 @@ GRANT SELECT ON TABLE account TO ssbd06auth;
 GRANT SELECT ON TABLE role TO ssbd06auth;
 GRANT SELECT ON TABLE auth_info TO ssbd06auth;
 
-GRANT SELECT, INSERT, UPDATE ON TABLE account_details_id_seq TO ssbd06auth;
-GRANT SELECT, INSERT, UPDATE ON TABLE account_id_seq TO ssbd06auth;
-GRANT SELECT, INSERT, UPDATE ON TABLE auth_info_id_seq TO ssbd06auth;
-GRANT SELECT, INSERT, UPDATE ON TABLE role_id_seq TO ssbd06auth;
-
 --ssbd06mok
-GRANT SELECT, INSERT, UPDATE ON TABLE account TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE ON TABLE account_details TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE account TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE account_details TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE administrator TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE owner TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE facility_manager TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE role TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE ON TABLE auth_info TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE ON TABLE verification_token TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE verification_token TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE auth_info TO ssbd06mok;
 
-GRANT SELECT, INSERT, UPDATE ON TABLE account_details_id_seq TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE ON TABLE account_id_seq TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE ON TABLE auth_info_id_seq TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE ON TABLE role_id_seq TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE ON TABLE verification_token_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT ON SEQUENCE account_details_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT ON SEQUENCE account_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT ON SEQUENCE auth_info_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT ON SEQUENCE role_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT ON SEQUENCE verification_token_id_seq TO ssbd06mok;
 
 --ssbd06mol
 GRANT SELECT ON TABLE account TO ssbd06mol;
@@ -38,6 +33,15 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE usage_report TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_meter TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_meter_check TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_usage_stats TO ssbd06mol;
+
+GRANT USAGE, SELECT ON SEQUENCE apartment_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT ON SEQUENCE bill_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT ON SEQUENCE invoice_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT ON SEQUENCE tariff_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT ON SEQUENCE usage_report_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT ON SEQUENCE water_meter_check_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT ON SEQUENCE water_meter_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT ON SEQUENCE water_usage_stats_id_seq TO ssbd06mol;
 
 -- add first administrator password admin12345
 INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on) VALUES (nextval('account_details_id_seq'), 0, 'kontomatino@gmail.com', 'Mateusz', 'Strzelecki', '123456789', now(), now());

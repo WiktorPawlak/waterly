@@ -66,18 +66,18 @@ public class Account extends AbstractEntity {
     @NotNull
     @JoinColumn(name = "account_details_id")
     @Setter
-    @OneToOne(optional = false, fetch = LAZY, cascade = {PERSIST, MERGE})
+    @OneToOne(optional = false, fetch = LAZY, cascade = {PERSIST, MERGE, REMOVE})
     private AccountDetails accountDetails;
     @ToString.Exclude
     @Setter
     @NotNull
-    @OneToOne(cascade = {PERSIST, MERGE}, mappedBy = "account", orphanRemoval = true)
+    @OneToOne(cascade = {PERSIST, MERGE, REMOVE}, mappedBy = "account", orphanRemoval = true)
     private AuthInfo authInfo;
 
     @ToString.Exclude
     @JoinColumn(name = "waiting_account_details")
     @Setter
-    @OneToOne(fetch = LAZY, cascade = {PERSIST, MERGE})
+    @OneToOne(fetch = LAZY, cascade = {PERSIST, MERGE, REMOVE})
     private AccountDetails waitingAccountDetails;
 
     //TODO we can add updates history?
