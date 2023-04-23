@@ -15,6 +15,7 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.PasswordHash;
+import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
@@ -22,9 +23,13 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ForbiddenOperationException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers.AccountActivationTimer;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers.AccountVerificationTimer;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
@@ -248,22 +253,28 @@ public class AccountService {
     }
 
     @OnlyGuest
+    @SneakyThrows(TokenExpiredException.class)
     public void registerUser(final AccountDto accountDto) {
         Account accountEntity = prepareAccountEntity(accountDto);
         Account persistedAccountEntity = accountFacade.create(accountEntity);
 
-        VerificationToken token = verificationTokenService.createToken(persistedAccountEntity);
-        accountVerificationTimer.scheduleAccountDeletion(persistedAccountEntity.getId());
+        VerificationToken token = verificationTokenService.createPrimaryFullTimeToken(persistedAccountEntity);
+        accountVerificationTimer.scheduleAccountDeletion(token);
 
         verificationsProvider.sendVerificationToken(token);
     }
 
-    @PermitAll
+    @OnlyGuest
+    public void resendVerificationToken(final long accountId) throws TokenNotFoundException, TokenExceededHalfTimeException {
+        Account account = accountFacade.findById(accountId);
+
+        VerificationToken halfTimeToken = verificationTokenService.findOrCreateSecondaryHalfTimeToken(account);
+        verificationsProvider.sendVerificationToken(halfTimeToken);
+    }
+
+    @OnlyGuest
     public void confirmRegistration(final String token) throws ApplicationBaseException {
-        VerificationToken verificationToken = verificationTokenService.findToken(token);
-        if (verificationToken == null) {
-            throw new TokenNotFoundException();
-        }
+        VerificationToken verificationToken = verificationTokenService.findValidToken(token);
         Account account = verificationToken.getAccount();
         accountVerificationTimer.cancelAccountDeletion(account.getId());
 
@@ -271,6 +282,7 @@ public class AccountService {
         account.getAuthInfo().setIncorrectAuthCount(0);
         account.setAccountState(TO_CONFIRM);
         accountFacade.update(account);
+        verificationTokenService.clearTokens(account.getId());
     }
 
     private Account prepareAccountEntity(final AccountDto account) {

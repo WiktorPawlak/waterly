@@ -27,7 +27,11 @@ import lombok.ToString;
                 @Index(name = "account_idx", columnList = "account_id")
         }
 )
-@NamedQuery(name = "VerificationToken.findByToken", query = "select v from VerificationToken v where v.token = :token")
+@NamedQuery(name = "VerificationToken.findValidByToken",
+        query = "select v from VerificationToken v where v.expiryDate > CURRENT_TIMESTAMP and v.token = :token")
+@NamedQuery(name = "VerificationToken.findByAccountId", query = "select v from VerificationToken v where v.account.id = :accountId")
+@NamedQuery(name = "VerificationToken.findAll", query = "select v from VerificationToken v")
+@NamedQuery(name = "VerificationToken.deleteByAccountId", query = "delete from VerificationToken v where v.account.id = :accountId")
 @Getter
 @Builder
 @AllArgsConstructor

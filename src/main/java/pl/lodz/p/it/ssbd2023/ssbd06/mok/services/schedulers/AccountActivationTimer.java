@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
+package pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -10,6 +10,7 @@ import jakarta.ejb.Timer;
 import jakarta.ejb.TimerConfig;
 import jakarta.ejb.TimerService;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
 @Stateless

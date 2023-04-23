@@ -47,7 +47,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
         <jakarta.jakartaee-api.version>10.0.0</jakarta.jakartaee-api.version>
-        <junit.version>5.9.1</junit.version>
+        <jersey.server.version>3.1.1</jersey.server.version>
+
         <hibernate.version>6.1.5.Final</hibernate.version>
         <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
         <postgres.version>42.5.4</postgres.version>
@@ -56,6 +57,8 @@
         <mail-api.version>2.1.1</mail-api.version>
         <vavr.version>0.10.4</vavr.version>
         <bCryptVer>0.10.2</bCryptVer>
+        <junit.version>5.9.2</junit.version>
+        <mockito.version>5.3.1</mockito.version>
     </properties>
 
     <dependencies>
@@ -66,6 +69,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.server.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>jakarta.mail</groupId>
             <artifactId>jakarta.mail-api</artifactId>
             <version>${mail-api.version}</version>
@@ -75,18 +84,6 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>
@@ -118,10 +115,34 @@
             <artifactId>bcrypt</artifactId>
             <version>${bCryptVer}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

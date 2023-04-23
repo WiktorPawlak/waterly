@@ -111,9 +111,18 @@ public class AccountController {
         return Response.ok().build();
     }
 
+    @OnlyGuest
+    @POST
+    @Path("/{id}/resendVerificationToken")
+    public Response resendVerificationToken(@PathParam("id") final long id) throws ApplicationBaseException {
+        accountEndpoint.resendVerificationToken(id);
+        log.info("Resending verification token for account with id: " + id);
+        return Response.ok().build();
+    }
+
+    @OnlyGuest
     @PUT
     @Path("/confirmRegistration")
-    @PermitAll
     public Response confirmRegistration(@NotNull @QueryParam("token") final String token) throws ApplicationBaseException {
         accountEndpoint.confirmRegistration(token);
         log.info("Confirming account with token: " + token);

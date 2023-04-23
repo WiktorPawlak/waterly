@@ -1,0 +1,46 @@
+package pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers;
+
+import java.util.List;
+import java.util.logging.Logger;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
+
+@Startup
+@Singleton
+public class AccountVerificationStartup {
+
+    private final Logger log = Logger.getLogger(AccountVerificationStartup.class.getName());
+
+    @Inject
+    private AccountService accountService;
+    @Inject
+    private VerificationTokenService verificationTokenService;
+    @Inject
+    private AccountVerificationTimer accountVerificationTimer;
+
+    @PostConstruct
+    public void initializeVerificationTimers() {
+        List<VerificationToken> allTokens = verificationTokenService.findAllTokens();
+        for (VerificationToken token : allTokens) {
+            long accountId = token.getAccount().getId();
+            try {
+                accountVerificationTimer.scheduleAccountDeletion(token);
+            } catch (final TokenExpiredException e) {
+                log.info("Deleting accountId with id: "
+                        + accountId
+                        + ", because of error occurred during verification token timers initialization: "
+                        + e.getMessage());
+                accountService.removeInactiveNotConfirmedAccount(accountId);
+                verificationTokenService.clearTokens(accountId);
+            }
+        }
+    }
+
+}

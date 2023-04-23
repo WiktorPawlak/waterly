@@ -20,6 +20,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
@@ -63,7 +65,12 @@ public class AccountEndpoint {
         accountService.registerUser(account);
     }
 
-    @PermitAll
+    @OnlyGuest
+    public void resendVerificationToken(final long accountId) throws TokenExceededHalfTimeException, TokenNotFoundException {
+        accountService.resendVerificationToken(accountId);
+    }
+
+    @OnlyGuest
     public void confirmRegistration(final String token) throws ApplicationBaseException {
         accountService.confirmRegistration(token);
     }
