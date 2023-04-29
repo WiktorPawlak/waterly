@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.FirstName;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.LanguageTag;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.LastName;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Login;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Password;
@@ -33,5 +34,7 @@ public class AccountDto {
     @PhoneNumber
     private String phoneNumber;
 
+    @LanguageTag
+    private String languageTag;
 
 }

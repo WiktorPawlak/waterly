@@ -4,6 +4,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -301,6 +302,7 @@ public class AccountService {
             role.setAccount(accountEntity);
         });
         accountEntity.setRoles(roles);
+        accountEntity.setLocale(Locale.forLanguageTag(account.getLanguageTag()));
 
         return accountEntity;
     }

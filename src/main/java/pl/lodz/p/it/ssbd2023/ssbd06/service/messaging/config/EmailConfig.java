@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.config;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -28,5 +28,9 @@ public class EmailConfig {
     @Inject
     @Property("mail.password")
     private String password;
+
+    @Inject
+    @Property("mail.account-confirmation-url")
+    private String accountConfirmationUrl;
 
 }

@@ -16,6 +16,7 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.config.EmailConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.exceptions.EmailSenderException;
 
 @Stateless

@@ -6,6 +6,7 @@ import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -58,6 +59,9 @@ public class Account extends AbstractEntity {
     @NotNull
     @Setter
     private boolean active;
+    @NotNull
+    @Setter
+    private Locale locale;
     @Setter
     @NotNull
     @Column(name = "account_state")

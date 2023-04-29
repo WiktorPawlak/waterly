@@ -18,4 +18,6 @@ public class ValidationRegex {
     public static final String PERMISSION = "^(?i)(ADMINISTRATOR|FACILITY_MANAGER|OWNER)$";
 
     public static final String LOGIN = "^[a-zA-Z0-9._-]*$";
+
+    public static final String LANGUAGE_TAG = "^[a-z]{2}\\-[A-Z]{2}$";
 }
