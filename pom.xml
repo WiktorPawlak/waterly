@@ -47,9 +47,9 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
         <jakarta.jakartaee-api.version>10.0.0</jakarta.jakartaee-api.version>
+        <junit.version>5.9.1</junit.version>
+        <hibernate.version>6.1.7.Final</hibernate.version>
         <jersey.server.version>3.1.1</jersey.server.version>
-
-        <hibernate.version>6.1.5.Final</hibernate.version>
         <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
         <postgres.version>42.5.4</postgres.version>
         <lombok.version>1.18.26</lombok.version>
@@ -59,6 +59,11 @@
         <testcontainers.version>1.17.6</testcontainers.version>
         <rest-assured.version>5.3.0</rest-assured.version>
         <bCryptVer>0.10.2</bCryptVer>
+        <aqruillian.payara.server.managed.version>3.0.alpha8</aqruillian.payara.server.managed.version>
+        <arquillian.junit5.container.version>1.7.0.Alpha14</arquillian.junit5.container.version>
+        <shrinkwrap-resolver-impl-maven.version>3.1.4</shrinkwrap-resolver-impl-maven.version>
+        <slf4j.version>2.0.7</slf4j.version>
+        <h2.version>2.1.214</h2.version>
         <junit.version>5.9.2</junit.version>
         <mockito.version>5.3.1</mockito.version>
     </properties>
@@ -117,6 +122,37 @@
             <artifactId>bcrypt</artifactId>
             <version>${bCryptVer}</version>
         </dependency>
+
+        <!--    arqullian-->
+        <dependency>
+            <groupId>fish.payara.arquillian</groupId>
+            <artifactId>arquillian-payara-server-managed</artifactId>
+            <version>${aqruillian.payara.server.managed.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <version>${arquillian.junit5.container.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>${shrinkwrap-resolver-impl-maven.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
@@ -201,6 +237,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <payara.home>${env.PAYARA_HOME}</payara.home>
+                    </systemPropertyVariables>
+                    <skip>false</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>

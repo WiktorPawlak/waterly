@@ -9,6 +9,8 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTR
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import org.hibernate.annotations.DiscriminatorOptions;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -31,6 +33,7 @@ import lombok.ToString;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "permission_level")
+@DiscriminatorOptions(force = true)
 @Table(name = "role", indexes = {
         @Index(name = "role_account_idx", columnList = "account_id")
 })

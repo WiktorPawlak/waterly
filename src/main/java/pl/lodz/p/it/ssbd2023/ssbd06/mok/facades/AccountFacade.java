@@ -1,5 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -84,5 +85,11 @@ public class AccountFacade extends AbstractFacade<Account> {
             log.info(CAUGHT_EXCEPTION + e);
             throw new RuntimeException();
         }
+    }
+
+    @Override
+    @PermitAll
+    public List<Account> findAll() {
+        return super.findAll();
     }
 }

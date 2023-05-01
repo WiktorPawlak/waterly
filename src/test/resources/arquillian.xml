@@ -1,0 +1,20 @@
+<arquillian
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://jboss.org/schema/arquillian"
+        xsi:schemaLocation="http://jboss.org/schema/arquillian https://jboss.org/schema/arquillian/arquillian_1_0.xsd%22%3E">
+    <engine>
+        <property name="deploymentExportPath">target/</property>
+    </engine>
+
+    <container qualifier="payara-managed">
+        <configuration>
+            <property name="allowConnectingToRunningServer">false</property>
+            <property name="adminHost">localhost</property>
+            <property name="adminPort">4848</property>
+            <property name="enableH2">${enableH2:true}</property>
+            <property name="outputToConsole">true</property>
+            <property name="debug">true</property>
+        </configuration>
+    </container>
+
+</arquillian>
