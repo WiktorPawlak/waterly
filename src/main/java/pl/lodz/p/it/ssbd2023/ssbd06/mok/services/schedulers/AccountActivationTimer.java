@@ -10,9 +10,11 @@ import jakarta.ejb.Timer;
 import jakarta.ejb.TimerConfig;
 import jakarta.ejb.TimerService;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
+@ServiceExceptionHandler
 @Stateless
 public class AccountActivationTimer {
 

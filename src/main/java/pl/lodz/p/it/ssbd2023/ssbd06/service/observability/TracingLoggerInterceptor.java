@@ -5,12 +5,10 @@ import java.util.logging.Logger;
 
 import jakarta.annotation.Priority;
 import jakarta.annotation.Resource;
-import jakarta.ejb.EJBAccessException;
 import jakarta.ejb.SessionContext;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.exceptions.UnauthorizedException;
 
 @Monitored
 @Interceptor
@@ -46,11 +44,6 @@ public class TracingLoggerInterceptor {
             prepareLogPrincipal();
             prepareLogException(e);
             logSevere();
-
-            if (e instanceof EJBAccessException) {
-                throw new UnauthorizedException(e.getMessage());
-            }
-
             throw e;
         }
     }

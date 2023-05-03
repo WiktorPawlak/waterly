@@ -10,7 +10,7 @@ import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.PasswordHash;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthFacade;

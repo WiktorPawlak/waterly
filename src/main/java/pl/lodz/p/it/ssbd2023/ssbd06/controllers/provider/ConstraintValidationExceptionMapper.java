@@ -10,7 +10,7 @@ import jakarta.validation.Path;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.response.ValidationErrorDetails;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ValidationErrorDetails;
 
 @Provider
 public class ConstraintValidationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {

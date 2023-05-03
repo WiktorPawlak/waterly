@@ -11,12 +11,14 @@ import jakarta.ejb.Timer;
 import jakarta.ejb.TimerConfig;
 import jakarta.ejb.TimerService;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.DateProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 
+@ServiceExceptionHandler
 @Stateless
 public class AccountVerificationTimer {
 

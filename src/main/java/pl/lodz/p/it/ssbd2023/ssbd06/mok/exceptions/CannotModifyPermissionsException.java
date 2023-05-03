@@ -2,13 +2,12 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions;
 
 import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 
-import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.response.ErrorResponse;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 
 public class CannotModifyPermissionsException extends ApplicationBaseException {
 
-    public CannotModifyPermissionsException(final String message) {
-        super(Response.status(CONFLICT).entity(new ErrorResponse(message)).build());
+    public CannotModifyPermissionsException() {
+        super(CONFLICT, ERROR_CANNOT_MODIFY_PERRMISSIONS);
     }
 
 }

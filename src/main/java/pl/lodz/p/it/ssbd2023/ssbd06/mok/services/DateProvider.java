@@ -7,9 +7,11 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
+@ServiceExceptionHandler
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class DateProvider {
@@ -20,6 +22,7 @@ public class DateProvider {
     public Date addTimeToDate(final double timeDifferenceInHours, final Date beginTime) {
         return prepareDate(timeDifferenceInHours, beginTime);
     }
+
     @PermitAll
     public Date subractTimeFromDate(final double timeDifferenceInHours, final Date beginTime) {
         return prepareDate(-timeDifferenceInHours, beginTime);

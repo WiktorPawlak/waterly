@@ -10,6 +10,8 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.config.VerificationTokenConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
@@ -19,6 +21,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
+@ServiceExceptionHandler
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class VerificationTokenService {
@@ -59,7 +62,7 @@ public class VerificationTokenService {
         VerificationToken primaryVerificationToken = getPrimaryVerificationToken(verificationTokens);
 
         if (checkIfHalfTimeExceeded(primaryVerificationToken)) {
-            throw new TokenExceededHalfTimeException();
+            throw ApplicationBaseException.tokenExceededHalfTimeException();
         }
 
         if (verificationTokens.size() > 1) {

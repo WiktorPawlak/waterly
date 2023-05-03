@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.controllers.response;
+package pl.lodz.p.it.ssbd2023.ssbd06.exceptions;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

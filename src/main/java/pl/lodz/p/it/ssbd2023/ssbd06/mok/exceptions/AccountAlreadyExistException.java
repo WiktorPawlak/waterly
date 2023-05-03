@@ -4,10 +4,10 @@ import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 
-public class IdenticalPasswordsException extends ApplicationBaseException {
+public class AccountAlreadyExistException extends ApplicationBaseException {
 
-    public IdenticalPasswordsException() {
-        super(CONFLICT, ERROR_IDENTICAL_PASSWORDS);
+    public AccountAlreadyExistException() {
+        super(CONFLICT, ERROR_ACCOUNT_ALREADY_EXIST);
     }
 
 }

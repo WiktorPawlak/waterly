@@ -17,13 +17,11 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.PasswordHash;
 import lombok.SneakyThrows;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ForbiddenOperationException;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
@@ -45,6 +43,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 @Monitored
+@ServiceExceptionHandler
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AccountService {
@@ -119,7 +118,7 @@ public class AccountService {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void updateAccountDetails(final long id, final AccountDetails accountDetails) throws AccountAlreadyExist {
+    public void updateAccountDetails(final long id, final AccountDetails accountDetails) throws AccountAlreadyExistException {
         Account account = accountFacade.findById(id);
         addAccountDetailsToUpdate(account, accountDetails);
     }
@@ -136,7 +135,7 @@ public class AccountService {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) throws AccountAlreadyExist {
+    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) throws AccountAlreadyExistException {
         Account account = accountFacade.findByLogin(login);
         addAccountDetailsToUpdate(account, accountDetails);
     }
@@ -164,10 +163,10 @@ public class AccountService {
             switch (editAccountRolesDto.getOperation()) {
                 case GRANT -> grantPermissions(editAccountRolesDto, account);
                 case REVOKE -> revokePermissions(editAccountRolesDto, account);
-                default -> throw new OperationUnsupportedException("Unsupported operation");
+                default -> throw ApplicationBaseException.operationUnsupportedException();
             }
         } else {
-            throw new ForbiddenOperationException("Forbidden operation");
+            throw ApplicationBaseException.forbiddenOperationException();
         }
     }
 
@@ -202,8 +201,7 @@ public class AccountService {
         Optional<Role> foundRole = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
         if (foundRole.isPresent() && (foundRole.get().isActive())) {
             log.info(() -> "Account has already granted " + role + " role");
-            throw new CannotModifyPermissionsException("Account has already granted " + role + " role");
-
+            throw ApplicationBaseException.cannotModifyPermissionsException();
         }
         foundRole.ifPresent(optRole -> optRole.setActive(true));
     }
@@ -212,20 +210,19 @@ public class AccountService {
         Optional<Role> roleToRemove = roleFacade.findRoleByAccountAndPermissionLevel(account, role);
         if (roleToRemove.isPresent() && (!roleToRemove.get().isActive())) {
             log.info(() -> "Account has no granted " + role + " role");
-            throw new CannotModifyPermissionsException("Account has no granted " + role + " role");
-
+            throw ApplicationBaseException.cannotModifyPermissionsException();
         }
         roleToRemove.ifPresent(optRole -> optRole.setActive(false));
     }
 
-    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) throws AccountAlreadyExist {
+    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) throws AccountAlreadyExistException {
         String currentAccountEmail = account.getAccountDetails().getEmail();
 
         Optional<Account> optionalAccount = accountFacade.findByEmail(accountDetails.getEmail());
 
         if (optionalAccount.isPresent()) {
             log.info("Account details update error: account with email" + accountDetails.getEmail() + "already exist" + account.getId());
-            throw new AccountAlreadyExist("Account already exist with email: " + accountDetails.getEmail());
+            throw ApplicationBaseException.accountAlreadyExist();
         }
 
         if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {

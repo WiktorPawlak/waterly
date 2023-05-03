@@ -18,7 +18,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.response.ErrorResponse;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ErrorResponse;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.AccountIdentityStore;

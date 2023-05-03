@@ -1,6 +1,8 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -13,16 +15,14 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.PasswordHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExist;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
@@ -56,7 +56,7 @@ public class AccountEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExist {
+    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExistException {
         accountService.updateAccountDetails(id, updateAccountDetailsDto.toDomain());
     }
 
@@ -76,7 +76,7 @@ public class AccountEndpoint {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExist {
+    public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExistException {
 
         accountService.updateOwnAccountDetails(authenticatedAccount.getLogin(), updateAccountDetailsDto.toDomain());
     }
@@ -95,14 +95,14 @@ public class AccountEndpoint {
         accountService.updateFailedAuthInfo(authenticationDate, login);
     }
 
-    @RolesAllowed({"ADMINISTRATOR", "OWNER", "FACILITY_MANAGER"})
+    @RolesAllowed({ADMINISTRATOR, OWNER, FACILITY_MANAGER})
     public void changeOwnAccountPassword(final AccountPasswordDto accountPasswordDto) throws ApplicationBaseException {
         Account account = accountService.findByLogin(authenticatedAccount.getLogin());
         if (!hashProvider.verify(accountPasswordDto.getOldPassword().toCharArray(), account.getPassword())) {
-            throw new UnmatchedPasswordsException();
+            throw ApplicationBaseException.unmatchedPasswordsException();
         }
         if (Objects.equals(accountPasswordDto.getNewPassword(), accountPasswordDto.getOldPassword())) {
-            throw new IdenticalPasswordsException();
+            throw ApplicationBaseException.identicalPasswordsException();
         }
         var hashedNewPassword = hashProvider.generate(accountPasswordDto.getNewPassword().toCharArray());
         accountService.changePassword(account, hashedNewPassword);

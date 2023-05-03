@@ -16,6 +16,8 @@ import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticat
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 
 @RequestScoped
 @DeclareRoles({ADMINISTRATOR, OWNER, FACILITY_MANAGER})
@@ -27,6 +29,7 @@ public class AuthenticationFilter implements HttpAuthenticationMechanism {
     private JwtProvider jwtProvider;
     private final Pattern tokenPattern = Pattern.compile("^Bearer *([^ ]+) *$", Pattern.CASE_INSENSITIVE);
 
+    @SneakyThrows
     @Override
     public AuthenticationStatus validateRequest(
             final HttpServletRequest httpServletRequest,
@@ -42,13 +45,13 @@ public class AuthenticationFilter implements HttpAuthenticationMechanism {
                 return httpMessageContext.notifyContainerAboutLogin(jwt.login(), jwt.roles());
             } catch (final Exception e) {
                 log.severe(() -> "Could not set user authentication in security context: " + e.getMessage());
-                return httpMessageContext.responseUnauthorized();
+                throw ApplicationBaseException.notAuthorizedException();
             }
         } else if (!httpMessageContext.isProtected()) {
             return httpMessageContext.doNothing();
         }
 
-        return httpMessageContext.responseUnauthorized();
+        throw ApplicationBaseException.notAuthorizedException();
     }
 
     private boolean validateToken(final String token) {

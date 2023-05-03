@@ -3,14 +3,19 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.EmailSenderProviderImpl;
 
 @ApplicationScoped
 public class PropertiesHolder {
+
+    private final Logger log = Logger.getLogger(EmailSenderProviderImpl.class.getName());
 
     private Properties properties;
 
@@ -48,12 +53,14 @@ public class PropertiesHolder {
         this.properties = new Properties();
         final InputStream stream = PropertiesHolder.class.getResourceAsStream("/application.properties");
         if (stream == null) {
-            throw new RuntimeException("Properties file not found");
+            log.severe("Properties file not found");
+            throw ApplicationBaseException.generalErrorException();
         }
         try {
             this.properties.load(stream);
         } catch (final IOException e) {
-            throw new RuntimeException("Properties could not be loaded!");
+            log.severe("Properties could not be loaded");
+            throw ApplicationBaseException.generalErrorException(e);
         }
     }
 }

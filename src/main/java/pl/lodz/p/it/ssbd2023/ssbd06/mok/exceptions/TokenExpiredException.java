@@ -2,9 +2,9 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions;
 
 public class TokenExpiredException extends Exception {
 
-    public static final String TOKEN_EXPIRED = "Token expired";
+    protected static final String ERROR_TOKEN_EXPIRED = "ERROR.TOKEN_EXPIRED";
 
     public TokenExpiredException() {
-        super(TOKEN_EXPIRED);
+        super(ERROR_TOKEN_EXPIRED);
     }
 }

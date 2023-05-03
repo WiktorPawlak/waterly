@@ -12,14 +12,15 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
 @Stateless
+@FacadeExceptionHandler
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AccountFacade extends AbstractFacade<Account> {
 
@@ -81,9 +82,6 @@ public class AccountFacade extends AbstractFacade<Account> {
             return Optional.of(accountTypedQuery.getSingleResult());
         } catch (final NoResultException e) {
             return Optional.empty();
-        } catch (final PersistenceException e) {
-            log.info(CAUGHT_EXCEPTION + e);
-            throw new RuntimeException();
         }
     }
 
