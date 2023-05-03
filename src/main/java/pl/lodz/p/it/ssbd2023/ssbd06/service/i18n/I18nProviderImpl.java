@@ -14,11 +14,11 @@ public class I18nProviderImpl implements I18nProvider {
     public static final String VERIFICATION_MAIL_TOPIC = "mail.verification.topic";
     public static final String VERIFICATION_MAIL_BODY = "mail.verification.body";
 
-    public String getMessage(String key, Locale locale) {
+    public String getMessage(final String key, final Locale locale) {
         return getResourceBundle(locale).getString(key);
     }
 
-    private ResourceBundle getResourceBundle(Locale locale) {
+    private ResourceBundle getResourceBundle(final Locale locale) {
         return ResourceBundle.getBundle("i18n/messages", locale);
     }
 
