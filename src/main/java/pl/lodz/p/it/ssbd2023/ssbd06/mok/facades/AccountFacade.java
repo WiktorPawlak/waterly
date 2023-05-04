@@ -76,7 +76,7 @@ public class AccountFacade extends AbstractFacade<Account> {
     @PermitAll
     public Optional<Account> findByEmail(final String email) {
         try {
-            TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByAccountDetails_Email", Account.class);
+            TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findAccountByEmail", Account.class);
             accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
             accountTypedQuery.setParameter("email", email);
             return Optional.of(accountTypedQuery.getSingleResult());

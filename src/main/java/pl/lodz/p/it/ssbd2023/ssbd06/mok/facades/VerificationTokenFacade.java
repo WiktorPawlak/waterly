@@ -77,4 +77,16 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
                 .executeUpdate();
     }
 
+    @Override
+    @PermitAll
+    public void delete(final VerificationToken entity) {
+        super.delete(entity);
+    }
+
+    @Override
+    @PermitAll
+    public VerificationToken findById(final Long id) {
+        return super.findById(id);
+    }
+
 }

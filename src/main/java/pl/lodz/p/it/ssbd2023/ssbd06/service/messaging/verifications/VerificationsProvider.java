@@ -6,4 +6,5 @@ public interface VerificationsProvider {
 
     void sendVerificationToken(VerificationToken token);
 
+    void sendResetToken(VerificationToken token);
 }

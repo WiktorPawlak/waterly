@@ -33,4 +33,7 @@ public class EmailConfig {
     @Property("mail.account-confirmation-url")
     private String accountConfirmationUrl;
 
+    @Inject
+    @Property("mail.reset-password-url")
+    private String passwordResetUrl;
 }

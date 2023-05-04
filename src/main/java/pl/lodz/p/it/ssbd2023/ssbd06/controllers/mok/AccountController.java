@@ -27,10 +27,13 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 
 @Path("/accounts")
 public class AccountController {
@@ -124,7 +127,7 @@ public class AccountController {
 
     @OnlyGuest
     @PUT
-    @Path("/confirmRegistration")
+    @Path("/confirm-registration")
     public Response confirmRegistration(@NotNull @QueryParam("token") final String token) throws ApplicationBaseException {
         accountEndpoint.confirmRegistration(token);
         log.info("Confirming account with token: " + token);
@@ -136,5 +139,20 @@ public class AccountController {
     public Response getAccounts() throws ApplicationBaseException {
         List<AccountDto> accounts = accountEndpoint.getAccounts();
         return Response.ok().entity(accounts).build();
+    }
+
+    @POST
+    @Path("/password/request-reset")
+    public Response requestPasswordReset(@NotNull @Valid @Email @QueryParam("email") final String email) {
+        accountEndpoint.sendResetPasswordToken(email);
+        log.info("Requested password reset by email: " + email);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/password/reset")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void resetPassword(@Valid final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
+        accountEndpoint.resetPassword(passwordResetDto);
     }
 }

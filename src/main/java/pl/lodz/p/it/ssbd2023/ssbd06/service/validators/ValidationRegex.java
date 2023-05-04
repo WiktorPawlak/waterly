@@ -20,4 +20,6 @@ public class ValidationRegex {
     public static final String LOGIN = "^[a-zA-Z0-9._-]*$";
 
     public static final String LANGUAGE_TAG = "^[a-z]{2}\\-[A-Z]{2}$";
+
+    public static final String UUID = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
@@ -22,6 +23,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
@@ -32,6 +34,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers.AccountActivationTim
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers.AccountVerificationTimer;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
@@ -305,6 +308,35 @@ public class AccountService {
         return accountEntity;
     }
 
+    @PermitAll
+    public Optional<Account> findByEmail(final String email) {
+        return accountFacade.findByEmail(email);
+    }
+
+    @PermitAll
+    public void sendEmailToken(final Account account) {
+        VerificationToken token = verificationTokenService.createResetToken(account);
+        checkAccountStatus(account);
+        verificationsProvider.sendResetToken(token);
+    }
+
+    @PermitAll
+    public void resetPassword(final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
+        Account account = verificationTokenService.confirmResetPassword(UUID.fromString(passwordResetDto.getToken()));
+        checkAccountStatus(account);
+        var hashedNewPassword = hashProvider.generate(passwordResetDto.getNewPassword().toCharArray());
+        changePassword(account, hashedNewPassword);
+    }
+
+    @PermitAll
+    public void checkAccountStatus(final Account account) {
+        if (!account.isActive()) {
+            throw ApplicationBaseException.notActiveAccountException();
+        }
+        if (account.getAccountState() != AccountState.CONFIRMED) {
+            throw ApplicationBaseException.notConfirmedAccountException();
+        }
+    }
     public List<Account> getAccounts() {
         return accountFacade.findAll();
     }

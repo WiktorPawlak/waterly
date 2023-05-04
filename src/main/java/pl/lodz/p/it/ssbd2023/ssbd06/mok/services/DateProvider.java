@@ -19,13 +19,13 @@ public class DateProvider {
     private static final int MINUTES_IN_HOUR = 60;
 
     @PermitAll
-    public Date addTimeToDate(final double timeDifferenceInHours, final Date beginTime) {
-        return prepareDate(timeDifferenceInHours, beginTime);
+    public Date addTimeToDate(final double timeDifferenceInMinutes, final Date beginTime) {
+        return prepareDate(timeDifferenceInMinutes, beginTime);
     }
 
     @PermitAll
-    public Date subractTimeFromDate(final double timeDifferenceInHours, final Date beginTime) {
-        return prepareDate(-timeDifferenceInHours, beginTime);
+    public Date subractTimeFromDate(final double timeDifferenceInMinutes, final Date beginTime) {
+        return prepareDate(-timeDifferenceInMinutes, beginTime);
     }
 
     @PermitAll
@@ -38,11 +38,11 @@ public class DateProvider {
         return givenDate.getTime() - currentDate().getTime();
     }
 
-    private Date prepareDate(final double timeDifferenceInHours, final Date beginTime) {
+    private Date prepareDate(final double timeDifferenceInMinutes, final Date beginTime) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(beginTime);
 
-        calendar.add(Calendar.MINUTE, (int) (timeDifferenceInHours * MINUTES_IN_HOUR));
+        calendar.add(Calendar.MINUTE, (int) (timeDifferenceInMinutes));
 
         return calendar.getTime();
     }

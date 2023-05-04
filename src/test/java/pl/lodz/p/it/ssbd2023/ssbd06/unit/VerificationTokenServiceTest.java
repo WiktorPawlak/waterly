@@ -35,9 +35,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 class VerificationTokenServiceTest {
 
     private static final long FRI_13_FEB_2009 = 1234567890000L;
-    private static final int MILLIS_IN_HOUR = 3600000;
-    private static final int EXPIRATION_TIME_IN_HOURS = 2;
-    private static final int HALF_EXPIRATION_TIME_IN_HOURS = 1;
+    private static final int MILLIS_IN_MINUTE = 60000;
+    private static final int EXPIRATION_TIME_IN_MINUTES = 120;
+    private static final int HALF_EXPIRATION_TIME_IN_MINUTES = 60;
 
     @InjectMocks
     private VerificationTokenService verificationTokenService;
@@ -57,8 +57,8 @@ class VerificationTokenServiceTest {
 
         when(dateProvider.addTimeToDate(anyDouble(), any())).thenCallRealMethod();
         when(dateProvider.subractTimeFromDate(anyDouble(), any())).thenCallRealMethod();
-        when(verificationTokenConfig.getExpirationTimeInHours()).thenReturn(EXPIRATION_TIME_IN_HOURS);
-        when(verificationTokenConfig.getHalfExpirationTimeInHours()).thenReturn(EXPIRATION_TIME_IN_HOURS * .5);
+        when(verificationTokenConfig.getExpirationTimeInMinutes()).thenReturn(EXPIRATION_TIME_IN_MINUTES);
+        when(verificationTokenConfig.getHalfExpirationTimeInMinutes()).thenReturn(EXPIRATION_TIME_IN_MINUTES * .5);
     }
 
     @Test
@@ -75,7 +75,7 @@ class VerificationTokenServiceTest {
 
         // then
         VerificationToken token = verificationTokenArgumentCaptor.getValue();
-        Date referenceDatePlusExpirationTime = new Date(FRI_13_FEB_2009 + EXPIRATION_TIME_IN_HOURS * MILLIS_IN_HOUR);
+        Date referenceDatePlusExpirationTime = new Date(FRI_13_FEB_2009 + EXPIRATION_TIME_IN_MINUTES * MILLIS_IN_MINUTE);
 
         assertEquals(token.getExpiryDate(), referenceDatePlusExpirationTime);
         assertEquals(token.getAccount().getLogin(), "test");
@@ -101,7 +101,7 @@ class VerificationTokenServiceTest {
                 .expiryDate(new Date(FRI_13_FEB_2009))
                 .build();
 
-        when(dateProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 + MILLIS_IN_HOUR));
+        when(dateProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 + MILLIS_IN_MINUTE));
         when(verificationTokenFacade.findByAccountId(anyLong())).thenReturn(List.of(verificationToken));
 
         // then
@@ -118,10 +118,10 @@ class VerificationTokenServiceTest {
                 .expiryDate(new Date(FRI_13_FEB_2009))
                 .build();
         VerificationToken secondaryToken = VerificationToken.builder()
-                .expiryDate(new Date(FRI_13_FEB_2009 - HALF_EXPIRATION_TIME_IN_HOURS * MILLIS_IN_HOUR))
+                .expiryDate(new Date(FRI_13_FEB_2009 - HALF_EXPIRATION_TIME_IN_MINUTES * MILLIS_IN_MINUTE))
                 .build();
 
-        when(dateProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 - EXPIRATION_TIME_IN_HOURS * MILLIS_IN_HOUR));
+        when(dateProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 - EXPIRATION_TIME_IN_MINUTES * MILLIS_IN_MINUTE));
         when(verificationTokenFacade.findByAccountId(anyLong())).thenReturn(List.of(primaryToken, secondaryToken));
 
         // when
@@ -139,7 +139,7 @@ class VerificationTokenServiceTest {
                 .expiryDate(new Date(FRI_13_FEB_2009))
                 .build();
 
-        when(dateProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 - EXPIRATION_TIME_IN_HOURS * MILLIS_IN_HOUR));
+        when(dateProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 - EXPIRATION_TIME_IN_MINUTES * MILLIS_IN_MINUTE));
         when(verificationTokenFacade.create(verificationTokenArgumentCaptor.capture())).thenReturn(new VerificationToken());
         when(verificationTokenFacade.findByAccountId(anyLong())).thenReturn(List.of(primaryToken));
 
@@ -149,7 +149,7 @@ class VerificationTokenServiceTest {
         // then
         VerificationToken capturedSecondaryVerificationToken = verificationTokenArgumentCaptor.getValue();
         Date createdSecondaryTokenExpiryDate = capturedSecondaryVerificationToken.getExpiryDate();
-        assertEquals(new Date(FRI_13_FEB_2009 - MILLIS_IN_HOUR), createdSecondaryTokenExpiryDate);
+        assertEquals(new Date(FRI_13_FEB_2009 - MILLIS_IN_MINUTE), createdSecondaryTokenExpiryDate);
     }
 
 }

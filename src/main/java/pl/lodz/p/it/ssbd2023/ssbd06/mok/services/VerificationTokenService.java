@@ -51,7 +51,7 @@ public class VerificationTokenService {
 
     @PermitAll
     public VerificationToken createPrimaryFullTimeToken(final Account account) {
-        VerificationToken token = prepareToken(account, dateProvider.currentDate(), verificationTokenConfig.getExpirationTimeInHours());
+        VerificationToken token = prepareToken(account, dateProvider.currentDate(), verificationTokenConfig.getExpirationTimeInMinutes());
         return verificationTokenFacade.create(token);
     }
 
@@ -69,15 +69,15 @@ public class VerificationTokenService {
             return getSecondaryVerificationToken(verificationTokens);
         }
 
-        Date beginDate = dateProvider.subractTimeFromDate(verificationTokenConfig.getExpirationTimeInHours(), primaryVerificationToken.getExpiryDate());
-        VerificationToken token = prepareToken(account, beginDate, verificationTokenConfig.getHalfExpirationTimeInHours());
+        Date beginDate = dateProvider.subractTimeFromDate(verificationTokenConfig.getExpirationTimeInMinutes(), primaryVerificationToken.getExpiryDate());
+        VerificationToken token = prepareToken(account, beginDate, verificationTokenConfig.getHalfExpirationTimeInMinutes());
         return verificationTokenFacade.create(token);
     }
 
     private boolean checkIfHalfTimeExceeded(final VerificationToken verificationToken) {
         Date expiryDate = verificationToken.getExpiryDate();
 
-        Date halfTime = dateProvider.subractTimeFromDate(verificationTokenConfig.getHalfExpirationTimeInHours(), expiryDate);
+        Date halfTime = dateProvider.subractTimeFromDate(verificationTokenConfig.getHalfExpirationTimeInMinutes(), expiryDate);
         Date currentTime = dateProvider.currentDate();
         return halfTime.before(currentTime);
     }
@@ -104,5 +104,20 @@ public class VerificationTokenService {
 
     private String generateToken() {
         return UUID.randomUUID().toString();
+    }
+
+    @PermitAll
+    public VerificationToken createResetToken(final Account account) {
+        VerificationToken token = prepareToken(account, dateProvider.currentDate(), verificationTokenConfig.getExpirationResetTimeInMinutes());
+        return verificationTokenFacade.create(token);
+    }
+
+    @PermitAll
+    public Account confirmResetPassword(final UUID token) throws TokenNotFoundException {
+        VerificationToken verificationToken = verificationTokenFacade
+                .findValidByToken(token.toString())
+                .orElseThrow(TokenNotFoundException::new);
+        verificationTokenFacade.delete(verificationToken);
+        return verificationToken.getAccount();
     }
 }

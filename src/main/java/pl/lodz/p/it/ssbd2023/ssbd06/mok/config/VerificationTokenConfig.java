@@ -12,10 +12,15 @@ public class VerificationTokenConfig {
 
     @Getter
     @Inject
-    @Property("verification.token.expirationTimeInHours")
-    private Integer expirationTimeInHours;
+    @Property("verification.token.expirationTimeInMinutes")
+    private Integer expirationTimeInMinutes;
 
-    public double getHalfExpirationTimeInHours() {
-        return expirationTimeInHours * HALF;
+    @Getter
+    @Inject
+    @Property("reset.token.expirationTimeInMinutes")
+    private Integer expirationResetTimeInMinutes;
+
+    public double getHalfExpirationTimeInMinutes() {
+        return expirationTimeInMinutes * HALF;
     }
 }

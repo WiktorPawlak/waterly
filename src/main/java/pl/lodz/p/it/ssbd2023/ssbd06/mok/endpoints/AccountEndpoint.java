@@ -7,6 +7,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.security.PermitAll;
@@ -21,6 +22,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
@@ -123,6 +125,21 @@ public class AccountEndpoint {
     @RolesAllowed(ADMINISTRATOR)
     public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) throws ApplicationBaseException {
         accountService.editAccountRoles(id, editAccountRolesDto);
+    }
+
+    @PermitAll
+    public void sendResetPasswordToken(final String email) {
+        Optional<Account> optionalAccount = accountService.findByEmail(email);
+        if (optionalAccount.isPresent()) {
+            accountService.sendEmailToken(optionalAccount.get());
+        } else {
+            throw ApplicationBaseException.noMatchingEmailException();
+        }
+    }
+
+    @PermitAll
+    public void resetPassword(final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
+        accountService.resetPassword(passwordResetDto);
     }
 
     @RolesAllowed(ADMINISTRATOR)

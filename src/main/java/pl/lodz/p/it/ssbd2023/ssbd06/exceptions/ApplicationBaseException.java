@@ -10,6 +10,9 @@ import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NoMatchingEmailException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotActiveAccountException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotConfirmedAccountException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
@@ -37,6 +40,10 @@ public class ApplicationBaseException extends WebApplicationException {
     protected static final String ERROR_NOT_AUTHORIZED = "ERROR.NOT_AUTHORIZED";
     protected static final String ERROR_PASSWORDS_DO_NOT_MATCH = "ERROR.NOT_MATCHING_PASSWORDS";
     protected static final String ERROR_RESOURCE_NOT_FOUND = "ERROR.RESOURCE_NOT_FOUND";
+
+    protected static final String ERROR_EMAIL_DO_NOT_MATCH = "ERROR.NO_MATCHING_EMAILS";
+    protected static final String ERROR_ACCOUNT_NOT_ACTIVE = "ERROR.NOT_ACTIVE_ACCOUNT";
+    protected static final String ERROR_ACCOUNT_NOT_CONFIRMED = "ERROR.NOT_CONFIRMED_ACCOUNT";
 
 
     public ApplicationBaseException(final Response.Status status, final String message) {
@@ -109,5 +116,17 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static WebApplicationException resourceNotFoundException() {
         return new ResourceNotFoundException();
+    }
+
+    public static NoMatchingEmailException noMatchingEmailException() {
+        return new NoMatchingEmailException();
+    }
+
+    public static NotActiveAccountException notActiveAccountException() {
+        return new NotActiveAccountException();
+    }
+
+    public static NotConfirmedAccountException notConfirmedAccountException() {
+        return new NotConfirmedAccountException();
     }
 }
