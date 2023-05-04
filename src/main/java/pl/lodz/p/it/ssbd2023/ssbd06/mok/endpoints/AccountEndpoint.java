@@ -5,7 +5,9 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -121,5 +123,12 @@ public class AccountEndpoint {
     @RolesAllowed(ADMINISTRATOR)
     public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) throws ApplicationBaseException {
         accountService.editAccountRoles(id, editAccountRolesDto);
+    }
+
+    @RolesAllowed(ADMINISTRATOR)
+    public List<AccountDto> getAccounts() {
+        return accountService.getAccounts().stream()
+                .map(AccountDto::new)
+                .collect(Collectors.toList());
     }
 }

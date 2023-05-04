@@ -6,6 +6,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTR
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
@@ -14,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -127,5 +129,12 @@ public class AccountController {
         accountEndpoint.confirmRegistration(token);
         log.info("Confirming account with token: " + token);
         return Response.ok().build();
+    }
+
+    @RolesAllowed({ADMINISTRATOR})
+    @GET
+    public Response getAccounts() throws ApplicationBaseException {
+        List<AccountDto> accounts = accountEndpoint.getAccounts();
+        return Response.ok().entity(accounts).build();
     }
 }

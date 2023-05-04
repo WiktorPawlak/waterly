@@ -4,6 +4,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -304,4 +305,7 @@ public class AccountService {
         return accountEntity;
     }
 
+    public List<Account> getAccounts() {
+        return accountFacade.findAll();
+    }
 }
