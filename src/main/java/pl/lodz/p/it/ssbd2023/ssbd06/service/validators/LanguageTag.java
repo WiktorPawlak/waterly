@@ -9,11 +9,13 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
+@NotBlank
 @Pattern(regexp = ValidationRegex.LANGUAGE_TAG, message = "Invalid language tag pattern")
 public @interface LanguageTag {
 

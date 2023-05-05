@@ -29,22 +29,21 @@ public class AccountIdentityStore {
     private AuthFacade authFacade;
 
     public CredentialValidationResult validate(final Credentials credential) {
-        try {
-            Account account = authFacade.findByLogin(credential.getLogin());
+        var optionalAccount = authFacade.findByLogin(credential.getLogin());
+        if (optionalAccount.isEmpty()) {
+            throw ApplicationBaseException.authenticationException();
+        }
+        var account = optionalAccount.get();
 
-            if (isPasswordValid(credential.getPassword(), account.getPassword()) && canAuthenticate(account)) {
-                return new CredentialValidationResult(
-                        account.getLogin(),
-                        account.getRoles().stream().filter(Role::isActive).map(Role::getPermissionLevel).collect(Collectors.toSet())
-                );
-            } else {
-                log.info("Invalid authentication: Wrong password or account is not active");
-                return INVALID_RESULT;
-            }
-        } catch (final ApplicationBaseException e) {
-            log.info("Invalid authentication:" + e.getMessage());
+        if (!isPasswordValid(credential.getPassword(), account.getPassword()) || !canAuthenticate(account)) {
+            log.info("Invalid authentication: Wrong password or account is not active/not confirmed");
             return INVALID_RESULT;
         }
+
+        return new CredentialValidationResult(
+                account.getLogin(),
+                account.getRoles().stream().filter(Role::isActive).map(Role::getPermissionLevel).collect(Collectors.toSet())
+        );
     }
 
     private boolean isPasswordValid(final String credentialPassword, final String accountPassword) {
@@ -52,7 +51,6 @@ public class AccountIdentityStore {
     }
 
     private boolean canAuthenticate(final Account account) {
-        //TODO może jakiś exception który będzie mówił że towje konto jest jeszcze nie zakceptowane
         return account.isActive() && account.getAccountState() == CONFIRMED;
     }
 

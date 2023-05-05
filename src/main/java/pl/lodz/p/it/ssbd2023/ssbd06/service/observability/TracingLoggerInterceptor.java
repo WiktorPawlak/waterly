@@ -36,12 +36,14 @@ public class TracingLoggerInterceptor {
             Object invocationResults = context.proceed();
 
             prepareLogPrincipal();
+            prepareLogMethodSignature(context);
             prepareLogInvocationResults(invocationResults);
             logInfo();
 
             return invocationResults;
         } catch (final Exception e) {
             prepareLogPrincipal();
+            prepareLogMethodSignature(context);
             prepareLogException(e);
             logSevere();
             throw e;
@@ -67,11 +69,15 @@ public class TracingLoggerInterceptor {
     }
 
     private void prepareLogInvocationResults(final Object invocationResults) {
-        sb.append(invocationResults == null ? "No return value."
-                        : "Returned: Type: " + invocationResults.getClass().toGenericString())
-                .append(" with contents: ")
-                .append(invocationResults)
-                .append(" ");
+        if (invocationResults == null) {
+            sb.append("No return value.");
+        } else {
+            sb.append("Returned: Type: ")
+                    .append(invocationResults.getClass().toGenericString())
+                    .append(" with contents: ")
+                    .append(invocationResults)
+                    .append(" ");
+        }
     }
 
     private void prepareLogException(final Exception e) {
@@ -83,11 +89,15 @@ public class TracingLoggerInterceptor {
 
     private void logInfo() {
         log.info(sb::toString);
-        sb.setLength(0);
+        clearStringBuilderBuffer();
     }
 
     private void logSevere() {
         log.severe(sb::toString);
+        clearStringBuilderBuffer();
+    }
+
+    private void clearStringBuilderBuffer() {
         sb.setLength(0);
     }
 }

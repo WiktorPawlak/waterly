@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
@@ -15,6 +16,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PhoneNumber;
 @ToString
 @Getter
 @Setter
+@NoArgsConstructor
 public class AccountDto {
 
     @Login
@@ -38,7 +40,7 @@ public class AccountDto {
     @LanguageTag
     private String languageTag;
 
-    public AccountDto(Account account) {
+    public AccountDto(final Account account) {
         this.login = account.getLogin();
         this.email = account.getAccountDetails().getEmail();
         this.firstName = account.getAccountDetails().getFirstName();

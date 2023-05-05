@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -16,6 +17,7 @@ import jakarta.validation.constraints.Size;
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
 @Size(min = 8, max = 9, message = "minimal 8 characters and maximal 9 characters")
+@NotBlank
 @Pattern(regexp = ValidationRegex.PHONE_NUMBER, message = "must contain only numbers")
 public @interface PhoneNumber {
 

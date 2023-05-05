@@ -1,31 +1,31 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 
 
-import java.util.logging.Logger;
+import java.util.Optional;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.exceptions.AccountNotFoundException;
 
 @Stateless
 public class AuthFacade {
 
-    private final Logger log = Logger.getLogger(getClass().getName());
-
     @PersistenceContext(unitName = "authPU")
     private EntityManager em;
 
-    public Account findByLogin(final String login) throws AccountNotFoundException {
+    public Optional<Account> findByLogin(final String login) {
         try {
-            return em.createNamedQuery("Account.findByLogin", Account.class)
+            return Optional.of(em.createNamedQuery("Account.findByLogin", Account.class)
                     .setParameter("login", login)
-                    .getSingleResult();
+                    .getSingleResult());
+        } catch (final NoResultException e) {
+            return Optional.empty();
         } catch (final PersistenceException e) {
-            throw ApplicationBaseException.accountNotFoundException();
+            throw ApplicationBaseException.persistenceException(e);
         }
     }
 

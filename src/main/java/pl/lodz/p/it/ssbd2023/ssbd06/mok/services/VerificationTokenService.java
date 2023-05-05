@@ -19,6 +19,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.VerificationTokenFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @Monitored
 @ServiceExceptionHandler
@@ -31,7 +32,7 @@ public class VerificationTokenService {
     @Inject
     private VerificationTokenConfig verificationTokenConfig;
     @Inject
-    private DateProvider dateProvider;
+    private TimeProvider timeProvider;
 
     @PermitAll
     public void clearTokens(final long accountId) {
@@ -51,7 +52,7 @@ public class VerificationTokenService {
 
     @PermitAll
     public VerificationToken createPrimaryFullTimeToken(final Account account) {
-        VerificationToken token = prepareToken(account, dateProvider.currentDate(), verificationTokenConfig.getExpirationTimeInMinutes());
+        VerificationToken token = prepareToken(account, timeProvider.currentDate(), verificationTokenConfig.getExpirationTimeInMinutes());
         return verificationTokenFacade.create(token);
     }
 
@@ -69,7 +70,7 @@ public class VerificationTokenService {
             return getSecondaryVerificationToken(verificationTokens);
         }
 
-        Date beginDate = dateProvider.subractTimeFromDate(verificationTokenConfig.getExpirationTimeInMinutes(), primaryVerificationToken.getExpiryDate());
+        Date beginDate = timeProvider.subractTimeFromDate(verificationTokenConfig.getExpirationTimeInMinutes(), primaryVerificationToken.getExpiryDate());
         VerificationToken token = prepareToken(account, beginDate, verificationTokenConfig.getHalfExpirationTimeInMinutes());
         return verificationTokenFacade.create(token);
     }
@@ -77,8 +78,8 @@ public class VerificationTokenService {
     private boolean checkIfHalfTimeExceeded(final VerificationToken verificationToken) {
         Date expiryDate = verificationToken.getExpiryDate();
 
-        Date halfTime = dateProvider.subractTimeFromDate(verificationTokenConfig.getHalfExpirationTimeInMinutes(), expiryDate);
-        Date currentTime = dateProvider.currentDate();
+        Date halfTime = timeProvider.subractTimeFromDate(verificationTokenConfig.getHalfExpirationTimeInMinutes(), expiryDate);
+        Date currentTime = timeProvider.currentDate();
         return halfTime.before(currentTime);
     }
 
@@ -97,7 +98,7 @@ public class VerificationTokenService {
     private VerificationToken prepareToken(final Account account, final Date beginTime, final double expirationTimeInHours) {
         return VerificationToken.builder()
                 .account(account)
-                .expiryDate(dateProvider.addTimeToDate(expirationTimeInHours, beginTime))
+                .expiryDate(timeProvider.addTimeToDate(expirationTimeInHours, beginTime))
                 .token(generateToken())
                 .build();
     }
@@ -108,7 +109,7 @@ public class VerificationTokenService {
 
     @PermitAll
     public VerificationToken createResetToken(final Account account) {
-        VerificationToken token = prepareToken(account, dateProvider.currentDate(), verificationTokenConfig.getExpirationResetTimeInMinutes());
+        VerificationToken token = prepareToken(account, timeProvider.currentDate(), verificationTokenConfig.getExpirationResetTimeInMinutes());
         return verificationTokenFacade.create(token);
     }
 

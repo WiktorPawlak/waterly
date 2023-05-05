@@ -8,6 +8,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountDoesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NoMatchingEmailException;
@@ -15,19 +16,17 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotActiveAccountException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotConfirmedAccountException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.exceptions.AccountNotFoundException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.exceptions.AuthenticationException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.exceptions.NotAuthorizedApplicationException;
 
 @ApplicationException(rollback = true)
 public class ApplicationBaseException extends WebApplicationException {
 
     protected static final String ERROR_UNKNOWN = "ERROR.UNKNOWN";
     protected static final String ERROR_GENERAL_PERSISTENCE = "ERROR.GENERAL_PERSISTENCE";
-    protected static final String ERROR_ENTITY_NOT_FOUND = "ERROR.ENTITY_NOT_FOUND";
     protected static final String ERROR_OPTIMISTIC_LOCK = "ERROR.OPTIMISTIC_LOCK";
     protected static final String ERROR_ACCESS_DENIED = "ERROR.ACCESS_DENIED";
-    protected static final String ERROR_TRANSACTION_ROLLEDBACK = "ERROR.TRANSACTION_ROLLEDBACK";
     protected static final String ERROR_ACCOUNT_ALREADY_EXIST = "ERROR.ACCOUNT.EXISTS";
     protected static final String ERROR_CANNOT_MODIFY_PERRMISSIONS = "ERROR.CANNOT_MODIFY_PERMISSIONS";
     protected static final String ERROR_FORBIDDEN_OPERATION = "ERROR.FORBIDDEN_OPERATION";
@@ -35,9 +34,9 @@ public class ApplicationBaseException extends WebApplicationException {
     protected static final String ERROR_UNSUPPORTED_OPERATION = "ERROR.UNSUPPORTED_OPERATION";
     protected static final String ERROR_TOKEN_EXCEEDED_HALF_TIME = "ERROR.TOKEN_EXCEEDED_HALF_TIME";
     protected static final String ERROR_TOKEN_NOT_FOUND = "ERROR.TOKEN_NOT_FOUND";
-    protected static final String ERROR_UNMATCHED_PASSWORDS = "ERROR.UNMATCHED_PASSWORDS";
     protected static final String ERROR_ACCOUNT_NOT_FOUND = "ERROR.ACCOUNT_NOT_FOUND";
     protected static final String ERROR_NOT_AUTHORIZED = "ERROR.NOT_AUTHORIZED";
+    protected static final String ERROR_AUTHENTICATION = "ERROR.AUTHENTICATION";
     protected static final String ERROR_PASSWORDS_DO_NOT_MATCH = "ERROR.NOT_MATCHING_PASSWORDS";
     protected static final String ERROR_RESOURCE_NOT_FOUND = "ERROR.RESOURCE_NOT_FOUND";
 
@@ -98,20 +97,20 @@ public class ApplicationBaseException extends WebApplicationException {
         return new TokenExceededHalfTimeException();
     }
 
-    public static TokenNotFoundException tokenNotFoundException() {
-        return new TokenNotFoundException();
-    }
-
     public static UnmatchedPasswordsException unmatchedPasswordsException() {
         return new UnmatchedPasswordsException();
     }
 
-    public static AccountNotFoundException accountNotFoundException() {
-        return new AccountNotFoundException();
+    public static AccountDoesNotExistException accountDoesNotExistException() {
+        return new AccountDoesNotExistException();
     }
 
     public static NotAuthorizedApplicationException notAuthorizedException() {
         return new NotAuthorizedApplicationException();
+    }
+
+    public static AuthenticationException authenticationException() {
+        return new AuthenticationException();
     }
 
     public static WebApplicationException resourceNotFoundException() {

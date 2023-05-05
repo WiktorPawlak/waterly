@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import jakarta.ejb.Asynchronous;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -29,14 +30,16 @@ public class EmailSenderProviderImpl implements EmailSenderProvider {
     private EmailConfig emailConfig;
 
     @Override
-    public void sendEmail(final String to, final String subject, final String body) {
+    @Asynchronous
+    public void sendEmail(final String receiversEmail, final String subject, final String body) {
         try {
-            Message message = prepareMail(to, subject, body);
+            Message message = prepareMail(receiversEmail, subject, body);
             Transport.send(message);
-            log.info("Email sent successfully");
+            log.info(() -> "Email with subject: \"" + subject + "\" has been sent to user with email: " + receiversEmail);
         } catch (final UnsupportedEncodingException | MessagingException e) {
-            String errorMsg = "Error occurred during email sending";
-            log.info(errorMsg);
+            String errorMsg = "Exception while sending email with subject: \"" + subject
+                    + "\" to user with email: " + receiversEmail + ". Cause: " + e.getMessage();
+            log.severe(() -> errorMsg);
             throw new EmailSenderException(errorMsg, e);
         }
     }
@@ -57,12 +60,16 @@ public class EmailSenderProviderImpl implements EmailSenderProvider {
         props.put("mail.smtp.host", emailConfig.getHost());
         props.put("mail.smtp.port", emailConfig.getPort());
 
-        return Session.getInstance(props,
-                new Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(emailConfig.getUsername(), emailConfig.getPassword());
-                    }
-                });
+        return Session.getInstance(props, prepareAuthenticator());
+    }
+
+    private Authenticator prepareAuthenticator() {
+        return new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(emailConfig.getUsername(), emailConfig.getPassword());
+            }
+        };
     }
 
 }

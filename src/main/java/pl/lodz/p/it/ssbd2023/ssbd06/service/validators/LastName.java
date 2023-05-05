@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -16,6 +17,7 @@ import jakarta.validation.constraints.Size;
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
 @Size(min = 2, max = 50, message = "minimal 2 characters and maximal 50 characters")
+@NotBlank
 @Pattern(regexp = ValidationRegex.LAST_NAME, message = "must contain only letters and character: -")
 public @interface LastName {
 

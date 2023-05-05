@@ -38,9 +38,9 @@ class AccountFacadeTest extends BaseArquillianTest {
 
         //then
         userTransaction.commit();
-        assertEquals(accounts.size(), 1);
-        assertEquals(account.getAccountDetails().getFirstName(), "Szymon");
-        assertEquals(account.getRoles().size(), 1);
+        assertEquals(1, accounts.size());
+        assertEquals("Szymon", account.getAccountDetails().getFirstName());
+        assertEquals(1, account.getRoles().size());
     }
 
     private static Account prepareAccount() {

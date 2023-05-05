@@ -34,12 +34,12 @@ public class EmailVerificationsImpl implements VerificationsProvider {
         Locale locale = account.getLocale();
         String email = account.getAccountDetails().getEmail();
 
-        emailSenderProvider.sendEmail(
-                email,
-                i18n.getMessage(VERIFICATION_MAIL_TOPIC, locale),
-                i18n.getMessage(VERIFICATION_MAIL_BODY, locale)
-                        + emailConfig.getAccountConfirmationUrl() + "?token=" + token.getToken()
-        );
+        final String tokenUrl = emailConfig.getAccountConfirmationUrl() + "?token=" + token.getToken();
+
+        final String subject = i18n.getMessage(VERIFICATION_MAIL_TOPIC, locale);
+        final String body = i18n.getMessage(VERIFICATION_MAIL_BODY, locale) + tokenUrl;
+
+        emailSenderProvider.sendEmail(email, subject, body);
     }
 
     @Override

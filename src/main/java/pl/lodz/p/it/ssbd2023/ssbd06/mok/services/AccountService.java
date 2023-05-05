@@ -79,8 +79,15 @@ public class AccountService {
     private int authAttempts;
 
     @PermitAll
-    public boolean checkAccountActive(final String login) {
-        return accountFacade.findByLogin(login).isActive();
+    public Account findByLogin(final String login) {
+        Optional<Account> optionalAccount = accountFacade.findByLogin(login);
+
+        if (optionalAccount.isEmpty()) {
+            log.info(() -> "Account with login:" + login + " does not exist");
+            throw ApplicationBaseException.accountDoesNotExistException();
+        }
+
+        return optionalAccount.get();
     }
 
     @PermitAll
@@ -94,7 +101,7 @@ public class AccountService {
 
     @PermitAll
     public void updateSuccessfulAuthInfo(final LocalDateTime authenticationDate, final String login, final String ipAddress) {
-        var account = accountFacade.findByLogin(login);
+        var account = findByLogin(login);
         var accountAuthInfo = account.getAuthInfo();
 
         accountAuthInfo.setIncorrectAuthCount(0);
@@ -106,7 +113,7 @@ public class AccountService {
 
     @PermitAll
     public void updateFailedAuthInfo(final LocalDateTime authenticationDate, final String login) {
-        var account = accountFacade.findByLogin(login);
+        var account = findByLogin(login);
         var accountAuthInfo = account.getAuthInfo();
         var authAttemptsCount = accountAuthInfo.getIncorrectAuthCount();
 
@@ -128,11 +135,6 @@ public class AccountService {
     }
 
     @PermitAll
-    public Account findByLogin(final String login) {
-        return accountFacade.findByLogin(login);
-    }
-
-    @PermitAll
     public void changePassword(final Account account, final String hashedPassword) {
         account.setPassword(hashedPassword);
         accountFacade.update(account);
@@ -140,13 +142,13 @@ public class AccountService {
 
     @PermitAll
     public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) throws AccountAlreadyExistException {
-        Account account = accountFacade.findByLogin(login);
+        Account account = findByLogin(login);
         addAccountDetailsToUpdate(account, accountDetails);
     }
 
     @PermitAll
     public void resendEmailToAcceptAccountDetailsUpdate(final String login) {
-        Account account = accountFacade.findByLogin(login);
+        Account account = findByLogin(login);
 
         notificationsProvider.notifyWaitingAccountDetailsUpdate(account.getId());
     }

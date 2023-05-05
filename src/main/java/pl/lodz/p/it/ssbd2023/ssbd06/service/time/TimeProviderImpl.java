@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.time;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -13,27 +13,26 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @Monitored
 @ServiceExceptionHandler
 @Stateless
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
-public class DateProvider {
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@PermitAll
+public class TimeProviderImpl implements TimeProvider {
 
-    private static final int MINUTES_IN_HOUR = 60;
-
-    @PermitAll
+    @Override
     public Date addTimeToDate(final double timeDifferenceInMinutes, final Date beginTime) {
         return prepareDate(timeDifferenceInMinutes, beginTime);
     }
 
-    @PermitAll
+    @Override
     public Date subractTimeFromDate(final double timeDifferenceInMinutes, final Date beginTime) {
         return prepareDate(-timeDifferenceInMinutes, beginTime);
     }
 
-    @PermitAll
+    @Override
     public Date currentDate() {
         return new Date();
     }
 
-    @PermitAll
+    @Override
     public long getDifferenceFromCurrentDateInMillis(final Date givenDate) {
         return givenDate.getTime() - currentDate().getTime();
     }

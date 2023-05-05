@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.config;
+package pl.lodz.p.it.ssbd2023.ssbd06.integration.config;
 
 import static io.restassured.RestAssured.given;
 

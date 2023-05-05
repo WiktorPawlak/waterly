@@ -12,7 +12,7 @@ public class PasswordResetDto {
     @NotNull
     @ValidUUID
     private String token;
-    @NotNull(message = "newPassword cannot be null")
+    @NotNull
     @Password
     private String newPassword;
 }

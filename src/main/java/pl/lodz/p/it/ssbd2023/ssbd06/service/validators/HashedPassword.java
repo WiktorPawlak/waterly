@@ -9,12 +9,14 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
 @Size(min = 60, max = 60, message = "Password hash must consist of exactly 60 characters")
+@NotBlank
 public @interface HashedPassword {
 
     String message() default "Password hash is invalid";

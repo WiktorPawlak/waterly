@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.controllers.auth;
+package pl.lodz.p.it.ssbd2023.ssbd06.integration.auth;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import pl.lodz.p.it.ssbd2023.ssbd06.config.IntegrationTestsConfig;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 class AuthControllerTest extends IntegrationTestsConfig {
@@ -48,7 +48,7 @@ class AuthControllerTest extends IntegrationTestsConfig {
                 .post(AUTH_PATH + "/login")
                 .then()
                 .statusCode(UNAUTHORIZED.getStatusCode())
-                .body("message", equalTo("Wrong login or password"));
+                .body("message", equalTo("ERROR.AUTHENTICATION"));
     }
 
     @ParameterizedTest(name = "Login = {0}, password = {1}")

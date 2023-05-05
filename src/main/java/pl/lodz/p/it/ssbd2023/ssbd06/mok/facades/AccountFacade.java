@@ -2,7 +2,6 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.ejb.Stateless;
@@ -23,8 +22,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @FacadeExceptionHandler
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AccountFacade extends AbstractFacade<Account> {
-
-    private final Logger log = Logger.getLogger(getClass().getName());
 
     @PersistenceContext(unitName = "mokPU")
     private EntityManager em;
@@ -58,11 +55,15 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     @PermitAll
-    public Account findByLogin(final String login) {
-        TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByLogin", Account.class);
-        accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
-        accountTypedQuery.setParameter("login", login);
-        return accountTypedQuery.getSingleResult();
+    public Optional<Account> findByLogin(final String login) {
+        try {
+            TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByLogin", Account.class);
+            accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
+            accountTypedQuery.setParameter("login", login);
+            return Optional.of(accountTypedQuery.getSingleResult());
+        } catch (final NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     @PermitAll
