@@ -137,4 +137,10 @@ public class AccountEndpoint {
                 .map(AccountDto::new)
                 .toList();
     }
+
+    @RolesAllowed({ADMINISTRATOR, OWNER, FACILITY_MANAGER})
+    public AccountDto retrieveOwnAccountDetails() {
+        Account account = accountService.findByLogin(authenticatedAccount.getLogin());
+        return new AccountDto(account);
+    }
 }

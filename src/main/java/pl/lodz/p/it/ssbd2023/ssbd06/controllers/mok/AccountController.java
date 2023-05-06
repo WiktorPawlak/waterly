@@ -21,6 +21,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -156,5 +157,13 @@ public class AccountController {
     @Consumes(MediaType.APPLICATION_JSON)
     public void resetPassword(@Valid final PasswordResetDto dto) throws TokenNotFoundException {
         accountEndpoint.resetPassword(dto);
+    }
+
+    @GET
+    @Path("/self")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveOwnAccountDetails() {
+        AccountDto accountDto = accountEndpoint.retrieveOwnAccountDetails();
+        return Response.ok().entity(accountDto).build();
     }
 }
