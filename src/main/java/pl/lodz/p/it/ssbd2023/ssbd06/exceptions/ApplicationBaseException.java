@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountDoesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NoMatchingEmailException;
@@ -35,6 +36,7 @@ public class ApplicationBaseException extends WebApplicationException {
     protected static final String ERROR_TOKEN_EXCEEDED_HALF_TIME = "ERROR.TOKEN_EXCEEDED_HALF_TIME";
     protected static final String ERROR_TOKEN_NOT_FOUND = "ERROR.TOKEN_NOT_FOUND";
     protected static final String ERROR_ACCOUNT_NOT_FOUND = "ERROR.ACCOUNT_NOT_FOUND";
+    protected static final String ERROR_ACCOUNT_SEARCH_PREFERENCES_NOT_FOUND = "ERROR.ACCOUNT_SEARCH_PREFERENCES_NOT_FOUND";
     protected static final String ERROR_NOT_AUTHORIZED = "ERROR.NOT_AUTHORIZED";
     protected static final String ERROR_AUTHENTICATION = "ERROR.AUTHENTICATION";
     protected static final String ERROR_PASSWORDS_DO_NOT_MATCH = "ERROR.NOT_MATCHING_PASSWORDS";
@@ -127,5 +129,9 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static NotConfirmedAccountException notConfirmedAccountException() {
         return new NotConfirmedAccountException();
+    }
+
+    public static AccountSearchPreferencesNotExistException accountSearchPreferencesNotExistException() {
+        return new AccountSearchPreferencesNotExistException();
     }
 }

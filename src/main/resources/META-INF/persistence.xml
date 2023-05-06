@@ -29,7 +29,7 @@
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Administrator</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken</class>
-
+        <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ListSearchPreferences</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

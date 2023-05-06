@@ -29,7 +29,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
@@ -142,6 +146,23 @@ public class AccountController {
     public Response getAccounts() throws ApplicationBaseException {
         List<AccountDto> accounts = accountEndpoint.getAccounts();
         return Response.ok().entity(accounts).build();
+    }
+
+
+    @RolesAllowed({ADMINISTRATOR})
+    @POST
+    @Path("/list")
+    public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto) throws ApplicationBaseException {
+        PaginatedList<AccountWithRolesDto> accounts = accountEndpoint.getAccountsList(dto);
+        return Response.ok().entity(accounts).build();
+    }
+
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
+    @GET
+    @Path("/self/preferences")
+    public Response getAccountSearchPreferences() throws ApplicationBaseException {
+        AccountSearchPreferencesDto dto = accountEndpoint.getAccountsSearchPreferences();
+        return Response.ok().entity(dto).build();
     }
 
     @POST

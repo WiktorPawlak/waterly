@@ -25,10 +25,12 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.ListSearchPreferencesFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers.AccountActivationTimer;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers.AccountVerificationTimer;
@@ -36,6 +38,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ListSearchPreferences;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
@@ -52,12 +55,15 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AccountService {
 
+    public static final int FIRST_PAGE = 1;
     private final Logger log = Logger.getLogger(AccountService.class.getName());
 
     @Inject
     private AccountFacade accountFacade;
     @Inject
     private RoleFacade roleFacade;
+    @Inject
+    private ListSearchPreferencesFacade listSearchPreferencesFacade;
     @Inject
     private NotificationsProvider notificationsProvider;
     @Inject
@@ -344,7 +350,53 @@ public class AccountService {
         }
     }
 
+    @PermitAll
     public List<Account> getAccounts() {
         return accountFacade.findAll();
+    }
+
+    @PermitAll
+    public List<Account> getAccountsList(final Integer page,
+                                         final Integer pageSize,
+                                         final String order,
+                                         final String orderBy) {
+        boolean ascOrder = "asc".equalsIgnoreCase(order);
+
+        Account account = findByLogin(authenticatedAccount.getLogin());
+
+        Optional<ListSearchPreferences> accountSearchPreferences = listSearchPreferencesFacade.findByAccount(account);
+        updateOrCreateAccountSearchPreferences(order, orderBy, pageSize, account, accountSearchPreferences);
+
+        return accountFacade.findAccounts(page,
+                pageSize,
+                ascOrder,
+                orderBy);
+    }
+
+    @PermitAll
+    public ListSearchPreferences getAccountSearchPreferences() {
+        Account account = findByLogin(authenticatedAccount.getLogin());
+        return listSearchPreferencesFacade.findByAccount(account).orElseThrow(AccountSearchPreferencesNotExistException::new);
+    }
+
+    @PermitAll
+    public Long getAccountListCount() {
+        return accountFacade.count();
+    }
+
+    private void updateOrCreateAccountSearchPreferences(final String order,
+                                                        final String orderBy,
+                                                        final int pageSize,
+                                                        final Account account,
+                                                        final Optional<ListSearchPreferences> accountSearchPreferences) {
+        accountSearchPreferences.ifPresentOrElse(searchPreferences -> {
+            searchPreferences.setPageSize(pageSize);
+            searchPreferences.setSortingOrder(order);
+            searchPreferences.setOrderBy(orderBy);
+            listSearchPreferencesFacade.update(searchPreferences);
+        }, () -> {
+            ListSearchPreferences newPreferences = new ListSearchPreferences(account, pageSize, orderBy, order);
+            listSearchPreferencesFacade.create(newPreferences);
+        });
     }
 }

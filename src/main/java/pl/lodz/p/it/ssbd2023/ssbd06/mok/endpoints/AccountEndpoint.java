@@ -1,5 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService.FIRST_PAGE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -21,7 +23,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
@@ -29,6 +35,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeExceptio
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
@@ -47,6 +54,10 @@ public class AccountEndpoint {
     @Inject
     @BCryptHash
     private PasswordHash hashProvider;
+
+    @Inject
+    @Property("default.list.page.size")
+    private int defaultListPageSize;
 
     @RolesAllowed(ADMINISTRATOR)
     public void changeAccountActiveStatus(final long id, final AccountActiveStatusDto dto) {
@@ -142,5 +153,29 @@ public class AccountEndpoint {
     public AccountDto retrieveOwnAccountDetails() {
         Account account = accountService.findByLogin(authenticatedAccount.getLogin());
         return new AccountDto(account);
+    }
+
+    @RolesAllowed(ADMINISTRATOR)
+    public PaginatedList<AccountWithRolesDto> getAccountsList(final GetPagedAccountListDto dto) {
+        int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;
+        int pageSizeResolved = dto.getPageSize() != null ? dto.getPageSize() : defaultListPageSize;
+        String orderByResolved = dto.getOrderBy() != null ? dto.getOrderBy() : "login";
+
+        List<AccountWithRolesDto> accountDtoList = accountService.getAccountsList(pageResolved,
+                        pageSizeResolved,
+                        dto.getOrder(),
+                        orderByResolved).stream()
+                .map(AccountWithRolesDto::new)
+                .collect(Collectors.toList());
+
+        return new PaginatedList<>(accountDtoList,
+                pageSizeResolved,
+                accountDtoList.size(),
+                (long) Math.ceil(accountService.getAccountListCount().doubleValue() / pageSizeResolved));
+    }
+
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
+    public AccountSearchPreferencesDto getAccountsSearchPreferences() {
+        return new AccountSearchPreferencesDto(accountService.getAccountSearchPreferences());
     }
 }

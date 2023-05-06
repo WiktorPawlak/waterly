@@ -22,4 +22,8 @@ public class ValidationRegex {
     public static final String LANGUAGE_TAG = "^[a-z]{2}\\-[A-Z]{2}$";
 
     public static final String UUID = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+
+    public static final String ORDER = "^asc|desc$";
+
+    public static final String ACCOUNT_ORDER_BY = "^(login|accountState|email|firstName|lastName|phoneNumber)$";
 }
