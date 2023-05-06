@@ -9,6 +9,7 @@ import jakarta.ejb.SessionContext;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 
 @Monitored
 @Interceptor
@@ -84,7 +85,9 @@ public class TracingLoggerInterceptor {
         sb.append("Exception occurred: ")
                 .append(e.getClass().toGenericString())
                 .append(", cause: ")
-                .append(e.getCause());
+                .append(e instanceof ApplicationBaseException abe ?
+                        abe.getResponse().getEntity().toString()
+                        : e.getCause());
     }
 
     private void logInfo() {

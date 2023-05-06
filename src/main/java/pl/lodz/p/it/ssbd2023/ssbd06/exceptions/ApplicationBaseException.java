@@ -27,9 +27,10 @@ public class ApplicationBaseException extends WebApplicationException {
     protected static final String ERROR_UNKNOWN = "ERROR.UNKNOWN";
     protected static final String ERROR_GENERAL_PERSISTENCE = "ERROR.GENERAL_PERSISTENCE";
     protected static final String ERROR_OPTIMISTIC_LOCK = "ERROR.OPTIMISTIC_LOCK";
+    protected static final String ERROR_TRANSACTION_ROLLBACK = "ERROR.TRANSACTION_ROLLBACK";
     protected static final String ERROR_ACCESS_DENIED = "ERROR.ACCESS_DENIED";
-    protected static final String ERROR_ACCOUNT_ALREADY_EXIST = "ERROR.ACCOUNT.EXISTS";
-    protected static final String ERROR_CANNOT_MODIFY_PERRMISSIONS = "ERROR.CANNOT_MODIFY_PERMISSIONS";
+    protected static final String ERROR_ACCOUNT_ALREADY_EXIST = "ERROR.ACCOUNT_EXISTS";
+    protected static final String ERROR_CANNOT_MODIFY_PERMISSIONS = "ERROR.CANNOT_MODIFY_PERMISSIONS";
     protected static final String ERROR_FORBIDDEN_OPERATION = "ERROR.FORBIDDEN_OPERATION";
     protected static final String ERROR_IDENTICAL_PASSWORDS = "ERROR.IDENTICAL_PASSWORDS";
     protected static final String ERROR_UNSUPPORTED_OPERATION = "ERROR.UNSUPPORTED_OPERATION";
@@ -73,6 +74,10 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static ApplicationOptimisticLockException optimisticLockException() {
         return new ApplicationOptimisticLockException();
+    }
+
+    public static TransactionRollbackException transactionRollbackException() {
+        return new TransactionRollbackException();
     }
 
     public static AccountAlreadyExistException accountAlreadyExist() {

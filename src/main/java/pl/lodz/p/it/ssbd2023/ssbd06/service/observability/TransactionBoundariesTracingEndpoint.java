@@ -11,11 +11,13 @@ import jakarta.ejb.EJBException;
 import jakarta.ejb.SessionContext;
 import jakarta.ejb.SessionSynchronization;
 import jakarta.ejb.TransactionAttribute;
+import lombok.Getter;
 
-public abstract class TransactionBoundariesTracingEndpoint implements SessionSynchronization {
+public abstract class TransactionBoundariesTracingEndpoint implements SessionSynchronization, TransactionAware {
 
     private final Logger log = Logger.getLogger(TransactionBoundariesTracingEndpoint.class.getName());
 
+    @Getter
     private String transactionId;
 
     private boolean lastTransactionRollback;
@@ -58,7 +60,7 @@ public abstract class TransactionBoundariesTracingEndpoint implements SessionSyn
                         transactionId,
                         this.getClass().getName(),
                         sessionContext.getCallerPrincipal().getName(),
-                        committed ? "ACCEPT" : "ROLLBACK"
+                        committed ? "COMMITTED" : "ROLLBACK"
                 });
     }
 }

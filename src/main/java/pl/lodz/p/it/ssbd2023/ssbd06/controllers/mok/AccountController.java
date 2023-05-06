@@ -26,6 +26,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
@@ -45,7 +46,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 
 @Path("/accounts")
 @RequestScoped
-public class AccountController {
+public class AccountController extends RepeatableTransactionController {
 
     private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -57,7 +58,7 @@ public class AccountController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON_PATCH_JSON)
     public Response changeAccountActiveStatus(@PathParam("id") final long id, @NotNull @Valid final AccountActiveStatusDto dto) {
-        accountEndpoint.changeAccountActiveStatus(id, dto);
+        retry(() -> accountEndpoint.changeAccountActiveStatus(id, dto), accountEndpoint);
         return Response.ok().build();
     }
 
@@ -66,7 +67,7 @@ public class AccountController {
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateOwnAccountDetails(@NotNull @Valid final UpdateAccountDetailsDto dto) throws AccountAlreadyExistException {
-        accountEndpoint.updateOwnAccountDetails(dto);
+        retry(() -> accountEndpoint.updateOwnAccountDetails(dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -76,7 +77,7 @@ public class AccountController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateAccountDetails(@PathParam("id") final long id, @NotNull @Valid final UpdateAccountDetailsDto dto)
             throws AccountAlreadyExistException {
-        accountEndpoint.updateAccountDetails(id, dto);
+        retry(() -> accountEndpoint.updateAccountDetails(id, dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -84,7 +85,7 @@ public class AccountController {
     @PUT
     @Path("/account-details/{id}/accept")
     public Response acceptAccountDetailsUpdate(@PathParam("id") final long id) {
-        accountEndpoint.acceptAccountDetailsUpdate(id);
+        retry(() -> accountEndpoint.acceptAccountDetailsUpdate(id), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -92,7 +93,7 @@ public class AccountController {
     @POST
     @Path("self/account-details/resend-accept-email")
     public Response resendEmailToAcceptAccountDetailsUpdate() {
-        accountEndpoint.resendEmailToAcceptAccountDetailsUpdate();
+        retry(() -> accountEndpoint.resendEmailToAcceptAccountDetailsUpdate(), accountEndpoint);
         return Response.status(OK).build();
     }
 
@@ -102,7 +103,7 @@ public class AccountController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editAccountRoles(@PathParam("id") final long id, @NotNull @Valid final EditAccountRolesDto dto)
             throws ApplicationBaseException {
-        accountEndpoint.editAccountRoles(id, dto);
+        retry(() -> accountEndpoint.editAccountRoles(id, dto), accountEndpoint);
         return Response.ok().build();
     }
 
@@ -111,7 +112,7 @@ public class AccountController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeOwnPassword(@NotNull @Valid final AccountPasswordDto dto)
             throws ApplicationBaseException {
-        accountEndpoint.changeOwnAccountPassword(dto);
+        retry(() -> accountEndpoint.changeOwnAccountPassword(dto), accountEndpoint);
         return Response.ok().build();
     }
 
@@ -120,7 +121,7 @@ public class AccountController {
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerAccount(@NotNull @Valid final AccountDto account) {
-        accountEndpoint.registerUser(account);
+        retry(() -> accountEndpoint.registerUser(account), accountEndpoint);
         log.info(() -> "Registering account: " + account);
         return Response.ok().build();
     }
@@ -129,7 +130,7 @@ public class AccountController {
     @POST
     @Path("/{id}/resend-verification-token")
     public Response resendVerificationToken(@PathParam("id") final long id) throws ApplicationBaseException {
-        accountEndpoint.resendVerificationToken(id);
+        retry(() -> accountEndpoint.resendVerificationToken(id), accountEndpoint);
         log.info(() -> "Resending verification token for account with id: " + id);
         return Response.ok().build();
     }
@@ -138,7 +139,7 @@ public class AccountController {
     @PUT
     @Path("/confirm-registration")
     public Response confirmRegistration(@NotNull @QueryParam("token") final String token) throws ApplicationBaseException {
-        accountEndpoint.confirmRegistration(token);
+        retry(() -> accountEndpoint.confirmRegistration(token), accountEndpoint);
         log.info(() -> "Confirming account with token: " + token);
         return Response.ok().build();
     }
@@ -146,7 +147,7 @@ public class AccountController {
     @RolesAllowed({ADMINISTRATOR})
     @GET
     public Response getAccounts() throws ApplicationBaseException {
-        List<AccountDto> accounts = accountEndpoint.getAccounts();
+        List<AccountDto> accounts = retry(() -> accountEndpoint.getAccounts(), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
 
@@ -155,7 +156,7 @@ public class AccountController {
     @POST
     @Path("/list")
     public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto) throws ApplicationBaseException {
-        PaginatedList<AccountWithRolesDto> accounts = accountEndpoint.getAccountsList(dto);
+        PaginatedList<AccountWithRolesDto> accounts = retry(() -> accountEndpoint.getAccountsList(dto), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
 
@@ -163,14 +164,14 @@ public class AccountController {
     @GET
     @Path("/self/preferences")
     public Response getAccountSearchPreferences() throws ApplicationBaseException {
-        AccountSearchPreferencesDto dto = accountEndpoint.getAccountsSearchPreferences();
+        AccountSearchPreferencesDto dto = retry(() -> accountEndpoint.getAccountsSearchPreferences(), accountEndpoint);
         return Response.ok().entity(dto).build();
     }
 
     @POST
     @Path("/password/request-reset")
     public Response requestPasswordReset(@Email @QueryParam("email") final String email) {
-        accountEndpoint.sendResetPasswordToken(email);
+        retry(() -> accountEndpoint.sendResetPasswordToken(email), accountEndpoint);
         log.info(() -> "Requested password reset by email: " + email);
         return Response.ok().build();
     }
@@ -179,14 +180,14 @@ public class AccountController {
     @Path("/password/reset")
     @Consumes(MediaType.APPLICATION_JSON)
     public void resetPassword(@Valid final PasswordResetDto dto) throws TokenNotFoundException {
-        accountEndpoint.resetPassword(dto);
+        retry(() -> accountEndpoint.resetPassword(dto), accountEndpoint);
     }
 
     @GET
     @Path("/self")
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveOwnAccountDetails() {
-        AccountDto accountDto = accountEndpoint.retrieveOwnAccountDetails();
+        AccountDto accountDto = retry(() -> accountEndpoint.retrieveOwnAccountDetails(), accountEndpoint);
         return Response.ok().entity(accountDto).build();
     }
 }

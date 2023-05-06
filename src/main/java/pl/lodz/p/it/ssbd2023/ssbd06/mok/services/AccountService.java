@@ -242,7 +242,7 @@ public class AccountService {
         Optional<Account> optionalAccount = accountFacade.findByEmail(accountDetails.getEmail());
 
         if (optionalAccount.isPresent()) {
-            log.info("Account details update error: account with email" + accountDetails.getEmail() + "already exist" + account.getId());
+            log.info("Account details update error: account with email" + accountDetails.getEmail() + " already exist.");
             throw ApplicationBaseException.accountAlreadyExist();
         }
 

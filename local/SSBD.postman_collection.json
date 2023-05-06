@@ -531,11 +531,8 @@
 							}
 						}
 					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -562,10 +559,33 @@
 				{
 					"name": "Change own account details",
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"dupa@gmail.com\",\r\n    \"firstName\": \"ttaaa\",\r\n    \"lastName\": \"yhy\",\r\n    \"phoneNumber\": 555666222\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": ""
+							"raw": "{{API_BASE_URL}}/accounts/self",
+							"host": [
+								"{{API_BASE_URL}}"
+							],
+							"path": [
+								"accounts",
+								"self"
+							]
 						}
 					},
 					"response": []
