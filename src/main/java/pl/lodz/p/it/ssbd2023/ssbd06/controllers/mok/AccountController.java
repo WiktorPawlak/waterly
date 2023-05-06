@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -24,6 +25,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
@@ -44,11 +46,11 @@ public class AccountController {
     private AccountEndpoint accountEndpoint;
 
     @RolesAllowed(ADMINISTRATOR)
-    @PUT
-    @Path("/{id}/active")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response changeAccountActiveStatus(@PathParam("id") final long id, final boolean active) {
-        accountEndpoint.changeAccountActiveStatus(id, active);
+    @PATCH
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON_PATCH_JSON)
+    public Response changeAccountActiveStatus(@PathParam("id") final long id, @NotNull @Valid final AccountActiveStatusDto dto) {
+        accountEndpoint.changeAccountActiveStatus(id, dto);
         return Response.ok().build();
     }
 
@@ -56,8 +58,8 @@ public class AccountController {
     @PUT
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateOwnAccountDetails(@Valid @NotNull final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExistException {
-        accountEndpoint.updateOwnAccountDetails(updateAccountDetailsDto);
+    public Response updateOwnAccountDetails(@NotNull @Valid final UpdateAccountDetailsDto dto) throws AccountAlreadyExistException {
+        accountEndpoint.updateOwnAccountDetails(dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -65,9 +67,9 @@ public class AccountController {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateAccountDetails(@PathParam("id") final long id, @Valid @NotNull final UpdateAccountDetailsDto updateAccountDetailsDto)
+    public Response updateAccountDetails(@PathParam("id") final long id, @NotNull @Valid final UpdateAccountDetailsDto dto)
             throws AccountAlreadyExistException {
-        accountEndpoint.updateAccountDetails(id, updateAccountDetailsDto);
+        accountEndpoint.updateAccountDetails(id, dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -91,18 +93,18 @@ public class AccountController {
     @PUT
     @Path("/{id}/roles")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response editAccountRoles(@PathParam("id") final long id, @NotNull @Valid final EditAccountRolesDto editAccountRolesDto)
+    public Response editAccountRoles(@PathParam("id") final long id, @NotNull @Valid final EditAccountRolesDto dto)
             throws ApplicationBaseException {
-        accountEndpoint.editAccountRoles(id, editAccountRolesDto);
+        accountEndpoint.editAccountRoles(id, dto);
         return Response.ok().build();
     }
 
     @PUT
     @Path("/self/password")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response changeOwnPassword(@NotNull @Valid final AccountPasswordDto accountPasswordDto)
+    public Response changeOwnPassword(@NotNull @Valid final AccountPasswordDto dto)
             throws ApplicationBaseException {
-        accountEndpoint.changeOwnAccountPassword(accountPasswordDto);
+        accountEndpoint.changeOwnAccountPassword(dto);
         return Response.ok().build();
     }
 
@@ -121,7 +123,7 @@ public class AccountController {
     @Path("/{id}/resendVerificationToken")
     public Response resendVerificationToken(@PathParam("id") final long id) throws ApplicationBaseException {
         accountEndpoint.resendVerificationToken(id);
-        log.info("Resending verification token for account with id: " + id);
+        log.info(() -> "Resending verification token for account with id: " + id);
         return Response.ok().build();
     }
 
@@ -130,7 +132,7 @@ public class AccountController {
     @Path("/confirm-registration")
     public Response confirmRegistration(@NotNull @QueryParam("token") final String token) throws ApplicationBaseException {
         accountEndpoint.confirmRegistration(token);
-        log.info("Confirming account with token: " + token);
+        log.info(() -> "Confirming account with token: " + token);
         return Response.ok().build();
     }
 
@@ -143,16 +145,16 @@ public class AccountController {
 
     @POST
     @Path("/password/request-reset")
-    public Response requestPasswordReset(@NotNull @Valid @Email @QueryParam("email") final String email) {
+    public Response requestPasswordReset(@Email @QueryParam("email") final String email) {
         accountEndpoint.sendResetPasswordToken(email);
-        log.info("Requested password reset by email: " + email);
+        log.info(() -> "Requested password reset by email: " + email);
         return Response.ok().build();
     }
 
     @POST
     @Path("/password/reset")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void resetPassword(@Valid final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
-        accountEndpoint.resetPassword(passwordResetDto);
+    public void resetPassword(@Valid final PasswordResetDto dto) throws TokenNotFoundException {
+        accountEndpoint.resetPassword(dto);
     }
 }

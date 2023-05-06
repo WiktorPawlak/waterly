@@ -10,12 +10,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.EmailSenderProviderImpl;
 
 @ApplicationScoped
 public class PropertiesHolder {
 
-    private final Logger log = Logger.getLogger(EmailSenderProviderImpl.class.getName());
+    private final Logger log = Logger.getLogger(PropertiesHolder.class.getName());
 
     private Properties properties;
 

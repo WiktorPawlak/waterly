@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.integration.auth;
+package pl.lodz.p.it.ssbd2023.ssbd06.integration.mok;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -15,8 +15,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 class AuthControllerTest extends IntegrationTestsConfig {
-
-    private static final String AUTH_PATH = "/auth";
 
     @Test
     void whenCredentialsAreCorrectShouldLogInAndReturnJwt() {

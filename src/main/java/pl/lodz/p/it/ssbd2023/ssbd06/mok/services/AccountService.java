@@ -109,6 +109,10 @@ public class AccountService {
         accountAuthInfo.setLastIpAddress(ipAddress);
 
         accountFacade.update(account);
+
+        if (authenticatedAccount.isAdmin()) {
+            notificationsProvider.notifySuccessfulAdminAuthentication(authenticationDate, login, ipAddress);
+        }
     }
 
     @PermitAll
@@ -339,6 +343,7 @@ public class AccountService {
             throw ApplicationBaseException.notConfirmedAccountException();
         }
     }
+
     public List<Account> getAccounts() {
         return accountFacade.findAll();
     }

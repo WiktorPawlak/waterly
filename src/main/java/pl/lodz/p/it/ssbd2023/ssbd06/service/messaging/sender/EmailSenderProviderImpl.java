@@ -21,7 +21,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.config.EmailConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.exceptions.EmailSenderException;
 
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class EmailSenderProviderImpl implements EmailSenderProvider {
 
     private final Logger log = Logger.getLogger(EmailSenderProviderImpl.class.getName());

@@ -9,7 +9,7 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @PermitAll
 public class EmailNotificationsImpl implements NotificationsProvider {
 
