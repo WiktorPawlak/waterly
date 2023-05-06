@@ -1,0 +1,48 @@
+{
+  "logInPage": {
+    "header": {
+      "title": "Welcome back!",
+      "description": "Log in to Waterly..."
+    },
+    "form": {
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submitButtonLabel": "Log in",
+      "forgotPasswordLinkLabel": "Forgot password?",
+      "registerText": "Don't have an account?",
+      "registerButton": "Sign up"
+    }
+  },
+  "registerPage": {
+    "header": {
+      "title": "Join us!",
+      "description": "Create your account in Waterly..."
+    },
+    "form": {
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "forgotPasswordLinkLabel": "Forgot password?",
+      "submitButtonLabel": "Submit",
+      "registerText": "Already have an account?",
+      "registerButton": "Login"
+    }
+  },
+  "waitForVerifyPage": {
+    "header": "Thank you for register!",
+    "description": "Wait for verification. We'll send you an email."
+  },
+  "editAccountDetailsPage": {
+    "header": "Edit account details",
+    "button": "Edit",
+    "editAccountDetailEntry": {
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "phoneNumberLabel": "Phone number"
+    }
+  },
+  "navigation": {
+    "login": "Log in",
+    "register": "Register",
+    "logout": "Log out"
+  }
+}
