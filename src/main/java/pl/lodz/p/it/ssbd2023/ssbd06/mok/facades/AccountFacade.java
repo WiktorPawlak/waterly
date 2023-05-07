@@ -60,6 +60,12 @@ public class AccountFacade extends AbstractFacade<Account> {
 
     @Override
     @PermitAll
+    public void delete(final Account entity) {
+        super.delete(entity);
+    }
+
+    @Override
+    @PermitAll
     public Account findById(final Long id) {
         return super.findById(id);
     }

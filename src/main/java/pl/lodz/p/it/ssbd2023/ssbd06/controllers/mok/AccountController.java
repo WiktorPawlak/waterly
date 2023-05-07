@@ -127,7 +127,7 @@ public class AccountController {
 
     @OnlyGuest
     @POST
-    @Path("/{id}/resendVerificationToken")
+    @Path("/{id}/resend-verification-token")
     public Response resendVerificationToken(@PathParam("id") final long id) throws ApplicationBaseException {
         accountEndpoint.resendVerificationToken(id);
         log.info(() -> "Resending verification token for account with id: " + id);

@@ -1,11 +1,13 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.NOT_CONFIRMED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_CONFIRM;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -83,6 +85,10 @@ public class AccountService {
     @Inject
     @Property("auth.attempts")
     private int authAttempts;
+
+    @Inject
+    @Property("default.list.page.size")
+    private int defaultListPageSize;
 
     @PermitAll
     public Account findByLogin(final String login) {
@@ -188,11 +194,10 @@ public class AccountService {
 
     @PermitAll
     public void removeInactiveNotConfirmedAccount(final long id) {
-        // TODO: fix account deletion
-//        Account account = accountFacade.findById(id);
-//        if (account != null && !account.isActive() && Objects.equals(account.getAccountState(), NOT_CONFIRMED)) {
-//            accountFacade.delete(account);
-//        }
+        Account account = accountFacade.findById(id);
+        if (account != null && !account.isActive() && Objects.equals(account.getAccountState(), NOT_CONFIRMED)) {
+            accountFacade.delete(account);
+        }
     }
 
     private void revokePermissions(final EditAccountRolesDto editAccountRolesDto, final Account account) throws ApplicationBaseException {

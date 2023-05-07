@@ -39,8 +39,8 @@ public class AccountVerificationTimer {
     @SuppressWarnings("checkstyle:FinalParameters")
     private void execute(Timer timer) {
         long accountId = retrieveAccountId((String) timer.getInfo());
-        accountService.removeInactiveNotConfirmedAccount(accountId);
         verificationTokenService.clearTokens(accountId);
+        accountService.removeInactiveNotConfirmedAccount(accountId);
         log.info(() -> "Account deletion period has expired. Account with id " + accountId + " has been deleted.");
     }
 

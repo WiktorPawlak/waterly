@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import jakarta.inject.Inject;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
@@ -21,9 +20,6 @@ class AccountFacadeTest extends BaseArquillianTest {
 
     @Inject
     private AccountFacade accountFacade;
-
-    @Inject
-    private RoleFacade roleFacade;
 
     @SneakyThrows
     @Test

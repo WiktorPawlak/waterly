@@ -37,8 +37,8 @@ public class AccountVerificationStartup {
                         + accountId
                         + ", because of error occurred during verification token timers initialization: "
                         + e.getMessage());
-                accountService.removeInactiveNotConfirmedAccount(accountId);
                 verificationTokenService.clearTokens(accountId);
+                accountService.removeInactiveNotConfirmedAccount(accountId);
             }
         }
     }

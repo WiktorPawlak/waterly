@@ -31,7 +31,7 @@ public class BaseArquillianTest {
                 .addAsResource(new File("src/test/resources/test.properties"), "application.properties")
                 .addAsResource(new File("src/main/resources/i18n"), "i18n")
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource("test-beans.xml", "beans.xml");
     }
 
 }
