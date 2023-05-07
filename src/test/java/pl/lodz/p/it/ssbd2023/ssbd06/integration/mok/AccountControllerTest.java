@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static io.restassured.RestAssured.given;
+import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
+import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
@@ -15,9 +17,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import io.restassured.http.Header;
+import lombok.SneakyThrows;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.DatabaseConnector;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 
 class AccountControllerTest extends IntegrationTestsConfig {
 
@@ -91,6 +97,64 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         //then
         assertEquals(3, accounts.size());
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldConfirmRegisteredAccountWhenVerificationTokenCorrect() {
+        // given
+        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
+        AccountDto accountDto = new AccountDto();
+        accountDto.setPhoneNumber("123123123");
+        accountDto.setEmail("test@test.test");
+        accountDto.setLogin("test");
+        accountDto.setFirstName("Test");
+        accountDto.setLastName("Test");
+        accountDto.setPassword("p@ssw0rd");
+        accountDto.setLanguageTag("en-US");
+
+        // when
+        given()
+                .body(accountDto)
+                .when()
+                .post(ACCOUNT_PATH + "/register")
+                .then()
+                .statusCode(CREATED.getStatusCode());
+
+        // then
+        String accountStateBefore = databaseConnector.executeQuery(
+                "SELECT account_state FROM account WHERE login = 'test'"
+        ).getString("account_state");
+
+        assertEquals(accountStateBefore, AccountState.NOT_CONFIRMED.name());
+
+        // given
+        String token = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token vt JOIN account ON account_id = vt.account_id WHERE login = 'test'"
+        ).getString("token");
+
+        // when
+        given()
+                .when()
+                .put(ACCOUNT_PATH + "/confirm-registration?token=" + token)
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        //then
+        String accountStateAfter = databaseConnector.executeQuery(
+                "SELECT account_state FROM account WHERE login = 'test'"
+        ).getString("account_state");
+
+        assertEquals(accountStateAfter, AccountState.TO_CONFIRM.name());
+    }
+
+    @Test
+    void shouldRespondWith404WhenVerificationTokenDoesntExist() {
+        given()
+                .when()
+                .put(ACCOUNT_PATH + "/confirm-registration?token=someRandomTokenThatDoesntExist")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @ParameterizedTest(name = "token = {0}")

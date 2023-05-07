@@ -34,11 +34,18 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected String OWNER_TOKEN;
     protected String FACILITY_MANAGER_TOKEN;
 
+    protected String POSTGRES_PORT;
+
     @BeforeAll
     protected void tokensSetup() {
         ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
         FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
         OWNER_TOKEN = getToken(OWNER_CREDENTIALS);
+    }
+
+    @BeforeAll
+    protected void postgresPortSetup() {
+        POSTGRES_PORT = String.valueOf(postgres.getFirstMappedPort());
     }
 
     protected String getToken(final Credentials credentials) {

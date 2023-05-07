@@ -2,7 +2,6 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.ejb.Stateless;
@@ -21,8 +20,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 @FacadeExceptionHandler
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
-
-    private final Logger log = Logger.getLogger(getClass().getName());
 
     @PersistenceContext(unitName = "mokPU")
     private EntityManager em;
