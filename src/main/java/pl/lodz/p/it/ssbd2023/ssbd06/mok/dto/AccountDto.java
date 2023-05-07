@@ -18,6 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PhoneNumber;
 @Setter
 @NoArgsConstructor
 public class AccountDto {
+    private long id;
 
     @Login
     private String login;
@@ -41,6 +42,7 @@ public class AccountDto {
     private String languageTag;
 
     public AccountDto(final Account account) {
+        this.id = account.getId();
         this.login = account.getLogin();
         this.email = account.getAccountDetails().getEmail();
         this.firstName = account.getAccountDetails().getFirstName();

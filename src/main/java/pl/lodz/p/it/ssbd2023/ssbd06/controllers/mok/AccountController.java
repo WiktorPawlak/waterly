@@ -1,5 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.controllers.mok;
 
+import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
@@ -123,7 +124,16 @@ public class AccountController extends RepeatableTransactionController {
     public Response registerAccount(@NotNull @Valid final AccountDto account) {
         retry(() -> accountEndpoint.registerUser(account), accountEndpoint);
         log.info(() -> "Registering account: " + account);
-        return Response.ok().build();
+        return Response.status(CREATED).build();
+    }
+
+    @RolesAllowed(ADMINISTRATOR)
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createAccount(@NotNull @Valid final AccountDto account) {
+        retry(() -> accountEndpoint.createAccount(account), accountEndpoint);
+        log.info(() -> "Creating account: " + account);
+        return Response.status(CREATED).build();
     }
 
     @OnlyGuest
@@ -188,6 +198,15 @@ public class AccountController extends RepeatableTransactionController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveOwnAccountDetails() {
         AccountDto accountDto = retry(() -> accountEndpoint.retrieveOwnAccountDetails(), accountEndpoint);
+        return Response.ok().entity(accountDto).build();
+    }
+
+    @RolesAllowed(ADMINISTRATOR)
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserById(@PathParam("id") final long id) {
+        AccountDto accountDto = retry(() -> accountEndpoint.getUserById(id), accountEndpoint);
         return Response.ok().entity(accountDto).build();
     }
 }

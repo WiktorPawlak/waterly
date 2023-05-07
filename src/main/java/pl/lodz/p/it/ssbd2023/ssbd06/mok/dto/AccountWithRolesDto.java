@@ -20,6 +20,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PhoneNumber;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountWithRolesDto {
+    private long id;
+
     @Login
     private String login;
 
@@ -44,6 +46,7 @@ public class AccountWithRolesDto {
     private List<String> roles = new ArrayList<>();
 
     public AccountWithRolesDto(final Account account) {
+        this.id = account.getId();
         this.login = account.getLogin();
         this.email = account.getAccountDetails().getEmail();
         this.firstName = account.getAccountDetails().getFirstName();

@@ -1,5 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.CONFIRMED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.NOT_CONFIRMED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_CONFIRM;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
@@ -196,6 +197,153 @@ public class AccountService {
         }
     }
 
+    @OnlyGuest
+    @SneakyThrows(TokenExpiredException.class)
+    public void registerUser(final AccountDto accountDto) {
+        Account accountEntity = prepareAccountEntity(accountDto);
+        Account persistedAccountEntity = accountFacade.create(accountEntity);
+
+        VerificationToken token = verificationTokenService.createPrimaryFullTimeToken(persistedAccountEntity);
+        accountVerificationTimer.scheduleAccountDeletion(token);
+
+        verificationsProvider.sendVerificationToken(token);
+    }
+
+    @RolesAllowed(ADMINISTRATOR)
+    public void createUser(final AccountDto account) {
+        Account accountEntity = prepareAccountEntity(account);
+        accountEntity.setAccountState(CONFIRMED);
+        accountEntity.setActive(true);
+        accountFacade.create(accountEntity);
+    }
+
+    @OnlyGuest
+    public void resendVerificationToken(final long accountId) throws TokenNotFoundException, TokenExceededHalfTimeException {
+        Account account = accountFacade.findById(accountId);
+
+        VerificationToken halfTimeToken = verificationTokenService.findOrCreateSecondaryHalfTimeToken(account);
+        verificationsProvider.sendVerificationToken(halfTimeToken);
+    }
+
+    @OnlyGuest
+    public void confirmRegistration(final String token) throws ApplicationBaseException {
+        VerificationToken verificationToken = verificationTokenService.findValidToken(token);
+        Account account = verificationToken.getAccount();
+        accountVerificationTimer.cancelAccountDeletion(account.getId());
+
+        account.setActive(true);
+        account.getAuthInfo().setIncorrectAuthCount(0);
+        account.setAccountState(TO_CONFIRM);
+        accountFacade.update(account);
+        verificationTokenService.clearTokens(account.getId());
+    }
+
+    @PermitAll
+    public Optional<Account> findByEmail(final String email) {
+        return accountFacade.findByEmail(email);
+    }
+
+    @PermitAll
+    public void sendEmailToken(final Account account) {
+        VerificationToken token = verificationTokenService.createResetToken(account);
+        checkAccountStatus(account);
+        verificationsProvider.sendResetToken(token);
+    }
+
+    @PermitAll
+    public void resetPassword(final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
+        Account account = verificationTokenService.confirmResetPassword(UUID.fromString(passwordResetDto.getToken()));
+        checkAccountStatus(account);
+        var hashedNewPassword = hashProvider.generate(passwordResetDto.getNewPassword().toCharArray());
+        changePassword(account, hashedNewPassword);
+    }
+
+    @PermitAll
+    public void checkAccountStatus(final Account account) {
+        if (!account.isActive()) {
+            throw ApplicationBaseException.notActiveAccountException();
+        }
+        if (account.getAccountState() != AccountState.CONFIRMED) {
+            throw ApplicationBaseException.notConfirmedAccountException();
+        }
+    }
+
+    @PermitAll
+    public List<Account> getAccounts() {
+        return accountFacade.findAll();
+    }
+
+    @PermitAll
+    public List<Account> getAccountsList(final Integer page,
+                                         final Integer pageSize,
+                                         final String order,
+                                         final String orderBy) {
+        boolean ascOrder = "asc".equalsIgnoreCase(order);
+
+        Account account = findByLogin(authenticatedAccount.getLogin());
+
+        Optional<ListSearchPreferences> accountSearchPreferences = listSearchPreferencesFacade.findByAccount(account);
+        updateOrCreateAccountSearchPreferences(order, orderBy, pageSize, account, accountSearchPreferences);
+
+        return accountFacade.findAccounts(page,
+                pageSize,
+                ascOrder,
+                orderBy);
+    }
+
+    @PermitAll
+    public ListSearchPreferences getAccountSearchPreferences() {
+        Account account = findByLogin(authenticatedAccount.getLogin());
+        return listSearchPreferencesFacade.findByAccount(account).orElseThrow(AccountSearchPreferencesNotExistException::new);
+    }
+
+    @PermitAll
+    public Long getAccountListCount() {
+        return accountFacade.count();
+    }
+
+    @PermitAll
+    public Account getUserById(final long id) {
+        return accountFacade.findById(id);
+    }
+
+    private void updateOrCreateAccountSearchPreferences(final String order,
+                                                        final String orderBy,
+                                                        final int pageSize,
+                                                        final Account account,
+                                                        final Optional<ListSearchPreferences> accountSearchPreferences) {
+        accountSearchPreferences.ifPresentOrElse(searchPreferences -> {
+            searchPreferences.setPageSize(pageSize);
+            searchPreferences.setSortingOrder(order);
+            searchPreferences.setOrderBy(orderBy);
+            listSearchPreferencesFacade.update(searchPreferences);
+        }, () -> {
+            ListSearchPreferences newPreferences = new ListSearchPreferences(account, pageSize, orderBy, order);
+            listSearchPreferencesFacade.create(newPreferences);
+        });
+    }
+
+    private Account prepareAccountEntity(final AccountDto account) {
+        var accountDetails = new AccountDetails(account.getEmail(), account.getFirstName(),
+                account.getLastName(), account.getPhoneNumber());
+        var authInfo = new AuthInfo();
+        var hashedPassword = hashProvider.generate(account.getPassword().toCharArray());
+        var accountEntity = new Account(account.getLogin(), hashedPassword,
+                accountDetails, authInfo);
+        authInfo.setAccount(accountEntity);
+        accountEntity.setAuthInfo(authInfo);
+        Set<Role> roles = Set.of(Role.valueOf("ADMINISTRATOR"),
+                Role.valueOf("FACILITY_MANAGER"), Role.valueOf("OWNER"));
+        roles.forEach(role -> {
+            role.setActive(false);
+            role.setAccount(accountEntity);
+        });
+        accountEntity.setRoles(roles);
+        accountEntity.setLocale(Locale.forLanguageTag(account.getLanguageTag()));
+
+        return accountEntity;
+    }
+
     private void revokePermissions(final EditAccountRolesDto editAccountRolesDto, final Account account) throws ApplicationBaseException {
         for (String roleToRevoke : editAccountRolesDto.getRoles()) {
             performRevokePermissionOperation(account, roleToRevoke);
@@ -265,139 +413,5 @@ public class AccountService {
 
     private boolean isModifyingAnotherUser(final Account account) {
         return !account.getLogin().equals(authenticatedAccount.getLogin());
-    }
-
-    @OnlyGuest
-    @SneakyThrows(TokenExpiredException.class)
-    public void registerUser(final AccountDto accountDto) {
-        Account accountEntity = prepareAccountEntity(accountDto);
-        Account persistedAccountEntity = accountFacade.create(accountEntity);
-
-        VerificationToken token = verificationTokenService.createPrimaryFullTimeToken(persistedAccountEntity);
-        accountVerificationTimer.scheduleAccountDeletion(token);
-
-        verificationsProvider.sendVerificationToken(token);
-    }
-
-    @OnlyGuest
-    public void resendVerificationToken(final long accountId) throws TokenNotFoundException, TokenExceededHalfTimeException {
-        Account account = accountFacade.findById(accountId);
-
-        VerificationToken halfTimeToken = verificationTokenService.findOrCreateSecondaryHalfTimeToken(account);
-        verificationsProvider.sendVerificationToken(halfTimeToken);
-    }
-
-    @OnlyGuest
-    public void confirmRegistration(final String token) throws ApplicationBaseException {
-        VerificationToken verificationToken = verificationTokenService.findValidToken(token);
-        Account account = verificationToken.getAccount();
-        accountVerificationTimer.cancelAccountDeletion(account.getId());
-
-        account.setActive(true);
-        account.getAuthInfo().setIncorrectAuthCount(0);
-        account.setAccountState(TO_CONFIRM);
-        accountFacade.update(account);
-        verificationTokenService.clearTokens(account.getId());
-    }
-
-    private Account prepareAccountEntity(final AccountDto account) {
-        var accountDetails = new AccountDetails(account.getEmail(), account.getFirstName(),
-                account.getLastName(), account.getPhoneNumber());
-        var authInfo = new AuthInfo();
-        var hashedPassword = hashProvider.generate(account.getPassword().toCharArray());
-        var accountEntity = new Account(account.getLogin(), hashedPassword,
-                accountDetails, authInfo);
-        authInfo.setAccount(accountEntity);
-        accountEntity.setAuthInfo(authInfo);
-        Set<Role> roles = Set.of(Role.valueOf("ADMINISTRATOR"),
-                Role.valueOf("FACILITY_MANAGER"), Role.valueOf("OWNER"));
-        roles.forEach(role -> {
-            role.setActive(false);
-            role.setAccount(accountEntity);
-        });
-        accountEntity.setRoles(roles);
-        accountEntity.setLocale(Locale.forLanguageTag(account.getLanguageTag()));
-
-        return accountEntity;
-    }
-
-    @PermitAll
-    public Optional<Account> findByEmail(final String email) {
-        return accountFacade.findByEmail(email);
-    }
-
-    @PermitAll
-    public void sendEmailToken(final Account account) {
-        VerificationToken token = verificationTokenService.createResetToken(account);
-        checkAccountStatus(account);
-        verificationsProvider.sendResetToken(token);
-    }
-
-    @PermitAll
-    public void resetPassword(final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
-        Account account = verificationTokenService.confirmResetPassword(UUID.fromString(passwordResetDto.getToken()));
-        checkAccountStatus(account);
-        var hashedNewPassword = hashProvider.generate(passwordResetDto.getNewPassword().toCharArray());
-        changePassword(account, hashedNewPassword);
-    }
-
-    @PermitAll
-    public void checkAccountStatus(final Account account) {
-        if (!account.isActive()) {
-            throw ApplicationBaseException.notActiveAccountException();
-        }
-        if (account.getAccountState() != AccountState.CONFIRMED) {
-            throw ApplicationBaseException.notConfirmedAccountException();
-        }
-    }
-
-    @PermitAll
-    public List<Account> getAccounts() {
-        return accountFacade.findAll();
-    }
-
-    @PermitAll
-    public List<Account> getAccountsList(final Integer page,
-                                         final Integer pageSize,
-                                         final String order,
-                                         final String orderBy) {
-        boolean ascOrder = "asc".equalsIgnoreCase(order);
-
-        Account account = findByLogin(authenticatedAccount.getLogin());
-
-        Optional<ListSearchPreferences> accountSearchPreferences = listSearchPreferencesFacade.findByAccount(account);
-        updateOrCreateAccountSearchPreferences(order, orderBy, pageSize, account, accountSearchPreferences);
-
-        return accountFacade.findAccounts(page,
-                pageSize,
-                ascOrder,
-                orderBy);
-    }
-
-    @PermitAll
-    public ListSearchPreferences getAccountSearchPreferences() {
-        Account account = findByLogin(authenticatedAccount.getLogin());
-        return listSearchPreferencesFacade.findByAccount(account).orElseThrow(AccountSearchPreferencesNotExistException::new);
-    }
-
-    @PermitAll
-    public Long getAccountListCount() {
-        return accountFacade.count();
-    }
-
-    private void updateOrCreateAccountSearchPreferences(final String order,
-                                                        final String orderBy,
-                                                        final int pageSize,
-                                                        final Account account,
-                                                        final Optional<ListSearchPreferences> accountSearchPreferences) {
-        accountSearchPreferences.ifPresentOrElse(searchPreferences -> {
-            searchPreferences.setPageSize(pageSize);
-            searchPreferences.setSortingOrder(order);
-            searchPreferences.setOrderBy(orderBy);
-            listSearchPreferencesFacade.update(searchPreferences);
-        }, () -> {
-            ListSearchPreferences newPreferences = new ListSearchPreferences(account, pageSize, orderBy, order);
-            listSearchPreferencesFacade.create(newPreferences);
-        });
     }
 }

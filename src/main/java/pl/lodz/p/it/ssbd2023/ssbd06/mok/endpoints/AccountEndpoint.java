@@ -75,6 +75,11 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         accountService.registerUser(account);
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    public void createAccount(final AccountDto account) {
+        accountService.createUser(account);
+    }
+
     @OnlyGuest
     public void resendVerificationToken(final long accountId) throws TokenExceededHalfTimeException, TokenNotFoundException {
         accountService.resendVerificationToken(accountId);
@@ -178,5 +183,11 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public AccountSearchPreferencesDto getAccountsSearchPreferences() {
         return new AccountSearchPreferencesDto(accountService.getAccountSearchPreferences());
+    }
+
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
+    public AccountDto getUserById(final long id) {
+        Account account = accountService.getUserById(id);
+        return new AccountDto(account);
     }
 }
