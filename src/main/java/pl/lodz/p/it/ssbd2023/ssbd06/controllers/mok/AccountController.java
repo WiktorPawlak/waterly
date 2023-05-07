@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -43,6 +44,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 
 @Path("/accounts")
+@RequestScoped
 public class AccountController {
 
     private final Logger log = Logger.getLogger(getClass().getName());

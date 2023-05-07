@@ -5,6 +5,7 @@ import static jakarta.security.enterprise.identitystore.CredentialValidationResu
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.JwtProvider;
 @Path(value = "/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@RequestScoped
 public class AuthController {
 
     private final Logger log = Logger.getLogger(getClass().getName());
