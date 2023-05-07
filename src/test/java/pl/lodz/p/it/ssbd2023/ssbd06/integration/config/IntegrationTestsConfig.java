@@ -49,7 +49,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     }
 
     protected String getToken(final Credentials credentials) {
-        return given().body(credentials).post("/auth/login").asString();
+        return "Bearer " + given().body(credentials).post("/auth/login").asString();
     }
 
     protected Stream<String> provideTokensForParameterizedTests() {

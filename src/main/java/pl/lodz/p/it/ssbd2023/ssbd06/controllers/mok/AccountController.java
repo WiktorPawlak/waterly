@@ -165,8 +165,9 @@ public class AccountController extends RepeatableTransactionController {
     @RolesAllowed({ADMINISTRATOR})
     @POST
     @Path("/list")
-    public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto) throws ApplicationBaseException {
-        PaginatedList<AccountWithRolesDto> accounts = retry(() -> accountEndpoint.getAccountsList(dto), accountEndpoint);
+    public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto, @QueryParam("pattern") final String pattern)
+            throws ApplicationBaseException {
+        PaginatedList<AccountWithRolesDto> accounts = retry(() -> accountEndpoint.getAccountsList(pattern, dto), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
 

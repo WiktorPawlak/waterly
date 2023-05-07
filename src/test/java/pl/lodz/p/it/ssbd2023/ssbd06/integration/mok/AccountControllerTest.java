@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static io.restassured.RestAssured.given;
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
@@ -11,9 +12,11 @@ import static jakarta.ws.rs.core.Response.Status.OK;
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import io.restassured.http.Header;
@@ -41,7 +44,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         //when
         given()
-                .header(new Header("Authorization", "Bearer " + ADMINISTRATOR_TOKEN))
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(DEACTIVATE_ACCOUNT)
                 .contentType("application/json-patch+json")
                 .when()
@@ -67,9 +70,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         //when
         List<AccountWithRolesDto> accounts = given()
-                .header(new Header("Authorization", "Bearer " + ADMINISTRATOR_TOKEN))
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(getPagedAccountListRequest)
-                .contentType("application/json")
                 .when()
                 .post(ACCOUNT_PATH + "/list")
                 .then()
@@ -86,9 +88,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         //when
         accounts = given()
-                .header(new Header("Authorization", "Bearer " + ADMINISTRATOR_TOKEN))
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(getPagedAccountListRequest)
-                .contentType("application/json")
                 .when()
                 .post(ACCOUNT_PATH + "/list")
                 .then()
@@ -97,6 +98,27 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         //then
         assertEquals(3, accounts.size());
+    }
+
+    @ParameterizedTest(name = "pattern = {0}, expected account ids = {1}")
+    @MethodSource("providePatterns")
+    void shouldReturnAccountsFilteredByPattern(String pattern, List<Long> expectedIds) {
+        //given
+        GetPagedAccountListDto getPagedAccountListRequest = new GetPagedAccountListDto(1, 10, "asc", null);
+
+        //when
+        List<AccountWithRolesDto> accounts = given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .queryParam("pattern", pattern)
+                .body(getPagedAccountListRequest)
+                .when()
+                .post(ACCOUNT_PATH + "/list")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract().body().jsonPath().getList("data", AccountWithRolesDto.class);
+
+        //then
+        assertEquals(expectedIds, accounts.stream().map(AccountWithRolesDto::getId).toList());
     }
 
     @Test
@@ -161,7 +183,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @MethodSource("provideTokensForParameterizedTests")
     void shouldForbidNonAdminUsersToDeactivateAccount(String token) {
         given()
-                .header(new Header("Authorization", "Bearer " + token))
+                .header(AUTHORIZATION, token)
                 .body(DEACTIVATE_ACCOUNT)
                 .contentType("application/json-patch+json")
                 .when()
@@ -169,6 +191,17 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .then()
                 .statusCode(FORBIDDEN.getStatusCode())
                 .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+    }
+
+    private Stream<Arguments> providePatterns() {
+        return Stream.of(
+                Arguments.of("konto ", List.of(1L, 2L)),
+                Arguments.of(" new", List.of(2L)),
+                Arguments.of("mateusz Strz", List.of(1L)),
+                Arguments.of("StrZelecki matEu", List.of(1L)),
+                Arguments.of(null, List.of(1L, 2L, 3L)),
+                Arguments.of(" ", List.of(1L, 2L, 3L))
+        );
     }
 
 }

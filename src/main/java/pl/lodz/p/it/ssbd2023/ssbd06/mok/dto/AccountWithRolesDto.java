@@ -20,8 +20,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PhoneNumber;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountWithRolesDto {
-    private long id;
-
+    private Long id;
     @Login
     private String login;
 

@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -162,22 +161,25 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public PaginatedList<AccountWithRolesDto> getAccountsList(final GetPagedAccountListDto dto) {
+    public PaginatedList<AccountWithRolesDto> getAccountsList(final String pattern, final GetPagedAccountListDto dto) {
         int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;
         int pageSizeResolved = dto.getPageSize() != null ? dto.getPageSize() : defaultListPageSize;
         String orderByResolved = dto.getOrderBy() != null ? dto.getOrderBy() : "login";
 
-        List<AccountWithRolesDto> accountDtoList = accountService.getAccountsList(pageResolved,
+        String preparedPattern = preparePattern(pattern);
+
+        List<AccountWithRolesDto> accountDtoList = accountService.getAccountsList(preparedPattern,
+                        pageResolved,
                         pageSizeResolved,
                         dto.getOrder(),
                         orderByResolved).stream()
                 .map(AccountWithRolesDto::new)
-                .collect(Collectors.toList());
+                .toList();
 
         return new PaginatedList<>(accountDtoList,
                 pageSizeResolved,
                 accountDtoList.size(),
-                (long) Math.ceil(accountService.getAccountListCount().doubleValue() / pageSizeResolved));
+                (long) Math.ceil(accountService.getAccountListCount(preparedPattern).doubleValue() / pageSizeResolved));
     }
 
     @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
@@ -189,5 +191,9 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     public AccountDto getUserById(final long id) {
         Account account = accountService.getUserById(id);
         return new AccountDto(account);
+    }
+
+    private String preparePattern(final String pattern) {
+        return pattern != null && !pattern.isBlank() ? pattern.strip() : null;
     }
 }

@@ -15,8 +15,10 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
@@ -109,7 +111,8 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     @PermitAll
-    public List<Account> findAccounts(final int page,
+    public List<Account> findAccounts(final String pattern,
+                                      final int page,
                                       final int pageSize,
                                       final boolean ascOrder,
                                       final String orderBy) {
@@ -123,6 +126,10 @@ public class AccountFacade extends AbstractFacade<Account> {
             query.orderBy(cb.desc(resolveFieldClass(join, orderBy).get(orderBy)));
         }
 
+        if (pattern != null) {
+            query.where(cb.or(getFilterByPatternPredicates(pattern, cb, account, join)));
+        }
+
         return getEntityManager().createQuery(query)
                 .setFirstResult(pageSize * (page - 1))
                 .setMaxResults(pageSize)
@@ -130,13 +137,34 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     @PermitAll
-    public Long count() {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
-        Root<Account> table = query.from(Account.class);
-        query.select(criteriaBuilder.count(table));
+    public Long count(final String pattern) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Account> account = query.from(Account.class);
+        Join<Account, AccountDetails> join = account.join("accountDetails");
+
+        if (pattern != null) {
+            query.where(cb.or(getFilterByPatternPredicates(pattern, cb, account, join)));
+        }
+
+        query.select(cb.count(account));
 
         return em.createQuery(query).getSingleResult();
+    }
+
+    private Predicate[] getFilterByPatternPredicates(final String pattern, final CriteriaBuilder cb, final Root<Account> account,
+                                                     final Join<Account, AccountDetails> join) {
+        Expression<String> fullNameExpression = cb.concat(cb.concat(join.get("firstName"), " "), join.get("lastName"));
+        Expression<String> fullNameExpressionReversed = cb.concat(cb.concat(join.get("lastName"), " "), join.get("firstName"));
+
+        String filterPattern = "%" + pattern.toUpperCase() + "%";
+
+        Predicate fullNamePredicate = cb.like(cb.upper(fullNameExpression), filterPattern);
+        Predicate fullNamePredicateReversed = cb.like(cb.upper(fullNameExpressionReversed), filterPattern);
+        Predicate emailPredicate = cb.like(cb.upper(join.get("email")), filterPattern);
+        Predicate loginPredicate = cb.like(cb.upper(account.get("login")), filterPattern);
+
+        return new Predicate[]{fullNamePredicate, fullNamePredicateReversed, emailPredicate, loginPredicate};
     }
 
     private From<?, ?> resolveFieldClass(final Join<Account, AccountDetails> join, final String fieldName) {

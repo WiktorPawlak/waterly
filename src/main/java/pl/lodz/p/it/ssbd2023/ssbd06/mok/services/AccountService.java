@@ -274,7 +274,8 @@ public class AccountService {
     }
 
     @PermitAll
-    public List<Account> getAccountsList(final Integer page,
+    public List<Account> getAccountsList(final String pattern,
+                                         final Integer page,
                                          final Integer pageSize,
                                          final String order,
                                          final String orderBy) {
@@ -285,7 +286,8 @@ public class AccountService {
         Optional<ListSearchPreferences> accountSearchPreferences = listSearchPreferencesFacade.findByAccount(account);
         updateOrCreateAccountSearchPreferences(order, orderBy, pageSize, account, accountSearchPreferences);
 
-        return accountFacade.findAccounts(page,
+        return accountFacade.findAccounts(pattern,
+                page,
                 pageSize,
                 ascOrder,
                 orderBy);
@@ -298,8 +300,8 @@ public class AccountService {
     }
 
     @PermitAll
-    public Long getAccountListCount() {
-        return accountFacade.count();
+    public Long getAccountListCount(final String pattern) {
+        return accountFacade.count(pattern);
     }
 
     @PermitAll
