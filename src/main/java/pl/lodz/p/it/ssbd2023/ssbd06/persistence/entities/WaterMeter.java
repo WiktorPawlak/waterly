@@ -9,6 +9,7 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ForeignKey;
@@ -21,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 
 @ToString(callSuper = true)
 @Entity
@@ -32,6 +34,7 @@ import lombok.ToString;
 )
 @Getter
 @NoArgsConstructor
+@EntityListeners({MolAuditingEntityListener.class})
 public class WaterMeter extends AbstractEntity {
     @NotNull
     @Column(nullable = false)

@@ -4,6 +4,7 @@ import static jakarta.persistence.CascadeType.REFRESH;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
 
 @Entity
 @Table(
@@ -25,6 +27,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners({MokAuditingEntityListener.class})
 public class ListSearchPreferences extends AbstractEntity {
 
     @OneToOne(cascade = {REFRESH})

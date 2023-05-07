@@ -2,6 +2,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
 
 @ToString(callSuper = true)
 @Entity
@@ -18,6 +20,7 @@ import lombok.ToString;
 @Setter
 @Builder
 @NoArgsConstructor
+@EntityListeners({MokAuditingEntityListener.class})
 public class AccountDetails extends AbstractEntity {
 
     @NotNull

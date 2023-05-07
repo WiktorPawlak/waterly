@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -15,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 
 @ToString(callSuper = true)
 @Entity
@@ -25,6 +27,7 @@ import lombok.ToString;
         })
 @NoArgsConstructor
 @Getter
+@EntityListeners({MolAuditingEntityListener.class})
 public class WaterMeterCheck extends AbstractEntity {
     @NotNull
     @Column(nullable = false)

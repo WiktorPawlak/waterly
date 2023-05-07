@@ -11,6 +11,7 @@ import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Index;
@@ -25,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 
 @ToString(callSuper = true)
@@ -41,6 +43,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 @NamedQuery(name = "Account.findAccountByEmail",
         query = "select a from Account a where a.accountDetails.email = :email")
 @NoArgsConstructor
+@EntityListeners({MokAuditingEntityListener.class})
 public class Account extends AbstractEntity {
 
     @NotNull

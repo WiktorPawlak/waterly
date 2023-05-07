@@ -4,15 +4,18 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 
 @ToString(callSuper = true)
 @Entity
 @Getter
 @Table(name = "usage_report")
+@EntityListeners({MolAuditingEntityListener.class})
 public class UsageReport extends AbstractEntity {
     @NotNull
     @Column(name = "garbage_cost")

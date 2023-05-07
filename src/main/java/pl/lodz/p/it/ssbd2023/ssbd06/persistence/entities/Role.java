@@ -15,6 +15,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -28,6 +29,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
 
 @ToString(callSuper = true)
 @Entity
@@ -41,6 +43,7 @@ import lombok.ToString;
         query = "select r from Role r where r.account = :account and r.permissionLevel = :permissionLevel")
 @Getter
 @NoArgsConstructor
+@EntityListeners({MokAuditingEntityListener.class})
 public class Role extends AbstractEntity {
 
     @Size(min = 5, max = 16)

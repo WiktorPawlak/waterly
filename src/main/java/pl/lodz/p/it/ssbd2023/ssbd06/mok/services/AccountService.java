@@ -86,10 +86,6 @@ public class AccountService {
     @Property("auth.attempts")
     private int authAttempts;
 
-    @Inject
-    @Property("default.list.page.size")
-    private int defaultListPageSize;
-
     @PermitAll
     public Account findByLogin(final String login) {
         Optional<Account> optionalAccount = accountFacade.findByLogin(login);

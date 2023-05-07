@@ -12,7 +12,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 public class ServiceExceptionInterceptor {
 
     @AroundInvoke
-    public Object intercept(final InvocationContext ctx) throws Exception {
+    public Object intercept(final InvocationContext ctx) {
         try {
             return ctx.proceed();
         } catch (final ApplicationBaseException abe) {

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
@@ -17,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
 
 @ToString(callSuper = true)
 @NamedQuery(name = "AuthInfo.findByAccountId",
@@ -28,6 +30,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
+@EntityListeners({MokAuditingEntityListener.class})
 public class AuthInfo extends AbstractEntity {
 
     @Column(name = "last_success_auth")

@@ -51,5 +51,6 @@ public abstract class AbstractEntity implements Serializable {
     @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "updated_by")
+    @Setter
     private Account updatedBy;
 }
