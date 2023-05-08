@@ -85,19 +85,23 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     @PermitAll
-    public Account findByWaitingAccountDetailsId(final long id) {
-        TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByWaitingAccountDetailsUpdates_Id", Account.class);
-        accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
-        accountTypedQuery.setParameter("id", id);
-        return accountTypedQuery.getSingleResult();
-    }
-
-    @PermitAll
     public Optional<Account> findByEmail(final String email) {
         try {
             TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findAccountByEmail", Account.class);
             accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
             accountTypedQuery.setParameter("email", email);
+            return Optional.of(accountTypedQuery.getSingleResult());
+        } catch (final NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @PermitAll
+    public Optional<Account> findByPhoneNumber(final String phoneNumber) {
+        try {
+            TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByPhoneNumber", Account.class);
+            accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
+            accountTypedQuery.setParameter("phoneNumber", phoneNumber);
             return Optional.of(accountTypedQuery.getSingleResult());
         } catch (final NoResultException e) {
             return Optional.empty();

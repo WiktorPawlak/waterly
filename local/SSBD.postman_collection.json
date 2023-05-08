@@ -1,931 +1,931 @@
 {
-	"info": {
-		"_postman_id": "9b5d68c1-eb5a-4506-a13a-e0dd525adb7a",
-		"name": "SSBD",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Register",
-			"item": [
-				{
-					"name": "Register",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\" : \"logafsdg\",\r\n    \"password\" : \"password1\",\r\n    \"email\" : \"skulmikpl@gmail.com\",\r\n    \"firstName\" : \"firstName\",\r\n    \"lastName\" : \"lastName\",\r\n    \"phoneNumber\" : \"184295835\",\r\n    \"languageTag\" : \"pl-PL\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/register",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Resend Confirmation Token",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/5/resendVerificationToken",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"5",
-								"resendVerificationToken"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Confirm Registration",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/confirmRegistration?token=2b94ba78-594c-4fc7-ab27-28cf85426d37",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"confirmRegistration"
-							],
-							"query": [
-								{
-									"key": "token",
-									"value": "2b94ba78-594c-4fc7-ab27-28cf85426d37"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Activate account",
-			"item": [
-				{
-					"name": "Login as admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login as facility manager",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Activate",
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {
-							"content-type": true
-						}
-					},
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json-patch+json",
-								"type": "default"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"active\": true\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/3",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"3"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "DeactivateAccount",
-			"item": [
-				{
-					"name": "Login as admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login as facility manager",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"tomdut\",\r\n    \"password\":\"jantes123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Deactivate",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json-patch+json",
-								"type": "default"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"active\": false\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/3",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"3"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Grant Permissions",
-			"item": [
-				{
-					"name": "Login as admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Grant Administrator Permissions",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{TOKEN}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"operation\": \"GRANT\",\r\n    \"roles\" : [\"ADMINISTRATOR\"]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/3/roles",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"3",
-								"roles"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Revoke permissions",
-			"item": [
-				{
-					"name": "Login as admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Revoke Administrator Permissions",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{TOKEN}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"operation\": \"REVOKE\",\r\n    \"roles\" : [\"ADMINISTRATOR\"]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/aaaa",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"aaaa"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Update own account details",
-			"item": [
-				{
-					"name": "Login as owner",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"new\",\r\n    \"password\":\"jantes123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Change own account details",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{TOKEN}}",
-								"type": "default",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"dupa@gmail.com\",\r\n    \"firstName\": \"ttaaa\",\r\n    \"lastName\": \"yhy\",\r\n    \"phoneNumber\": 555666222\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/self",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"self"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Change own password",
-			"item": [
-				{
-					"name": "Login as owner",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"new\",\r\n    \"password\":\"jantes123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Update account details",
-			"item": [
-				{
-					"name": "Login as admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Auth",
-			"item": [
-				{
-					"name": "Login as admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"zerowanieslojaspuchy\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login as owner",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"logafsdg\",\r\n    \"password\":\"password1\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login as facility manager",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.text()\r",
-									"pm.collectionVariables.set('TOKEN', jsonData);\r",
-									"\r",
-									"console.log(jsonData)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"tomdut\",\r\n    \"password\":\"jantes123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/auth/login",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "PasswordReset",
-			"item": [
-				{
-					"name": "passwordReset",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"token\":\"0053623b-93fe-4ba0-b3dc-604b27de2925\",\r\n    \"newPassword\":\"zerowanieslojaspuchy\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/password/reset",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"password",
-								"reset"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "requestPasswordReset",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE_URL}}/accounts/password/request-reset?email=kontomatino@gmail.com",
-							"host": [
-								"{{API_BASE_URL}}"
-							],
-							"path": [
-								"accounts",
-								"password",
-								"request-reset"
-							],
-							"query": [
-								{
-									"key": "email",
-									"value": "kontomatino@gmail.com"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"auth": {
-		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "{{TOKEN}}",
-				"type": "string"
-			}
-		]
-	},
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "API_BASE_URL",
-			"value": "http://localhost:8080/ssbd06-0.2.1/api",
-			"type": "string"
-		},
-		{
-			"key": "TOKEN",
-			"value": "",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "9b5d68c1-eb5a-4506-a13a-e0dd525adb7a",
+    "name": "SSBD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\" : \"logafsdg\",\r\n    \"password\" : \"password1\",\r\n    \"email\" : \"skulmikpl@gmail.com\",\r\n    \"firstName\" : \"firstName\",\r\n    \"lastName\" : \"lastName\",\r\n    \"phoneNumber\" : \"184295835\",\r\n    \"languageTag\" : \"pl-PL\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/register",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Confirmation Token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/5/resendVerificationToken",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "5",
+                "resendVerificationToken"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Registration",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/confirmRegistration?token=2b94ba78-594c-4fc7-ab27-28cf85426d37",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "confirmRegistration"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "2b94ba78-594c-4fc7-ab27-28cf85426d37"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Activate account",
+      "item": [
+        {
+          "name": "Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login as facility manager",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activate",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json-patch+json",
+                "type": "default"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"active\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/3",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "DeactivateAccount",
+      "item": [
+        {
+          "name": "Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login as facility manager",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"tomdut\",\r\n    \"password\":\"jantes123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json-patch+json",
+                "type": "default"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"active\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/3",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Grant Permissions",
+      "item": [
+        {
+          "name": "Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Grant Administrator Permissions",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"operation\": \"GRANT\",\r\n    \"roles\" : [\"ADMINISTRATOR\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/3/roles",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "3",
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Revoke permissions",
+      "item": [
+        {
+          "name": "Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke Administrator Permissions",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"operation\": \"REVOKE\",\r\n    \"roles\" : [\"ADMINISTRATOR\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/aaaa",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "aaaa"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Update own account details",
+      "item": [
+        {
+          "name": "Login as owner",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"new\",\r\n    \"password\":\"jantes123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change own account details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}",
+                "type": "default",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"dupa@gmail.com\",\r\n    \"firstName\": \"ttaaa\",\r\n    \"lastName\": \"yhy\",\r\n    \"phoneNumber\": 555666222\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/self",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "self"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Change own password",
+      "item": [
+        {
+          "name": "Login as owner",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"new\",\r\n    \"password\":\"jantes123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Update account details",
+      "item": [
+        {
+          "name": "Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"admin12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"admin\",\r\n    \"password\":\"zerowanieslojaspuchy\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login as owner",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"logafsdg\",\r\n    \"password\":\"password1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login as facility manager",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.text()\r",
+                  "pm.collectionVariables.set('TOKEN', jsonData);\r",
+                  "\r",
+                  "console.log(jsonData)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"login\":\"tomdut\",\r\n    \"password\":\"jantes123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/auth/login",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "PasswordReset",
+      "item": [
+        {
+          "name": "passwordReset",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"token\":\"0053623b-93fe-4ba0-b3dc-604b27de2925\",\r\n    \"newPassword\":\"zerowanieslojaspuchy\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/password/reset",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "password",
+                "reset"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "requestPasswordReset",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{API_BASE_URL}}/accounts/password/request-reset?email=kontomat@gmail.com",
+              "host": [
+                "{{API_BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "password",
+                "request-reset"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "kontomat@gmail.com"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{TOKEN}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "API_BASE_URL",
+      "value": "http://localhost:8080/ssbd06-0.2.1/api",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": "",
+      "type": "string"
+    }
+  ]
 }

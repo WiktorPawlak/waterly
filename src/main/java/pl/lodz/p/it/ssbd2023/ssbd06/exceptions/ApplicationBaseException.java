@@ -7,9 +7,10 @@ import jakarta.ejb.ApplicationException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountDoesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithPhoneNumberAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NoMatchingEmailException;
@@ -29,7 +30,8 @@ public class ApplicationBaseException extends WebApplicationException {
     protected static final String ERROR_OPTIMISTIC_LOCK = "ERROR.OPTIMISTIC_LOCK";
     protected static final String ERROR_TRANSACTION_ROLLBACK = "ERROR.TRANSACTION_ROLLBACK";
     protected static final String ERROR_ACCESS_DENIED = "ERROR.ACCESS_DENIED";
-    protected static final String ERROR_ACCOUNT_ALREADY_EXIST = "ERROR.ACCOUNT_EXISTS";
+    protected static final String ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXIST = "ERROR.ACCOUNT_WITH_EMAIL_EXIST";
+    protected static final String ERROR_ACCOUNT_WITH_PHONE_NUMBER_ALREADY_EXIST = "ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST";
     protected static final String ERROR_CANNOT_MODIFY_PERMISSIONS = "ERROR.CANNOT_MODIFY_PERMISSIONS";
     protected static final String ERROR_FORBIDDEN_OPERATION = "ERROR.FORBIDDEN_OPERATION";
     protected static final String ERROR_IDENTICAL_PASSWORDS = "ERROR.IDENTICAL_PASSWORDS";
@@ -80,8 +82,12 @@ public class ApplicationBaseException extends WebApplicationException {
         return new TransactionRollbackException();
     }
 
-    public static AccountAlreadyExistException accountAlreadyExist() {
-        return new AccountAlreadyExistException();
+    public static AccountWithEmailAlreadyExistException accountWithEmailAlreadyExist() {
+        return new AccountWithEmailAlreadyExistException();
+    }
+
+    public static AccountWithPhoneNumberAlreadyExistException accountWithPhoneNumberAlreadyExist() {
+        return new AccountWithPhoneNumberAlreadyExistException();
     }
 
     public static CannotModifyPermissionsException cannotModifyPermissionsException() {

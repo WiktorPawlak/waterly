@@ -40,7 +40,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
@@ -67,7 +66,7 @@ public class AccountController extends RepeatableTransactionController {
     @PUT
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateOwnAccountDetails(@NotNull @Valid final UpdateAccountDetailsDto dto) throws AccountAlreadyExistException {
+    public Response updateOwnAccountDetails(@NotNull @Valid final UpdateAccountDetailsDto dto) throws ApplicationBaseException {
         retry(() -> accountEndpoint.updateOwnAccountDetails(dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
@@ -77,16 +76,16 @@ public class AccountController extends RepeatableTransactionController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateAccountDetails(@PathParam("id") final long id, @NotNull @Valid final UpdateAccountDetailsDto dto)
-            throws AccountAlreadyExistException {
+            throws ApplicationBaseException {
         retry(() -> accountEndpoint.updateAccountDetails(id, dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 
     @PermitAll
-    @PUT
-    @Path("/account-details/{id}/accept")
-    public Response acceptAccountDetailsUpdate(@PathParam("id") final long id) {
-        retry(() -> accountEndpoint.acceptAccountDetailsUpdate(id), accountEndpoint);
+    @POST
+    @Path("/account-details/accept")
+    public Response acceptAccountDetailsUpdate(@NotNull @QueryParam("token") final String token) {
+        retry(() -> accountEndpoint.acceptAccountDetailsUpdate(token), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 

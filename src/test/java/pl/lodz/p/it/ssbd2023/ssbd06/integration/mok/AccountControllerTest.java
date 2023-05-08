@@ -3,11 +3,15 @@ package pl.lodz.p.it.ssbd2023.ssbd06.integration.mok;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
+import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
@@ -17,15 +21,16 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import io.restassured.http.Header;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.DatabaseConnector;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 
 class AccountControllerTest extends IntegrationTestsConfig {
@@ -124,8 +129,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldConfirmRegisteredAccountWhenVerificationTokenCorrect() {
-        // given
         DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
+        // given
         AccountDto accountDto = new AccountDto();
         accountDto.setPhoneNumber("123123123");
         accountDto.setEmail("test@test.test");
@@ -179,7 +184,169 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .statusCode(NOT_FOUND.getStatusCode());
     }
 
-    @ParameterizedTest(name = "token = {0}")
+    @Test
+    void shouldEditSelfAccountDetailsWhenEmailNotChanged() {
+        String firstName = "Kamil";
+        String lastName = "Kowalski-Nowak";
+        String phoneNumber = "000000000";
+
+        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(getOwnerAccount().getEmail(), firstName, lastName, phoneNumber);
+
+        given()
+                .header(AUTHORIZATION, OWNER_TOKEN)
+                .body(dto)
+                .when()
+                .put(ACCOUNT_PATH + "/self")
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        assertEquals(firstName, getOwnerAccount().getFirstName());
+        assertEquals(lastName, getOwnerAccount().getLastName());
+        assertEquals(phoneNumber, getOwnerAccount().getPhoneNumber());
+    }
+
+    @ParameterizedTest
+    @SneakyThrows
+    @CsvSource({"/self", "/1"})
+    void shouldEditAccountDetailsWithChangedEmailWhenEditAccepted(String path) {
+        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
+        String firstName = "Kamil";
+        String lastName = "Kowalski-Nowak";
+        String phoneNumber = "000000000";
+        String email = "mati@mati.com";
+
+        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(email, firstName, lastName, phoneNumber);
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(dto)
+                .when()
+                .put(ACCOUNT_PATH + path)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        assertNotEquals(firstName, getAdministratorAccount().getFirstName());
+        assertNotEquals(lastName, getAdministratorAccount().getLastName());
+        assertNotEquals(phoneNumber, getAdministratorAccount().getPhoneNumber());
+        assertNotEquals(email, getAdministratorAccount().getEmail());
+
+        String token = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token WHERE account_id = " + getAdministratorAccount().getId()
+        ).getString("token");
+
+        // when
+        given()
+                .when()
+                .post(ACCOUNT_PATH + "/account-details/accept?token=" + token)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        assertEquals(firstName, getAdministratorAccount().getFirstName());
+        assertEquals(lastName, getAdministratorAccount().getLastName());
+        assertEquals(phoneNumber, getAdministratorAccount().getPhoneNumber());
+        assertEquals(email, getAdministratorAccount().getEmail());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            ",,,,",
+            "' ',' ',' ',' '",
+            "'','','',''",
+            "mati mati,mati 123,mati mati,mati mati",
+    })
+    void whenUpdateSelfAccountDetailsAndDataIsIncorrectShouldReturnBadRequest(String email, String firstName, String lastName, String phoneNumber) {
+        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(email, firstName, lastName, phoneNumber);
+
+        given()
+                .header(AUTHORIZATION, OWNER_TOKEN)
+                .body(dto)
+                .when()
+                .put(ACCOUNT_PATH + "/self")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .body("[0].field", notNullValue())
+                .body("[0].message", notNullValue());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"/self", "/1"})
+    void whenUpdateAccountDetailsAndAccountWithEmailOrPhoneNumberExistShouldReturnConflict(String path) {
+        AccountDto adminAccount = getAdministratorAccount();
+        UpdateAccountDetailsDto dtoWithExistedEmail =
+                new UpdateAccountDetailsDto(getOwnerAccount().getEmail(),
+                        adminAccount.getFirstName(),
+                        adminAccount.getLastName(),
+                        adminAccount.getPhoneNumber()
+                );
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(dtoWithExistedEmail)
+                .when()
+                .put(ACCOUNT_PATH + path)
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
+
+        UpdateAccountDetailsDto dtoWithExistedPhoneNumber =
+                new UpdateAccountDetailsDto(adminAccount.getEmail(),
+                        adminAccount.getFirstName(),
+                        adminAccount.getLastName(),
+                        getFacilityManagerAccount().getPhoneNumber()
+                );
+
+        given()
+                .header(AUTHORIZATION, OWNER_TOKEN)
+                .body(dtoWithExistedPhoneNumber)
+                .when()
+                .put(ACCOUNT_PATH + "/self")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST"));
+    }
+
+    @Test
+    void shouldEditOtherAccountAccountDetailsWhenEmailNotChanged() {
+        String firstName = "Kamil";
+        String lastName = "Kowalski-Nowak";
+        String phoneNumber = "000000000";
+
+        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(getOwnerAccount().getEmail(), firstName, lastName, phoneNumber);
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(dto)
+                .when()
+                .put(ACCOUNT_PATH + "/" + OWNER_ID)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        assertEquals(firstName, getOwnerAccount().getFirstName());
+        assertEquals(lastName, getOwnerAccount().getLastName());
+        assertEquals(phoneNumber, getOwnerAccount().getPhoneNumber());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensForParameterizedTests")
+    void shouldForbidNonAdminUsersToUpdateOtherAccountsAccountDetails(String token) {
+        String firstName = "Kamil";
+        String lastName = "Kowalski-Nowak";
+        String phoneNumber = "000000000";
+        String email = "mati@mati.com";
+
+        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(email, firstName, lastName, phoneNumber);
+
+        given()
+                .header(AUTHORIZATION, token)
+                .body(dto)
+                .when()
+                .put(ACCOUNT_PATH + "/" + ADMIN_ID)
+                .then()
+                .statusCode(FORBIDDEN.getStatusCode())
+                .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+    }
+
+    @ParameterizedTest
     @MethodSource("provideTokensForParameterizedTests")
     void shouldForbidNonAdminUsersToDeactivateAccount(String token) {
         given()

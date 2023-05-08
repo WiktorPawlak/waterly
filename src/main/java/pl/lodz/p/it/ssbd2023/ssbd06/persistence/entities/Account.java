@@ -37,11 +37,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
         @Index(name = "account_waiting_details_idx", columnList = "waiting_account_details_id")
 })
 @NamedQuery(name = "Account.findByLogin", query = "select a from Account a where a.login = :login")
-@NamedQuery(name = "Account.findByWaitingAccountDetailsUpdates_Id", query = "select a from Account a where a.waitingAccountDetails.id = :id")
 @NamedQuery(name = "Account.findByAccountDetails_Email",
         query = "select a from Account a where a.accountDetails.email = :email or a.waitingAccountDetails.email = :email")
 @NamedQuery(name = "Account.findAccountByEmail",
         query = "select a from Account a where a.accountDetails.email = :email")
+@NamedQuery(name = "Account.findByPhoneNumber", query = "select a from Account a where a.accountDetails.phoneNumber = :phoneNumber")
 @NoArgsConstructor
 @EntityListeners({MokAuditingEntityListener.class})
 public class Account extends AbstractEntity {

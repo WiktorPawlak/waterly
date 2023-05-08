@@ -114,6 +114,12 @@ public class VerificationTokenService {
     }
 
     @PermitAll
+    public VerificationToken createAcceptAccountDetailToken(final Account account) {
+        VerificationToken token = prepareToken(account, timeProvider.currentDate(), verificationTokenConfig.getExpirationAccountDetailsInMinutes());
+        return verificationTokenFacade.create(token);
+    }
+
+    @PermitAll
     public Account confirmResetPassword(final UUID token) throws TokenNotFoundException {
         VerificationToken verificationToken = verificationTokenFacade
                 .findValidByToken(token.toString())

@@ -20,6 +20,11 @@ public class VerificationTokenConfig {
     @Property("reset.token.expirationTimeInMinutes")
     private Integer expirationResetTimeInMinutes;
 
+    @Getter
+    @Inject
+    @Property("accountDetails.token.expirationTimeInMinutes")
+    private Integer expirationAccountDetailsInMinutes;
+
     public double getHalfExpirationTimeInMinutes() {
         return expirationTimeInMinutes * HALF;
     }

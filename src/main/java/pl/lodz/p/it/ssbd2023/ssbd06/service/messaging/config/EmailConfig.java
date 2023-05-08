@@ -36,4 +36,8 @@ public class EmailConfig {
     @Inject
     @Property("mail.reset-password-url")
     private String passwordResetUrl;
+
+    @Inject
+    @Property("mail.account-detail-accept-url")
+    private String accountDetailsAcceptUrl;
 }

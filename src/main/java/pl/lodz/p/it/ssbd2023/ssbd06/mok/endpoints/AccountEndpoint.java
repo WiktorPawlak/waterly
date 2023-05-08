@@ -29,7 +29,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
@@ -65,7 +65,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExistException {
+    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountWithEmailAlreadyExistException {
         accountService.updateAccountDetails(id, updateAccountDetailsDto.toDomain());
     }
 
@@ -90,7 +90,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountAlreadyExistException {
+    public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) throws AccountWithEmailAlreadyExistException {
         accountService.updateOwnAccountDetails(authenticatedAccount.getLogin(), updateAccountDetailsDto.toDomain());
     }
 
@@ -118,8 +118,8 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @PermitAll
-    public void acceptAccountDetailsUpdate(final long id) {
-        accountService.acceptAccountDetailsUpdate(id);
+    public void acceptAccountDetailsUpdate(final String token) {
+        accountService.acceptAccountDetailsUpdate(token);
     }
 
     @PermitAll

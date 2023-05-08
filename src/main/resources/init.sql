@@ -47,7 +47,7 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_meter_id_seq TO ssbd06mol;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_usage_stats_id_seq TO ssbd06mol;
 
 -- add first administrator password admin12345
-INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on) VALUES (nextval('account_details_id_seq'), 0, 'kontomatino@gmail.com', 'Mateusz', 'Strzelecki', '123456789', now(), now());
+INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on) VALUES (nextval('account_details_id_seq'), 0, 'kontomat@gmail.com', 'Mateusz', 'Strzelecki', '123456789', now(), now());
 INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on) VALUES (nextval('account_id_seq'), 0, true, 'admin', '$2a$04$m9vbbL2RTbV/XNC44TEZ0e.t9WH2Q6hjtyEem/siFCdNS564hW68q', 'en_US', 'CONFIRMED', 1, now(), now());
 INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('ADMINISTRATOR', nextval('role_id_seq'), true, 0, 1, now(), now());
 INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), true, 0, 1, now(), now());

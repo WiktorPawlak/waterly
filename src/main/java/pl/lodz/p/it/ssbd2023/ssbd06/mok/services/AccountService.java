@@ -27,8 +27,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHand
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
@@ -46,7 +46,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.verifications.VerificationsProvider;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.verifications.TokenSender;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
@@ -70,7 +70,7 @@ public class AccountService {
     @Inject
     private NotificationsProvider notificationsProvider;
     @Inject
-    private VerificationsProvider verificationsProvider;
+    private TokenSender tokenSender;
     @Inject
     private VerificationTokenService verificationTokenService;
     @Inject
@@ -142,7 +142,7 @@ public class AccountService {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void updateAccountDetails(final long id, final AccountDetails accountDetails) throws AccountAlreadyExistException {
+    public void updateAccountDetails(final long id, final AccountDetails accountDetails) throws AccountWithEmailAlreadyExistException {
         Account account = accountFacade.findById(id);
         addAccountDetailsToUpdate(account, accountDetails);
     }
@@ -154,7 +154,7 @@ public class AccountService {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) throws AccountAlreadyExistException {
+    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) throws AccountWithEmailAlreadyExistException {
         Account account = findByLogin(login);
         addAccountDetailsToUpdate(account, accountDetails);
     }
@@ -163,16 +163,21 @@ public class AccountService {
     public void resendEmailToAcceptAccountDetailsUpdate(final String login) {
         Account account = findByLogin(login);
 
+        //TODO resend email token
         notificationsProvider.notifyWaitingAccountDetailsUpdate(account.getId());
     }
 
-    public void acceptAccountDetailsUpdate(final long id) {
-        Account account = accountFacade.findByWaitingAccountDetailsId(id);
+    @PermitAll
+    public void acceptAccountDetailsUpdate(final String token) {
+        VerificationToken verificationToken = verificationTokenService.findValidToken(token);
+        Account account = verificationToken.getAccount();
 
         account.setAccountDetails(account.getWaitingAccountDetails());
         account.setWaitingAccountDetails(null);
 
         accountFacade.update(account);
+        //TODO czy to usuwa wszystkie tokeny?
+        verificationTokenService.clearTokens(account.getId());
     }
 
     @PermitAll
@@ -206,7 +211,7 @@ public class AccountService {
         VerificationToken token = verificationTokenService.createPrimaryFullTimeToken(persistedAccountEntity);
         accountVerificationTimer.scheduleAccountDeletion(token);
 
-        verificationsProvider.sendVerificationToken(token);
+        tokenSender.sendVerificationToken(token);
     }
 
     @RolesAllowed(ADMINISTRATOR)
@@ -222,7 +227,7 @@ public class AccountService {
         Account account = accountFacade.findById(accountId);
 
         VerificationToken halfTimeToken = verificationTokenService.findOrCreateSecondaryHalfTimeToken(account);
-        verificationsProvider.sendVerificationToken(halfTimeToken);
+        tokenSender.sendVerificationToken(halfTimeToken);
     }
 
     @OnlyGuest
@@ -247,7 +252,7 @@ public class AccountService {
     public void sendEmailToken(final Account account) {
         VerificationToken token = verificationTokenService.createResetToken(account);
         checkAccountStatus(account);
-        verificationsProvider.sendResetToken(token);
+        tokenSender.sendResetToken(token);
     }
 
     @PermitAll
@@ -382,24 +387,40 @@ public class AccountService {
         roleToRemove.ifPresent(optRole -> optRole.setActive(false));
     }
 
-    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) throws AccountAlreadyExistException {
+    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) throws AccountWithEmailAlreadyExistException {
         String currentAccountEmail = account.getAccountDetails().getEmail();
+        String currentAccountPhoneNumber = account.getAccountDetails().getPhoneNumber();
 
-        Optional<Account> optionalAccount = accountFacade.findByEmail(accountDetails.getEmail());
-
-        if (optionalAccount.isPresent()) {
-            log.info("Account details update error: account with email" + accountDetails.getEmail() + " already exist.");
-            throw ApplicationBaseException.accountAlreadyExist();
+        if (!accountDetails.getPhoneNumber().equals(currentAccountPhoneNumber)) {
+            checkAccountWithPhoneNumberExist(accountDetails.getPhoneNumber());
         }
 
         if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {
             updateAccountDetails(accountDetails, account);
             log.info("Account details updated: " + account.getId());
         } else {
+            checkAccountWithEmailExist(accountDetails.getEmail());
+
             account.setWaitingAccountDetails(accountDetails);
             accountFacade.update(account);
-            notificationsProvider.notifyWaitingAccountDetailsUpdate(account.getId());
+            tokenSender.accountDetailsAcceptToken(verificationTokenService.createAcceptAccountDetailToken(account));
             log.info("Added account details waiting for accept: " + account.getId());
+        }
+    }
+
+    private void checkAccountWithEmailExist(final String email) {
+        Optional<Account> optionalAccountByEmail = accountFacade.findByEmail(email);
+        if (optionalAccountByEmail.isPresent()) {
+            log.info("Account details update error: account with email" + email + " already exist.");
+            throw ApplicationBaseException.accountWithEmailAlreadyExist();
+        }
+    }
+
+    private void checkAccountWithPhoneNumberExist(final String phoneNumber) {
+        Optional<Account> optionalAccountByEmail = accountFacade.findByPhoneNumber(phoneNumber);
+        if (optionalAccountByEmail.isPresent()) {
+            log.info("Account details update error: account with phone number" + phoneNumber + " already exist.");
+            throw ApplicationBaseException.accountWithPhoneNumberAlreadyExist();
         }
     }
 
