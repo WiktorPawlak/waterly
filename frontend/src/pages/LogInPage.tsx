@@ -6,6 +6,7 @@ import { LoginFormSection } from "../layouts/components/auth/login/LoginFormSect
 const LogInPage = () => {
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
     <MainLayout>
       <Box
@@ -32,7 +33,7 @@ const LogInPage = () => {
           {!isMobileWidth && (
             <img
               src={loginPose}
-              alt="XD"
+              alt="loginImage"
               style={{
                 width: "100%",
                 height: "100%",

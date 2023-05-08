@@ -13,6 +13,7 @@ export const RegisterFormSection = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
     <Box
       sx={{

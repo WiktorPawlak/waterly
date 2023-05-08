@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LogInPage from "./pages/LogInPage";
 import RegisterPage from "./pages/RegisterPage";
 import WaitForVerifyPage from "./pages/WaitForVerifyPage";
+import EditAccountDetailsPage from "./pages/EditAccountDetailsPage";
 
 const Routing = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const Routing = createBrowserRouter([
   {
     path: "/wait-for-verify",
     element: <WaitForVerifyPage />,
+  },
+  {
+    path: "/edit-profile",
+    element: <EditAccountDetailsPage />,
   },
 ]);
 
