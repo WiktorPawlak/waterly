@@ -29,6 +29,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
@@ -46,6 +47,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ListSearchPreferences;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
@@ -144,7 +146,7 @@ public class AccountService {
         accountFacade.update(account);
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed({ADMINISTRATOR})
     public void updateAccountDetails(final long id, final AccountDetails accountDetails) throws AccountWithEmailAlreadyExistException {
         Account account = accountFacade.findById(id);
         addAccountDetailsToUpdate(account, accountDetails);
@@ -217,7 +219,7 @@ public class AccountService {
         tokenSender.sendVerificationToken(token);
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed({ADMINISTRATOR})
     public void createUser(final CreateAccountDto account) {
         Account accountEntity = prepareAccountEntity(account);
         accountEntity.setAccountState(CONFIRMED);
@@ -259,8 +261,23 @@ public class AccountService {
     }
 
     @PermitAll
+    public void sendChangePasswordToken(final Account account) {
+        VerificationToken token = verificationTokenService.createChangePasswordToken(account);
+        checkAccountStatus(account);
+        tokenSender.sendChangePasswordToken(token);
+    }
+
+    @RolesAllowed(ADMINISTRATOR)
+    public void changePasswordByAdmin(final PasswordChangeByAdminDto changeByAdminDto, final Account account) {
+        checkAccountStatus(account);
+        var hashedNewPassword = hashProvider.generate(changeByAdminDto.getNewPassword().toCharArray());
+        changePassword(account, hashedNewPassword);
+    }
+
+    @PermitAll
     public void resetPassword(final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
-        Account account = verificationTokenService.confirmResetPassword(UUID.fromString(passwordResetDto.getToken()));
+        TokenType type = passwordResetDto.getType();
+        Account account = verificationTokenService.confirmPassword(UUID.fromString(passwordResetDto.getToken()), type);
         checkAccountStatus(account);
         var hashedNewPassword = hashProvider.generate(passwordResetDto.getNewPassword().toCharArray());
         changePassword(account, hashedNewPassword);

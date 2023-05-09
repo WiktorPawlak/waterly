@@ -38,6 +38,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
@@ -188,17 +189,28 @@ public class AccountController extends RepeatableTransactionController {
 
     @POST
     @Path("/password/request-reset")
-    public Response requestPasswordReset(@Email @QueryParam("email") final String email) {
-        retry(() -> accountEndpoint.sendResetPasswordToken(email), accountEndpoint);
+    public Response requestPasswordReset(@Valid @Email @QueryParam("email") final String email) {
+        retry(() -> accountEndpoint.sendResetPasswordTokenAndChangePassword(email), accountEndpoint);
         log.info(() -> "Requested password reset by email: " + email);
+        return Response.ok().build();
+    }
+
+    @RolesAllowed({ADMINISTRATOR})
+    @POST
+    @Path("/password/request-change")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response requestPasswordChange(@Valid @Email @QueryParam("email") final String email, final PasswordChangeByAdminDto dto) {
+        retry(() -> accountEndpoint.sendChangePasswordToken(email, dto), accountEndpoint);
+        log.info(() -> "Requested password change for user with email: " + email);
         return Response.ok().build();
     }
 
     @POST
     @Path("/password/reset")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void resetPassword(@Valid final PasswordResetDto dto) throws TokenNotFoundException {
+    public Response resetPassword(@Valid final PasswordResetDto dto) throws TokenNotFoundException {
         retry(() -> accountEndpoint.resetPassword(dto), accountEndpoint);
+        return Response.ok().build();
     }
 
     @GET

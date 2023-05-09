@@ -16,7 +16,8 @@ public class I18nProviderImpl implements I18nProvider {
 
     public static final String RESET_PASSWORD_MAIL_TOPIC = "mail.reset-password.topic";
     public static final String RESET_PASSWORD_MAIL_BODY = "mail.reset-password.body";
-
+    public static final String CHANGE_PASSWORD_MAIL_TOPIC = "mail.change-password.topic";
+    public static final String CHANGE_PASSWORD_MAIL_BODY = "mail.change-password.body";
     public static final String ACCOUNT_DETAILS_ACCEPT_MAIL_TOPIC = "mail.accept-account-details.topic";
     public static final String ACCOUNT_DETAILS_ACCEPT_MAIL_BODY = "mail.accept-account-details.body";
 

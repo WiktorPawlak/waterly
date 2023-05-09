@@ -18,6 +18,7 @@ import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 import java.util.List;
 import java.util.stream.Stream;
 
+import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,8 +33,12 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 class AccountControllerTest extends IntegrationTestsConfig {
 
@@ -407,6 +412,161 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .then()
                 .statusCode(FORBIDDEN.getStatusCode())
                 .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldChangePasswordRequestProperlyAfterUserChange() {
+        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
+        String newPassword = "123jantes";
+        PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto(newPassword);
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .queryParam("email", getOwnerAccount().getEmail())
+                .body(passwordChangeByAdminDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-change")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        String changePasswordToken = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
+        ).getString("token");
+
+        String newPassword1 = "1234jantes";
+        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword1, TokenType.CHANGE_PASSWORD);
+        given()
+                //.header(AUTHORIZATION, OWNER_TOKEN)
+                .body(changePasswordRequestDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        given()
+                .body(new Credentials("new", "1234jantes"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(AUTH_PATH + "/login")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldChangePasswordRequestProperlyAfterAdminChange() {
+        String newPassword = "123jantes";
+        PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto(newPassword);
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .queryParam("email", getOwnerAccount().getEmail())
+                .body(passwordChangeByAdminDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-change")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        given()
+                .body(new Credentials("new", "123jantes"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(AUTH_PATH + "/login")
+                .then()
+                .statusCode(OK.getStatusCode());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensForParameterizedTests")
+    void shouldForbidNotAdminUsersToRequestPasswordChange(String token) {
+        PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
+        given()
+                .header(AUTHORIZATION, token)
+                .queryParam("email", getOwnerAccount().getEmail())
+                .body(passwordChangeByAdminDto)
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-change")
+                .then()
+                .statusCode(FORBIDDEN.getStatusCode())
+                .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+    }
+
+    @Test
+    @SneakyThrows
+    void noMatchingEmailsForPasswordChangeRequest() {
+        String email = "tenEmailNieIstnieje@aaa.com";
+        PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .queryParam("email", email)
+                .body(passwordChangeByAdminDto)
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-change")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .body("message", equalTo("ERROR.NO_MATCHING_EMAILS"));
+    }
+
+    @Test
+    void shouldRespondWith404WhenChangePasswordTokenDoesntExist() {
+        String newPassword = "123jantes";
+        String thisTokenIsNotCorrect = "11111111-1111-1111-1111-a4cbafae584d";
+        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(thisTokenIsNotCorrect, newPassword, TokenType.CHANGE_PASSWORD);
+
+        given()
+                .header(AUTHORIZATION, OWNER_TOKEN)
+                .body(changePasswordRequestDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldRespondWith404WhenChangePasswordTokenWasAlreadyUsed() {
+        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
+        PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .queryParam("email", getOwnerAccount().getEmail())
+                .body(passwordChangeByAdminDto)
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-change")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        String changePasswordToken = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
+        ).getString("token");
+
+        String newPassword = "124jantes";
+        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword, TokenType.CHANGE_PASSWORD);
+        given()
+                //.header(AUTHORIZATION, OWNER_TOKEN)
+                .body(changePasswordRequestDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        String newPassword1 = "125jantes";
+        PasswordResetDto newChangePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword1, TokenType.CHANGE_PASSWORD);
+        given()
+                .header(AUTHORIZATION, OWNER_TOKEN)
+                .body(newChangePasswordRequestDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
     }
 
     private Stream<Arguments> providePatterns() {

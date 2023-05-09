@@ -8,5 +8,7 @@ public interface TokenSender {
 
     void sendResetToken(VerificationToken token);
 
+    void sendChangePasswordToken(VerificationToken token);
+
     void accountDetailsAcceptToken(VerificationToken token);
 }

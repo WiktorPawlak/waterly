@@ -38,6 +38,10 @@ public class EmailConfig {
     private String passwordResetUrl;
 
     @Inject
+    @Property("mail.change-password-url")
+    private String passwordChangeUrl;
+
+    @Inject
     @Property("mail.account-detail-accept-url")
     private String accountDetailsAcceptUrl;
 }

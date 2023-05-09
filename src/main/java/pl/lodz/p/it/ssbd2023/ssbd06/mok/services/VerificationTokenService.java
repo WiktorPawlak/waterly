@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.ACCOUNT_DETAILS_UPDATE;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.CHANGE_PASSWORD;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.PASSWORD_RESET;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
 
@@ -69,7 +70,7 @@ public class VerificationTokenService {
     @PermitAll
     public VerificationToken findOrCreateSecondaryHalfTimeToken(final Account account)
             throws TokenExceededHalfTimeException, TokenNotFoundException {
-        List<VerificationToken> verificationTokens = verificationTokenFacade.findByAccountIdAndTokenType(account.getId(), REGISTRATION);
+        List<VerificationToken> verificationTokens = verificationTokenFacade.findByAccountIdAndTokenType(account.getId(), TokenType.REGISTRATION);
         VerificationToken primaryVerificationToken = getPrimaryVerificationToken(verificationTokens);
 
         if (checkIfHalfTimeExceeded(primaryVerificationToken)) {
@@ -135,6 +136,17 @@ public class VerificationTokenService {
     }
 
     @PermitAll
+    public VerificationToken createChangePasswordToken(final Account account) {
+        VerificationToken token = prepareToken(
+                account,
+                timeProvider.currentDate(),
+                verificationTokenConfig.getExpirationChangePasswordTimeInMinutes(),
+                CHANGE_PASSWORD
+        );
+        return verificationTokenFacade.create(token);
+    }
+
+    @PermitAll
     public VerificationToken createAcceptAccountDetailToken(final Account account) {
         VerificationToken token = prepareToken(
                 account,
@@ -146,9 +158,9 @@ public class VerificationTokenService {
     }
 
     @PermitAll
-    public Account confirmResetPassword(final UUID token) throws TokenNotFoundException {
+    public Account confirmPassword(final UUID token, final TokenType type) throws TokenNotFoundException {
         VerificationToken verificationToken = verificationTokenFacade
-                .findValidByToken(token.toString(), PASSWORD_RESET)
+                .findValidByToken(token.toString(), type)
                 .orElseThrow(TokenNotFoundException::new);
         verificationTokenFacade.delete(verificationToken);
         return verificationToken.getAccount();

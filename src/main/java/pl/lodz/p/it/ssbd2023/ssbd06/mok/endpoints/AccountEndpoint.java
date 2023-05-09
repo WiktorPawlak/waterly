@@ -28,6 +28,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
@@ -134,10 +135,21 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @PermitAll
-    public void sendResetPasswordToken(final String email) {
+    public void sendResetPasswordTokenAndChangePassword(final String email) {
         Optional<Account> optionalAccount = accountService.findByEmail(email);
         if (optionalAccount.isPresent()) {
             accountService.sendEmailToken(optionalAccount.get());
+        } else {
+            throw ApplicationBaseException.noMatchingEmailException();
+        }
+    }
+
+    @RolesAllowed({ADMINISTRATOR})
+    public void sendChangePasswordToken(final String email, final PasswordChangeByAdminDto dto) {
+        Optional<Account> optionalAccount = accountService.findByEmail(email);
+        if (optionalAccount.isPresent()) {
+            accountService.sendChangePasswordToken(optionalAccount.get());
+            accountService.changePasswordByAdmin(dto, optionalAccount.get());
         } else {
             throw ApplicationBaseException.noMatchingEmailException();
         }

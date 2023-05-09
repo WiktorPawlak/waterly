@@ -22,6 +22,11 @@ public class VerificationTokenConfig {
 
     @Getter
     @Inject
+    @Property("changePassword.token.expirationTimeInMinutes")
+    private Integer expirationChangePasswordTimeInMinutes;
+
+    @Getter
+    @Inject
     @Property("accountDetails.token.expirationTimeInMinutes")
     private Integer expirationAccountDetailsInMinutes;
 
