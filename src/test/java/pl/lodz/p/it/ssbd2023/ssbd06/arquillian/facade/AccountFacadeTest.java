@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.arquillian;
+package pl.lodz.p.it.ssbd2023.ssbd06.arquillian.facade;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
