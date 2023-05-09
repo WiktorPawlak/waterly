@@ -1,10 +1,14 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_CONFIRM;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -154,6 +158,14 @@ public class AccountFacade extends AbstractFacade<Account> {
         query.select(cb.count(account));
 
         return em.createQuery(query).getSingleResult();
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public List<Account> findNotAcceptedAccounts() {
+        TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByAccountState", Account.class);
+        accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
+        accountTypedQuery.setParameter("accountState", TO_CONFIRM);
+        return accountTypedQuery.getResultList();
     }
 
     private Predicate[] getFilterByPatternPredicates(final String pattern, final CriteriaBuilder cb, final Root<Account> account,

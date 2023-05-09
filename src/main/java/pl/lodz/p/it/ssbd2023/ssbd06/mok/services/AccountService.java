@@ -4,6 +4,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.CON
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.NOT_CONFIRMED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_CONFIRM;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -312,6 +313,11 @@ public class AccountService {
     @PermitAll
     public Account getUserById(final long id) {
         return accountFacade.findById(id);
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public List<Account> getNotAcceptedAccounts() {
+        return accountFacade.findNotAcceptedAccounts();
     }
 
     private void updateOrCreateAccountSearchPreferences(final String order,

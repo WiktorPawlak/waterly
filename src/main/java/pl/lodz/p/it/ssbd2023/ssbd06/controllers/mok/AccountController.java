@@ -209,4 +209,13 @@ public class AccountController extends RepeatableTransactionController {
         AccountDto accountDto = retry(() -> accountEndpoint.getUserById(id), accountEndpoint);
         return Response.ok().entity(accountDto).build();
     }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    @GET
+    @Path("/to-verify")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNotAcceptedAccounts() {
+        List<AccountDto> accounts = retry(() -> accountEndpoint.getNotAcceptedAccounts(), accountEndpoint);
+        return Response.ok().entity(accounts).build();
+    }
 }

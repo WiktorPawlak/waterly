@@ -193,6 +193,13 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         return new AccountDto(account);
     }
 
+    @RolesAllowed({FACILITY_MANAGER})
+    public List<AccountDto> getNotAcceptedAccounts() {
+        return accountService.getNotAcceptedAccounts().stream()
+                .map(AccountDto::new)
+                .toList();
+    }
+
     private String preparePattern(final String pattern) {
         return pattern != null && !pattern.isBlank() ? pattern.strip() : null;
     }

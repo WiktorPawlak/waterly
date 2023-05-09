@@ -42,6 +42,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 @NamedQuery(name = "Account.findAccountByEmail",
         query = "select a from Account a where a.accountDetails.email = :email")
 @NamedQuery(name = "Account.findByPhoneNumber", query = "select a from Account a where a.accountDetails.phoneNumber = :phoneNumber")
+@NamedQuery(name = "Account.findByAccountState", query = "select a from Account a where a.accountState = :accountState")
 @NoArgsConstructor
 @EntityListeners({MokAuditingEntityListener.class})
 public class Account extends AbstractEntity {
