@@ -24,11 +24,13 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.DatabaseConnector;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
@@ -131,7 +133,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     void shouldConfirmRegisteredAccountWhenVerificationTokenCorrect() {
         DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
         // given
-        AccountDto accountDto = new AccountDto();
+        CreateAccountDto accountDto = new CreateAccountDto();
         accountDto.setPhoneNumber("123123123");
         accountDto.setEmail("test@test.test");
         accountDto.setLogin("test");
@@ -190,11 +192,17 @@ class AccountControllerTest extends IntegrationTestsConfig {
         String lastName = "Kowalski-Nowak";
         String phoneNumber = "000000000";
 
-        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(getOwnerAccount().getEmail(), firstName, lastName, phoneNumber);
+        Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(ownerAccount._1.getId(),
+                ownerAccount._1.getEmail(),
+                firstName, lastName, phoneNumber,
+                ownerAccount._1.getVersion());
 
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
                 .body(dto)
+                .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + "/self")
                 .then()
@@ -215,11 +223,18 @@ class AccountControllerTest extends IntegrationTestsConfig {
         String phoneNumber = "000000000";
         String email = "mati@mati.com";
 
-        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(email, firstName, lastName, phoneNumber);
+        Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(ownerAccount._1.getId(),
+                email,
+                firstName,
+                lastName,
+                phoneNumber,
+                ownerAccount._1.getVersion());
 
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(dto)
+                .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + path)
                 .then()
@@ -255,11 +270,20 @@ class AccountControllerTest extends IntegrationTestsConfig {
             "mati mati,mati 123,mati mati,mati mati",
     })
     void whenUpdateSelfAccountDetailsAndDataIsIncorrectShouldReturnBadRequest(String email, String firstName, String lastName, String phoneNumber) {
-        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(email, firstName, lastName, phoneNumber);
+        Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+        UpdateAccountDetailsDto dto =
+                new UpdateAccountDetailsDto(ownerAccount._1.getId(),
+                        ownerAccount._1.getEmail(),
+                        firstName,
+                        lastName,
+                        phoneNumber,
+                        ownerAccount._1.getVersion());
 
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
                 .body(dto)
+                .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + "/self")
                 .then()
@@ -271,17 +295,21 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @ParameterizedTest
     @CsvSource({"/self", "/1"})
     void whenUpdateAccountDetailsAndAccountWithEmailOrPhoneNumberExistShouldReturnConflict(String path) {
-        AccountDto adminAccount = getAdministratorAccount();
+        Tuple2<AccountDto, String> adminAccount = getAdministratorAccountWithEtag();
+        Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
         UpdateAccountDetailsDto dtoWithExistedEmail =
-                new UpdateAccountDetailsDto(getOwnerAccount().getEmail(),
-                        adminAccount.getFirstName(),
-                        adminAccount.getLastName(),
-                        adminAccount.getPhoneNumber()
+                new UpdateAccountDetailsDto(adminAccount._1.getId(),
+                        ownerAccount._1.getEmail(),
+                        adminAccount._1.getFirstName(),
+                        adminAccount._1.getLastName(),
+                        adminAccount._1.getPhoneNumber(),
+                        adminAccount._1.getVersion()
                 );
 
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(dtoWithExistedEmail)
+                .header(IF_MATCH_HEADER_NAME, adminAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + path)
                 .then()
@@ -289,15 +317,18 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
 
         UpdateAccountDetailsDto dtoWithExistedPhoneNumber =
-                new UpdateAccountDetailsDto(adminAccount.getEmail(),
-                        adminAccount.getFirstName(),
-                        adminAccount.getLastName(),
-                        getFacilityManagerAccount().getPhoneNumber()
+                new UpdateAccountDetailsDto(adminAccount._1.getId(),
+                        adminAccount._1.getEmail(),
+                        adminAccount._1.getFirstName(),
+                        adminAccount._1.getLastName(),
+                        getFacilityManagerAccount().getPhoneNumber(),
+                        adminAccount._1.getVersion()
                 );
 
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
                 .body(dtoWithExistedPhoneNumber)
+                .header(IF_MATCH_HEADER_NAME, adminAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + "/self")
                 .then()
@@ -311,11 +342,20 @@ class AccountControllerTest extends IntegrationTestsConfig {
         String lastName = "Kowalski-Nowak";
         String phoneNumber = "000000000";
 
-        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(getOwnerAccount().getEmail(), firstName, lastName, phoneNumber);
+        Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+        UpdateAccountDetailsDto dto =
+                new UpdateAccountDetailsDto(ownerAccount._1.getId(),
+                        ownerAccount._1.getEmail(),
+                        firstName,
+                        lastName,
+                        phoneNumber,
+                        ownerAccount._1.getVersion());
 
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(dto)
+                .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + "/" + OWNER_ID)
                 .then()
@@ -334,11 +374,20 @@ class AccountControllerTest extends IntegrationTestsConfig {
         String phoneNumber = "000000000";
         String email = "mati@mati.com";
 
-        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(email, firstName, lastName, phoneNumber);
+        Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+        UpdateAccountDetailsDto dto =
+                new UpdateAccountDetailsDto(ownerAccount._1.getId(),
+                        ownerAccount._1.getEmail(),
+                        firstName,
+                        lastName,
+                        phoneNumber,
+                        ownerAccount._1.getVersion());
 
         given()
                 .header(AUTHORIZATION, token)
                 .body(dto)
+                .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + "/" + ADMIN_ID)
                 .then()

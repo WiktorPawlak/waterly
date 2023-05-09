@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 import lombok.SneakyThrows;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.VerificationTokenFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
@@ -35,7 +35,7 @@ class AccountServiceTest extends BaseArquillianTest {
     @Test
     void shouldDeleteAccountAndVerificationTokensWhenSimulatingFlow() {
         //given
-        AccountDto accountDto = prepareAccountDto();
+        CreateAccountDto accountDto = prepareAccountDto();
 
         //when
         userTransaction.begin();
@@ -64,8 +64,8 @@ class AccountServiceTest extends BaseArquillianTest {
         assertEquals(0, verificationTokensAfter.size());
     }
 
-    private static AccountDto prepareAccountDto() {
-        AccountDto accountDto = new AccountDto();
+    private static CreateAccountDto prepareAccountDto() {
+        CreateAccountDto accountDto = new CreateAccountDto();
         accountDto.setPhoneNumber("123123123");
         accountDto.setEmail("test@test.test");
         accountDto.setLogin("test");

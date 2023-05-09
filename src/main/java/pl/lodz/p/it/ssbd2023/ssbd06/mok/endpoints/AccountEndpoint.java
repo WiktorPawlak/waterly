@@ -24,6 +24,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
@@ -70,12 +71,12 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @OnlyGuest
-    public void registerUser(final AccountDto account) {
+    public void registerUser(final CreateAccountDto account) {
         accountService.registerUser(account);
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void createAccount(final AccountDto account) {
+    public void createAccount(final CreateAccountDto account) {
         accountService.createUser(account);
     }
 

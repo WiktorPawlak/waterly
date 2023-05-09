@@ -66,6 +66,7 @@
         <h2.version>2.1.214</h2.version>
         <junit.version>5.9.2</junit.version>
         <mockito.version>5.3.1</mockito.version>
+        <jose-jwt.version>9.31</jose-jwt.version>
     </properties>
 
     <dependencies>
@@ -121,6 +122,11 @@
             <groupId>at.favre.lib</groupId>
             <artifactId>bcrypt</artifactId>
             <version>${bCryptVer}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${jose-jwt.version}</version>
         </dependency>
 
         <!--    arqullian-->

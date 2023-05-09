@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt;
+package pl.lodz.p.it.ssbd2023.ssbd06.service.security.filter;
 
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
@@ -18,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.JwtProvider;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.SimpleJWT;
 
 @RequestScoped
 @DeclareRoles({ADMINISTRATOR, OWNER, FACILITY_MANAGER})

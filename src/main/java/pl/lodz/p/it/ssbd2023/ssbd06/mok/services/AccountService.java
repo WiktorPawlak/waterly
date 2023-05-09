@@ -27,7 +27,7 @@ import jakarta.security.enterprise.identitystore.PasswordHash;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
@@ -207,7 +207,7 @@ public class AccountService {
 
     @OnlyGuest
     @SneakyThrows(TokenExpiredException.class)
-    public void registerUser(final AccountDto accountDto) {
+    public void registerUser(final CreateAccountDto accountDto) {
         Account accountEntity = prepareAccountEntity(accountDto);
         Account persistedAccountEntity = accountFacade.create(accountEntity);
 
@@ -218,7 +218,7 @@ public class AccountService {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void createUser(final AccountDto account) {
+    public void createUser(final CreateAccountDto account) {
         Account accountEntity = prepareAccountEntity(account);
         accountEntity.setAccountState(CONFIRMED);
         accountEntity.setActive(true);
@@ -338,7 +338,7 @@ public class AccountService {
         });
     }
 
-    private Account prepareAccountEntity(final AccountDto account) {
+    private Account prepareAccountEntity(final CreateAccountDto account) {
         var accountDetails = new AccountDetails(account.getEmail(), account.getFirstName(),
                 account.getLastName(), account.getPhoneNumber());
         var authInfo = new AuthInfo();

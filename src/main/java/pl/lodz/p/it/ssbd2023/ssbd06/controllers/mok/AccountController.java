@@ -34,6 +34,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
@@ -42,6 +43,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 
 @Path("/accounts")
@@ -52,6 +55,9 @@ public class AccountController extends RepeatableTransactionController {
 
     @Inject
     private AccountEndpoint accountEndpoint;
+
+    @Inject
+    private PayloadSigner payloadSigner;
 
     @RolesAllowed(ADMINISTRATOR)
     @PATCH
@@ -66,6 +72,7 @@ public class AccountController extends RepeatableTransactionController {
     @PUT
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
+    @EtagValidationFilter
     public Response updateOwnAccountDetails(@NotNull @Valid final UpdateAccountDetailsDto dto) throws ApplicationBaseException {
         retry(() -> accountEndpoint.updateOwnAccountDetails(dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
@@ -75,6 +82,7 @@ public class AccountController extends RepeatableTransactionController {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @EtagValidationFilter
     public Response updateAccountDetails(@PathParam("id") final long id, @NotNull @Valid final UpdateAccountDetailsDto dto)
             throws ApplicationBaseException {
         retry(() -> accountEndpoint.updateAccountDetails(id, dto), accountEndpoint);
@@ -120,7 +128,7 @@ public class AccountController extends RepeatableTransactionController {
     @POST
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response registerAccount(@NotNull @Valid final AccountDto account) {
+    public Response registerAccount(@NotNull @Valid final CreateAccountDto account) {
         retry(() -> accountEndpoint.registerUser(account), accountEndpoint);
         log.info(() -> "Registering account: " + account);
         return Response.status(CREATED).build();
@@ -129,7 +137,7 @@ public class AccountController extends RepeatableTransactionController {
     @RolesAllowed(ADMINISTRATOR)
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createAccount(@NotNull @Valid final AccountDto account) {
+    public Response createAccount(@NotNull @Valid final CreateAccountDto account) {
         retry(() -> accountEndpoint.createAccount(account), accountEndpoint);
         log.info(() -> "Creating account: " + account);
         return Response.status(CREATED).build();
@@ -198,16 +206,18 @@ public class AccountController extends RepeatableTransactionController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveOwnAccountDetails() {
         AccountDto accountDto = retry(() -> accountEndpoint.retrieveOwnAccountDetails(), accountEndpoint);
-        return Response.ok().entity(accountDto).build();
+        String entityTag = payloadSigner.sign(accountDto);
+        return Response.ok().entity(accountDto).header("ETag", entityTag).build();
     }
 
     @RolesAllowed(ADMINISTRATOR)
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("id") final long id) {
+    public Response getAccountById(@PathParam("id") final long id) {
         AccountDto accountDto = retry(() -> accountEndpoint.getUserById(id), accountEndpoint);
-        return Response.ok().entity(accountDto).build();
+        String entityTag = payloadSigner.sign(accountDto);
+        return Response.ok().entity(accountDto).header("ETag", entityTag).build();
     }
 
     @RolesAllowed(FACILITY_MANAGER)

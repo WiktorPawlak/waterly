@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.provider.Arguments;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
@@ -32,6 +34,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final long ADMIN_ID = 1;
     protected static final long OWNER_ID = 2;
     protected static final long FACILITY_MANAGER_ID = 3;
+    protected static final String IF_MATCH_HEADER_NAME = "If-Match";
 
     protected String ADMINISTRATOR_TOKEN;
     protected String OWNER_TOKEN;
@@ -69,6 +72,24 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
 
     protected AccountDto getUser(long id) {
         return given().header(AUTHORIZATION, ADMINISTRATOR_TOKEN).get(ACCOUNT_PATH + "/" + id).as(AccountDto.class);
+    }
+    
+    protected Tuple2<AccountDto, String> getAdministratorAccountWithEtag() {
+        return getUserWithEtag(ADMIN_ID);
+    }
+
+    protected Tuple2<AccountDto, String> getOwnerAccountWithEtag() {
+        return getUserWithEtag(OWNER_ID);
+    }
+
+    protected Tuple2<AccountDto, String> getFacilityManagerAccountWithEtag() {
+        return getUserWithEtag(FACILITY_MANAGER_ID);
+    }
+
+    protected Tuple2<AccountDto, String> getUserWithEtag(long id) {
+        String eTag = given().header(AUTHORIZATION, ADMINISTRATOR_TOKEN).get(ACCOUNT_PATH + "/" + id).getHeader("ETag");
+        AccountDto dto = given().header(AUTHORIZATION, ADMINISTRATOR_TOKEN).get(ACCOUNT_PATH + "/" + id).as(AccountDto.class);
+        return Tuple.of(dto, eTag);
     }
 
     protected Stream<Arguments> provideTokensForParameterizedTests() {

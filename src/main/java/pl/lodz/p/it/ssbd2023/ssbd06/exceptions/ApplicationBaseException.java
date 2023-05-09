@@ -19,6 +19,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotConfirmedAccountException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.EntityIntegrityViolatedException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.IfMatchHeaderMissingException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.JWSException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.NoPayloadException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.exceptions.AuthenticationException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.exceptions.NotAuthorizedApplicationException;
 
@@ -49,6 +53,10 @@ public class ApplicationBaseException extends WebApplicationException {
     protected static final String ERROR_ACCOUNT_NOT_ACTIVE = "ERROR.NOT_ACTIVE_ACCOUNT";
     protected static final String ERROR_ACCOUNT_NOT_CONFIRMED = "ERROR.NOT_CONFIRMED_ACCOUNT";
 
+    protected static final String ERROR_JWS_PROCESSING = "ERROR.JWS_PROCESSING";
+    protected static final String ERROR_NO_ETAG_PAYLOAD = "ERROR.NO_ETAG_PAYLOAD";
+    protected static final String ERROR_ENTITY_INTEGRITY_VIOLATED = "ERROR.ENTITY_INTEGRITY_VIOLATED";
+    protected static final String ERROR_IF_MATCH_HEADER_MISSING = "ERROR.IF_MATCH_HEADER_MISSING";
 
     public ApplicationBaseException(final Response.Status status, final String message) {
         super(Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON_TYPE).build());
@@ -144,5 +152,21 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static AccountSearchPreferencesNotExistException accountSearchPreferencesNotExistException() {
         return new AccountSearchPreferencesNotExistException();
+    }
+
+    public static JWSException jwsException() {
+        return new JWSException();
+    }
+
+    public static NoPayloadException noPayloadException() {
+        return new NoPayloadException();
+    }
+
+    public static IfMatchHeaderMissingException ifMatchHeaderMissingException() {
+        return new IfMatchHeaderMissingException();
+    }
+
+    public static EntityIntegrityViolatedException entityIntegrityViolatedException() {
+        return new EntityIntegrityViolatedException();
     }
 }
