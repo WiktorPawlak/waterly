@@ -7,6 +7,8 @@ import java.util.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
@@ -29,11 +31,14 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
                 @Index(name = "account_idx", columnList = "account_id")
         }
 )
-@NamedQuery(name = "VerificationToken.findValidByToken",
-        query = "select v from VerificationToken v where v.expiryDate > CURRENT_TIMESTAMP and v.token = :token")
-@NamedQuery(name = "VerificationToken.findByAccountId", query = "select v from VerificationToken v where v.account.id = :accountId")
-@NamedQuery(name = "VerificationToken.findAll", query = "select v from VerificationToken v")
-@NamedQuery(name = "VerificationToken.deleteByAccountId", query = "delete from VerificationToken v where v.account.id = :accountId")
+@NamedQuery(name = "VerificationToken.findValidByTokenAndTokenType",
+        query = "select v from VerificationToken v where v.expiryDate > CURRENT_TIMESTAMP and v.token = :token and v.tokenType = :tokenType")
+@NamedQuery(name = "VerificationToken.findByAccountIdAndTokenType",
+        query = "select v from VerificationToken v where v.account.id = :accountId and v.tokenType = :tokenType")
+@NamedQuery(name = "VerificationToken.findAll",
+        query = "select v from VerificationToken v")
+@NamedQuery(name = "VerificationToken.deleteByAccountIdAndTokenType",
+        query = "delete from VerificationToken v where v.account.id = :accountId and v.tokenType = :tokenType")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -43,6 +48,10 @@ public class VerificationToken extends AbstractEntity {
 
     @Column(name = "token", nullable = false, unique = true)
     private String token;
+
+    @Column(name = "token_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TokenType tokenType;
 
     @ToString.Exclude
     @NotNull

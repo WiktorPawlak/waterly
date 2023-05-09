@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
+
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -37,7 +39,7 @@ public class AccountVerificationStartup {
                         + accountId
                         + ", because of error occurred during verification token timers initialization: "
                         + e.getMessage());
-                verificationTokenService.clearTokens(accountId);
+                verificationTokenService.clearTokens(accountId, REGISTRATION);
                 accountService.removeInactiveNotConfirmedAccount(accountId);
             }
         }

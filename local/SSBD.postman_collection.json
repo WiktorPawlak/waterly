@@ -1,8 +1,9 @@
 {
   "info": {
-    "_postman_id": "9b5d68c1-eb5a-4506-a13a-e0dd525adb7a",
+    "_postman_id": "46288f43-e231-41df-a53f-83c19433469f",
     "name": "SSBD",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "26567523"
   },
   "item": [
     {
@@ -47,14 +48,14 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{API_BASE_URL}}/accounts/5/resendVerificationToken",
+              "raw": "{{API_BASE_URL}}/accounts/4/resend-verification-token",
               "host": [
                 "{{API_BASE_URL}}"
               ],
               "path": [
                 "accounts",
-                "5",
-                "resendVerificationToken"
+                "4",
+                "resend-verification-token"
               ]
             }
           },
@@ -69,18 +70,18 @@
             "method": "PUT",
             "header": [],
             "url": {
-              "raw": "{{API_BASE_URL}}/accounts/confirmRegistration?token=2b94ba78-594c-4fc7-ab27-28cf85426d37",
+              "raw": "{{API_BASE_URL}}/accounts/confirm-registration?token=4110768a-103b-4396-bf0e-56e1fe6937b2",
               "host": [
                 "{{API_BASE_URL}}"
               ],
               "path": [
                 "accounts",
-                "confirmRegistration"
+                "confirm-registration"
               ],
               "query": [
                 {
                   "key": "token",
-                  "value": "2b94ba78-594c-4fc7-ab27-28cf85426d37"
+                  "value": "4110768a-103b-4396-bf0e-56e1fe6937b2"
                 }
               ]
             }
@@ -831,7 +832,7 @@
       "name": "PasswordReset",
       "item": [
         {
-          "name": "passwordReset",
+          "name": "Reset Password",
           "request": {
             "method": "POST",
             "header": [],
@@ -859,7 +860,7 @@
           "response": []
         },
         {
-          "name": "requestPasswordReset",
+          "name": "Request Reset Password",
           "request": {
             "method": "POST",
             "header": [],

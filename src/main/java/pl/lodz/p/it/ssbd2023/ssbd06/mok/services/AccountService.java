@@ -3,6 +3,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.CONFIRMED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.NOT_CONFIRMED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_CONFIRM;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.ACCOUNT_DETAILS_UPDATE;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
@@ -170,7 +172,7 @@ public class AccountService {
 
     @PermitAll
     public void acceptAccountDetailsUpdate(final String token) {
-        VerificationToken verificationToken = verificationTokenService.findValidToken(token);
+        VerificationToken verificationToken = verificationTokenService.findValidToken(token, ACCOUNT_DETAILS_UPDATE);
         Account account = verificationToken.getAccount();
 
         account.setAccountDetails(account.getWaitingAccountDetails());
@@ -178,7 +180,7 @@ public class AccountService {
 
         accountFacade.update(account);
         //TODO czy to usuwa wszystkie tokeny?
-        verificationTokenService.clearTokens(account.getId());
+        verificationTokenService.clearTokens(account.getId(), ACCOUNT_DETAILS_UPDATE);
     }
 
     @PermitAll
@@ -233,7 +235,7 @@ public class AccountService {
 
     @OnlyGuest
     public void confirmRegistration(final String token) throws ApplicationBaseException {
-        VerificationToken verificationToken = verificationTokenService.findValidToken(token);
+        VerificationToken verificationToken = verificationTokenService.findValidToken(token, REGISTRATION);
         Account account = verificationToken.getAccount();
         accountVerificationTimer.cancelAccountDeletion(account.getId());
 
@@ -241,7 +243,7 @@ public class AccountService {
         account.getAuthInfo().setIncorrectAuthCount(0);
         account.setAccountState(TO_CONFIRM);
         accountFacade.update(account);
-        verificationTokenService.clearTokens(account.getId());
+        verificationTokenService.clearTokens(account.getId(), REGISTRATION);
     }
 
     @PermitAll

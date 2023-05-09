@@ -1,5 +1,9 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.ACCOUNT_DETAILS_UPDATE;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.PASSWORD_RESET;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
+
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +21,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeExceptio
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.VerificationTokenFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
@@ -35,13 +40,13 @@ public class VerificationTokenService {
     private TimeProvider timeProvider;
 
     @PermitAll
-    public void clearTokens(final long accountId) {
-        verificationTokenFacade.deleteByAccountId(accountId);
+    public void clearTokens(final long accountId, final TokenType tokenType) {
+        verificationTokenFacade.deleteByAccountIdAndTokenType(accountId, tokenType);
     }
 
     @PermitAll
-    public VerificationToken findValidToken(final String token) throws TokenNotFoundException {
-        return verificationTokenFacade.findValidByToken(token)
+    public VerificationToken findValidToken(final String token, final TokenType tokenType) throws TokenNotFoundException {
+        return verificationTokenFacade.findValidByToken(token, tokenType)
                 .orElseThrow(TokenNotFoundException::new);
     }
 
@@ -52,14 +57,19 @@ public class VerificationTokenService {
 
     @PermitAll
     public VerificationToken createPrimaryFullTimeToken(final Account account) {
-        VerificationToken token = prepareToken(account, timeProvider.currentDate(), verificationTokenConfig.getExpirationTimeInMinutes());
+        VerificationToken token = prepareToken(
+                account,
+                timeProvider.currentDate(),
+                verificationTokenConfig.getExpirationTimeInMinutes(),
+                REGISTRATION
+        );
         return verificationTokenFacade.create(token);
     }
 
     @PermitAll
     public VerificationToken findOrCreateSecondaryHalfTimeToken(final Account account)
             throws TokenExceededHalfTimeException, TokenNotFoundException {
-        List<VerificationToken> verificationTokens = verificationTokenFacade.findByAccountId(account.getId());
+        List<VerificationToken> verificationTokens = verificationTokenFacade.findByAccountIdAndTokenType(account.getId(), REGISTRATION);
         VerificationToken primaryVerificationToken = getPrimaryVerificationToken(verificationTokens);
 
         if (checkIfHalfTimeExceeded(primaryVerificationToken)) {
@@ -71,7 +81,12 @@ public class VerificationTokenService {
         }
 
         Date beginDate = timeProvider.subractTimeFromDate(verificationTokenConfig.getExpirationTimeInMinutes(), primaryVerificationToken.getExpiryDate());
-        VerificationToken token = prepareToken(account, beginDate, verificationTokenConfig.getHalfExpirationTimeInMinutes());
+        VerificationToken token = prepareToken(
+                account,
+                beginDate,
+                verificationTokenConfig.getHalfExpirationTimeInMinutes(),
+                REGISTRATION
+        );
         return verificationTokenFacade.create(token);
     }
 
@@ -95,11 +110,12 @@ public class VerificationTokenService {
                 .orElseThrow(TokenNotFoundException::new);
     }
 
-    private VerificationToken prepareToken(final Account account, final Date beginTime, final double expirationTimeInHours) {
+    private VerificationToken prepareToken(final Account account, final Date beginTime, final double expirationTimeInHours, final TokenType tokenType) {
         return VerificationToken.builder()
                 .account(account)
                 .expiryDate(timeProvider.addTimeToDate(expirationTimeInHours, beginTime))
                 .token(generateToken())
+                .tokenType(tokenType)
                 .build();
     }
 
@@ -109,20 +125,30 @@ public class VerificationTokenService {
 
     @PermitAll
     public VerificationToken createResetToken(final Account account) {
-        VerificationToken token = prepareToken(account, timeProvider.currentDate(), verificationTokenConfig.getExpirationResetTimeInMinutes());
+        VerificationToken token = prepareToken(
+                account,
+                timeProvider.currentDate(),
+                verificationTokenConfig.getExpirationResetTimeInMinutes(),
+                PASSWORD_RESET
+        );
         return verificationTokenFacade.create(token);
     }
 
     @PermitAll
     public VerificationToken createAcceptAccountDetailToken(final Account account) {
-        VerificationToken token = prepareToken(account, timeProvider.currentDate(), verificationTokenConfig.getExpirationAccountDetailsInMinutes());
+        VerificationToken token = prepareToken(
+                account,
+                timeProvider.currentDate(),
+                verificationTokenConfig.getExpirationAccountDetailsInMinutes(),
+                ACCOUNT_DETAILS_UPDATE
+        );
         return verificationTokenFacade.create(token);
     }
 
     @PermitAll
     public Account confirmResetPassword(final UUID token) throws TokenNotFoundException {
         VerificationToken verificationToken = verificationTokenFacade
-                .findValidByToken(token.toString())
+                .findValidByToken(token.toString(), PASSWORD_RESET)
                 .orElseThrow(TokenNotFoundException::new);
         verificationTokenFacade.delete(verificationToken);
         return verificationToken.getAccount();

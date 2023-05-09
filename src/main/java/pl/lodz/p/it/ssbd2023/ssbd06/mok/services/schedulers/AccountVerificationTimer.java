@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
+
 import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -39,7 +41,7 @@ public class AccountVerificationTimer {
     @SuppressWarnings("checkstyle:FinalParameters")
     private void execute(Timer timer) {
         long accountId = retrieveAccountId((String) timer.getInfo());
-        verificationTokenService.clearTokens(accountId);
+        verificationTokenService.clearTokens(accountId, REGISTRATION);
         accountService.removeInactiveNotConfirmedAccount(accountId);
         log.info(() -> "Account deletion period has expired. Account with id " + accountId + " has been deleted.");
     }

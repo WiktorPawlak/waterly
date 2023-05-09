@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.arquillian;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ class AccountServiceTest extends BaseArquillianTest {
         Account account = accountsBefore.get(0);
 
         userTransaction.begin();
-        verificationTokenService.clearTokens(account.getId());
+        verificationTokenService.clearTokens(account.getId(), REGISTRATION);
         accountService.removeInactiveNotConfirmedAccount(account.getId());
         userTransaction.commit();
 

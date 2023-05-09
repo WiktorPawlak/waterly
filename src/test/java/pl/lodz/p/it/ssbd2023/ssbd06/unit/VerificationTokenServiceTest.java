@@ -85,7 +85,7 @@ class VerificationTokenServiceTest {
     @Test
     void shouldNotCreateSecondaryHalfTimeToken() {
         // given
-        when(verificationTokenFacade.findByAccountId(anyLong())).thenReturn(List.of());
+        when(verificationTokenFacade.findByAccountIdAndTokenType(anyLong(), any())).thenReturn(List.of());
 
         // then
         assertThrows(TokenNotFoundException.class,
@@ -102,7 +102,7 @@ class VerificationTokenServiceTest {
                 .build();
 
         when(timeProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 + MILLIS_IN_MINUTE));
-        when(verificationTokenFacade.findByAccountId(anyLong())).thenReturn(List.of(verificationToken));
+        when(verificationTokenFacade.findByAccountIdAndTokenType(anyLong(), any())).thenReturn(List.of(verificationToken));
 
         // then
         assertThrows(TokenExceededHalfTimeException.class,
@@ -122,7 +122,7 @@ class VerificationTokenServiceTest {
                 .build();
 
         when(timeProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 - EXPIRATION_TIME_IN_MINUTES * MILLIS_IN_MINUTE));
-        when(verificationTokenFacade.findByAccountId(anyLong())).thenReturn(List.of(primaryToken, secondaryToken));
+        when(verificationTokenFacade.findByAccountIdAndTokenType(anyLong(), any())).thenReturn(List.of(primaryToken, secondaryToken));
 
         // when
         VerificationToken returnedSecondaryToken = verificationTokenService.findOrCreateSecondaryHalfTimeToken(account);
@@ -141,7 +141,7 @@ class VerificationTokenServiceTest {
 
         when(timeProvider.currentDate()).thenReturn(new Date(FRI_13_FEB_2009 - EXPIRATION_TIME_IN_MINUTES * MILLIS_IN_MINUTE));
         when(verificationTokenFacade.create(verificationTokenArgumentCaptor.capture())).thenReturn(new VerificationToken());
-        when(verificationTokenFacade.findByAccountId(anyLong())).thenReturn(List.of(primaryToken));
+        when(verificationTokenFacade.findByAccountIdAndTokenType(anyLong(), any())).thenReturn(List.of(primaryToken));
 
         // when
         verificationTokenService.findOrCreateSecondaryHalfTimeToken(account);

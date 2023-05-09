@@ -14,6 +14,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 
 @Stateless
@@ -40,10 +41,12 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
     }
 
     @PermitAll
-    public Optional<VerificationToken> findValidByToken(final String token) {
-        TypedQuery<VerificationToken> verificationTokenTypedQuery = em.createNamedQuery("VerificationToken.findValidByToken", VerificationToken.class);
-        verificationTokenTypedQuery.setFlushMode(FlushModeType.COMMIT);
-        verificationTokenTypedQuery.setParameter("token", token);
+    public Optional<VerificationToken> findValidByToken(final String token, final TokenType tokenType) {
+        TypedQuery<VerificationToken> verificationTokenTypedQuery =
+                em.createNamedQuery("VerificationToken.findValidByTokenAndTokenType", VerificationToken.class)
+                        .setFlushMode(FlushModeType.COMMIT)
+                        .setParameter("token", token)
+                        .setParameter("tokenType", tokenType);
         try {
             return Optional.of(verificationTokenTypedQuery.getSingleResult());
         } catch (final NoResultException e) {
@@ -59,18 +62,20 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
     }
 
     @PermitAll
-    public List<VerificationToken> findByAccountId(final long accountId) {
-        return em.createNamedQuery("VerificationToken.findByAccountId", VerificationToken.class)
+    public List<VerificationToken> findByAccountIdAndTokenType(final long accountId, final TokenType tokenType) {
+        return em.createNamedQuery("VerificationToken.findByAccountIdAndTokenType", VerificationToken.class)
                 .setFlushMode(FlushModeType.COMMIT)
                 .setParameter("accountId", accountId)
+                .setParameter("tokenType", tokenType)
                 .getResultList();
     }
 
     @PermitAll
-    public void deleteByAccountId(final long accountId) {
-        em.createNamedQuery("VerificationToken.deleteByAccountId")
+    public void deleteByAccountIdAndTokenType(final long accountId, final TokenType tokenType) {
+        em.createNamedQuery("VerificationToken.deleteByAccountIdAndTokenType")
                 .setFlushMode(FlushModeType.COMMIT)
                 .setParameter("accountId", accountId)
+                .setParameter("tokenType", tokenType)
                 .executeUpdate();
     }
 
