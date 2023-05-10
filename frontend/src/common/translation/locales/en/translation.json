@@ -40,6 +40,11 @@
       "phoneNumberLabel": "Phone number"
     }
   },
+  "manageUsersPage": {
+    "header": "Manage users",
+    "description": "Here you can add new users or edit existing ones.",
+    "button": "+ Add user"
+  },
   "navigation": {
     "login": "Log in",
     "register": "Register",

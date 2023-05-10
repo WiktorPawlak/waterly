@@ -4,6 +4,7 @@ import LogInPage from "./pages/LogInPage";
 import RegisterPage from "./pages/RegisterPage";
 import WaitForVerifyPage from "./pages/WaitForVerifyPage";
 import EditAccountDetailsPage from "./pages/EditAccountDetailsPage";
+import { ManageUsersAdminPage } from "./pages/admin";
 
 const Routing = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const Routing = createBrowserRouter([
   {
     path: "/edit-profile",
     element: <EditAccountDetailsPage />,
+  },
+  {
+    path: "/manage-users",
+    element: <ManageUsersAdminPage />,
   },
 ]);
 

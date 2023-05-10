@@ -40,6 +40,11 @@
       "phoneNumberLabel": "Nr telefonu"
     }
   },
+  "manageUsersPage": {
+    "header": "Zarządzaj użytkownikami",
+    "description": "Tutaj możesz zmieniać role użytkownikom oraz dodawać nowe konta.",
+    "button": "+ Dodaj użytkownika"
+  },
   "navigation": {
     "login": "Zaloguj",
     "register": "Zarejestruj się",
