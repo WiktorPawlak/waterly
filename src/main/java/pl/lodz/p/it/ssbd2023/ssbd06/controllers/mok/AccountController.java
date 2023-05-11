@@ -17,6 +17,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -240,4 +241,14 @@ public class AccountController extends RepeatableTransactionController {
         List<AccountDto> accounts = retry(() -> accountEndpoint.getNotAcceptedAccounts(), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    @DELETE
+    @Path("/{id}/reject")
+    public Response rejectOwnerAccount(@PathParam("id") final long id) {
+        retry(() -> accountEndpoint.rejectOwnerAccount(id), accountEndpoint);
+        return  Response.ok().build();
+    }
+
+
 }

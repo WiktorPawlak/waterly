@@ -153,7 +153,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .extract().body().jsonPath().getList("data", AccountWithRolesDto.class);
 
         //then
-        assertEquals(3, accounts.size());
+        assertEquals(4, accounts.size());
     }
 
     @ParameterizedTest(name = "pattern = {0}, expected account ids = {1}")
@@ -498,22 +498,22 @@ class AccountControllerTest extends IntegrationTestsConfig {
         String newPassword = "123jantes";
         PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto(newPassword);
         given()
-                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                .queryParam("email", getOwnerAccount().getEmail())
-                .body(passwordChangeByAdminDto)
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .post(ACCOUNT_PATH + "/password/request-change")
-                .then()
-                .statusCode(OK.getStatusCode());
+            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+            .queryParam("email", getOwnerAccount().getEmail())
+            .body(passwordChangeByAdminDto)
+            .contentType(MediaType.APPLICATION_JSON)
+        .when()
+            .post(ACCOUNT_PATH + "/password/request-change")
+        .then()
+            .statusCode(OK.getStatusCode());
 
         given()
-                .body(new Credentials("new", "123jantes"))
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .post(AUTH_PATH + "/login")
-                .then()
-                .statusCode(OK.getStatusCode());
+            .body(new Credentials("new", "123jantes"))
+            .contentType(MediaType.APPLICATION_JSON)
+        .when()
+            .post(AUTH_PATH + "/login")
+        .then()
+            .statusCode(OK.getStatusCode());
     }
 
     @ParameterizedTest
@@ -521,14 +521,14 @@ class AccountControllerTest extends IntegrationTestsConfig {
     void shouldForbidNotAdminUsersToRequestPasswordChange(String token) {
         PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
         given()
-                .header(AUTHORIZATION, token)
-                .queryParam("email", getOwnerAccount().getEmail())
-                .body(passwordChangeByAdminDto)
-                .when()
-                .post(ACCOUNT_PATH + "/password/request-change")
-                .then()
-                .statusCode(FORBIDDEN.getStatusCode())
-                .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+            .header(AUTHORIZATION, token)
+            .queryParam("email", getOwnerAccount().getEmail())
+            .body(passwordChangeByAdminDto)
+        .when()
+            .post(ACCOUNT_PATH + "/password/request-change")
+        .then()
+            .statusCode(FORBIDDEN.getStatusCode())
+            .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
     }
 
     @Test
@@ -537,14 +537,14 @@ class AccountControllerTest extends IntegrationTestsConfig {
         String email = "tenEmailNieIstnieje@aaa.com";
         PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
         given()
-                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                .queryParam("email", email)
-                .body(passwordChangeByAdminDto)
-                .when()
-                .post(ACCOUNT_PATH + "/password/request-change")
-                .then()
-                .statusCode(BAD_REQUEST.getStatusCode())
-                .body("message", equalTo("ERROR.NO_MATCHING_EMAILS"));
+            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+            .queryParam("email", email)
+            .body(passwordChangeByAdminDto)
+        .when()
+            .post(ACCOUNT_PATH + "/password/request-change")
+        .then()
+            .statusCode(BAD_REQUEST.getStatusCode())
+            .body("message", equalTo("ERROR.NO_MATCHING_EMAILS"));
     }
 
     @Test
@@ -554,14 +554,14 @@ class AccountControllerTest extends IntegrationTestsConfig {
         PasswordResetDto changePasswordRequestDto = new PasswordResetDto(thisTokenIsNotCorrect, newPassword, TokenType.CHANGE_PASSWORD);
 
         given()
-                .header(AUTHORIZATION, OWNER_TOKEN)
-                .body(changePasswordRequestDto)
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .post(ACCOUNT_PATH + "/password/reset")
-                .then()
-                .statusCode(NOT_FOUND.getStatusCode())
-                .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
+            .header(AUTHORIZATION, OWNER_TOKEN)
+            .body(changePasswordRequestDto)
+            .contentType(MediaType.APPLICATION_JSON)
+        .when()
+            .post(ACCOUNT_PATH + "/password/reset")
+        .then()
+            .statusCode(NOT_FOUND.getStatusCode())
+            .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
     }
 
     @Test
@@ -570,13 +570,13 @@ class AccountControllerTest extends IntegrationTestsConfig {
         DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
         PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
         given()
-                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                .queryParam("email", getOwnerAccount().getEmail())
-                .body(passwordChangeByAdminDto)
-                .when()
-                .post(ACCOUNT_PATH + "/password/request-change")
-                .then()
-                .statusCode(OK.getStatusCode());
+            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+            .queryParam("email", getOwnerAccount().getEmail())
+            .body(passwordChangeByAdminDto)
+        .when()
+            .post(ACCOUNT_PATH + "/password/request-change")
+        .then()
+            .statusCode(OK.getStatusCode());
 
         String changePasswordToken = databaseConnector.executeQuery(
                 "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
@@ -586,24 +586,74 @@ class AccountControllerTest extends IntegrationTestsConfig {
         PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword, TokenType.CHANGE_PASSWORD);
         given()
                 //.header(AUTHORIZATION, OWNER_TOKEN)
-                .body(changePasswordRequestDto)
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .post(ACCOUNT_PATH + "/password/reset")
-                .then()
-                .statusCode(OK.getStatusCode());
+            .body(changePasswordRequestDto)
+            .contentType(MediaType.APPLICATION_JSON)
+        .when()
+            .post(ACCOUNT_PATH + "/password/reset")
+        .then()
+            .statusCode(OK.getStatusCode());
 
         String newPassword1 = "125jantes";
         PasswordResetDto newChangePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword1, TokenType.CHANGE_PASSWORD);
         given()
+            .header(AUTHORIZATION, OWNER_TOKEN)
+            .body(newChangePasswordRequestDto)
+            .contentType(MediaType.APPLICATION_JSON)
+        .when()
+            .post(ACCOUNT_PATH + "/password/reset")
+        .then()
+            .statusCode(NOT_FOUND.getStatusCode())
+            .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
+    }
+
+    @Test
+    public void shouldRejectOwnerAccountSuccessfully() {
+        given()
+            .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+        .when()
+            .delete(ACCOUNT_PATH + "/" + NOT_CONFIRMED_OWNER_ID + "/reject")
+        .then()
+            .statusCode(OK.getStatusCode());
+
+        given()
+            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+        .when()
+            .get(ACCOUNT_PATH + "/" + NOT_CONFIRMED_OWNER_ID)
+        .then()
+            .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    public void shouldForbidNotFacilityManagerUsersRejectOwnerAccount() {
+        given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
-                .body(newChangePasswordRequestDto)
-                .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .post(ACCOUNT_PATH + "/password/reset")
+                .delete(ACCOUNT_PATH + "/" + NOT_CONFIRMED_OWNER_ID + "/reject")
+                .then()
+                .statusCode(FORBIDDEN.getStatusCode())
+                .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+    }
+
+    @Test
+    public void shouldFailRejectOwnerAccountWhenAccountStatusIsDifferentThanToConfirm() {
+        given()
+                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                .when()
+                .delete(ACCOUNT_PATH + "/" + OWNER_ID + "/reject")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION"));
+    }
+
+    @Test
+    public void shouldFailRejectOwnerAccountWhenAccountDoesNotExist() {
+        given()
+                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                .when()
+                .delete(ACCOUNT_PATH + "/99999999999/reject")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode())
-                .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
+                .body("message", equalTo("ERROR.RESOURCE_NOT_FOUND"));
     }
 
     private Stream<Arguments> providePatterns() {
@@ -612,8 +662,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 Arguments.of(" new", List.of(2L)),
                 Arguments.of("mateusz Strz", List.of(1L)),
                 Arguments.of("StrZelecki matEu", List.of(1L)),
-                Arguments.of(null, List.of(1L, 2L, 3L)),
-                Arguments.of(" ", List.of(1L, 2L, 3L))
+                Arguments.of(null, List.of(1L, 2L, 4L, 3L)),
+                Arguments.of(" ", List.of(1L, 2L, 4L, 3L))
         );
     }
 

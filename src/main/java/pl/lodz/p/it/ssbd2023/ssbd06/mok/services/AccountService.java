@@ -329,7 +329,7 @@ public class AccountService {
     }
 
     @PermitAll
-    public Account getUserById(final long id) {
+    public Account geAccountById(final long id) {
         return accountFacade.findById(id);
     }
 
@@ -431,6 +431,20 @@ public class AccountService {
         currentAccountDetails.setFirstName(newAccountDetails.getFirstName());
         currentAccountDetails.setLastName(newAccountDetails.getLastName());
         currentAccountDetails.setPhoneNumber(newAccountDetails.getPhoneNumber());
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public void rejectOwnerAccount(final long id) {
+        Account account = accountFacade.findById(id);
+        if (Objects.equals(account, null)) {
+            throw ApplicationBaseException.accountDoesNotExistException();
+        }
+        if (Objects.equals(account.getAccountState(), TO_CONFIRM)) {
+            accountFacade.delete(account);
+            notificationsProvider.notifyAccountRejected(id);
+        } else {
+            throw ApplicationBaseException.accountNotWaitingForConfirmation();
+        }
     }
 
     private boolean isModifyingAnotherUser(final Account account) {

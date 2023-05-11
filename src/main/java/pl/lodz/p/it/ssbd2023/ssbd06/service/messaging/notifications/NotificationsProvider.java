@@ -14,4 +14,6 @@ public interface NotificationsProvider {
     void notifyRoleGranted(long id, Set<String> rolesToAdd);
 
     void notifyRoleRevoked(long id, Set<String> rolesToRevoke);
+
+    void notifyAccountRejected(long id);
 }

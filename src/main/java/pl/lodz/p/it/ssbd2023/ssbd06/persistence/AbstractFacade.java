@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ResourceNotFoundException;
 
 public abstract class AbstractFacade<T> {
 
@@ -36,7 +36,7 @@ public abstract class AbstractFacade<T> {
     }
 
     protected T findById(final Long id) {
-        return Optional.ofNullable(getEntityManager().find(clazz, id)).orElseThrow(EntityNotFoundException::new);
+        return Optional.ofNullable(getEntityManager().find(clazz, id)).orElseThrow(ResourceNotFoundException::new);
     }
 
     protected List<T> findAll() {

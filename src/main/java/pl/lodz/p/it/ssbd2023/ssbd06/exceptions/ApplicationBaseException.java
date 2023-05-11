@@ -8,6 +8,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountDoesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountNotWaitingForConfirmationException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
@@ -56,6 +57,8 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_NO_ETAG_PAYLOAD = "ERROR.NO_ETAG_PAYLOAD";
     public static final String ERROR_ENTITY_INTEGRITY_VIOLATED = "ERROR.ENTITY_INTEGRITY_VIOLATED";
     public static final String ERROR_IF_MATCH_HEADER_MISSING = "ERROR.IF_MATCH_HEADER_MISSING";
+
+    protected static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
 
     public ApplicationBaseException(final Response.Status status, final String message) {
         super(Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON_TYPE).build());
@@ -159,6 +162,10 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static EntityIntegrityViolatedException entityIntegrityViolatedException() {
         return new EntityIntegrityViolatedException();
+    }
+
+    public static AccountNotWaitingForConfirmationException accountNotWaitingForConfirmation() {
+        return new AccountNotWaitingForConfirmationException();
     }
 
     public static PersistenceConstraintException persistenceConstraintException(final String message) {

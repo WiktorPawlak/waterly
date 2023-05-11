@@ -201,7 +201,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public AccountDto getUserById(final long id) {
-        Account account = accountService.getUserById(id);
+        Account account = accountService.geAccountById(id);
         return new AccountDto(account);
     }
 
@@ -212,7 +212,13 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
                 .toList();
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
+    public void rejectOwnerAccount(final long id) {
+        accountService.rejectOwnerAccount(id);
+    }
+
     private String preparePattern(final String pattern) {
         return pattern != null && !pattern.isBlank() ? pattern.strip() : null;
     }
+
 }

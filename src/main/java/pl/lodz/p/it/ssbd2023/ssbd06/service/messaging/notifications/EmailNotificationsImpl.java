@@ -38,4 +38,9 @@ public class EmailNotificationsImpl implements NotificationsProvider {
         //TODO
     }
 
+    @Override
+    public void notifyAccountRejected(final long id){
+        //TODO
+    }
+
 }

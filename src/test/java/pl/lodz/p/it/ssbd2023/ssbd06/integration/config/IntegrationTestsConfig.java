@@ -11,8 +11,8 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -33,6 +33,8 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final AccountActiveStatusDto DEACTIVATE_ACCOUNT = AccountActiveStatusDto.of(false);
     protected static final long ADMIN_ID = 1;
     protected static final long OWNER_ID = 2;
+
+    protected static final long NOT_CONFIRMED_OWNER_ID = 4;
     protected static final long FACILITY_MANAGER_ID = 3;
     protected static final String IF_MATCH_HEADER_NAME = "If-Match";
 
@@ -59,18 +61,22 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     }
 
     protected AccountDto getAdministratorAccount() {
-        return getUser(ADMIN_ID);
+        return getAccount(ADMIN_ID);
     }
 
     protected AccountDto getOwnerAccount() {
-        return getUser(OWNER_ID);
+        return getAccount(OWNER_ID);
+    }
+
+    protected AccountDto getNotConfirmedOwnerAccount() {
+        return getAccount(NOT_CONFIRMED_OWNER_ID);
     }
 
     protected AccountDto getFacilityManagerAccount() {
-        return getUser(FACILITY_MANAGER_ID);
+        return getAccount(FACILITY_MANAGER_ID);
     }
 
-    protected AccountDto getUser(long id) {
+    protected AccountDto getAccount(long id) {
         return given().header(AUTHORIZATION, ADMINISTRATOR_TOKEN).get(ACCOUNT_PATH + "/" + id).as(AccountDto.class);
     }
     
@@ -99,7 +105,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
         );
     }
 
-    @AfterEach
+    @BeforeEach
     @SneakyThrows
     void reinitializeDbAfterEachTest() {
         String url = "jdbc:postgresql://localhost:" + postgres.getFirstMappedPort() + "/ssbd06?loggerLevel=OFF";
