@@ -18,7 +18,6 @@ import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 import java.util.List;
 import java.util.stream.Stream;
 
-import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,6 +25,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import io.vavr.Tuple2;
+import jakarta.ws.rs.core.MediaType;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.DatabaseConnector;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
@@ -41,6 +41,50 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 class AccountControllerTest extends IntegrationTestsConfig {
+
+    @Test
+    void registerUserWithViolatedConstraintsShouldFail() {
+
+        //given
+        CreateAccountDto accountDto = prepareCreateAccountDto();
+        accountDto.setLogin("new");
+
+        // when && then
+        given()
+                .body(accountDto)
+                .when()
+                .post(ACCOUNT_PATH + "/register")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.ACCOUNT_WITH_LOGIN_EXIST"));
+
+        //given
+        accountDto = prepareCreateAccountDto();
+        accountDto.setEmail("tomdut@gmail.com");
+
+        // when && then
+        given()
+                .body(accountDto)
+                .when()
+                .post(ACCOUNT_PATH + "/register")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
+
+        //given
+        accountDto = prepareCreateAccountDto();
+        accountDto.setPhoneNumber("123456789");
+
+        // when && then
+        given()
+                .body(accountDto)
+                .when()
+                .post(ACCOUNT_PATH + "/register")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST"));
+
+    }
 
     @Test
     void shouldDeactivateActiveAccount() {
@@ -138,14 +182,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     void shouldConfirmRegisteredAccountWhenVerificationTokenCorrect() {
         DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
         // given
-        CreateAccountDto accountDto = new CreateAccountDto();
-        accountDto.setPhoneNumber("123123123");
-        accountDto.setEmail("test@test.test");
-        accountDto.setLogin("test");
-        accountDto.setFirstName("Test");
-        accountDto.setLastName("Test");
-        accountDto.setPassword("p@ssw0rd");
-        accountDto.setLanguageTag("en-US");
+        CreateAccountDto accountDto = prepareCreateAccountDto();
 
         // when
         given()
@@ -322,18 +359,18 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
 
         UpdateAccountDetailsDto dtoWithExistedPhoneNumber =
-                new UpdateAccountDetailsDto(adminAccount._1.getId(),
-                        adminAccount._1.getEmail(),
-                        adminAccount._1.getFirstName(),
-                        adminAccount._1.getLastName(),
+                new UpdateAccountDetailsDto(ownerAccount._1.getId(),
+                        ownerAccount._1.getEmail(),
+                        ownerAccount._1.getFirstName(),
+                        ownerAccount._1.getLastName(),
                         getFacilityManagerAccount().getPhoneNumber(),
-                        adminAccount._1.getVersion()
+                        ownerAccount._1.getVersion()
                 );
 
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
                 .body(dtoWithExistedPhoneNumber)
-                .header(IF_MATCH_HEADER_NAME, adminAccount._2)
+                .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + "/self")
                 .then()
@@ -580,4 +617,15 @@ class AccountControllerTest extends IntegrationTestsConfig {
         );
     }
 
+    private static CreateAccountDto prepareCreateAccountDto() {
+        CreateAccountDto accountDto = new CreateAccountDto();
+        accountDto.setPhoneNumber("123123123");
+        accountDto.setEmail("test@test.test");
+        accountDto.setLogin("test");
+        accountDto.setFirstName("Test");
+        accountDto.setLastName("Test");
+        accountDto.setPassword("p@ssw0rd");
+        accountDto.setLanguageTag("en-US");
+        return accountDto;
+    }
 }

@@ -32,7 +32,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
@@ -147,7 +146,7 @@ public class AccountService {
     }
 
     @RolesAllowed({ADMINISTRATOR})
-    public void updateAccountDetails(final long id, final AccountDetails accountDetails) throws AccountWithEmailAlreadyExistException {
+    public void updateAccountDetails(final long id, final AccountDetails accountDetails) {
         Account account = accountFacade.findById(id);
         addAccountDetailsToUpdate(account, accountDetails);
     }
@@ -159,7 +158,7 @@ public class AccountService {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) throws AccountWithEmailAlreadyExistException {
+    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) {
         Account account = findByLogin(login);
         addAccountDetailsToUpdate(account, accountDetails);
     }
@@ -412,40 +411,17 @@ public class AccountService {
         roleToRemove.ifPresent(optRole -> optRole.setActive(false));
     }
 
-    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) throws AccountWithEmailAlreadyExistException {
+    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) {
         String currentAccountEmail = account.getAccountDetails().getEmail();
-        String currentAccountPhoneNumber = account.getAccountDetails().getPhoneNumber();
-
-        if (!accountDetails.getPhoneNumber().equals(currentAccountPhoneNumber)) {
-            checkAccountWithPhoneNumberExist(accountDetails.getPhoneNumber());
-        }
-
         if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {
             updateAccountDetails(accountDetails, account);
+            accountFacade.update(account);
             log.info("Account details updated: " + account.getId());
         } else {
-            checkAccountWithEmailExist(accountDetails.getEmail());
-
             account.setWaitingAccountDetails(accountDetails);
             accountFacade.update(account);
             tokenSender.accountDetailsAcceptToken(verificationTokenService.createAcceptAccountDetailToken(account));
             log.info("Added account details waiting for accept: " + account.getId());
-        }
-    }
-
-    private void checkAccountWithEmailExist(final String email) {
-        Optional<Account> optionalAccountByEmail = accountFacade.findByEmail(email);
-        if (optionalAccountByEmail.isPresent()) {
-            log.info("Account details update error: account with email" + email + " already exist.");
-            throw ApplicationBaseException.accountWithEmailAlreadyExist();
-        }
-    }
-
-    private void checkAccountWithPhoneNumberExist(final String phoneNumber) {
-        Optional<Account> optionalAccountByEmail = accountFacade.findByPhoneNumber(phoneNumber);
-        if (optionalAccountByEmail.isPresent()) {
-            log.info("Account details update error: account with phone number" + phoneNumber + " already exist.");
-            throw ApplicationBaseException.accountWithPhoneNumberAlreadyExist();
         }
     }
 
@@ -455,8 +431,6 @@ public class AccountService {
         currentAccountDetails.setFirstName(newAccountDetails.getFirstName());
         currentAccountDetails.setLastName(newAccountDetails.getLastName());
         currentAccountDetails.setPhoneNumber(newAccountDetails.getPhoneNumber());
-
-        accountFacade.update(account);
     }
 
     private boolean isModifyingAnotherUser(final Account account) {
