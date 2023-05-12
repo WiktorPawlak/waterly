@@ -35,6 +35,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
         query = "select v from VerificationToken v where v.expiryDate > CURRENT_TIMESTAMP and v.token = :token and v.tokenType = :tokenType")
 @NamedQuery(name = "VerificationToken.findByAccountIdAndTokenType",
         query = "select v from VerificationToken v where v.account.id = :accountId and v.tokenType = :tokenType")
+@NamedQuery(name = "VerificationToken.findLatestVerificationToken",
+        query = "select v from VerificationToken v where v.account.id = :accountId and v.tokenType = :tokenType order by v.createdOn desc limit 1")
 @NamedQuery(name = "VerificationToken.findAll",
         query = "select v from VerificationToken v")
 @NamedQuery(name = "VerificationToken.deleteByAccountIdAndTokenType",

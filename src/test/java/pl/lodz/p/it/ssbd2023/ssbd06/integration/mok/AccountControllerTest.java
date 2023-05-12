@@ -482,7 +482,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .queryParam("email", getOwnerAccount().getEmail())
                 .body(passwordChangeByAdminDto)
-                .contentType(MediaType.APPLICATION_JSON)
                 .when()
                 .post(ACCOUNT_PATH + "/password/request-change")
                 .then()
@@ -495,9 +494,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
         String newPassword1 = "1234jantes";
         PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword1, TokenType.CHANGE_PASSWORD);
         given()
-                //.header(AUTHORIZATION, OWNER_TOKEN)
                 .body(changePasswordRequestDto)
-                .contentType(MediaType.APPLICATION_JSON)
                 .when()
                 .post(ACCOUNT_PATH + "/password/reset")
                 .then()
@@ -505,7 +502,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         given()
                 .body(new Credentials("new", "1234jantes"))
-                .contentType(MediaType.APPLICATION_JSON)
                 .when()
                 .post(AUTH_PATH + "/login")
                 .then()

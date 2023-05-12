@@ -75,10 +75,10 @@ public class EmailTokenSenderImpl implements TokenSender {
     }
 
     @Override
-    public void accountDetailsAcceptToken(final VerificationToken token) {
+    public void sendAccountDetailsAcceptToken(final VerificationToken token) {
         Account account = token.getAccount();
         Locale locale = account.getLocale();
-        String email = account.getAccountDetails().getEmail();
+        String email = account.getWaitingAccountDetails().getEmail();
         //TODO add what changed to email
         emailSenderProvider.sendEmail(
                 email,

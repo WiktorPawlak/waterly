@@ -62,6 +62,20 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
     }
 
     @PermitAll
+    public Optional<VerificationToken> findLatestVerificationToken(final long accountId, final TokenType tokenType) {
+        TypedQuery<VerificationToken> verificationTokenTypedQuery =
+                em.createNamedQuery("VerificationToken.findLatestVerificationToken", VerificationToken.class)
+                        .setFlushMode(FlushModeType.COMMIT)
+                        .setParameter("accountId", accountId)
+                        .setParameter("tokenType", tokenType);
+        try {
+            return Optional.of(verificationTokenTypedQuery.getSingleResult());
+        } catch (final NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @PermitAll
     public List<VerificationToken> findByAccountIdAndTokenType(final long accountId, final TokenType tokenType) {
         return em.createNamedQuery("VerificationToken.findByAccountIdAndTokenType", VerificationToken.class)
                 .setFlushMode(FlushModeType.COMMIT)

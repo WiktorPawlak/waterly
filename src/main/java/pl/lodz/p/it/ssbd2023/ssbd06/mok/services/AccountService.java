@@ -109,7 +109,7 @@ public class AccountService {
         account.setActive(active);
         account.getAuthInfo().setIncorrectAuthCount(0);
         accountFacade.update(account);
-        notificationsProvider.notifyAccountActiveStatusChanged(id);
+        notificationsProvider.notifyAccountActiveStatusChanged(account, active);
     }
 
     @PermitAll
@@ -123,8 +123,8 @@ public class AccountService {
 
         accountFacade.update(account);
 
-        if (authenticatedAccount.isAdmin()) {
-            notificationsProvider.notifySuccessfulAdminAuthentication(authenticationDate, login, ipAddress);
+        if (account.inRole(ADMINISTRATOR)) {
+            notificationsProvider.notifySuccessfulAdminAuthentication(authenticationDate, account, ipAddress);
         }
     }
 
@@ -167,8 +167,8 @@ public class AccountService {
     public void resendEmailToAcceptAccountDetailsUpdate(final String login) {
         Account account = findByLogin(login);
 
-        //TODO resend email token
-        notificationsProvider.notifyWaitingAccountDetailsUpdate(account.getId());
+        VerificationToken token = verificationTokenService.findLatestToken(account.getId(), ACCOUNT_DETAILS_UPDATE);
+        tokenSender.sendAccountDetailsAcceptToken(token);
     }
 
     @PermitAll
@@ -180,7 +180,6 @@ public class AccountService {
         account.setWaitingAccountDetails(null);
 
         accountFacade.update(account);
-        //TODO czy to usuwa wszystkie tokeny?
         verificationTokenService.clearTokens(account.getId(), ACCOUNT_DETAILS_UPDATE);
     }
 
@@ -203,6 +202,7 @@ public class AccountService {
         Account account = accountFacade.findById(id);
         if (account != null && !account.isActive() && Objects.equals(account.getAccountState(), NOT_CONFIRMED)) {
             accountFacade.delete(account);
+            notificationsProvider.notifyAccountDeleted(account);
         }
     }
 
@@ -244,6 +244,7 @@ public class AccountService {
         account.getAuthInfo().setIncorrectAuthCount(0);
         account.setAccountState(TO_CONFIRM);
         accountFacade.update(account);
+        notificationsProvider.notifyAccountVerified(account);
         verificationTokenService.clearTokens(account.getId(), REGISTRATION);
     }
 
@@ -324,7 +325,7 @@ public class AccountService {
     }
 
     @PermitAll
-    public Account geAccountById(final long id) {
+    public Account getAccountById(final long id) {
         return accountFacade.findById(id);
     }
 
@@ -376,7 +377,7 @@ public class AccountService {
         }
 
         accountFacade.update(account);
-        notificationsProvider.notifyRoleRevoked(account.getId(), editAccountRolesDto.getRoles());
+        notificationsProvider.notifyRoleRevoked(account, editAccountRolesDto.getRoles());
     }
 
     private void grantPermissions(final EditAccountRolesDto editAccountRolesDto, final Account account) throws ApplicationBaseException {
@@ -385,7 +386,7 @@ public class AccountService {
         }
 
         accountFacade.update(account);
-        notificationsProvider.notifyRoleGranted(account.getId(), editAccountRolesDto.getRoles());
+        notificationsProvider.notifyRoleGranted(account, editAccountRolesDto.getRoles());
     }
 
     private void performGrantPermissionOperation(final Account account, final String role) throws ApplicationBaseException {
@@ -416,7 +417,7 @@ public class AccountService {
         } else {
             account.setWaitingAccountDetails(accountDetails);
             accountFacade.update(account);
-            tokenSender.accountDetailsAcceptToken(verificationTokenService.createAcceptAccountDetailToken(account));
+            tokenSender.sendAccountDetailsAcceptToken(verificationTokenService.createAcceptAccountDetailToken(account));
             log.info("Added account details waiting for accept: " + account.getId());
         }
     }
@@ -437,7 +438,7 @@ public class AccountService {
         }
         if (Objects.equals(account.getAccountState(), TO_CONFIRM)) {
             accountFacade.delete(account);
-            notificationsProvider.notifyAccountRejected(id);
+            notificationsProvider.notifyAccountRejected(account);
         } else {
             throw ApplicationBaseException.accountNotWaitingForConfirmation();
         }

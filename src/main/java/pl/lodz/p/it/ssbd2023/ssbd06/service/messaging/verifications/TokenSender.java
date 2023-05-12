@@ -10,5 +10,5 @@ public interface TokenSender {
 
     void sendChangePasswordToken(VerificationToken token);
 
-    void accountDetailsAcceptToken(VerificationToken token);
+    void sendAccountDetailsAcceptToken(VerificationToken token);
 }

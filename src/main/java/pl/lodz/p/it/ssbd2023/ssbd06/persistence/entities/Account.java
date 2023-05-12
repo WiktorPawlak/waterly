@@ -7,6 +7,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -101,5 +102,9 @@ public class Account extends AbstractEntity {
         this.accountDetails = accountDetails;
         this.authInfo = authInfo;
         this.accountState = AccountState.NOT_CONFIRMED;
+    }
+
+    public boolean inRole(final String role) {
+        return roles.stream().anyMatch(it -> Objects.equals(it.getPermissionLevel(), role) && it.isActive());
     }
 }

@@ -3,17 +3,21 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
+
 public interface NotificationsProvider {
 
-    void notifyAccountActiveStatusChanged(long id);
+    void notifyAccountActiveStatusChanged(Account account, boolean active);
 
-    void notifySuccessfulAdminAuthentication(LocalDateTime authenticationDate, String login, String ipAddress);
+    void notifySuccessfulAdminAuthentication(LocalDateTime authenticationDate, Account account, String ipAddress);
 
-    void notifyWaitingAccountDetailsUpdate(long id);
+    void notifyRoleGranted(Account account, Set<String> rolesToAdd);
 
-    void notifyRoleGranted(long id, Set<String> rolesToAdd);
+    void notifyRoleRevoked(Account account, Set<String> rolesToRevoke);
 
-    void notifyRoleRevoked(long id, Set<String> rolesToRevoke);
+    void notifyAccountRejected(Account account);
 
-    void notifyAccountRejected(long id);
+    void notifyAccountDeleted(Account account);
+
+    void notifyAccountVerified(Account account);
 }

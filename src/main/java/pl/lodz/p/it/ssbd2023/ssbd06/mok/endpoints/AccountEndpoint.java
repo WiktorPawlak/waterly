@@ -194,7 +194,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public AccountDto getUserById(final long id) {
-        Account account = accountService.geAccountById(id);
+        Account account = accountService.getAccountById(id);
         return new AccountDto(account);
     }
 

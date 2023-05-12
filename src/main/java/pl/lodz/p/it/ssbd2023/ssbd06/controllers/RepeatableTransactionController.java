@@ -63,7 +63,7 @@ public abstract class RepeatableTransactionController {
             markedForRollback = true;
             log.log(Level.WARNING, "Transaction {0} has been marked for rollback, because of optimistic lock exception during {1}. Retry: {2}",
                     prepareTransactionInfo(transactionalBean, retryCounter));
-            if (retryCounter < 2) {
+            if (retryCounter > 2) {
                 throw e;
             }
         } while (markedForRollback && ++retryCounter <= transactionRetryCount);

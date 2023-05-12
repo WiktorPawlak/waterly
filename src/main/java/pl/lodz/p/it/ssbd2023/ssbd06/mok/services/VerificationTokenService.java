@@ -51,6 +51,11 @@ public class VerificationTokenService {
                 .orElseThrow(TokenNotFoundException::new);
     }
 
+    public VerificationToken findLatestToken(final long accountId, final TokenType tokenType) throws TokenNotFoundException {
+        return verificationTokenFacade.findLatestVerificationToken(accountId, tokenType)
+                .orElseThrow(TokenNotFoundException::new);
+    }
+
     @PermitAll
     public List<VerificationToken> findAllTokens() {
         return verificationTokenFacade.findAll();
