@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import WaitForVerifyPage from "./pages/WaitForVerifyPage";
 import EditAccountDetailsPage from "./pages/EditAccountDetailsPage";
 import { ManageUsersAdminPage } from "./pages/admin";
+import { VerifyUsersFMPage } from "./pages/facilityManager";
 import VerifyAccountPage from "./pages/VerifyAccountPage";
 
 const Routing = createBrowserRouter([
@@ -31,6 +32,10 @@ const Routing = createBrowserRouter([
   {
     path: "/manage-users",
     element: <ManageUsersAdminPage />,
+  },
+  {
+    path: "/verify-users",
+    element: <VerifyUsersFMPage />,
   },
 ]);
 

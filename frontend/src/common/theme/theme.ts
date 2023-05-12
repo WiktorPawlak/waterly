@@ -8,9 +8,10 @@ export const theme = createTheme({
       contrastText: "#ffffff",
     },
     secondary: {
+      50: "#E7D428",
+      100: "#E1935A",
       main: "#EE6F2D",
     },
-    action: { active: "#E7D428", hover: "#E1935A" },
     text: {
       primary: "#121B2A",
       secondary: "#7D7D7D",

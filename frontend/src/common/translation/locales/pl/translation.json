@@ -56,6 +56,10 @@
     "description": "Tutaj możesz zmieniać role użytkownikom oraz dodawać nowe konta.",
     "button": "+ Dodaj użytkownika"
   },
+  "verifyUsersFMPage": {
+    "header": "Weryfikuj użytkowników",
+    "description": "Tutaj możesz akceptować lub odrzucać użytkowników."
+  },
   "navigation": {
     "login": "Zaloguj",
     "register": "Zarejestruj się",

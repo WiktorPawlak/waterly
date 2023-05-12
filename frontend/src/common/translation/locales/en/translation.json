@@ -56,6 +56,10 @@
     "description": "Here you can add new users or edit existing ones.",
     "button": "+ Add user"
   },
+  "verifyUsersFMPage": {
+    "header": "Verify users",
+    "description": "Here you can accept or remove users."
+  },
   "navigation": {
     "login": "Log in",
     "register": "Register"

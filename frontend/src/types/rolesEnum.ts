@@ -19,10 +19,16 @@ export const statusClasses = {
   },
   FACILITY_MANAGER: {
     className: "FACILITY_MANAGER",
-    color: theme.palette.action.active,
+    color:
+      theme.palette.secondary[
+        50 as unknown as keyof typeof theme.palette.secondary
+      ],
   },
   ADMINISTRATOR: {
     className: "ADMINISTRATOR",
-    color: theme.palette.action.hover,
+    color:
+      theme.palette.secondary[
+        100 as unknown as keyof typeof theme.palette.secondary
+      ],
   },
 };
