@@ -36,7 +36,8 @@
     "button": "Edit",
     "editAccountDetailEntry": {
       "emailLabel": "Email",
-      "passwordLabel": "Password",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
       "phoneNumberLabel": "Phone number"
     }
   },
