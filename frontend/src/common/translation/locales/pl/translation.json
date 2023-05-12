@@ -29,7 +29,17 @@
   },
   "waitForVerifyPage": {
     "header": "Dziękujemy za rejestrację!",
-    "description": "Zaczekaj na weryfikację. Powiadomimy Cię o tym mailowo."
+    "description": "Zaczekaj na weryfikację. Powiadomimy Cię o tym mailowo.",
+    "clickHere": "Kliknij tutaj",
+    "resendMailDescription": ", aby wysłać maila ponownie.",
+    "toastSuccess": "Link weryfikacyjny został wysłany ponownie.",
+    "toastError": "Pojawił się błąd podczas ponownego wysyłania linku weryfikacyjnego."
+  },
+  "verifyAccountPage": {
+    "header": "Aktywowanie konta...",
+    "description": "To może chwilę zająć.",
+    "toastSuccess": "Konto zostało zweryfikowane.",
+    "toastError": "Błąd weryfikacji konta. Token jest nieaktywny."
   },
   "editAccountDetailsPage": {
     "header": "Edytuj dane konta",

@@ -1,32 +1,37 @@
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import { useTranslation } from "react-i18next";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { putVerifyAccount } from '../api/accountApi';
 import { useSnackbar } from 'notistack';
-import { Box, Grid, Link, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import verifyPose from "../assets/verifyPose.svg";
-import { MainLayout } from "../layouts/MainLayout/MainLayout";
-import { postResendVerificationToken } from "../api/accountApi";
+import { CircularProgress } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 
-const WaitForVerifyPage = () => {
+const VerifyAccountPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const token = searchParams.get("token") as string;
 
-  const handleResendMail = () => {
-    postResendVerificationToken(`2137`) // TODO: refactor backend so register returns accountId
+  useEffect(() => {
+    putVerifyAccount(token)
     .then((response) => {
       if (response.status === 200) {
-        enqueueSnackbar(t("waitForVerifyPage.toastSuccess"), {
+        enqueueSnackbar(t("verifyAccountPage.toastSuccess"), {
           variant: 'success',
         });
       } else {
-        enqueueSnackbar(t('waitForVerifyPage.toastError'), {
+        enqueueSnackbar(t('verifyAccountPage.toastError'), {
           variant: 'error',
         });
       }
-    });
-  };
-
+    }).finally(() => navigate("/"));
+  }, []);
+  
   return (
-    //<MainLayout hideMenuEntries>
     <Grid
       sx={{
         display: "flex",
@@ -62,7 +67,7 @@ const WaitForVerifyPage = () => {
             alignItems: "center",
           }}
         >
-          <MailOutlineIcon sx={{ fontSize: { xs: "80px", md: "96px" } }} />
+          <CircularProgress />
         </Box>
         <Typography
           variant="h2"
@@ -72,7 +77,7 @@ const WaitForVerifyPage = () => {
             fontWeight: "700",
           }}
         >
-          {t("waitForVerifyPage.header")}
+          {t("verifyAccountPage.header")}
         </Typography>
         <Typography
           sx={{
@@ -82,22 +87,11 @@ const WaitForVerifyPage = () => {
             fontSize: { xs: "16px", md: "20px" },
           }}
         >
-          {t("waitForVerifyPage.description")}
-        </Typography>
-        <Typography
-          sx={{
-            mt: 2,
-            color: "text.secondary",
-            mb: { xs: 10, md: 0 },
-            fontSize: { xs: "12px", md: "16px" },
-          }}
-        > 
-        <Link href="#" onClick={handleResendMail}>{t("waitForVerifyPage.clickHere")}</Link>
-          {t("waitForVerifyPage.resendMailDescription")}
+          {t("verifyAccountPage.description")}
         </Typography>
         <Box
           sx={{
-            width: { xs: "500px", md: "600px" },
+            width: { xs: "500px", md: "800px" },
             height: { xs: "500px", md: "800px" },
             position: "absolute",
             bottom: 0,
@@ -122,4 +116,4 @@ const WaitForVerifyPage = () => {
   );
 };
 
-export default WaitForVerifyPage;
+export default VerifyAccountPage;

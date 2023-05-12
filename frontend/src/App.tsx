@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import WaitForVerifyPage from "./pages/WaitForVerifyPage";
 import EditAccountDetailsPage from "./pages/EditAccountDetailsPage";
 import { ManageUsersAdminPage } from "./pages/admin";
+import VerifyAccountPage from "./pages/VerifyAccountPage";
 
 const Routing = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const Routing = createBrowserRouter([
   {
     path: "/wait-for-verify",
     element: <WaitForVerifyPage />,
+  },
+  {
+    path: "/verify-account",
+    element: <VerifyAccountPage />,
   },
   {
     path: "/edit-profile",

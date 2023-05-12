@@ -29,7 +29,17 @@
   },
   "waitForVerifyPage": {
     "header": "Thank you for register!",
-    "description": "Wait for verification. We'll send you an email."
+    "description": "Wait for verification. We'll send you an email.",
+    "clickHere": "Click here",
+    "resendMailDescription": " to resend an email.",
+    "toastSuccess": "The verification link has been resent.",
+    "toastError": "An error occurred while resending verification link."
+  },
+  "verifyAccountPage": {
+    "header": "Activation account...",
+    "description": "This may take a while.",
+    "toastSuccess": "The account has been activated.",
+    "toastError": "Account verification error. The token is inactive."
   },
   "editAccountDetailsPage": {
     "header": "Edit account details",
