@@ -12,10 +12,11 @@ import {
 } from "@mui/material";
 import TranslateIcon from "@mui/icons-material/Translate";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { NavEntry, SlideNav } from "./Nav.styled";
 import { Twirl } from "hamburger-react";
+import { ProfileCard } from "../ProfileCard";
 
 interface NavProps {
   hideMenuEntries?: boolean;
@@ -55,6 +56,19 @@ export const Nav = ({ hideMenuEntries, window }: NavProps) => {
   const trigger = useScrollTrigger({
     target: window ? window() : undefined,
   });
+
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user") || "{}")
+    : {};
+
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
   return (
     <SlideNav appear={false} direction="down" in={!trigger || isMobileMenuOpen}>
       <AppBar
@@ -110,24 +124,36 @@ export const Nav = ({ hideMenuEntries, window }: NavProps) => {
                       backgroundColor: "background.default",
                     }}
                   >
-                    <NavEntry to="/">{t("navigation.login")}</NavEntry>
-                    <NavEntry to="/register">
-                      {t("navigation.register")}
-                    </NavEntry>
+                    {user.username ? (
+                      <ProfileCard onCLick={logout} />
+                    ) : (
+                      <>
+                        <NavEntry to="/">{t("navigation.login")}</NavEntry>
+                        <NavEntry to="/register">
+                          {t("navigation.register")}
+                        </NavEntry>
+                      </>
+                    )}
                   </Toolbar>
                 </Box>
               </Drawer>
               {!isMobileWidth && (
-                <Box>
-                  <NavEntry to="/">{t("navigation.login")}</NavEntry>
-                  <Link to="/register">
-                    <Button
-                      variant="contained"
-                      sx={{ textTransform: "none", ml: 4 }}
-                    >
-                      {t("navigation.register")}
-                    </Button>
-                  </Link>
+                <Box sx={{ display: "flex", flexDirection: "row" }}>
+                  {user.username ? (
+                    <ProfileCard onCLick={logout} />
+                  ) : (
+                    <>
+                      <NavEntry to="/">{t("navigation.login")}</NavEntry>
+                      <Link to="/register">
+                        <Button
+                          variant="contained"
+                          sx={{ textTransform: "none", ml: 4 }}
+                        >
+                          {t("navigation.register")}
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                   <Button onClick={handleClick}>
                     <TranslateIcon />
                   </Button>
@@ -136,12 +162,12 @@ export const Nav = ({ hideMenuEntries, window }: NavProps) => {
                     anchorEl={anchorEl}
                     onClose={handleClose}
                     anchorOrigin={{
-                      vertical: "center",
-                      horizontal: "center",
+                      vertical: "bottom",
+                      horizontal: "left",
                     }}
                     transformOrigin={{
-                      vertical: "center",
-                      horizontal: "center",
+                      vertical: "top",
+                      horizontal: "left",
                     }}
                   >
                     <Box

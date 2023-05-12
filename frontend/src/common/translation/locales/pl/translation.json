@@ -5,7 +5,7 @@
       "description": "Zaloguj się do Waterly..."
     },
     "form": {
-      "emailLabel": "Email",
+      "loginLabel": "Login",
       "passwordLabel": "Hasło",
       "submitButtonLabel": "Zaloguj",
       "forgotPasswordLinkLabel": "Zapomniałeś hasła?",
@@ -48,6 +48,11 @@
   "navigation": {
     "login": "Zaloguj",
     "register": "Zarejestruj się",
+    "logout": "Wyloguj"
+  },
+  "general": {
+    "role": "Rola: ",
+    "showProfile": "Pokaż profil",
     "logout": "Wyloguj"
   }
 }

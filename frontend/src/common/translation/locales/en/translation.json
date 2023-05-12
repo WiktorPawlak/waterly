@@ -5,7 +5,7 @@
       "description": "Log in to Waterly..."
     },
     "form": {
-      "emailLabel": "Email",
+      "loginLabel": "Login",
       "passwordLabel": "Password",
       "submitButtonLabel": "Log in",
       "forgotPasswordLinkLabel": "Forgot password?",
@@ -47,7 +47,11 @@
   },
   "navigation": {
     "login": "Log in",
-    "register": "Register",
+    "register": "Register"
+  },
+  "general": {
+    "role": "Role: ",
+    "showProfile": "Show profile",
     "logout": "Log out"
   }
 }

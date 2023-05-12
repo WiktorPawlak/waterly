@@ -8,11 +8,24 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
+import { useUser } from "../../../../../hooks/useUser";
+import { useState } from "react";
 
 export const LoginFormSection = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
+
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { logInClient } = useUser();
+
+  async function signInButtonHandle() {
+    if (!(await logInClient({ login, password }))) {
+      return <Box>Loading...</Box>;
+    }
+  }
   return (
     <Box
       sx={{
@@ -54,13 +67,14 @@ export const LoginFormSection = () => {
       {isMobileWidth && (
         <img
           src={loginPose}
-          alt="XD"
+          alt="loginPose"
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       )}
       <TextField
-        label={t("logInPage.form.emailLabel")}
+        label={t("logInPage.form.loginLabel")}
         variant="standard"
+        onChange={(e) => setLogin(e.target.value)}
         sx={{
           mb: 3,
           "& label": {
@@ -75,6 +89,7 @@ export const LoginFormSection = () => {
         label={t("logInPage.form.passwordLabel")}
         type="password"
         variant="standard"
+        onChange={(e) => setPassword(e.target.value)}
         sx={{
           mb: 3,
           "& label": {
@@ -100,6 +115,7 @@ export const LoginFormSection = () => {
       <Button
         variant="contained"
         sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
+        onClick={signInButtonHandle}
       >
         {t("logInPage.form.submitButtonLabel")}
       </Button>
