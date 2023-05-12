@@ -1,9 +1,11 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto;
 
-import lombok.Getter;
+import java.time.format.DateTimeFormatter;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.Signable;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
@@ -13,34 +15,40 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.LastName;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Login;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PhoneNumber;
 
-@ToString
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class AccountDto implements Signable {
     private long id;
-
     @Login
     private String login;
-
     @Email
     private String email;
-
     @FirstName
     private String firstName;
-
     @LastName
     private String lastName;
-
     @PhoneNumber
     private String phoneNumber;
-
     @LanguageTag
     private String languageTag;
-
     private long version;
-
     private boolean active;
+    @NotNull
+    private String createdOn;
+    @NotNull
+    private String createdBy;
+    @NotNull
+    private String updatedOn;
+    @NotNull
+    private String updatedBy;
+    @NotNull
+    private String lastSuccessAuth;
+    @NotNull
+    private String lastIncorrectAuth;
+    @NotNull
+    private String lastIpAddress;
+    private int incorrectAuthCount;
 
     public AccountDto(final Account account) {
         this.id = account.getId();
@@ -52,6 +60,30 @@ public class AccountDto implements Signable {
         this.languageTag = account.getLocale().toLanguageTag();
         this.active = account.isActive();
         this.version = account.getVersion() + account.getAccountDetails().getVersion();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        this.createdOn = account.getCreatedOn().format(formatter);
+        this.createdBy = account.getCreatedBy() != null
+                ? account.getCreatedBy().getLogin()
+                : "System";
+        this.updatedOn = account.getUpdatedOn() != null
+                ? account.getUpdatedOn().format(formatter)
+                : "---";
+        this.updatedBy = account.getUpdatedBy() != null
+                ? account.getUpdatedBy().getLogin()
+                : "---";
+
+        var authInfo = account.getAuthInfo();
+        this.lastSuccessAuth = authInfo.getLastSuccessAuth() != null
+                ? authInfo.getLastSuccessAuth().format(formatter)
+                : "---";
+        this.lastIncorrectAuth = authInfo.getLastIncorrectAuth() != null
+                ? authInfo.getLastIncorrectAuth().format(formatter)
+                : "---";
+        this.lastIpAddress = authInfo.getLastIpAddress() != null
+                ? authInfo.getLastIpAddress()
+                : "---";
+        this.incorrectAuthCount = authInfo.getIncorrectAuthCount();
     }
 
     @Override

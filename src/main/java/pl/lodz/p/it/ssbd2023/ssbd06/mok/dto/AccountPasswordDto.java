@@ -1,15 +1,13 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Password;
 
-@ToString
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class AccountPasswordDto {
 
     @Password

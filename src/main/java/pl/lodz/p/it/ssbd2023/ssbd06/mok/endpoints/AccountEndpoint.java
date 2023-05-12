@@ -66,8 +66,8 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto updateAccountDetailsDto) {
-        accountService.updateAccountDetails(id, updateAccountDetailsDto.toDomain());
+    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto dto) {
+        accountService.updateAccountDetails(id, dto.toDomain(), dto.getLanguageTag());
     }
 
     @OnlyGuest
@@ -91,8 +91,8 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final UpdateAccountDetailsDto updateAccountDetailsDto) {
-        accountService.updateOwnAccountDetails(authenticatedAccount.getLogin(), updateAccountDetailsDto.toDomain());
+    public void updateOwnAccountDetails(final UpdateAccountDetailsDto dto) {
+        accountService.updateOwnAccountDetails(authenticatedAccount.getLogin(), dto.toDomain(), dto.getLanguageTag());
     }
 
     @PermitAll
@@ -106,15 +106,15 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({ADMINISTRATOR, OWNER, FACILITY_MANAGER})
-    public void changeOwnAccountPassword(final AccountPasswordDto accountPasswordDto) throws ApplicationBaseException {
+    public void changeOwnAccountPassword(final AccountPasswordDto dto) throws ApplicationBaseException {
         Account account = accountService.findByLogin(authenticatedAccount.getLogin());
-        if (!hashProvider.verify(accountPasswordDto.getOldPassword().toCharArray(), account.getPassword())) {
+        if (!hashProvider.verify(dto.getOldPassword().toCharArray(), account.getPassword())) {
             throw ApplicationBaseException.unmatchedPasswordsException();
         }
-        if (Objects.equals(accountPasswordDto.getNewPassword(), accountPasswordDto.getOldPassword())) {
+        if (Objects.equals(dto.getNewPassword(), dto.getOldPassword())) {
             throw ApplicationBaseException.identicalPasswordsException();
         }
-        var hashedNewPassword = hashProvider.generate(accountPasswordDto.getNewPassword().toCharArray());
+        var hashedNewPassword = hashProvider.generate(dto.getNewPassword().toCharArray());
         accountService.changePassword(account, hashedNewPassword);
     }
 
@@ -129,8 +129,8 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) throws ApplicationBaseException {
-        accountService.editAccountRoles(id, editAccountRolesDto);
+    public void editAccountRoles(final long id, final EditAccountRolesDto dto) throws ApplicationBaseException {
+        accountService.editAccountRoles(id, dto);
     }
 
     @PermitAll
@@ -155,15 +155,8 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @PermitAll
-    public void resetPassword(final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
-        accountService.resetPassword(passwordResetDto);
-    }
-
-    @RolesAllowed(ADMINISTRATOR)
-    public List<AccountDto> getAccounts() {
-        return accountService.getAccounts().stream()
-                .map(AccountDto::new)
-                .toList();
+    public void resetPassword(final PasswordResetDto dto) throws TokenNotFoundException {
+        accountService.resetPassword(dto);
     }
 
     @RolesAllowed({ADMINISTRATOR, OWNER, FACILITY_MANAGER})
@@ -206,9 +199,9 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public List<AccountDto> getNotAcceptedAccounts() {
-        return accountService.getNotAcceptedAccounts().stream()
-                .map(AccountDto::new)
+    public List<AccountWithRolesDto> getNotConfirmedAccounts() {
+        return accountService.getNotConfirmedAccounts().stream()
+                .map(AccountWithRolesDto::new)
                 .toList();
     }
 

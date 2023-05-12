@@ -163,23 +163,6 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().build();
     }
 
-    @RolesAllowed({ADMINISTRATOR})
-    @GET
-    public Response getAccounts() throws ApplicationBaseException {
-        List<AccountDto> accounts = retry(() -> accountEndpoint.getAccounts(), accountEndpoint);
-        return Response.ok().entity(accounts).build();
-    }
-
-
-    @RolesAllowed({ADMINISTRATOR})
-    @POST
-    @Path("/list")
-    public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto, @QueryParam("pattern") final String pattern)
-            throws ApplicationBaseException {
-        PaginatedList<AccountWithRolesDto> accounts = retry(() -> accountEndpoint.getAccountsList(pattern, dto), accountEndpoint);
-        return Response.ok().entity(accounts).build();
-    }
-
     @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     @GET
     @Path("/self/preferences")
@@ -214,6 +197,14 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().build();
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
+    @DELETE
+    @Path("/{id}/reject")
+    public Response rejectOwnerAccount(@PathParam("id") final long id) {
+        retry(() -> accountEndpoint.rejectOwnerAccount(id), accountEndpoint);
+        return Response.ok().build();
+    }
+
     @GET
     @Path("/self")
     @Produces(MediaType.APPLICATION_JSON)
@@ -237,18 +228,17 @@ public class AccountController extends RepeatableTransactionController {
     @GET
     @Path("/to-verify")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNotAcceptedAccounts() {
-        List<AccountDto> accounts = retry(() -> accountEndpoint.getNotAcceptedAccounts(), accountEndpoint);
+    public Response getNotConfirmedAccounts() {
+        List<AccountWithRolesDto> accounts = retry(() -> accountEndpoint.getNotConfirmedAccounts(), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
 
-    @RolesAllowed(FACILITY_MANAGER)
-    @DELETE
-    @Path("/{id}/reject")
-    public Response rejectOwnerAccount(@PathParam("id") final long id) {
-        retry(() -> accountEndpoint.rejectOwnerAccount(id), accountEndpoint);
-        return  Response.ok().build();
+    @RolesAllowed({ADMINISTRATOR})
+    @POST
+    @Path("/list")
+    public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto, @QueryParam("pattern") final String pattern)
+            throws ApplicationBaseException {
+        PaginatedList<AccountWithRolesDto> accounts = retry(() -> accountEndpoint.getAccountsList(pattern, dto), accountEndpoint);
+        return Response.ok().entity(accounts).build();
     }
-
-
 }

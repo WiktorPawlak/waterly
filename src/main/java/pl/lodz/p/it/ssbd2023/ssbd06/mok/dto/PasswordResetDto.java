@@ -2,17 +2,15 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Password;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ValidUUID;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class PasswordResetDto {
     @NotNull
     @ValidUUID
@@ -23,3 +21,4 @@ public class PasswordResetDto {
     @NotNull
     private TokenType type;
 }
+

@@ -1,14 +1,12 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@ToString
-@Getter
-@AllArgsConstructor(staticName = "of")
+@Data
 @NoArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class AccountActiveStatusDto {
 
     private boolean active;

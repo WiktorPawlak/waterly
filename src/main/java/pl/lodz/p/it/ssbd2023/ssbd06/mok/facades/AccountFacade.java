@@ -161,7 +161,7 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public List<Account> findNotAcceptedAccounts() {
+    public List<Account> findNotConfirmedAccounts() {
         TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByAccountState", Account.class);
         accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
         accountTypedQuery.setParameter("accountState", TO_CONFIRM);

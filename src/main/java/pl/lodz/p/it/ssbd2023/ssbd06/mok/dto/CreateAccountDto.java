@@ -12,8 +12,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Password;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PhoneNumber;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreateAccountDto {
     @Login
     private String login;

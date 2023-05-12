@@ -146,9 +146,9 @@ public class AccountService {
     }
 
     @RolesAllowed({ADMINISTRATOR})
-    public void updateAccountDetails(final long id, final AccountDetails accountDetails) {
+    public void updateAccountDetails(final long id, final AccountDetails accountDetails, final String languageTag) {
         Account account = accountFacade.findById(id);
-        addAccountDetailsToUpdate(account, accountDetails);
+        addAccountDetailsToUpdate(account, accountDetails, languageTag);
     }
 
     @PermitAll
@@ -158,9 +158,9 @@ public class AccountService {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails) {
+    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails, final String languageTag) {
         Account account = findByLogin(login);
-        addAccountDetailsToUpdate(account, accountDetails);
+        addAccountDetailsToUpdate(account, accountDetails, languageTag);
     }
 
     @PermitAll
@@ -293,11 +293,6 @@ public class AccountService {
     }
 
     @PermitAll
-    public List<Account> getAccounts() {
-        return accountFacade.findAll();
-    }
-
-    @PermitAll
     public List<Account> getAccountsList(final String pattern,
                                          final Integer page,
                                          final Integer pageSize,
@@ -334,8 +329,8 @@ public class AccountService {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public List<Account> getNotAcceptedAccounts() {
-        return accountFacade.findNotAcceptedAccounts();
+    public List<Account> getNotConfirmedAccounts() {
+        return accountFacade.findNotConfirmedAccounts();
     }
 
     private void updateOrCreateAccountSearchPreferences(final String order,
@@ -411,8 +406,9 @@ public class AccountService {
         roleToRemove.ifPresent(optRole -> optRole.setActive(false));
     }
 
-    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails) {
+    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails, final String languageTag) {
         String currentAccountEmail = account.getAccountDetails().getEmail();
+        account.setLocale(Locale.forLanguageTag(languageTag));
         if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {
             updateAccountDetails(accountDetails, account);
             accountFacade.update(account);
