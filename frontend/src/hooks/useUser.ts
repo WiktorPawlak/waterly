@@ -1,4 +1,9 @@
-import { LoginRequestBody, postLogin, LoginResponse } from "../api/authApi";
+import {
+  LoginRequestBody,
+  postLogin,
+  LoginResponse,
+  registerApi,
+} from "../api/authApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
@@ -6,6 +11,16 @@ import jwt_decode from "jwt-decode";
 interface User {
   username: string;
   roles: string[];
+}
+
+interface NewUser {
+  login: string;
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  languageTag: string;
 }
 
 export const useUser = () => {
@@ -47,5 +62,17 @@ export const useUser = () => {
     navigate("/login");
   };
 
-  return { user, logInClient, logout };
+  const registerUser = async (userData: NewUser) => {
+    try {
+      const response = await registerApi(userData);
+
+      if (response.status === 201) {
+        navigate("/wait-for-verify");
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+
+  return { user, logInClient, logout, registerUser };
 };

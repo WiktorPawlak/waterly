@@ -8,11 +8,62 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
+import { useState } from "react";
+import { useUser } from "../../../../../hooks/useUser";
+import { languages } from "../../../../../types";
+
+interface RegisterFormValues {
+  login: string;
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  confirmPassword: string;
+  phoneNumber: string;
+  languageTag: string;
+}
 
 export const RegisterFormSection = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
+
+  const { registerUser } = useUser();
+  const languageTagFromStorage = localStorage.getItem("preferredLanguage");
+  const formattedLanguageTag =
+    languages[languageTagFromStorage as keyof typeof languages];
+
+  const [formValues, setFormValues] = useState<RegisterFormValues>({
+    login: "",
+    password: "",
+    confirmPassword: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    languageTag: formattedLanguageTag ?? languages.pl,
+  });
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (formValues.password !== formValues.confirmPassword) {
+      console.log("Passwords do not match");
+      return;
+    } else if (formValues.password === formValues.confirmPassword) {
+      const { confirmPassword, ...user } = formValues;
+
+      registerUser(user);
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
 
   return (
     <Box
@@ -60,13 +111,86 @@ export const RegisterFormSection = () => {
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       )}
-      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
+      <form onSubmit={handleFormSubmit}>
+        <Box
+          sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
+        >
+          <TextField
+            label="First Name"
+            variant="standard"
+            name="firstName"
+            onChange={handleInputChange}
+            sx={{
+              mb: 3,
+              mr: { xs: 0, md: 5 },
+              "& label": {
+                color: "text.secondary",
+              },
+              "& label.Mui-focused": {
+                color: "primary.main",
+              },
+            }}
+          />
+          <TextField
+            label="Last Name"
+            variant="standard"
+            name="lastName"
+            onChange={handleInputChange}
+            sx={{
+              mb: 3,
+              "& label": {
+                color: "text.secondary",
+              },
+              "& label.Mui-focused": {
+                color: "primary.main",
+              },
+            }}
+          />
+        </Box>
+        <Box
+          sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
+        >
+          <TextField
+            label={t("registerPage.form.emailLabel")}
+            variant="standard"
+            name="email"
+            onChange={handleInputChange}
+            sx={{
+              mb: 3,
+              mr: { xs: 0, md: 5 },
+              "& label": {
+                color: "text.secondary",
+              },
+              "& label.Mui-focused": {
+                color: "primary.main",
+              },
+            }}
+          />
+          <TextField
+            label="Login"
+            variant="standard"
+            name="login"
+            onChange={handleInputChange}
+            sx={{
+              mb: 3,
+              "& label": {
+                color: "text.secondary",
+              },
+              "& label.Mui-focused": {
+                color: "primary.main",
+              },
+            }}
+          />
+        </Box>
         <TextField
-          label="First Name"
+          label="Phone Number"
+          name="phoneNumber"
           variant="standard"
+          onChange={handleInputChange}
+          type="number"
           sx={{
             mb: 3,
-            mr: { xs: 0, md: 5 },
+            width: "100%",
             "& label": {
               color: "text.secondary",
             },
@@ -75,112 +199,79 @@ export const RegisterFormSection = () => {
             },
           }}
         />
-        <TextField
-          label="Last Name"
-          variant="standard"
-          sx={{
-            mb: 3,
-            "& label": {
-              color: "text.secondary",
-            },
-            "& label.Mui-focused": {
-              color: "primary.main",
-            },
-          }}
-        />
-      </Box>
-      <TextField
-        label={t("registerPage.form.emailLabel")}
-        variant="standard"
-        sx={{
-          mb: 3,
-          "& label": {
-            color: "text.secondary",
-          },
-          "& label.Mui-focused": {
-            color: "primary.main",
-          },
-        }}
-      />
-      <TextField
-        label="Phone Number"
-        variant="standard"
-        type="number"
-        sx={{
-          mb: 3,
-          "& label": {
-            color: "text.secondary",
-          },
-          "& label.Mui-focused": {
-            color: "primary.main",
-          },
-        }}
-      />
 
-      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
-        <TextField
-          label={t("registerPage.form.passwordLabel")}
-          variant="standard"
-          type="password"
+        <Box
+          sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
+        >
+          <TextField
+            label={t("registerPage.form.passwordLabel")}
+            onChange={handleInputChange}
+            variant="standard"
+            name="password"
+            type="password"
+            sx={{
+              mb: 3,
+              mr: { xs: 0, md: 5 },
+              "& label": {
+                color: "text.secondary",
+              },
+              "& label.Mui-focused": {
+                color: "primary.main",
+              },
+            }}
+          />
+          <TextField
+            label="Confirm Password"
+            variant="standard"
+            onChange={handleInputChange}
+            type="password"
+            name="confirmPassword"
+            sx={{
+              mb: 3,
+              "& label": {
+                color: "text.secondary",
+              },
+              "& label.Mui-focused": {
+                color: "primary.main",
+              },
+            }}
+          />
+        </Box>
+        <Button
+          variant="text"
           sx={{
-            mb: 3,
-            mr: { xs: 0, md: 5 },
-            "& label": {
-              color: "text.secondary",
-            },
-            "& label.Mui-focused": {
-              color: "primary.main",
-            },
+            textTransform: "none",
+            width: "204px",
+            justifyContent: "flex-end",
+            alignSelf: "flex-end",
+            mb: { xs: 3, md: 6 },
           }}
-        />
-        <TextField
-          label="Confirm Password"
-          variant="standard"
-          type="password"
-          sx={{
-            mb: 3,
-            "& label": {
-              color: "text.secondary",
-            },
-            "& label.Mui-focused": {
-              color: "primary.main",
-            },
-          }}
-        />
-      </Box>
-      <Button
-        variant="text"
-        sx={{
-          textTransform: "none",
-          width: "204px",
-          justifyContent: "flex-end",
-          alignSelf: "flex-end",
-          mb: { xs: 3, md: 6 },
-        }}
-      >
-        {t("registerPage.form.forgotPasswordLinkLabel")}
-      </Button>
-      <Button
-        variant="contained"
-        sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
-      >
-        {t("registerPage.form.submitButtonLabel")}
-      </Button>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          mb: 1,
-        }}
-      >
-        <Typography sx={{ fontSize: "14px", color: "text.secondary" }}>
-          {t("registerPage.form.registerText")}
-        </Typography>
-        <Button variant="text" sx={{ textTransform: "none" }}>
-          {t("registerPage.form.registerButton")}
+        >
+          {t("registerPage.form.forgotPasswordLinkLabel")}
         </Button>
-      </Box>
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
+        >
+          {t("registerPage.form.submitButtonLabel")}
+        </Button>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            mb: 1,
+          }}
+        >
+          <Typography sx={{ fontSize: "14px", color: "text.secondary" }}>
+            {t("registerPage.form.registerText")}
+          </Typography>
+          <Button variant="text" sx={{ textTransform: "none" }}>
+            {t("registerPage.form.registerButton")}
+          </Button>
+        </Box>
+      </form>
     </Box>
   );
 };
