@@ -11,6 +11,16 @@
       "forgotPasswordLinkLabel": "Zapomniałeś hasła?",
       "registerText": "Nie masz konta?",
       "registerButton": "Zarejestruj się"
+    },
+    "validation": {
+      "login": {
+        "min": "Login musi mieć przynajmniej 3 znaki",
+        "max": "Login nie może mieć więcej niż 36 znaków"
+      },
+      "password": {
+        "min": "Hasło musi mieć przynajmniej 8 znaków",
+        "max": "Hasło nie może być dłuższe niż 32 znaki"
+      }
     }
   },
   "registerPage": {
@@ -49,6 +59,28 @@
       "firstNameLabel": "Imię",
       "lastNameLabel": "Nazwisko",
       "phoneNumberLabel": "Nr telefonu"
+    },
+    "validation": {
+      "email": {
+        "min": "Email musi mieć przynajmniej 5 znaków",
+        "max": "Email nie może mieć więcej niż 320 znaków",
+        "syntax": "Składnia emaila jest nieprawidłowa"
+      },
+      "firstName": {
+        "min": "Imię nie może być krótsze niż 2 litery",
+        "max": "imię musi być krótsze niż 50 liter",
+        "syntax": "Imię może zawierać tylko litery"
+      },
+      "lastName": {
+        "min": "Nazwisko nie może być krótsze niż 2 litery",
+        "max": "Nazwisko musi być krótsze niż 50 liter",
+        "syntax": "Nazwisko może zawierać tylko litery i znak: -"
+      },
+      "phoneNumber": {
+        "min": "Numer telefonu nie może być krótszy niż 8 cyfr",
+        "max": "Numer telefonu nie może być dłuższy niż 9 cyfr",
+        "syntax": "Number telefonu musi składać się tylko z cyfr"
+      }
     }
   },
   "manageUsersPage": {

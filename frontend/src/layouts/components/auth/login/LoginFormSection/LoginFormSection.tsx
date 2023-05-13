@@ -10,8 +10,10 @@ import { useTranslation } from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
 import { useUser } from "../../../../../hooks/useUser";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const LoginFormSection = () => {
+  const navigation = useNavigate();
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
@@ -26,6 +28,7 @@ export const LoginFormSection = () => {
       return <Box>Loading...</Box>;
     }
   }
+
   return (
     <Box
       sx={{
@@ -130,7 +133,11 @@ export const LoginFormSection = () => {
         <Typography sx={{ fontSize: "14px", color: "text.secondary" }}>
           {t("logInPage.form.registerText")}
         </Typography>
-        <Button variant="text" sx={{ textTransform: "none" }}>
+        <Button
+          variant="text"
+          sx={{ textTransform: "none" }}
+          onClick={() => navigation("/register")}
+        >
           {t("logInPage.form.registerButton")}
         </Button>
       </Box>

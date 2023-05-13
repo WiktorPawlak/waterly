@@ -4,7 +4,6 @@ import {
   Button,
   CircularProgress,
   Divider,
-  Input,
   TextField,
   Typography,
 } from "@mui/material";
@@ -19,20 +18,33 @@ import {
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { editAccountDetilsSchema } from "../validation/validationSchemas";
+import {
+  EditAccountDetailsSchemaType,
+  editAccountDetailsSchema,
+} from "../validation/validationSchemas";
 
 const EditAccountDetailsPage = () => {
   const [accountDetails, setAccountDetails] = useState<AccountDto>();
   const { t } = useTranslation();
-  type FormSchemaType = z.infer<typeof editAccountDetilsSchema>;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormSchemaType>({
-    resolver: zodResolver(editAccountDetilsSchema),
+  } = useForm<EditAccountDetailsSchemaType>({
+    resolver: zodResolver(editAccountDetailsSchema),
   });
+
+  const {
+    email: emailError,
+    firstName: firstNameError,
+    lastName: lastNameError,
+    phoneNumber: phoneNumberError,
+  } = errors;
+  const emailErrorMessage = emailError?.message;
+  const firstNameErrorMessage = firstNameError?.message;
+  const lastNameErrorMessage = lastNameError?.message;
+  const phoneNumberErrorMessage = phoneNumberError?.message;
 
   useEffect(() => {
     getSelfAccountDetails().then((it) => {
@@ -111,8 +123,8 @@ const EditAccountDetailsPage = () => {
             </Box>
             <TextField
               {...register("email")}
-              error={errors.email?.message !== undefined}
-              helperText={errors.email?.message}
+              error={!!emailErrorMessage}
+              helperText={emailErrorMessage && t(emailErrorMessage)}
               variant="standard"
               value={accountDetails.email}
               onChange={(e) => {
@@ -152,8 +164,8 @@ const EditAccountDetailsPage = () => {
             </Box>
             <TextField
               {...register("firstName")}
-              error={errors.firstName?.message !== undefined}
-              helperText={errors.firstName?.message}
+              error={!!firstNameErrorMessage}
+              helperText={firstNameErrorMessage && t(firstNameErrorMessage)}
               variant="standard"
               value={accountDetails.firstName}
               sx={{ color: "text.secondary" }}
@@ -193,8 +205,8 @@ const EditAccountDetailsPage = () => {
             </Box>
             <TextField
               {...register("lastName")}
-              error={errors.lastName?.message !== undefined}
-              helperText={errors.lastName?.message}
+              error={!!lastNameErrorMessage}
+              helperText={lastNameErrorMessage && t(lastNameErrorMessage)}
               variant="standard"
               value={accountDetails.lastName}
               sx={{ color: "text.secondary" }}
@@ -234,8 +246,8 @@ const EditAccountDetailsPage = () => {
             </Box>
             <TextField
               {...register("phoneNumber")}
-              error={errors.phoneNumber?.message !== undefined}
-              helperText={errors.phoneNumber?.message}
+              error={!!phoneNumberErrorMessage}
+              helperText={phoneNumberErrorMessage && t(phoneNumberErrorMessage)}
               variant="standard"
               value={accountDetails.phoneNumber}
               sx={{ color: "text.secondary" }}

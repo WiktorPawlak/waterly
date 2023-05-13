@@ -11,6 +11,16 @@
       "forgotPasswordLinkLabel": "Forgot password?",
       "registerText": "Don't have an account?",
       "registerButton": "Sign up"
+    },
+    "validation": {
+      "login": {
+        "min": "Login must be at least 3 characters long",
+        "max": "Login must be at most 36 characters long"
+      },
+      "password": {
+        "min": "Pasword must be at least 8 characters long",
+        "max": "Password must be at most 32 characters long"
+      }
     }
   },
   "registerPage": {
@@ -49,6 +59,28 @@
       "firstNameLabel": "First name",
       "lastNameLabel": "Last name",
       "phoneNumberLabel": "Phone number"
+    },
+    "validation": {
+      "email": {
+        "min": "Email must be at least 5 characters long",
+        "max": "Email must be at most 320 characters long",
+        "syntax": "Invalid email syntax"
+      },
+      "firstName": {
+        "min": "First name must be at least 2 characters long",
+        "max": "First name must be at most 50 characters long",
+        "syntax": "First name can contain only letters"
+      },
+      "lastName": {
+        "min": "Last name must be at least 2 characters long",
+        "max": "Last name must be at most 50 characters long",
+        "syntax": "Last name can contain only letters and character: -"
+      },
+      "phoneNumber": {
+        "min": "Phone number must be at least 8 digits long",
+        "max": "Phone number must be at most 9 digits long",
+        "syntax": "Phone number can contain only digits"
+      }
     }
   },
   "manageUsersPage": {
