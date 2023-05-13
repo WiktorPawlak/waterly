@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.PASSWORD_RESET;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.security.enterprise.identitystore.PasswordHash;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -19,14 +21,17 @@ import pl.lodz.p.it.ssbd2023.ssbd06.arquillian.config.BaseArquillianTest;
 import pl.lodz.p.it.ssbd2023.ssbd06.arquillian.role.AdministratorRole;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.VerificationTokenFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 class AccountServiceTest extends BaseArquillianTest {
 
@@ -44,6 +49,10 @@ class AccountServiceTest extends BaseArquillianTest {
 
     @Inject
     private AdministratorRole administratorRole;
+
+    @Inject
+    @BCryptHash
+    private PasswordHash hashProvider;
 
     private final CreateAccountDto accountDto = prepareAccountDto();
     private final AccountDetails accountDetails = prepareAccountDetails();
@@ -262,6 +271,136 @@ class AccountServiceTest extends BaseArquillianTest {
         assertEquals(2, modifiedAccount.getRoles().stream().filter(Role::isActive).count());
     }
 
+    @Test
+    @SneakyThrows
+    void shouldRegisterUser() {
+        //given
+        userTransaction.begin();
+        List<Account> accountsBeforeRegistration = accountFacade.findAll();
+        userTransaction.commit();
+
+        //when
+        userTransaction.begin();
+        accountService.registerUser(accountDto);
+        Account registeredAccount = accountService.findByLogin(accountDto.getLogin());
+        userTransaction.commit();
+
+        userTransaction.begin();
+        List<Account> accountsAfterRegistration = accountFacade.findAll();
+        userTransaction.commit();
+
+        //then
+        assertEquals(0, accountsBeforeRegistration.size());
+        assertEquals(1, accountsAfterRegistration.size());
+        assertEquals("test", registeredAccount.getLogin());
+        assertEquals("test@test.test", registeredAccount.getAccountDetails().getEmail());
+        assertEquals("Test", registeredAccount.getAccountDetails().getFirstName());
+        assertEquals("Test", registeredAccount.getAccountDetails().getLastName());
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldCreateUser() {
+        //given
+        userTransaction.begin();
+        List<Account> accountsBeforeCreation = accountFacade.findAll();
+        userTransaction.commit();
+
+        //when
+        userTransaction.begin();
+        administratorRole.createUser(accountDto);
+        Account createdAccount = accountService.findByLogin(accountDto.getLogin());
+        userTransaction.commit();
+
+        userTransaction.begin();
+        List<Account> accountsAfterCreation = accountFacade.findAll();
+        userTransaction.commit();
+
+        //then
+        assertEquals(0, accountsBeforeCreation.size());
+        assertEquals(1, accountsAfterCreation.size());
+        assertEquals("test", createdAccount.getLogin());
+        assertEquals("test@test.test", createdAccount.getAccountDetails().getEmail());
+        assertEquals("Test", createdAccount.getAccountDetails().getFirstName());
+        assertEquals("Test", createdAccount.getAccountDetails().getLastName());
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldRemoveInactiveNotConfirmedAccount() {
+        //given
+        userTransaction.begin();
+        accountService.registerUser(accountDto);
+        Account createdAccount = accountService.findByLogin(accountDto.getLogin());
+        userTransaction.commit();
+
+        //when
+        userTransaction.begin();
+        List<Account> accountsAfterCreation = accountFacade.findAll();
+        userTransaction.commit();
+
+        userTransaction.begin();
+        accountService.removeInactiveNotConfirmedAccount(createdAccount.getId());
+        userTransaction.commit();
+
+        //then
+        userTransaction.begin();
+        List<Account> accountsAfterRemoving = accountFacade.findAll();
+        userTransaction.commit();
+
+        assertEquals(1, accountsAfterCreation.size());
+        assertEquals(0, accountsAfterRemoving.size());
+        assertEquals("test", createdAccount.getLogin());
+        assertEquals("test@test.test", createdAccount.getAccountDetails().getEmail());
+        assertEquals("Test", createdAccount.getAccountDetails().getFirstName());
+        assertEquals("Test", createdAccount.getAccountDetails().getLastName());
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResetPassword() {
+        //given
+        userTransaction.begin();
+        administratorRole.createUser(accountDto);
+        Account createdAccount = accountService.findByLogin(accountDto.getLogin());
+        userTransaction.commit();
+
+        //when
+        userTransaction.begin();
+        accountService.sendEmailToken(createdAccount);
+        userTransaction.commit();
+
+        userTransaction.begin();
+        accountService.resetPassword(preparePasswordResetDto(verificationTokenService.findAllTokens().get(0).getToken()));
+        Account changedPasswordAccount = accountService.findByLogin(accountDto.getLogin());
+        var hashedPassword = hashProvider.generate(changedPasswordAccount.getPassword().toCharArray());
+        userTransaction.commit();
+
+        //then
+        assertTrue(hashProvider.verify(changedPasswordAccount.getPassword().toCharArray(), hashedPassword));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldConfirmRegistration() {
+        //given
+        userTransaction.begin();
+        accountService.registerUser(accountDto);
+        userTransaction.commit();
+
+        //when
+        userTransaction.begin();
+        accountService.confirmRegistration(verificationTokenService.findAllTokens().get(0).getToken());
+        Account registeredAccount = accountService.findByLogin(accountDto.getLogin());
+        List<VerificationToken> verificationTokensAfter = verificationTokenService.findAllTokens();
+        userTransaction.commit();
+
+        //then
+        assertEquals(registeredAccount.getAccountState(), AccountState.TO_CONFIRM);
+        assertTrue(registeredAccount.isActive());
+        assertEquals(0, verificationTokensAfter.size());
+    }
+
     private CreateAccountDto prepareAccountDto() {
         CreateAccountDto accountDto = new CreateAccountDto();
         accountDto.setPhoneNumber("123123123");
@@ -272,6 +411,14 @@ class AccountServiceTest extends BaseArquillianTest {
         accountDto.setPassword("password");
         accountDto.setLanguageTag("en-US");
         return accountDto;
+    }
+
+    private PasswordResetDto preparePasswordResetDto(final String token) {
+        PasswordResetDto passwordResetDto = new PasswordResetDto();
+        passwordResetDto.setNewPassword("newPassword");
+        passwordResetDto.setToken(token);
+        passwordResetDto.setType(PASSWORD_RESET);
+        return passwordResetDto;
     }
 
     private AccountDetails prepareAccountDetails() {

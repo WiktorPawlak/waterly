@@ -473,7 +473,7 @@ public class AccountService {
         if (Objects.equals(account.getAccountState(), TO_CONFIRM)) {
             account.setAccountState(CONFIRMED);
             accountFacade.update(account);
-            notificationsProvider.notifyAccountRejected(account);
+            notificationsProvider.notifyAccountAccepted(account);
         } else {
             throw ApplicationBaseException.accountNotWaitingForConfirmation();
         }
