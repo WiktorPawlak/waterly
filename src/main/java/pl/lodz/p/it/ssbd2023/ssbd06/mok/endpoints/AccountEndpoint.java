@@ -25,12 +25,13 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
@@ -66,8 +67,13 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public void updateAccountDetails(final long id, final UpdateAccountDetailsDto dto) {
-        accountService.updateAccountDetails(id, dto.toDomain(), dto.getLanguageTag());
+    public void editAccountDetails(final long id, final EditAccountDetailsDto dto) {
+        accountService.editAccountDetails(id, dto.toDomain(), dto.getLanguageTag());
+    }
+
+    @PermitAll
+    public void editEmail(final long id, final EditEmailDto dto) {
+        accountService.editEmail(id, dto.getEmail().toLowerCase());
     }
 
     @OnlyGuest
@@ -77,7 +83,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed(ADMINISTRATOR)
     public void createAccount(final CreateAccountDto account) {
-        accountService.createUser(account);
+        accountService.createAccount(account);
     }
 
     @OnlyGuest
@@ -91,8 +97,13 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final UpdateAccountDetailsDto dto) {
-        accountService.updateOwnAccountDetails(authenticatedAccount.getLogin(), dto.toDomain(), dto.getLanguageTag());
+    public void editOwnAccountDetails(final EditAccountDetailsDto dto) {
+        accountService.editOwnAccountDetails(authenticatedAccount.getLogin(), dto.toDomain(), dto.getLanguageTag());
+    }
+
+    @PermitAll
+    public void editOwnEmail(final EditEmailDto dto) {
+        accountService.editOwnEmail(authenticatedAccount.getLogin(), dto.getEmail().toLowerCase());
     }
 
     @PermitAll
@@ -119,13 +130,13 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @PermitAll
-    public void acceptAccountDetailsUpdate(final String token) {
-        accountService.acceptAccountDetailsUpdate(token);
+    public void acceptEmailUpdate(final String token) {
+        accountService.acceptEmailUpdate(token);
     }
 
     @PermitAll
     public void resendEmailToAcceptAccountDetailsUpdate() {
-        accountService.resendEmailToAcceptAccountDetailsUpdate(authenticatedAccount.getLogin());
+        accountService.resendEmailToAcceptEmailUpdate(authenticatedAccount.getLogin());
     }
 
     @RolesAllowed(ADMINISTRATOR)

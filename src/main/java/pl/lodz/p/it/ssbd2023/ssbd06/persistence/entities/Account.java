@@ -35,11 +35,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 @Getter
 @Table(name = "account", indexes = {
         @Index(name = "account_details_idx", columnList = "account_details_id"),
-        @Index(name = "account_waiting_details_idx", columnList = "waiting_account_details_id")
 })
 @NamedQuery(name = "Account.findByLogin", query = "select a from Account a where a.login = :login")
-@NamedQuery(name = "Account.findByAccountDetails_Email",
-        query = "select a from Account a where a.accountDetails.email = :email or a.waitingAccountDetails.email = :email")
+@NamedQuery(name = "Account.findByEmailAndWaitingEmail",
+        query = "select a from Account a where a.accountDetails.email = :email or a.waitingEmail = :email")
 @NamedQuery(name = "Account.findAccountByEmail",
         query = "select a from Account a where a.accountDetails.email = :email")
 @NamedQuery(name = "Account.findByPhoneNumber", query = "select a from Account a where a.accountDetails.phoneNumber = :phoneNumber")
@@ -86,13 +85,10 @@ public class Account extends AbstractEntity {
     @OneToOne(cascade = {PERSIST, MERGE, REMOVE}, mappedBy = "account", orphanRemoval = true)
     private AuthInfo authInfo;
 
-    @ToString.Exclude
-    @JoinColumn(name = "waiting_account_details_id")
     @Setter
-    @OneToOne(fetch = LAZY, cascade = {PERSIST, MERGE, REMOVE})
-    private AccountDetails waitingAccountDetails;
-
-    //TODO we can add updates history?
+    @Size(min = 5, max = 320)
+    @Column(unique = true)
+    private String waitingEmail;
 
     public Account(final String login, final String password, final AccountDetails accountDetails,
                    final AuthInfo authInfo) {

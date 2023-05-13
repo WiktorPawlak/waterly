@@ -181,15 +181,10 @@ class AccountServiceTest extends BaseArquillianTest {
         userTransaction.commit();
 
         userTransaction.begin();
-        accountService.acceptAccountDetailsUpdate(verificationTokenService.findAllTokens().get(1).getToken());
-        userTransaction.commit();
-
-        userTransaction.begin();
         Account modifiedAccount = accountService.findByLogin(createdAccount.getLogin());
         userTransaction.commit();
 
         //then
-        assertEquals("testNew1@test.test", modifiedAccount.getAccountDetails().getEmail());
         assertEquals("TestNew", modifiedAccount.getAccountDetails().getFirstName());
         assertEquals("TestNew", modifiedAccount.getAccountDetails().getLastName());
         assertEquals("000000000", modifiedAccount.getAccountDetails().getPhoneNumber());
@@ -213,15 +208,10 @@ class AccountServiceTest extends BaseArquillianTest {
         userTransaction.commit();
 
         userTransaction.begin();
-        accountService.acceptAccountDetailsUpdate(verificationTokenService.findAllTokens().get(1).getToken());
-        userTransaction.commit();
-
-        userTransaction.begin();
         Account modifiedAccount = accountService.findByLogin(createdAccount.getLogin());
         userTransaction.commit();
 
         //then
-        assertEquals("testNew1@test.test", modifiedAccount.getAccountDetails().getEmail());
         assertEquals("TestNew", modifiedAccount.getAccountDetails().getFirstName());
         assertEquals("TestNew", modifiedAccount.getAccountDetails().getLastName());
         assertEquals("000000000", modifiedAccount.getAccountDetails().getPhoneNumber());
@@ -285,7 +275,7 @@ class AccountServiceTest extends BaseArquillianTest {
     }
 
     private AccountDetails prepareAccountDetails() {
-        return new AccountDetails("testNew1@test.test", "TestNew", "TestNew", "000000000");
+        return new AccountDetails(null, "TestNew", "TestNew", "000000000");
     }
 
 }

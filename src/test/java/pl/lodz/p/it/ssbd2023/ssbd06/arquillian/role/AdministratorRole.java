@@ -37,7 +37,7 @@ public class AdministratorRole {
     }
 
     public void updateAccountDetails(final long id, final AccountDetails accountDetails, String languageTag) {
-        accountService.updateAccountDetails(id, accountDetails, languageTag);
+        accountService.editAccountDetails(id, accountDetails, languageTag);
     }
 
     public String getVerificationToken() {
@@ -45,11 +45,11 @@ public class AdministratorRole {
     }
 
     public void confirmAccountTransactionWithToken(String token) {
-        accountService.acceptAccountDetailsUpdate(token);
+        accountService.acceptEmailUpdate(token);
     }
 
     public void createUser(CreateAccountDto account) {
-        accountService.createUser(account);
+        accountService.createAccount(account);
     }
 
     public void sendChangePasswordToken(Account account) {
@@ -61,7 +61,7 @@ public class AdministratorRole {
     }
 
     public void updateOwnAccountDetails(String login, AccountDetails accountDetails, String languageTag) {
-        accountService.updateOwnAccountDetails(login, accountDetails, languageTag);
+        accountService.editOwnAccountDetails(login, accountDetails, languageTag);
     }
 
     public void editAccountRoles(long id, EditAccountRolesDto editAccountRolesDto) {

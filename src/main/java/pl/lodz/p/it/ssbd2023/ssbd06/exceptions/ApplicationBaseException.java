@@ -10,6 +10,7 @@ import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountDoesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountNotWaitingForConfirmationException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NoMatchingEmailException;
@@ -134,6 +135,10 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static NoMatchingEmailException noMatchingEmailException() {
         return new NoMatchingEmailException();
+    }
+
+    public static AccountWithEmailAlreadyExistException accountWithEmailAlreadyExist() {
+        return new AccountWithEmailAlreadyExistException(ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXIST);
     }
 
     public static NotActiveAccountException notActiveAccountException() {

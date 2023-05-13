@@ -33,10 +33,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
@@ -239,7 +240,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     }
 
     @Test
-    void shouldEditSelfAccountDetailsWhenEmailNotChanged() {
+    void shouldEditSelfAccountDetails() {
         String firstName = "Kamil";
         String lastName = "Kowalski-Nowak";
         String phoneNumber = "000000000";
@@ -247,8 +248,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
 
-        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(ownerAccount._1.getId(),
-                ownerAccount._1.getEmail(),
+        EditAccountDetailsDto dto = new EditAccountDetailsDto(ownerAccount._1.getId(),
                 firstName, lastName, phoneNumber,
                 languageTag,
                 ownerAccount._1.getVersion());
@@ -269,36 +269,22 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
     @ParameterizedTest
     @SneakyThrows
-    @CsvSource({"/self", "/1"})
-    void shouldEditAccountDetailsWithChangedEmailWhenEditAccepted(String path) {
+    @CsvSource({"/self/email", "/1/email"})
+    void shouldEditEmailWhenEditAccepted(String path) {
         DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
-        String firstName = "Kamil";
-        String lastName = "Kowalski-Nowak";
-        String phoneNumber = "000000000";
         String email = "mati@mati.com";
-        String languageTag = "pl-PL";
 
-        Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
-        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(ownerAccount._1.getId(),
-                email,
-                firstName,
-                lastName,
-                phoneNumber,
-                languageTag,
-                ownerAccount._1.getVersion());
+        EditEmailDto dto = new EditEmailDto(email);
 
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .contentType("application/json-patch+json")
                 .body(dto)
-                .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                 .when()
-                .put(ACCOUNT_PATH + path)
+                .patch(ACCOUNT_PATH + path)
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        assertNotEquals(firstName, getAdministratorAccount().getFirstName());
-        assertNotEquals(lastName, getAdministratorAccount().getLastName());
-        assertNotEquals(phoneNumber, getAdministratorAccount().getPhoneNumber());
         assertNotEquals(email, getAdministratorAccount().getEmail());
 
         String token = databaseConnector.executeQuery(
@@ -308,14 +294,31 @@ class AccountControllerTest extends IntegrationTestsConfig {
         // when
         given()
                 .when()
-                .post(ACCOUNT_PATH + "/account-details/accept?token=" + token)
+                .post(ACCOUNT_PATH + "/email/accept?token=" + token)
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        assertEquals(firstName, getAdministratorAccount().getFirstName());
-        assertEquals(lastName, getAdministratorAccount().getLastName());
-        assertEquals(phoneNumber, getAdministratorAccount().getPhoneNumber());
         assertEquals(email, getAdministratorAccount().getEmail());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "''",
+            "mati@mati",
+            "mati.com",
+    })
+    void whenEditEmailAndDataIsIncorrectShouldReturnBadRequest(String email) {
+        EditEmailDto dto = new EditEmailDto(email);
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(dto)
+                .when()
+                .put(ACCOUNT_PATH + "/self")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .body("[0].field", notNullValue())
+                .body("[0].message", notNullValue());
     }
 
     @ParameterizedTest
@@ -328,9 +331,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
     void whenUpdateSelfAccountDetailsAndDataIsIncorrectShouldReturnBadRequest(String firstName, String lastName, String phoneNumber, String languageTag) {
         Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
 
-        UpdateAccountDetailsDto dto =
-                new UpdateAccountDetailsDto(ownerAccount._1.getId(),
-                        ownerAccount._1.getEmail(),
+        EditAccountDetailsDto dto =
+                new EditAccountDetailsDto(ownerAccount._1.getId(),
                         firstName,
                         lastName,
                         phoneNumber,
@@ -350,53 +352,75 @@ class AccountControllerTest extends IntegrationTestsConfig {
     }
 
     @ParameterizedTest
+    @CsvSource({"/self/email", "/1/email"})
+    void whenUpdateEmailAndEmailExistShouldReturnConflict(String path) {
+        EditEmailDto dtoWithExistedEmail =
+                new EditEmailDto(getOwnerAccount().getEmail());
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(dtoWithExistedEmail)
+                .when()
+                .contentType("application/json-patch+json")
+                .patch(ACCOUNT_PATH + path)
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
+    }
+
+    @Test
+    void whenUpdateEmailAndEmailExistInWaitingEmailShouldReturnConflict() {
+        EditEmailDto dtoEmail =
+                new EditEmailDto(getOwnerAccount().getEmail());
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(dtoEmail)
+                .when()
+                .contentType("application/json-patch+json")
+                .patch(ACCOUNT_PATH + "/" + OWNER_ID + "/email")
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(dtoEmail)
+                .when()
+                .contentType("application/json-patch+json")
+                .patch(ACCOUNT_PATH + "/self/email")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
+    }
+
+
+    @ParameterizedTest
     @CsvSource({"/self", "/1"})
-    void whenUpdateAccountDetailsAndAccountWithEmailOrPhoneNumberExistShouldReturnConflict(String path) {
+    void whenEditAccountDetailsAndPhoneNumberExistShouldReturnConflict(String path) {
         Tuple2<AccountDto, String> adminAccount = getAdministratorAccountWithEtag();
-        Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
-        UpdateAccountDetailsDto dtoWithExistedEmail =
-                new UpdateAccountDetailsDto(adminAccount._1.getId(),
-                        ownerAccount._1.getEmail(),
+
+        EditAccountDetailsDto dtoWithExistedPhoneNumber =
+                new EditAccountDetailsDto(adminAccount._1.getId(),
                         adminAccount._1.getFirstName(),
                         adminAccount._1.getLastName(),
-                        adminAccount._1.getPhoneNumber(),
-                        adminAccount._1.getLanguageTag(),
+                        getFacilityManagerAccount().getPhoneNumber(),
+                        adminAccount._1().getLanguageTag(),
                         adminAccount._1.getVersion()
                 );
 
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                .body(dtoWithExistedEmail)
+                .body(dtoWithExistedPhoneNumber)
                 .header(IF_MATCH_HEADER_NAME, adminAccount._2)
                 .when()
                 .put(ACCOUNT_PATH + path)
-                .then()
-                .statusCode(CONFLICT.getStatusCode())
-                .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
-
-        UpdateAccountDetailsDto dtoWithExistedPhoneNumber =
-                new UpdateAccountDetailsDto(ownerAccount._1.getId(),
-                        ownerAccount._1.getEmail(),
-                        ownerAccount._1.getFirstName(),
-                        ownerAccount._1.getLastName(),
-                        getFacilityManagerAccount().getPhoneNumber(),
-                        ownerAccount._1().getLanguageTag(),
-                        ownerAccount._1.getVersion()
-                );
-
-        given()
-                .header(AUTHORIZATION, OWNER_TOKEN)
-                .body(dtoWithExistedPhoneNumber)
-                .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
-                .when()
-                .put(ACCOUNT_PATH + "/self")
                 .then()
                 .statusCode(CONFLICT.getStatusCode())
                 .body("message", equalTo("ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST"));
     }
 
     @Test
-    void shouldEditOtherAccountAccountDetailsWhenEmailNotChanged() {
+    void shouldEditOtherAccountAccountDetails() {
         String firstName = "Kamil";
         String lastName = "Kowalski-Nowak";
         String phoneNumber = "000000000";
@@ -404,8 +428,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
 
-        UpdateAccountDetailsDto dto = new UpdateAccountDetailsDto(ownerAccount._1.getId(),
-                ownerAccount._1.getEmail(),
+        EditAccountDetailsDto dto = new EditAccountDetailsDto(ownerAccount._1.getId(),
                 firstName,
                 lastName,
                 phoneNumber,
@@ -438,9 +461,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
 
-        UpdateAccountDetailsDto dto =
-                new UpdateAccountDetailsDto(ownerAccount._1.getId(),
-                        ownerAccount._1.getEmail(),
+        EditAccountDetailsDto dto =
+                new EditAccountDetailsDto(ownerAccount._1.getId(),
                         firstName,
                         lastName,
                         phoneNumber,
@@ -456,6 +478,25 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .then()
                 .statusCode(FORBIDDEN.getStatusCode())
                 .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensForParameterizedTests")
+    void shouldForbidNonAdminUsersToUpdateOtherAccountsEmail(String token) {
+        String email = "mati@mati.com";
+
+        EditEmailDto dto = new EditEmailDto(email);
+
+        given()
+                .header(AUTHORIZATION, token)
+                .body(dto)
+                .contentType("application/json-patch+json")
+                .when()
+                .patch(ACCOUNT_PATH + "/2/email")
+                .then()
+                .statusCode(FORBIDDEN.getStatusCode())
+                .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+
     }
 
     @ParameterizedTest

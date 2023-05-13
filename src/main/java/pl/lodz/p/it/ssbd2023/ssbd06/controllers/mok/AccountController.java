@@ -36,12 +36,13 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.UpdateAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
@@ -75,8 +76,17 @@ public class AccountController extends RepeatableTransactionController {
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
     @EtagValidationFilter
-    public Response updateOwnAccountDetails(@NotNull @Valid final UpdateAccountDetailsDto dto) throws ApplicationBaseException {
-        retry(() -> accountEndpoint.updateOwnAccountDetails(dto), accountEndpoint);
+    public Response editOwnAccountDetails(@NotNull @Valid final EditAccountDetailsDto dto) throws ApplicationBaseException {
+        retry(() -> accountEndpoint.editOwnAccountDetails(dto), accountEndpoint);
+        return Response.status(NO_CONTENT).build();
+    }
+
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
+    @PATCH
+    @Path("/self/email")
+    @Consumes(MediaType.APPLICATION_JSON_PATCH_JSON)
+    public Response editOwnEmail(@NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
+        retry(() -> accountEndpoint.editOwnEmail(dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -85,23 +95,32 @@ public class AccountController extends RepeatableTransactionController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @EtagValidationFilter
-    public Response updateAccountDetails(@PathParam("id") final long id, @NotNull @Valid final UpdateAccountDetailsDto dto)
+    public Response editAccountDetails(@PathParam("id") final long id, @NotNull @Valid final EditAccountDetailsDto dto)
             throws ApplicationBaseException {
-        retry(() -> accountEndpoint.updateAccountDetails(id, dto), accountEndpoint);
+        retry(() -> accountEndpoint.editAccountDetails(id, dto), accountEndpoint);
+        return Response.status(NO_CONTENT).build();
+    }
+
+    @RolesAllowed(ADMINISTRATOR)
+    @PATCH
+    @Path("/{id}/email")
+    @Consumes(MediaType.APPLICATION_JSON_PATCH_JSON)
+    public Response editEmail(@PathParam("id") final long id, @NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
+        retry(() -> accountEndpoint.editEmail(id, dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 
     @PermitAll
     @POST
-    @Path("/account-details/accept")
-    public Response acceptAccountDetailsUpdate(@NotNull @QueryParam("token") final String token) {
-        retry(() -> accountEndpoint.acceptAccountDetailsUpdate(token), accountEndpoint);
+    @Path("/email/accept")
+    public Response acceptEmailUpdate(@NotNull @QueryParam("token") final String token) {
+        retry(() -> accountEndpoint.acceptEmailUpdate(token), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     @POST
-    @Path("self/account-details/resend-accept-email")
+    @Path("self/email/resend-accept-email")
     public Response resendEmailToAcceptAccountDetailsUpdate() {
         retry(() -> accountEndpoint.resendEmailToAcceptAccountDetailsUpdate(), accountEndpoint);
         return Response.status(OK).build();

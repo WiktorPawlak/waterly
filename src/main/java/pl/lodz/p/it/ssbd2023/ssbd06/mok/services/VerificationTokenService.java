@@ -1,7 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 
-import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.ACCOUNT_DETAILS_UPDATE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.CHANGE_PASSWORD;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.EMAIL_UPDATE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.PASSWORD_RESET;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
 
@@ -157,7 +157,7 @@ public class VerificationTokenService {
                 account,
                 timeProvider.currentDate(),
                 verificationTokenConfig.getExpirationAccountDetailsInMinutes(),
-                ACCOUNT_DETAILS_UPDATE
+                EMAIL_UPDATE
         );
         return verificationTokenFacade.create(token);
     }

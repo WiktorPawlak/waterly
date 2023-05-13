@@ -101,11 +101,11 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     @PermitAll
-    public Optional<Account> findByPhoneNumber(final String phoneNumber) {
+    public Optional<Account> findByWaitingEmail(final String email) {
         try {
-            TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByPhoneNumber", Account.class);
+            TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByEmailAndWaitingEmail", Account.class);
             accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
-            accountTypedQuery.setParameter("phoneNumber", phoneNumber);
+            accountTypedQuery.setParameter("email", email);
             return Optional.of(accountTypedQuery.getSingleResult());
         } catch (final NoResultException e) {
             return Optional.empty();

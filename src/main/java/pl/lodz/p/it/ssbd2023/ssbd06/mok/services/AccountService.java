@@ -3,7 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.services;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.CONFIRMED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.NOT_CONFIRMED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_CONFIRM;
-import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.ACCOUNT_DETAILS_UPDATE;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.EMAIL_UPDATE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
@@ -146,9 +146,15 @@ public class AccountService {
     }
 
     @RolesAllowed({ADMINISTRATOR})
-    public void updateAccountDetails(final long id, final AccountDetails accountDetails, final String languageTag) {
+    public void editAccountDetails(final long id, final AccountDetails accountDetails, final String languageTag) {
         Account account = accountFacade.findById(id);
-        addAccountDetailsToUpdate(account, accountDetails, languageTag);
+        updateAccountDetails(accountDetails, account, languageTag);
+    }
+
+    @PermitAll
+    public void editEmail(final long id, final String email) {
+        Account account = accountFacade.findById(id);
+        addAccountEmailToUpdate(account, email);
     }
 
     @PermitAll
@@ -158,29 +164,35 @@ public class AccountService {
     }
 
     @PermitAll
-    public void updateOwnAccountDetails(final String login, final AccountDetails accountDetails, final String languageTag) {
+    public void editOwnAccountDetails(final String login, final AccountDetails accountDetails, final String languageTag) {
         Account account = findByLogin(login);
-        addAccountDetailsToUpdate(account, accountDetails, languageTag);
+        updateAccountDetails(accountDetails, account, languageTag);
     }
 
     @PermitAll
-    public void resendEmailToAcceptAccountDetailsUpdate(final String login) {
+    public void editOwnEmail(final String login, final String email) {
         Account account = findByLogin(login);
-
-        VerificationToken token = verificationTokenService.findLatestToken(account.getId(), ACCOUNT_DETAILS_UPDATE);
-        tokenSender.sendAccountDetailsAcceptToken(token);
+        addAccountEmailToUpdate(account, email);
     }
 
     @PermitAll
-    public void acceptAccountDetailsUpdate(final String token) {
-        VerificationToken verificationToken = verificationTokenService.findValidToken(token, ACCOUNT_DETAILS_UPDATE);
+    public void resendEmailToAcceptEmailUpdate(final String login) {
+        Account account = findByLogin(login);
+
+        VerificationToken token = verificationTokenService.findLatestToken(account.getId(), EMAIL_UPDATE);
+        tokenSender.sendEmailUpdateAcceptToken(token);
+    }
+
+    @PermitAll
+    public void acceptEmailUpdate(final String token) {
+        VerificationToken verificationToken = verificationTokenService.findValidToken(token, EMAIL_UPDATE);
         Account account = verificationToken.getAccount();
 
-        account.setAccountDetails(account.getWaitingAccountDetails());
-        account.setWaitingAccountDetails(null);
+        account.getAccountDetails().setEmail(account.getWaitingEmail());
+        account.setWaitingEmail(null);
 
         accountFacade.update(account);
-        verificationTokenService.clearTokens(account.getId(), ACCOUNT_DETAILS_UPDATE);
+        verificationTokenService.clearTokens(account.getId(), EMAIL_UPDATE);
     }
 
     @PermitAll
@@ -219,7 +231,8 @@ public class AccountService {
     }
 
     @RolesAllowed({ADMINISTRATOR})
-    public void createUser(final CreateAccountDto account) {
+    public void createAccount(final CreateAccountDto account) {
+        checkWaitingAccountEmailNotExist(account.getEmail());
         Account accountEntity = prepareAccountEntity(account);
         accountEntity.setAccountState(CONFIRMED);
         accountEntity.setActive(true);
@@ -407,27 +420,34 @@ public class AccountService {
         roleToRemove.ifPresent(optRole -> optRole.setActive(false));
     }
 
-    private void addAccountDetailsToUpdate(final Account account, final AccountDetails accountDetails, final String languageTag) {
-        String currentAccountEmail = account.getAccountDetails().getEmail();
-        account.setLocale(Locale.forLanguageTag(languageTag));
-        if (currentAccountEmail.equalsIgnoreCase(accountDetails.getEmail())) {
-            updateAccountDetails(accountDetails, account);
+
+    private void addAccountEmailToUpdate(final Account account, final String email) {
+        String currentEmail = account.getAccountDetails().getEmail();
+        if (!currentEmail.equalsIgnoreCase(email)) {
+            checkWaitingAccountEmailNotExist(email);
+
+            account.setWaitingEmail(email);
             accountFacade.update(account);
-            log.info("Account details updated: " + account.getId());
-        } else {
-            account.setWaitingAccountDetails(accountDetails);
-            accountFacade.update(account);
-            tokenSender.sendAccountDetailsAcceptToken(verificationTokenService.createAcceptAccountDetailToken(account));
-            log.info("Added account details waiting for accept: " + account.getId());
+            tokenSender.sendEmailUpdateAcceptToken(verificationTokenService.createAcceptAccountDetailToken(account));
+            log.info("Added account email waiting for accept: " + account.getId());
         }
     }
 
-    private void updateAccountDetails(final AccountDetails newAccountDetails, final Account account) {
-        AccountDetails currentAccountDetails = account.getAccountDetails();
+    private void checkWaitingAccountEmailNotExist(final String email) {
+        accountFacade.findByWaitingEmail(email).ifPresent(it -> {
+            throw ApplicationBaseException.accountWithEmailAlreadyExist();
+        });
+    }
 
-        currentAccountDetails.setFirstName(newAccountDetails.getFirstName());
-        currentAccountDetails.setLastName(newAccountDetails.getLastName());
-        currentAccountDetails.setPhoneNumber(newAccountDetails.getPhoneNumber());
+    private void updateAccountDetails(final AccountDetails newAccountDetails, final Account account, final String languageTag) {
+        account.setLocale(Locale.forLanguageTag(languageTag));
+        AccountDetails accountDetails = account.getAccountDetails();
+
+        accountDetails.setFirstName(newAccountDetails.getFirstName());
+        accountDetails.setLastName(newAccountDetails.getLastName());
+        accountDetails.setPhoneNumber(newAccountDetails.getPhoneNumber());
+        accountFacade.update(account);
+        log.info("Account details updated: " + account.getId());
     }
 
     @RolesAllowed(FACILITY_MANAGER)
