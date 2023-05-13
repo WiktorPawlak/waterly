@@ -444,6 +444,21 @@ public class AccountService {
         }
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
+    public void acceptOwnerAccount(final long id) {
+        Account account = accountFacade.findById(id);
+        if (Objects.equals(account, null)) {
+            throw ApplicationBaseException.accountDoesNotExistException();
+        }
+        if (Objects.equals(account.getAccountState(), TO_CONFIRM)) {
+            account.setAccountState(CONFIRMED);
+            accountFacade.update(account);
+            notificationsProvider.notifyAccountRejected(account);
+        } else {
+            throw ApplicationBaseException.accountNotWaitingForConfirmation();
+        }
+    }
+
     private boolean isModifyingAnotherUser(final Account account) {
         return !account.getLogin().equals(authenticatedAccount.getLogin());
     }

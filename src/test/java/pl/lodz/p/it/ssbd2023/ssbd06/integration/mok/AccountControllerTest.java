@@ -673,6 +673,36 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .body("message", equalTo("ERROR.RESOURCE_NOT_FOUND"));
     }
 
+    @Test
+    void shouldAcceptOwnerAccountSuccessfully() {
+        given()
+                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                .when()
+                .post(ACCOUNT_PATH + "/" + NOT_CONFIRMED_OWNER_ID + "/accept")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .when()
+                .get(ACCOUNT_PATH + "/" + NOT_CONFIRMED_OWNER_ID)
+                .then()
+                .log().all()
+                .statusCode(OK.getStatusCode())
+                .body("accountState", equalTo("CONFIRMED"));
+    }
+
+    @Test
+    void shouldFailAcceptOwnerAccountWhenAccountStatusIsDifferentThanToConfirm() {
+        given()
+                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                .when()
+                .post(ACCOUNT_PATH + "/" + OWNER_ID + "/accept")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION"));
+    }
+
     private Stream<Arguments> providePatterns() {
         return Stream.of(
                 Arguments.of("konto ", List.of(1L, 2L)),

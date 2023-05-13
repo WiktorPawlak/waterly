@@ -49,6 +49,7 @@ public class AccountDto implements Signable {
     @NotNull
     private String lastIpAddress;
     private int incorrectAuthCount;
+    private String accountState;
 
     public AccountDto(final Account account) {
         this.id = account.getId();
@@ -60,6 +61,7 @@ public class AccountDto implements Signable {
         this.languageTag = account.getLocale().toLanguageTag();
         this.active = account.isActive();
         this.version = account.getVersion() + account.getAccountDetails().getVersion();
+        this.accountState = account.getAccountState().name();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         this.createdOn = account.getCreatedOn().format(formatter);

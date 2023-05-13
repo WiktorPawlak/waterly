@@ -31,6 +31,8 @@ public class I18nProviderImpl implements I18nProvider {
     public static final String ROLE_REVOKE_NOTIFICATION_MAIL_BODY = "mail.notification.role-revoke.body";
     public static final String ACCOUNT_REJECTED_NOTIFICATION_MAIL_TOPIC = "mail.notification.account-rejected.topic";
     public static final String ACCOUNT_REJECTED_NOTIFICATION_MAIL_BODY = "mail.notification.account-rejected.body";
+    public static final String ACCOUNT_ACCEPTED_NOTIFICATION_MAIL_TOPIC = "mail.notification.account-accepted.topic";
+    public static final String ACCOUNT_ACCEPTED_NOTIFICATION_MAIL_BODY = "mail.notification.account-accepted.body";
     public static final String ACCOUNT_DELETED_NOTIFICATION_MAIL_TOPIC = "mail.notification.account-deleted.topic";
     public static final String ACCOUNT_DELETED_NOTIFICATION_MAIL_BODY = "mail.notification.account-deleted.body";
     public static final String ACCOUNT_VERIFIED_NOTIFICATION_MAIL_TOPIC = "mail.notification.account-verified.topic";

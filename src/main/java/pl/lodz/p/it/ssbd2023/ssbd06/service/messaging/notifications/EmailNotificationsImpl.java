@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.ACCOUNT_ACCEPTED_NOTIFICATION_MAIL_BODY;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.ACCOUNT_ACCEPTED_NOTIFICATION_MAIL_TOPIC;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.ACCOUNT_DELETED_NOTIFICATION_MAIL_BODY;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.ACCOUNT_DELETED_NOTIFICATION_MAIL_TOPIC;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.ACCOUNT_REJECTED_NOTIFICATION_MAIL_BODY;
@@ -76,6 +78,11 @@ public class EmailNotificationsImpl implements NotificationsProvider {
     @Override
     public void notifyAccountRejected(final Account account) {
         sendBasicEmail(account, ACCOUNT_REJECTED_NOTIFICATION_MAIL_TOPIC, ACCOUNT_REJECTED_NOTIFICATION_MAIL_BODY);
+    }
+
+    @Override
+    public void notifyAccountAccepted(final Account account) {
+        sendBasicEmail(account, ACCOUNT_ACCEPTED_NOTIFICATION_MAIL_TOPIC, ACCOUNT_ACCEPTED_NOTIFICATION_MAIL_BODY);
     }
 
     @Override

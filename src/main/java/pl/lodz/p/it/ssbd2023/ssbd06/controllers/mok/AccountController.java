@@ -205,6 +205,14 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().build();
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
+    @POST
+    @Path("/{id}/accept")
+    public Response acceptOwnerAccount(@PathParam("id") final long id) {
+        retry(() -> accountEndpoint.acceptOwnerAccount(id), accountEndpoint);
+        return Response.ok().build();
+    }
+
     @GET
     @Path("/self")
     @Produces(MediaType.APPLICATION_JSON)

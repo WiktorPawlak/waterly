@@ -210,6 +210,11 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         accountService.rejectOwnerAccount(id);
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
+    public void acceptOwnerAccount(final long id) {
+        accountService.acceptOwnerAccount(id);
+    }
+
     private String preparePattern(final String pattern) {
         return pattern != null && !pattern.isBlank() ? pattern.strip() : null;
     }

@@ -17,6 +17,8 @@ public interface NotificationsProvider {
 
     void notifyAccountRejected(Account account);
 
+    void notifyAccountAccepted(Account account);
+
     void notifyAccountDeleted(Account account);
 
     void notifyAccountVerified(Account account);
