@@ -15,7 +15,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Login;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountWithRolesDto {
+public class ListAccountDto {
     private long id;
 
     @Login
@@ -31,7 +31,7 @@ public class AccountWithRolesDto {
 
     private List<String> roles = new ArrayList<>();
 
-    public AccountWithRolesDto(final Account account) {
+    public ListAccountDto(final Account account) {
         this.id = account.getId();
         this.login = account.getLogin();
         this.firstName = account.getAccountDetails().getFirstName();

@@ -7,6 +7,7 @@ import EditAccountDetailsPage from "./pages/EditAccountDetailsPage";
 import { ManageUsersAdminPage } from "./pages/admin";
 import { VerifyUsersFMPage } from "./pages/facilityManager";
 import VerifyAccountPage from "./pages/VerifyAccountPage";
+import AccountDetailsPage from "./pages/AccountDetailsPage";
 
 const Routing = createBrowserRouter([
   {
@@ -37,12 +38,14 @@ const Routing = createBrowserRouter([
     path: "/verify-users",
     element: <VerifyUsersFMPage />,
   },
+  {
+    path: "/accounts/:id/details",
+    element: <AccountDetailsPage />,
+  },
 ]);
 
 export default function App() {
   return (
-    <React.StrictMode>
       <RouterProvider router={Routing} />
-    </React.StrictMode>
   );
 }

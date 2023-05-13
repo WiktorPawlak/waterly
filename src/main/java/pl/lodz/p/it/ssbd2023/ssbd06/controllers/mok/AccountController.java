@@ -34,19 +34,18 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.ListAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 
@@ -75,7 +74,7 @@ public class AccountController extends RepeatableTransactionController {
     @PUT
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
-    @EtagValidationFilter
+//    @EtagValidationFilter
     public Response editOwnAccountDetails(@NotNull @Valid final EditAccountDetailsDto dto) throws ApplicationBaseException {
         retry(() -> accountEndpoint.editOwnAccountDetails(dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
@@ -94,7 +93,7 @@ public class AccountController extends RepeatableTransactionController {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @EtagValidationFilter
+//    @EtagValidationFilter
     public Response editAccountDetails(@PathParam("id") final long id, @NotNull @Valid final EditAccountDetailsDto dto)
             throws ApplicationBaseException {
         retry(() -> accountEndpoint.editAccountDetails(id, dto), accountEndpoint);
@@ -256,7 +255,7 @@ public class AccountController extends RepeatableTransactionController {
     @Path("/to-verify")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getNotConfirmedAccounts() {
-        List<AccountWithRolesDto> accounts = retry(() -> accountEndpoint.getNotConfirmedAccounts(), accountEndpoint);
+        List<ListAccountDto> accounts = retry(() -> accountEndpoint.getNotConfirmedAccounts(), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
 
@@ -265,7 +264,7 @@ public class AccountController extends RepeatableTransactionController {
     @Path("/list")
     public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto, @QueryParam("pattern") final String pattern)
             throws ApplicationBaseException {
-        PaginatedList<AccountWithRolesDto> accounts = retry(() -> accountEndpoint.getAccountsList(pattern, dto), accountEndpoint);
+        PaginatedList<ListAccountDto> accounts = retry(() -> accountEndpoint.getAccountsList(pattern, dto), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
 }

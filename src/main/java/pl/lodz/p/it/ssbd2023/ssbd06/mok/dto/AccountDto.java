@@ -1,12 +1,15 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.Signable;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.FirstName;
@@ -30,6 +33,7 @@ public class AccountDto implements Signable {
     private String lastName;
     @PhoneNumber
     private String phoneNumber;
+    private List<String> roles = new ArrayList();
     @LanguageTag
     private String languageTag;
     private long version;
@@ -86,6 +90,7 @@ public class AccountDto implements Signable {
                 ? authInfo.getLastIpAddress()
                 : "---";
         this.incorrectAuthCount = authInfo.getIncorrectAuthCount();
+        account.getRoles().stream().filter(Role::isActive).forEach(role -> roles.add(role.getPermissionLevel()));
     }
 
     @Override

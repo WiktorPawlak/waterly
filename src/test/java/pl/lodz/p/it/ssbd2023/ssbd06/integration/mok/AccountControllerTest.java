@@ -31,11 +31,11 @@ import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.DatabaseConnector;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.ListAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
@@ -136,14 +136,14 @@ class AccountControllerTest extends IntegrationTestsConfig {
         GetPagedAccountListDto getPagedAccountListRequest = new GetPagedAccountListDto(1, 2, "asc", null);
 
         //when
-        List<AccountWithRolesDto> accounts = given()
+        List<ListAccountDto> accounts = given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(getPagedAccountListRequest)
                 .when()
                 .post(ACCOUNT_PATH + "/list")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .extract().body().jsonPath().getList("data", AccountWithRolesDto.class);
+                .extract().body().jsonPath().getList("data", ListAccountDto.class);
 
         //then
         assertEquals(2, accounts.size());
@@ -161,7 +161,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .post(ACCOUNT_PATH + "/list")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .extract().body().jsonPath().getList("data", AccountWithRolesDto.class);
+                .extract().body().jsonPath().getList("data", ListAccountDto.class);
 
         //then
         assertEquals(4, accounts.size());
@@ -174,7 +174,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
         GetPagedAccountListDto getPagedAccountListRequest = new GetPagedAccountListDto(1, 10, "asc", null);
 
         //when
-        List<AccountWithRolesDto> accounts = given()
+        List<ListAccountDto> accounts = given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .queryParam("pattern", pattern)
                 .body(getPagedAccountListRequest)
@@ -182,10 +182,10 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .post(ACCOUNT_PATH + "/list")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .extract().body().jsonPath().getList("data", AccountWithRolesDto.class);
+                .extract().body().jsonPath().getList("data", ListAccountDto.class);
 
         //then
-        assertEquals(expectedIds, accounts.stream().map(AccountWithRolesDto::getId).toList());
+        assertEquals(expectedIds, accounts.stream().map(ListAccountDto::getId).toList());
     }
 
     @Test

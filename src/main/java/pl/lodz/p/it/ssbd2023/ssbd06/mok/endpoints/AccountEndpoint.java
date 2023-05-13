@@ -23,12 +23,12 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountWithRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.ListAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
@@ -177,19 +177,19 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    public PaginatedList<AccountWithRolesDto> getAccountsList(final String pattern, final GetPagedAccountListDto dto) {
+    public PaginatedList<ListAccountDto> getAccountsList(final String pattern, final GetPagedAccountListDto dto) {
         int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;
         int pageSizeResolved = dto.getPageSize() != null ? dto.getPageSize() : defaultListPageSize;
         String orderByResolved = dto.getOrderBy() != null ? dto.getOrderBy() : "login";
 
         String preparedPattern = preparePattern(pattern);
 
-        List<AccountWithRolesDto> accountDtoList = accountService.getAccountsList(preparedPattern,
+        List<ListAccountDto> accountDtoList = accountService.getAccountsList(preparedPattern,
                         pageResolved,
                         pageSizeResolved,
                         dto.getOrder(),
                         orderByResolved).stream()
-                .map(AccountWithRolesDto::new)
+                .map(ListAccountDto::new)
                 .toList();
 
         return new PaginatedList<>(accountDtoList,
@@ -210,9 +210,9 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public List<AccountWithRolesDto> getNotConfirmedAccounts() {
+    public List<ListAccountDto> getNotConfirmedAccounts() {
         return accountService.getNotConfirmedAccounts().stream()
-                .map(AccountWithRolesDto::new)
+                .map(ListAccountDto::new)
                 .toList();
     }
 

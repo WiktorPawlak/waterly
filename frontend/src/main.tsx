@@ -8,11 +8,9 @@ import "./index.css";
 import "./i18n";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
     <ThemeProvider theme={theme}>
       <SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
         <App />
       </SnackbarProvider>
     </ThemeProvider>
-  </React.StrictMode>
 );
