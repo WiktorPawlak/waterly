@@ -20,7 +20,12 @@
       "password": {
         "min": "Pasword must be at least 8 characters long",
         "max": "Password must be at most 32 characters long"
-      }
+      },
+      "confirmPassword": {
+        "min": "Pasword must be at least 8 characters long",
+        "max": "Password must be at most 32 characters long"
+      },
+      "passwordsMatch": "Passwords must match"
     }
   },
   "registerPage": {
@@ -29,8 +34,12 @@
       "description": "Create your account in Waterly..."
     },
     "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
       "emailLabel": "Email",
+      "phoneNumber": "Phone Number",
       "passwordLabel": "Password",
+      "confirmPassword": "Confirm Password",
       "forgotPasswordLinkLabel": "Forgot password?",
       "submitButtonLabel": "Submit",
       "registerText": "Already have an account?",
@@ -111,7 +120,10 @@
         "roles": "Roles"
       }
     },
-    "pageSize": "Page size"
+    "pageSize": "Page size",
+    "toastActivateSuccess": "The account has been activated",
+    "toastDeactivateSuccess": "The account has been deactivated",
+    "toastFailure": "ZMIENIĆ NA ERROR JAK SZYMON RACZY DOKOŃCZYĆ ZADANIE"
   },
   "verifyUsersFMPage": {
     "header": "Verify users",

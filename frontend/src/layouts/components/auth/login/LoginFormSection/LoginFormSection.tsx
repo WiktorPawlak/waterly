@@ -1,20 +1,29 @@
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import { useTranslation } from "react-i18next";
+import {Box, Button, TextField, Typography, useMediaQuery, useTheme,} from "@mui/material";
+import {useTranslation} from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
-import { useUser } from "../../../../../hooks/useUser";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useUser} from "../../../../../hooks/useUser";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {loginSchema, LoginSchemaType,} from "../../../../../validation/validationSchemas";
 
 export const LoginFormSection = () => {
   const navigation = useNavigate();
   const { t } = useTranslation();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginSchemaType>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const { login: loginError, password: passwordError } = errors;
+  const loginErrorMessage = loginError?.message;
+  const passwordErrorMessage = passwordError?.message;
+
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -23,11 +32,11 @@ export const LoginFormSection = () => {
 
   const { logInClient } = useUser();
 
-  async function signInButtonHandle() {
+  const signInButtonHandle = async () => {
     if (!(await logInClient({ login, password }))) {
       return <Box>Loading...</Box>;
     }
-  }
+  };
 
   return (
     <Box
@@ -76,6 +85,9 @@ export const LoginFormSection = () => {
       )}
       <TextField
         label={t("logInPage.form.loginLabel")}
+        {...register("login")}
+        error={!!loginErrorMessage}
+        helperText={loginErrorMessage && t(loginErrorMessage)}
         variant="standard"
         onChange={(e) => setLogin(e.target.value)}
         sx={{
@@ -90,6 +102,9 @@ export const LoginFormSection = () => {
       />
       <TextField
         label={t("logInPage.form.passwordLabel")}
+        {...register("password")}
+        error={!!passwordErrorMessage}
+        helperText={passwordErrorMessage && t(passwordErrorMessage)}
         type="password"
         variant="standard"
         onChange={(e) => setPassword(e.target.value)}
@@ -118,7 +133,7 @@ export const LoginFormSection = () => {
       <Button
         variant="contained"
         sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
-        onClick={signInButtonHandle}
+        onClick={handleSubmit(signInButtonHandle)}
       >
         {t("logInPage.form.submitButtonLabel")}
       </Button>

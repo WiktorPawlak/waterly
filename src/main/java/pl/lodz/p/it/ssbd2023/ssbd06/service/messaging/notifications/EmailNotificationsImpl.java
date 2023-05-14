@@ -32,7 +32,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.EmailSenderProvider;
 
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class EmailNotificationsImpl implements NotificationsProvider {
 
     @Inject

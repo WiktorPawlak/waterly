@@ -20,7 +20,12 @@
       "password": {
         "min": "Hasło musi mieć przynajmniej 8 znaków",
         "max": "Hasło nie może być dłuższe niż 32 znaki"
-      }
+      },
+      "confirmPassword": {
+        "min": "Hasło musi mieć przynajmniej 8 znaków",
+        "max": "Hasło nie może być dłuższe niż 32 znaki"
+      },
+      "passwordsMatch": "Hasła muszą się zgadzać"
     }
   },
   "registerPage": {
@@ -29,8 +34,12 @@
       "description": "Załóż swoje konto w Waterly..."
     },
     "form": {
+      "firstName": "Imię",
+      "lastName": "Nazwisko",
       "emailLabel": "Email",
+      "phoneNumber": "Numer Telefonu",
       "passwordLabel": "Hasło",
+      "confirmPassword": "Powtórz hasło",
       "forgotPasswordLinkLabel": "Zapomniałeś hasła?",
       "submitButtonLabel": "Zarejestruj",
       "registerText": "Masz już konto?",
@@ -112,7 +121,10 @@
         "roles": "Role"
       }
     },
-    "pageSize": "Ilość wierszy"
+    "pageSize": "Ilość wierszy",
+    "toastActivateSuccess": "Konto zostało odblokowane",
+    "toastDeactivateSuccess": "Konto zostało zablokowane",
+    "toastFailure": "ZMIENIĆ NA ERROR JAK SZYMON RACZY DOKOŃCZYĆ ZADANIE"
   },
   "verifyUsersFMPage": {
     "header": "Weryfikuj użytkowników",

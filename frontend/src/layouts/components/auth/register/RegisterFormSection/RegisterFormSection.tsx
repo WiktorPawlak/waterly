@@ -1,16 +1,13 @@
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import { useTranslation } from "react-i18next";
+import {Box, Button, TextField, Typography, useMediaQuery, useTheme,} from "@mui/material";
+import {useTranslation} from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
-import { useState } from "react";
-import { useUser } from "../../../../../hooks/useUser";
-import { languages } from "../../../../../types";
+import {useState} from "react";
+import {useUser} from "../../../../../hooks/useUser";
+import {languages} from "../../../../../types";
+import {useNavigate} from "react-router-dom";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useForm} from "react-hook-form";
+import {accountDetailsSchema, AccountDetailsSchemaType,} from "../../../../../validation/validationSchemas";
 
 interface RegisterFormValues {
   login: string;
@@ -24,9 +21,35 @@ interface RegisterFormValues {
 }
 
 export const RegisterFormSection = () => {
+  const navigation = useNavigate();
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountDetailsSchemaType>({
+    resolver: zodResolver(accountDetailsSchema),
+  });
+
+  const {
+    email: emailError,
+    login: loginError,
+    firstName: firstNameError,
+    lastName: lastNameError,
+    phoneNumber: phoneNumberError,
+    password: passwordError,
+    confirmPassword: confirmPasswordError,
+  } = errors;
+  const emailErrorMessage = emailError?.message;
+  const loginErrorMessage = loginError?.message;
+  const firstNameErrorMessage = firstNameError?.message;
+  const lastNameErrorMessage = lastNameError?.message;
+  const phoneNumberErrorMessage = phoneNumberError?.message;
+  const passwordErrorMessage = passwordError?.message;
+  const confirmPasswordErrorMessage = confirmPasswordError?.message;
 
   const { registerUser } = useUser();
   const languageTagFromStorage = localStorage.getItem("preferredLanguage");
@@ -44,17 +67,12 @@ export const RegisterFormSection = () => {
     languageTag: formattedLanguageTag ?? languages.pl,
   });
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleFormSubmit = () => {
+    //TODO usunąłem stąd (event: React.FormEvent<HTMLFormElement>) => { event.preventDefault();} bo nie działało.
+    //Werka usun ten komentarz jeśli jest to akceptowalne
+    const { confirmPassword, ...user } = formValues;
 
-    if (formValues.password !== formValues.confirmPassword) {
-      console.log("Passwords do not match");
-      return;
-    } else if (formValues.password === formValues.confirmPassword) {
-      const { confirmPassword, ...user } = formValues;
-
-      registerUser(user);
-    }
+    registerUser(user);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,12 +129,15 @@ export const RegisterFormSection = () => {
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       )}
-      <form onSubmit={handleFormSubmit}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Box
           sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
         >
           <TextField
-            label="First Name"
+            label={t("registerPage.form.firstName")}
+            {...register("firstName")}
+            error={!!firstNameErrorMessage}
+            helperText={firstNameErrorMessage && t(firstNameErrorMessage)}
             variant="standard"
             name="firstName"
             onChange={handleInputChange}
@@ -132,7 +153,10 @@ export const RegisterFormSection = () => {
             }}
           />
           <TextField
-            label="Last Name"
+            label={t("registerPage.form.lastName")}
+            {...register("lastName")}
+            error={!!lastNameErrorMessage}
+            helperText={lastNameErrorMessage && t(lastNameErrorMessage)}
             variant="standard"
             name="lastName"
             onChange={handleInputChange}
@@ -152,6 +176,9 @@ export const RegisterFormSection = () => {
         >
           <TextField
             label={t("registerPage.form.emailLabel")}
+            {...register("email")}
+            error={!!emailErrorMessage}
+            helperText={emailErrorMessage && t(emailErrorMessage)}
             variant="standard"
             name="email"
             onChange={handleInputChange}
@@ -168,6 +195,9 @@ export const RegisterFormSection = () => {
           />
           <TextField
             label="Login"
+            {...register("login")}
+            error={!!loginErrorMessage}
+            helperText={loginErrorMessage && t(loginErrorMessage)}
             variant="standard"
             name="login"
             onChange={handleInputChange}
@@ -183,7 +213,10 @@ export const RegisterFormSection = () => {
           />
         </Box>
         <TextField
-          label="Phone Number"
+          label={t("registerPage.form.phoneNumber")}
+          {...register("phoneNumber")}
+          error={!!phoneNumberErrorMessage}
+          helperText={phoneNumberErrorMessage && t(phoneNumberErrorMessage)}
           name="phoneNumber"
           variant="standard"
           onChange={handleInputChange}
@@ -205,6 +238,9 @@ export const RegisterFormSection = () => {
         >
           <TextField
             label={t("registerPage.form.passwordLabel")}
+            {...register("password")}
+            error={!!passwordErrorMessage}
+            helperText={passwordErrorMessage && t(passwordErrorMessage)}
             onChange={handleInputChange}
             variant="standard"
             name="password"
@@ -221,7 +257,12 @@ export const RegisterFormSection = () => {
             }}
           />
           <TextField
-            label="Confirm Password"
+            label={t("registerPage.form.confirmPassword")}
+            {...register("confirmPassword")}
+            error={!!confirmPasswordErrorMessage}
+            helperText={
+              confirmPasswordErrorMessage && t(confirmPasswordErrorMessage)
+            }
             variant="standard"
             onChange={handleInputChange}
             type="password"
@@ -237,18 +278,6 @@ export const RegisterFormSection = () => {
             }}
           />
         </Box>
-        <Button
-          variant="text"
-          sx={{
-            textTransform: "none",
-            width: "204px",
-            justifyContent: "flex-end",
-            alignSelf: "flex-end",
-            mb: { xs: 3, md: 6 },
-          }}
-        >
-          {t("registerPage.form.forgotPasswordLinkLabel")}
-        </Button>
         <Button
           variant="contained"
           type="submit"
@@ -267,7 +296,11 @@ export const RegisterFormSection = () => {
           <Typography sx={{ fontSize: "14px", color: "text.secondary" }}>
             {t("registerPage.form.registerText")}
           </Typography>
-          <Button variant="text" sx={{ textTransform: "none" }}>
+          <Button
+            variant="text"
+            sx={{ textTransform: "none" }}
+            onClick={() => navigation("/")}
+          >
             {t("registerPage.form.registerButton")}
           </Button>
         </Box>
