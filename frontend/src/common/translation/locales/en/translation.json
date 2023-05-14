@@ -86,7 +86,16 @@
   "manageUsersPage": {
     "header": "Manage users",
     "description": "Here you can add new users or edit existing ones.",
-    "button": "+ Add user"
+    "button": "+ Add user",
+    "dataGrid": {
+      "header": {
+        "login": "Login",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "roles": "Roles"
+      }
+    },
+    "pageSize": "Page size"
   },
   "verifyUsersFMPage": {
     "header": "Verify users",
@@ -100,5 +109,10 @@
     "role": "Role: ",
     "showProfile": "Show profile",
     "logout": "Log out"
+  },
+  "roles": {
+    "ADMINISTRATOR": "Administrator",
+    "OWNER": "Owner",
+    "FACILITY_MANAGER": "Facility manager"
   }
 }

@@ -49,13 +49,17 @@ export interface AccountSearchPreferencesDto {
   pageSize: number;
   order: string;
   orderBy: string;
-};
+}
 
 export interface GetPagedAccountListDto {
   page: number | null;
   pageSize: number | null;
   order: string;
   orderBy: string;
+}
+
+export interface AccountActiveStatusDto {
+  active: boolean;
 }
 
 export async function putAccountDetails(body: EditAccountDetailsDto) {
@@ -76,9 +80,16 @@ export async function getSelfAccountDetails(): Promise<
   return get(`${ACCOUNTS_PATH}/self`);
 }
 
-export async function getUserById(accountId: number): Promise<
-  ApiResponse<AccountDto>
-> {
+export async function changeAccountActiveStatus(
+  accountId: string,
+  body: AccountActiveStatusDto
+) {
+  return put(`${ACCOUNTS_PATH}/${accountId}/active`, body);
+}
+
+export async function getUserById(
+  accountId: number
+): Promise<ApiResponse<AccountDto>> {
   return get(`${ACCOUNTS_PATH}/${accountId}`);
 }
 
@@ -88,8 +99,8 @@ export async function getSelfSearchPreferences(): Promise<
   return get(`${ACCOUNTS_PATH}/self/preferences`);
 }
 
-export async function getAccountsList(getPagedListDto: GetPagedAccountListDto ): Promise<
-  ApiResponse<PaginatedList<ListAccountDto>>
-> {
+export async function getAccountsList(
+  getPagedListDto: GetPagedAccountListDto
+): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
   return post(`${ACCOUNTS_PATH}/list`, getPagedListDto);
 }

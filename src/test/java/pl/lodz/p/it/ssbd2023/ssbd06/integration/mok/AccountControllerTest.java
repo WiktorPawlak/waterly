@@ -110,9 +110,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(DEACTIVATE_ACCOUNT)
-                .contentType("application/json-patch+json")
                 .when()
-                .patch(ACCOUNT_PATH + "/" + FACILITY_MANAGER_ID)
+                .put(ACCOUNT_PATH + "/" + FACILITY_MANAGER_ID + "/active")
                 .then()
                 .statusCode(OK.getStatusCode());
 
@@ -128,6 +127,78 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .then()
                 .statusCode(UNAUTHORIZED.getStatusCode())
                 .body("message", equalTo("ERROR.AUTHENTICATION"));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldActivateInactiveAccount() {
+        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
+
+        //given
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(DEACTIVATE_ACCOUNT)
+                .when()
+                .put(ACCOUNT_PATH + "/" + FACILITY_MANAGER_ID + "/active")
+                .then()
+                .statusCode(OK.getStatusCode());
+        boolean inactive = !databaseConnector.executeQuery(
+                "SELECT active FROM account WHERE login = 'tomdut'"
+        ).getBoolean("active");
+        assertTrue(inactive);
+        given()
+                .body(FACILITY_MANAGER_CREDENTIALS)
+                .when()
+                .post(AUTH_PATH + "/login")
+                .then()
+                .statusCode(UNAUTHORIZED.getStatusCode())
+                .body("message", equalTo("ERROR.AUTHENTICATION"));
+
+        //when
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(ACTIVATE_ACCOUNT)
+                .when()
+                .put(ACCOUNT_PATH + "/" + FACILITY_MANAGER_ID + "/active")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        //then
+        boolean active = databaseConnector.executeQuery(
+                "SELECT active FROM account WHERE login = 'tomdut'"
+        ).getBoolean("active");
+        assertTrue(active);
+        given()
+                .body(FACILITY_MANAGER_CREDENTIALS)
+                .when()
+                .post(AUTH_PATH + "/login")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(notNullValue());
+    }
+
+    @Test
+    void shouldRespondWith404WhenAccountNotFoundDuringDeactivation() {
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(DEACTIVATE_ACCOUNT)
+                .when()
+                .put(ACCOUNT_PATH + "/" + NONE_EXISTENT_ACCOUNT_ID + "/active")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensForParameterizedTests")
+    void shouldForbidNonAdminUsersToDeactivateAccount(String token) {
+        given()
+                .header(AUTHORIZATION, token)
+                .body(DEACTIVATE_ACCOUNT)
+                .when()
+                .put(ACCOUNT_PATH + "/" + ADMIN_ID + "/active")
+                .then()
+                .statusCode(FORBIDDEN.getStatusCode())
+                .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
     }
 
     @Test
@@ -497,20 +568,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .statusCode(FORBIDDEN.getStatusCode())
                 .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
 
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideTokensForParameterizedTests")
-    void shouldForbidNonAdminUsersToDeactivateAccount(String token) {
-        given()
-                .header(AUTHORIZATION, token)
-                .body(DEACTIVATE_ACCOUNT)
-                .contentType("application/json-patch+json")
-                .when()
-                .patch(ACCOUNT_PATH + "/" + ADMIN_ID)
-                .then()
-                .statusCode(FORBIDDEN.getStatusCode())
-                .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
     }
 
     @Test

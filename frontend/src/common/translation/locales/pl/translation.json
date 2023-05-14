@@ -86,7 +86,16 @@
   "manageUsersPage": {
     "header": "Zarządzaj użytkownikami",
     "description": "Tutaj możesz zmieniać role użytkownikom oraz dodawać nowe konta.",
-    "button": "+ Dodaj użytkownika"
+    "button": "+ Dodaj użytkownika",
+    "dataGrid": {
+      "header": {
+        "login": "Login",
+        "firstName": "Imię",
+        "lastName": "Nazwisko",
+        "roles": "Role"
+      }
+    },
+    "pageSize": "Ilość wierszy"
   },
   "verifyUsersFMPage": {
     "header": "Weryfikuj użytkowników",
@@ -101,5 +110,10 @@
     "role": "Rola: ",
     "showProfile": "Pokaż profil",
     "logout": "Wyloguj"
+  },
+  "roles": {
+    "ADMINISTRATOR": "Administrator",
+    "OWNER": "Właściciel",
+    "FACILITY_MANAGER": "Zarządca"
   }
 }

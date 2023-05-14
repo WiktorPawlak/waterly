@@ -26,19 +26,19 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 @Priority(Interceptor.Priority.APPLICATION + 25)
 public class AccountFacadeExceptionInterceptor {
 
-    private Map<String, String> accountConstraintsMappings = Map.of("email", ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXIST,
+    private final Map<String, String> accountConstraintsMappings = Map.of("email", ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXIST,
             "phone_number", ERROR_ACCOUNT_WITH_PHONE_NUMBER_ALREADY_EXIST,
             "login", ERROR_ACCOUNT_WITH_LOGIN_ALREADY_EXIST);
 
     @AroundInvoke
-    public Object intercept(final InvocationContext ctx) throws Exception {
+    public Object intercept(final InvocationContext ctx) {
         try {
             return ctx.proceed();
         } catch (final OptimisticLockException ole) {
             throw ApplicationBaseException.optimisticLockException();
         } catch (final PersistenceException | java.sql.SQLException e) {
-            if (e.getCause() instanceof ConstraintViolationException) {
-                ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
+            if (e.getCause() instanceof ConstraintViolationException constraintViolationException) {
+                constraintViolationException = (ConstraintViolationException) e.getCause();
                 String constraintKey = getConstraintKeyFromException(constraintViolationException.getCause().getMessage());
                 throw ApplicationBaseException.persistenceConstraintException(mapConstraintToErrorCode(constraintKey));
             }

@@ -1,28 +1,28 @@
-import { MainLayout } from "../../layouts/MainLayout";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { DataGrid, GridCellParams, GridColDef, GridColumnHeaderParams, GridPaginationModel, GridRowParams, GridSortModel } from "@mui/x-data-grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useCallback, useEffect, useState } from "react";
-import { PaginatedList, ListAccountDto, GetPagedAccountListDto, getAccountsList } from "../../api/accountApi";
-import { Pagination, FormControl, Select, MenuItem, InputLabel, SelectChangeEvent, Box, Button, Typography } from "@mui/material";
+import {MainLayout} from "../../layouts/MainLayout";
+import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
+import {DataGrid, GridCellParams, GridColDef, GridColumnHeaderParams, GridSortModel,} from "@mui/x-data-grid";
+import {useCallback, useEffect, useState} from "react";
+import {getAccountsList, GetPagedAccountListDto, ListAccountDto, PaginatedList,} from "../../api/accountApi";
+import {Box, Button, FormControl, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Typography,} from "@mui/material";
+import {Lock} from "../../layouts/components/account";
 
 export const ManageUsersAdminPage = () => {
-
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
     data: [],
     pageNumber: 1,
     itemsInPage: 0,
     totalPages: 0,
-  })
+  });
 
   const [listRequest, setListRequest] = useState<GetPagedAccountListDto>({
     page: 1,
     pageSize: 10,
-    order: 'asc',
-    orderBy: 'login',
+    order: "asc",
+    orderBy: "login",
   });
 
   useEffect(() => {
@@ -33,24 +33,32 @@ export const ManageUsersAdminPage = () => {
         console.error(response.error);
       }
     });
-  }, [listRequest.page, listRequest.pageSize, listRequest.order, listRequest.orderBy]);
+  }, [
+    listRequest.page,
+    listRequest.pageSize,
+    listRequest.order,
+    listRequest.orderBy,
+  ]);
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-    setListRequest(prevListRequest => ({
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setListRequest((prevListRequest) => ({
       ...prevListRequest,
       page: page,
     }));
   };
-  
-  const handleCellClick = (params : GridCellParams) => {
-    if(params.field != "actions"){
+
+  const handleCellClick = (params: GridCellParams) => {
+    if (params.field != "actions") {
       const accountId = params.row.id;
       navigate(`/accounts/${accountId}/details`);
     }
   };
 
   const handlePageSizeChange = (event: SelectChangeEvent) => {
-    setListRequest(prevListRequest => ({
+    setListRequest((prevListRequest) => ({
       ...prevListRequest,
       page: 1,
       pageSize: parseInt(event.target.value),
@@ -58,14 +66,37 @@ export const ManageUsersAdminPage = () => {
   };
 
   const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
-    if (column.field != "id" && column.field != "roles" && column.field != "actions")
-      setListRequest(old => ({ ...old, orderBy: column.field }))
+    if (
+      column.field != "id" &&
+      column.field != "roles" &&
+      column.field != "actions"
+    )
+      setListRequest((old) => ({ ...old, orderBy: column.field }));
   };
 
   const handleSortModelChange = useCallback((sortModel: GridSortModel) => {
     console.log(sortModel);
-    setListRequest(old => ({ ...old, order: sortModel[0]?.sort || "asc" }))
+    setListRequest((old) => ({ ...old, order: sortModel[0]?.sort as string }));
   }, []);
+
+  function translateRoles(t) {
+    return (params: GridCellParams) => {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {params.row.roles.map((role: string) => (
+            <Typography key={role} variant="body2">
+              {t("roles." + role)}
+            </Typography>
+          ))}
+        </Box>
+      );
+    };
+  }
 
   const columns: GridColDef[] = [
     {
@@ -79,17 +110,23 @@ export const ManageUsersAdminPage = () => {
     },
     {
       field: "login",
-      renderHeader: () => <strong>{"login"}</strong>,
+      renderHeader: () => (
+        <strong>{t("manageUsersPage.dataGrid.header.login")}</strong>
+      ),
       width: 120,
     },
     {
       field: "firstName",
-      renderHeader: () => <strong>{"First Name"}</strong>,
+      renderHeader: () => (
+        <strong>{t("manageUsersPage.dataGrid.header.firstName")}</strong>
+      ),
       width: 150,
     },
     {
       field: "lastName",
-      renderHeader: () => <strong>{"Last Name"}</strong>,
+      renderHeader: () => (
+        <strong>{t("manageUsersPage.dataGrid.header.lastName")}</strong>
+      ),
       width: 150,
     },
     {
@@ -98,7 +135,10 @@ export const ManageUsersAdminPage = () => {
       disableReorder: true,
       filterable: false,
       sortable: false,
-      renderHeader: () => <strong>{"Roles"}</strong>,
+      renderHeader: () => (
+        <strong>{t("manageUsersPage.dataGrid.header.roles")}</strong>
+      ),
+      renderCell: translateRoles(t),
       width: 300,
     },
     {
@@ -107,17 +147,10 @@ export const ManageUsersAdminPage = () => {
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 80,
-      renderCell: () => {
-        return (
-          <Button variant="text">
-            <LockOutlinedIcon sx={{ color: "red" }} />
-          </Button>
-        );
-      },
+      renderCell: (params) => <Lock accountId={params.row.id} />,
     },
   ];
 
-  const { t } = useTranslation();
   return (
     <MainLayout>
       <Box
@@ -157,27 +190,37 @@ export const ManageUsersAdminPage = () => {
               disableColumnMenu={true}
               hideFooterPagination={true}
               onCellClick={handleCellClick}
+              sortingOrder={["asc", "desc"]}
             />
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <Pagination
-              count={pageState.totalPages as number}
-              page={listRequest.page as number}
-              onChange={handlePageChange}
-            />
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="demo-simple-select-standard-label">Page Size</InputLabel>
-              <Select
-                labelId="demo-simple-select-standard-label"
-                id="demo-simple-select-standard"
-                value={listRequest?.pageSize}
-                onChange={handlePageSizeChange}
-                label="pageSize"
-              >
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={20}>20</MenuItem>
-                <MenuItem value={30}>30</MenuItem>
-              </Select>
-            </FormControl>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <Pagination
+                count={pageState.totalPages as number}
+                page={listRequest.page as number}
+                onChange={handlePageChange}
+              />
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                <InputLabel id="demo-simple-select-standard-label">
+                  {t("manageUsersPage.pageSize")}
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  id="demo-simple-select-standard"
+                  value={listRequest?.pageSize}
+                  onChange={handlePageSizeChange}
+                  label="pageSize"
+                >
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                  <MenuItem value={30}>30</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
           </Box>
         </Box>

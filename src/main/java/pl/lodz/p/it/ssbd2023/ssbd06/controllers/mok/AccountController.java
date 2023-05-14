@@ -62,9 +62,9 @@ public class AccountController extends RepeatableTransactionController {
     private PayloadSigner payloadSigner;
 
     @RolesAllowed(ADMINISTRATOR)
-    @PATCH
-    @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON_PATCH_JSON)
+    @PUT
+    @Path("/{id}/active")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response changeAccountActiveStatus(@PathParam("id") final long id, @NotNull @Valid final AccountActiveStatusDto dto) {
         retry(() -> accountEndpoint.changeAccountActiveStatus(id, dto), accountEndpoint);
         return Response.ok().build();
