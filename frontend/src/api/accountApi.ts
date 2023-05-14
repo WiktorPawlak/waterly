@@ -1,3 +1,4 @@
+import { EnumValues } from "zod";
 import {ApiResponse, get, post, postNoBody, put, putNoBody} from "./api";
 
 const ACCOUNTS_PATH = "/accounts";
@@ -66,8 +67,17 @@ export interface AccountActiveStatusDto {
   active: boolean;
 }
 
-export async function putAccountDetails(body: EditAccountDetailsDto) {
-  return put(`${ACCOUNTS_PATH}/self`, body);
+export enum TokenType {
+  Registration = "REGISTRATION",
+  PasswordReset = "PASSWORD_RESET",
+  ChangePassword = "CHANGE_PASSWORD",
+  EmailUpdate = "EMAIL_UPDATE",
+}
+
+export interface PasswordResetDto {
+  token: string;
+  newPassword: string;
+  type: TokenType;
 }
 
 export async function editAccountDetails(body: EditAccountDetailsDto) {
@@ -84,6 +94,14 @@ export async function resendEmailEditMail() {
 
 export async function putVerifyAccount(token: string) {
     return putNoBody(`${ACCOUNTS_PATH}/confirm-registration?token=` + token);
+}
+
+export async function postSendResetPasswordEmail(email: string) {
+  return postNoBody(`${ACCOUNTS_PATH}/password/request-reset?email=` + email);
+}
+
+export async function postResetPassword(body: PasswordResetDto) {
+  return post(`${ACCOUNTS_PATH}/password/reset`, body);
 }
 
 export async function postResendVerificationToken(accountId: string) {

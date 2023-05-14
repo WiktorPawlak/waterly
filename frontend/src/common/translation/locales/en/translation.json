@@ -9,8 +9,11 @@
       "passwordLabel": "Password",
       "submitButtonLabel": "Log in",
       "forgotPasswordLinkLabel": "Forgot password?",
+      "forgotPasswordDescription": "Enter your email address below and if your account is active, we'll send you a password reset link.",
       "registerText": "Don't have an account?",
-      "registerButton": "Sign up"
+      "registerButton": "Sign up",
+      "forgotPasswordSend": "Send",
+      "forgotPasswordCancel": "Cancel"
     },
     "validation": {
       "login": {
@@ -147,5 +150,28 @@
     "accountWithPhoneNumberExist": "Account with the given phone number already exists, select another one",
     "accountWithEmailExist": "Account with the given email already exists, select another one",
     "unkownError": "Unkown error"
+  },
+  "resetEmailSuccess": {
+    "alert": {
+      "emailSent":"An email has been sent to your email address. Please check your inbox."
+    }
+  },
+  "resetPassword": {
+    "header": {
+      "title": "Reset password",
+      "description": "Fill the form below to reset your password."
+    },
+    "form": {
+      "newPasswordLabel": "New password.",
+      "newPasswordRepeatLabel": "Repeat new password.",
+      "submitPasswordReset": "Reset password"
+    },
+    "alert": {
+      "passwordReseted": "Password reseted succesfully. You will be redirected to the login page in a moment.",
+      "passwordNotReseted": "Password not reseted successfully."
+    },
+    "passwordsValidation": {
+        "passwordsDoNotMatch": "Passwords do not match."
+    }
   }
 }

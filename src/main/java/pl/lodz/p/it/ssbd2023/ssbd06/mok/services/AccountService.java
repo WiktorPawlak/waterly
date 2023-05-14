@@ -270,7 +270,9 @@ public class AccountService {
     @PermitAll
     public void sendEmailToken(final Account account) {
         VerificationToken token = verificationTokenService.createResetToken(account);
-        checkAccountStatus(account);
+        if (!account.isActive()) {
+            throw ApplicationBaseException.notActiveAccountException();
+        }
         tokenSender.sendResetToken(token);
     }
 
@@ -292,7 +294,9 @@ public class AccountService {
     public void resetPassword(final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
         TokenType type = passwordResetDto.getType();
         Account account = verificationTokenService.confirmPassword(UUID.fromString(passwordResetDto.getToken()), type);
-        checkAccountStatus(account);
+        if (!account.isActive()) {
+            throw ApplicationBaseException.notActiveAccountException();
+        }
         var hashedNewPassword = hashProvider.generate(passwordResetDto.getNewPassword().toCharArray());
         changePassword(account, hashedNewPassword);
     }

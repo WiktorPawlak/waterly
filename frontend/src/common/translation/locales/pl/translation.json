@@ -9,8 +9,11 @@
       "passwordLabel": "Hasło",
       "submitButtonLabel": "Zaloguj",
       "forgotPasswordLinkLabel": "Zapomniałeś hasła?",
+      "forgotPasswordDescription": "Wpisz swój adres email poniżej a jeżeli twoje konto jest aktywne, my wyślemy ci link pozwalający na reset hasła.",
       "registerText": "Nie masz konta?",
-      "registerButton": "Zarejestruj się"
+      "registerButton": "Zarejestruj się",
+      "forgotPasswordSend": "Wyślij",
+      "forgotPasswordCancel": "Anuluj"
     },
     "validation": {
       "login": {
@@ -41,6 +44,7 @@
       "passwordLabel": "Hasło",
       "confirmPassword": "Powtórz hasło",
       "forgotPasswordLinkLabel": "Zapomniałeś hasła?",
+      "forgotPasswordDescription": "Wpisz swój email poniżej a my wyślemy ci link pozwalający na reset hasła.",
       "submitButtonLabel": "Zarejestruj",
       "registerText": "Masz już konto?",
       "registerButton": "Zaloguj się"
@@ -149,5 +153,28 @@
     "accountWithPhoneNumberExist": "Konto z podanym numerem telefonu już istnieje, podaj inne",
     "accountWithEmailExist": "Konto z podanym emailem już istnieje, podaj inne",
     "unkownError": "Nieznany błąd"
+  },
+  "resetEmailSuccess": {
+    "alert": {
+      "emailSent":"Na twoje konto pocztowe został wysłany email. Sprawdź pocztę."
+    }
+  },
+  "resetPassword": {
+    "header": {
+      "title": "Zresetuj hasło",
+      "description": "Aby zresetować hasło wypełnij poniższy formularz."
+    },
+    "form": {
+      "newPasswordLabel": "Nowe hasło.",
+      "newPasswordRepeatLabel": "Powtórz nowe hasło.",
+      "submitPasswordReset": "Zresetuj hasło"
+    },
+    "alert": {
+      "passwordReseted": "Hasło zostało zresetowane pomyślnie. Za chwilę zostaniesz przeniesiony na stronę logowania.",
+      "passwordNotReseted": "Hasło nie zostało zresetowane."
+    },
+    "passwordsValidation": {
+        "passwordsDoNotMatch": "Podana hasła różnią się."
+    }
   }
 }

@@ -7,6 +7,7 @@ import { ManageUsersAdminPage } from "./pages/admin";
 import { VerifyUsersFMPage } from "./pages/facilityManager";
 import VerifyAccountPage from "./pages/VerifyAccountPage";
 import AccountDetailsPage from "./pages/AccountDetailsPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const Routing = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const Routing = createBrowserRouter([
     path: "/accounts/:id/details",
     element: <AccountDetailsPage />,
   },
+  {
+    path: "/password/reset",
+    element: <ResetPasswordPage />,
+  }
 ]);
 
 export default function App() {

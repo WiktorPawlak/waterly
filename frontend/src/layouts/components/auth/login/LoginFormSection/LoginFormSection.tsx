@@ -1,35 +1,48 @@
-import {Box, Button, TextField, Typography, useMediaQuery, useTheme,} from "@mui/material";
-import {useTranslation} from "react-i18next";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
-import {useUser} from "../../../../../hooks/useUser";
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {loginSchema, LoginSchemaType,} from "../../../../../validation/validationSchemas";
+import { useUser } from "../../../../../hooks/useUser";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginSchemaType, resetPasswordEmailSchema, } from "../../../../../validation/validationSchemas";
+import { useToast } from "../../../../../hooks/useToast";
+import { Toast } from "../../../Toast";
+import { SendResetPasswordEmailSection } from "../../../SendResetPasswordEmailSection/SendResetPasswordEmailSection";
 
 export const LoginFormSection = () => {
   const navigation = useNavigate();
   const { t } = useTranslation();
-
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
+    register: registerLogin,
+    handleSubmit: handleLoginSubmit,
+    formState: { errors: loginErrors },
   } = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
   });
 
-  const { login: loginError, password: passwordError } = errors;
-  const loginErrorMessage = loginError?.message;
-  const passwordErrorMessage = passwordError?.message;
+  const loginErrorMessage = loginErrors?.login?.message;
+  const passwordErrorMessage = loginErrors?.password?.message;
 
   const theme = useTheme();
+  const toast = useToast();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
 
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-
   const { logInClient } = useUser();
 
   const signInButtonHandle = async () => {
@@ -85,7 +98,7 @@ export const LoginFormSection = () => {
       )}
       <TextField
         label={t("logInPage.form.loginLabel")}
-        {...register("login")}
+        {...registerLogin("login")}
         error={!!loginErrorMessage}
         helperText={loginErrorMessage && t(loginErrorMessage)}
         variant="standard"
@@ -102,7 +115,7 @@ export const LoginFormSection = () => {
       />
       <TextField
         label={t("logInPage.form.passwordLabel")}
-        {...register("password")}
+        {...registerLogin("password")}
         error={!!passwordErrorMessage}
         helperText={passwordErrorMessage && t(passwordErrorMessage)}
         type="password"
@@ -118,22 +131,11 @@ export const LoginFormSection = () => {
           },
         }}
       />
-      <Button
-        variant="text"
-        sx={{
-          textTransform: "none",
-          width: "204px",
-          justifyContent: "flex-end",
-          alignSelf: "flex-end",
-          mb: { xs: 3, md: 6 },
-        }}
-      >
-        {t("logInPage.form.forgotPasswordLinkLabel")}
-      </Button>
+      <SendResetPasswordEmailSection />
       <Button
         variant="contained"
         sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
-        onClick={handleSubmit(signInButtonHandle)}
+        onClick={handleLoginSubmit(signInButtonHandle)}
       >
         {t("logInPage.form.submitButtonLabel")}
       </Button>

@@ -3,7 +3,8 @@ const apiErrores = new Map<string, string>([
     "ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST",
     "apiError.accountWithPhoneNumberExist",
   ],
-  ["ERROR.ACCOUNT_WITH_EMAIL_EXIST", "apiError.accountWithEmailExist"],
+  ["ERROR.ACCOUNT_WITH_EMAIL_EXIST", 
+  "apiError.accountWithEmailExist"],
 ]);
 
 const UNKONW_ERROR = "apiError.unkownError";

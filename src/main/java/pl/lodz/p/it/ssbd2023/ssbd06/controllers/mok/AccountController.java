@@ -210,7 +210,7 @@ public class AccountController extends RepeatableTransactionController {
     @POST
     @Path("/password/reset")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response resetPassword(@Valid final PasswordResetDto dto) throws TokenNotFoundException {
+    public Response resetPassword(@NotNull @Valid final PasswordResetDto dto) throws TokenNotFoundException {
         retry(() -> accountEndpoint.resetPassword(dto), accountEndpoint);
         return Response.ok().build();
     }
