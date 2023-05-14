@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LogInPage from "./pages/LogInPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -46,6 +45,8 @@ const Routing = createBrowserRouter([
 
 export default function App() {
   return (
+    <>
       <RouterProvider router={Routing} />
+    </>
   );
 }

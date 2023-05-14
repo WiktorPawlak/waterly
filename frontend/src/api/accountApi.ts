@@ -3,10 +3,14 @@ import { ApiResponse, get, post, postNoBody, put, putNoBody } from "./api";
 const ACCOUNTS_PATH = "/accounts";
 
 export interface EditAccountDetailsDto {
-  email: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  languageTag: string;
+}
+
+export interface EditEmailDto {
+  email: string;
 }
 
 export interface AccountDto {
@@ -62,8 +66,16 @@ export interface AccountActiveStatusDto {
   active: boolean;
 }
 
-export async function putAccountDetails(body: EditAccountDetailsDto) {
+export async function editAccountDetails(body: EditAccountDetailsDto) {
   return put(`${ACCOUNTS_PATH}/self`, body);
+}
+
+export async function editEmail(body: EditEmailDto) {
+  return put(`${ACCOUNTS_PATH}/self/email`, body);
+}
+
+export async function resendEmailEditMail() {
+  return post(`${ACCOUNTS_PATH}/self/email/resend-accept-email`);
 }
 
 export async function putVerifyAccount(token: string) {

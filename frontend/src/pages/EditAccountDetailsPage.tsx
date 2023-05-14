@@ -5,6 +5,8 @@ import {
   CircularProgress,
   Divider,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import loginPose from "../assets/loginPose.svg";
@@ -13,18 +15,22 @@ import { useEffect, useState } from "react";
 import {
   AccountDto,
   getSelfAccountDetails,
-  putAccountDetails,
+  editAccountDetails,
 } from "../api/accountApi";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   EditAccountDetailsSchemaType,
   editAccountDetailsSchema,
 } from "../validation/validationSchemas";
+import { EditEmail } from "../layouts/components/account/EditEmail";
+import { useToast } from "../hooks/useToast";
+import { Toast } from "../layouts/components/Toast";
+import { resolveApiError } from "../api/apiErrors";
 
 const EditAccountDetailsPage = () => {
   const [accountDetails, setAccountDetails] = useState<AccountDto>();
+  const toast = useToast();
   const { t } = useTranslation();
 
   const {
@@ -36,17 +42,15 @@ const EditAccountDetailsPage = () => {
   });
 
   const {
-    email: emailError,
     firstName: firstNameError,
     lastName: lastNameError,
     phoneNumber: phoneNumberError,
   } = errors;
-  const emailErrorMessage = emailError?.message;
   const firstNameErrorMessage = firstNameError?.message;
   const lastNameErrorMessage = lastNameError?.message;
   const phoneNumberErrorMessage = phoneNumberError?.message;
 
-  useEffect(() => {
+  const fetchAccountDetails = () => {
     getSelfAccountDetails().then((it) => {
       if (it.data) {
         setAccountDetails(it.data);
@@ -54,11 +58,24 @@ const EditAccountDetailsPage = () => {
         console.error(it.error);
       }
     });
+  };
+
+  useEffect(() => {
+    fetchAccountDetails();
   }, []);
 
-  const handleEditButton = () => {
+  const handleEditButton = async () => {
     if (accountDetails) {
-      putAccountDetails(accountDetails);
+      const reponse = await editAccountDetails(accountDetails);
+      console.log(reponse);
+      if (reponse.status === 204) {
+        toast.showSuccessToast(
+          t("editAccountDetailsPage.alert.detailsSuccesEdited")
+        );
+      } else {
+        toast.showErrorToast(t(resolveApiError(reponse.error)));
+      }
+      fetchAccountDetails();
     }
   };
 
@@ -89,6 +106,8 @@ const EditAccountDetailsPage = () => {
             width: { xs: "100%", md: "50%" },
           }}
         >
+          <EditEmail accountDetails={accountDetails} />
+          <Divider variant="middle" sx={{ my: 2 }} />
           <Button
             variant="contained"
             sx={{
@@ -98,47 +117,8 @@ const EditAccountDetailsPage = () => {
             }}
             onClick={handleSubmit(handleEditButton)}
           >
-            {t("editAccountDetailsPage.button")}
+            {t("editAccountDetailsPage.detailsButton")}
           </Button>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography
-                variant="h4"
-                sx={{ fontSize: "16px", fontWeight: "700" }}
-              >
-                {t("editAccountDetailsPage.editAccountDetailEntry.emailLabel")}
-              </Typography>
-            </Box>
-            <TextField
-              {...register("email")}
-              error={!!emailErrorMessage}
-              helperText={emailErrorMessage && t(emailErrorMessage)}
-              variant="standard"
-              value={accountDetails.email}
-              onChange={(e) => {
-                setAccountDetails({
-                  ...accountDetails,
-                  email: e.target.value,
-                });
-              }}
-              sx={{ color: "text.secondary" }}
-            />
-          </Box>
-
-          <Divider variant="middle" sx={{ my: 2 }} />
-
           <Box
             sx={{
               display: "flex",
@@ -259,8 +239,49 @@ const EditAccountDetailsPage = () => {
               }}
             />
           </Box>
-        </Box>
+          <Divider variant="middle" sx={{ my: 2 }} />
 
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                variant="h4"
+                sx={{ fontSize: "16px", fontWeight: "700" }}
+              >
+                {t(
+                  "editAccountDetailsPage.editAccountDetailEntry.preferedLanguageLabel"
+                )}
+              </Typography>
+            </Box>
+            <ToggleButtonGroup
+              color="standard"
+              value={accountDetails.languageTag}
+              exclusive
+              onChange={(e, value) => {
+                setAccountDetails({
+                  ...accountDetails,
+                  languageTag: value,
+                });
+              }}
+              aria-label="Platform"
+            >
+              <ToggleButton value="pl-PL">{t("language.pl")}</ToggleButton>
+              <ToggleButton value="en-US">{t("language.en")}</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+          <Divider variant="middle" sx={{ my: 2 }} />
+        </Box>
         <Box
           sx={{
             width: { xs: "500px", md: "800px" },
@@ -283,6 +304,12 @@ const EditAccountDetailsPage = () => {
           />
         </Box>
       </Box>
+      <Toast
+        isToastOpen={toast.isToastOpen}
+        setIsToastOpen={toast.setIsToastOpen}
+        message={toast.message}
+        severity={toast.severity}
+      />
     </MainLayout>
   );
 };

@@ -53,12 +53,25 @@
   },
   "editAccountDetailsPage": {
     "header": "Edytuj dane konta",
-    "button": "Edytuj",
+    "button": "Edytuj detale",
+    "detailsButton": "Edytuj detale",
+    "emailButton": "Edytuj email",
+    "alert": {
+      "detailsSuccesEdited": "Detale zmienione pomyślnie",
+      "emailSuccesEdited": "Email zmieniony pomyślnie",
+      "emailSuccesResended": "Email wysłany ponownie pomyślnie"
+    },
+    "resendAcceptMail": {
+      "resendButton": "Wyślij email ponownie ",
+      "modalHeader": "Wysłaliśmy email do ciebie",
+      "modalBody": "Proszę otwórz swoją skrzynke pocztową i zakceptuj edycję emaila poprzez link"
+    },
     "editAccountDetailEntry": {
       "emailLabel": "Email",
       "firstNameLabel": "Imię",
       "lastNameLabel": "Nazwisko",
-      "phoneNumberLabel": "Nr telefonu"
+      "phoneNumberLabel": "Nr telefonu",
+      "preferedLanguageLabel": "Preferowany język"
     },
     "validation": {
       "email": {
@@ -82,6 +95,10 @@
         "syntax": "Number telefonu musi składać się tylko z cyfr"
       }
     }
+  },
+  "language": {
+    "pl": "Polski",
+    "en": "Angielski"
   },
   "manageUsersPage": {
     "header": "Zarządzaj użytkownikami",
@@ -115,5 +132,10 @@
     "ADMINISTRATOR": "Administrator",
     "OWNER": "Właściciel",
     "FACILITY_MANAGER": "Zarządca"
+  },
+  "apiError": {
+    "accountWithPhoneNumberExist": "Konto z podanym numerem telefonu już istnieje, podaj inne",
+    "accountWithEmailExist": "Konto z podanym emailem już istnieje, podaj inne",
+    "unkownError": "Nieznany błąd"
   }
 }

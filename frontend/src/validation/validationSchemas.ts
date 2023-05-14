@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const editAccountDetailsSchema = z.object({
+export const editEmailSchema = z.object({
   email: z
     .string()
     .min(5, "editAccountDetailsPage.validation.email.min")
@@ -9,6 +9,9 @@ export const editAccountDetailsSchema = z.object({
       /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/,
       "editAccountDetailsPage.validation.email.syntax"
     ),
+});
+
+export const editAccountDetailsSchema = z.object({
   firstName: z
     .string()
     .min(2, "editAccountDetailsPage.validation.firstName.min")
@@ -43,4 +46,7 @@ export const loginSchema = z.object({
 export type EditAccountDetailsSchemaType = z.infer<
   typeof editAccountDetailsSchema
 >;
+
+export type EditEmailSchemaType = z.infer<typeof editEmailSchema>;
+
 export type LoginSchemaType = z.infer<typeof loginSchema>;

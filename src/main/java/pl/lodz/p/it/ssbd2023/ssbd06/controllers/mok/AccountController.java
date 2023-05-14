@@ -19,7 +19,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -81,9 +80,9 @@ public class AccountController extends RepeatableTransactionController {
     }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
-    @PATCH
+    @PUT
     @Path("/self/email")
-    @Consumes(MediaType.APPLICATION_JSON_PATCH_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response editOwnEmail(@NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
         retry(() -> accountEndpoint.editOwnEmail(dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
@@ -101,9 +100,9 @@ public class AccountController extends RepeatableTransactionController {
     }
 
     @RolesAllowed(ADMINISTRATOR)
-    @PATCH
+    @PUT
     @Path("/{id}/email")
-    @Consumes(MediaType.APPLICATION_JSON_PATCH_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response editEmail(@PathParam("id") final long id, @NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
         retry(() -> accountEndpoint.editEmail(id, dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();

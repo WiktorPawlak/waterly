@@ -28,7 +28,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import io.vavr.Tuple2;
 import jakarta.ws.rs.core.MediaType;
 import lombok.SneakyThrows;
-import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.DatabaseConnector;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
@@ -346,10 +345,9 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                .contentType("application/json-patch+json")
                 .body(dto)
                 .when()
-                .patch(ACCOUNT_PATH + path)
+                .put(ACCOUNT_PATH + path)
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
@@ -429,8 +427,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(dtoWithExistedEmail)
                 .when()
-                .contentType("application/json-patch+json")
-                .patch(ACCOUNT_PATH + path)
+                .put(ACCOUNT_PATH + path)
                 .then()
                 .statusCode(CONFLICT.getStatusCode())
                 .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
@@ -445,8 +442,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(dtoEmail)
                 .when()
-                .contentType("application/json-patch+json")
-                .patch(ACCOUNT_PATH + "/" + OWNER_ID + "/email")
+                .put(ACCOUNT_PATH + "/" + OWNER_ID + "/email")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
@@ -454,8 +450,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .body(dtoEmail)
                 .when()
-                .contentType("application/json-patch+json")
-                .patch(ACCOUNT_PATH + "/self/email")
+                .put(ACCOUNT_PATH + "/self/email")
                 .then()
                 .statusCode(CONFLICT.getStatusCode())
                 .body("message", equalTo("ERROR.ACCOUNT_WITH_EMAIL_EXIST"));
@@ -558,9 +553,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
         given()
                 .header(AUTHORIZATION, token)
                 .body(dto)
-                .contentType("application/json-patch+json")
                 .when()
-                .patch(ACCOUNT_PATH + "/2/email")
+                .put(ACCOUNT_PATH + "/2/email")
                 .then()
                 .statusCode(FORBIDDEN.getStatusCode())
                 .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
@@ -900,7 +894,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldResetPasswordProperly() {
-
         given()
                 .queryParam("email", getOwnerAccount().getEmail())
                 .when()
@@ -960,7 +953,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldRespondWith404WhenResetPasswordTokenWasAlreadyUsed() {
-
         given()
                 .queryParam("email", getOwnerAccount().getEmail())
                 .when()
@@ -997,7 +989,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldFailPasswordResetWhenPasswordIsNotValid() {
-
         given()
                 .queryParam("email", getOwnerAccount().getEmail())
                 .when()
