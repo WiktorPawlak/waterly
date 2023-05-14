@@ -3,15 +3,17 @@ import { useTranslation } from "react-i18next";
 import { useSnackbar } from 'notistack';
 import { Box, Grid, Link, Typography } from "@mui/material";
 import verifyPose from "../assets/verifyPose.svg";
-import { MainLayout } from "../layouts/MainLayout/MainLayout";
 import { postResendVerificationToken } from "../api/accountApi";
+import { useLocation } from "react-router-dom";
 
 const WaitForVerifyPage = () => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const { state } = useLocation();
 
   const handleResendMail = () => {
-    postResendVerificationToken(`2137`) // TODO: refactor backend so register returns accountId
+    const accountId = state ? state.id : "-1";
+    postResendVerificationToken(accountId)
     .then((response) => {
       if (response.status === 200) {
         enqueueSnackbar(t("waitForVerifyPage.toastSuccess"), {
@@ -92,7 +94,7 @@ const WaitForVerifyPage = () => {
             fontSize: { xs: "12px", md: "16px" },
           }}
         > 
-        <Link href="#" onClick={handleResendMail}>{t("waitForVerifyPage.clickHere")}</Link>
+        <Link sx={{ cursor: "pointer" }} onClick={handleResendMail}>{t("waitForVerifyPage.clickHere")}</Link>
           {t("waitForVerifyPage.resendMailDescription")}
         </Typography>
         <Box

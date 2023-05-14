@@ -220,7 +220,7 @@ public class AccountService {
 
     @OnlyGuest
     @SneakyThrows(TokenExpiredException.class)
-    public void registerUser(final CreateAccountDto accountDto) {
+    public Long registerUser(final CreateAccountDto accountDto) {
         Account accountEntity = prepareAccountEntity(accountDto);
         Account persistedAccountEntity = accountFacade.create(accountEntity);
 
@@ -228,6 +228,7 @@ public class AccountService {
         accountVerificationTimer.scheduleAccountDeletion(token);
 
         tokenSender.sendVerificationToken(token);
+        return persistedAccountEntity.getId();
     }
 
     @RolesAllowed({ADMINISTRATOR})

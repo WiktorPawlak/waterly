@@ -24,6 +24,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreatedAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
@@ -77,8 +78,9 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @OnlyGuest
-    public void registerUser(final CreateAccountDto account) {
-        accountService.registerUser(account);
+    public CreatedAccountDto registerUser(final CreateAccountDto account) {
+        Long accountId = accountService.registerUser(account);
+        return new CreatedAccountDto(accountId);
     }
 
     @RolesAllowed(ADMINISTRATOR)

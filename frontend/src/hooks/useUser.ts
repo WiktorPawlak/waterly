@@ -67,7 +67,7 @@ export const useUser = () => {
       const response = await registerApi(userData);
 
       if (response.status === 201) {
-        navigate("/wait-for-verify");
+        navigate("/wait-for-verify", { state: response.data });
       }
     } catch (error) {
       return error;

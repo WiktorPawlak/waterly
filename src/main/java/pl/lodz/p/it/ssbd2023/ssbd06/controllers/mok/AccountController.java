@@ -34,6 +34,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountSearchPreferencesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreatedAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
@@ -148,9 +149,9 @@ public class AccountController extends RepeatableTransactionController {
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerAccount(@NotNull @Valid final CreateAccountDto account) {
-        retry(() -> accountEndpoint.registerUser(account), accountEndpoint);
+        CreatedAccountDto createdAccountDto = retry(() -> accountEndpoint.registerUser(account), accountEndpoint);
         log.info(() -> "Registering account: " + account);
-        return Response.status(CREATED).build();
+        return Response.status(CREATED).entity(createdAccountDto).build();
     }
 
     @RolesAllowed(ADMINISTRATOR)
