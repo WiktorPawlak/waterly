@@ -192,7 +192,7 @@ public class AccountController extends RepeatableTransactionController {
     @POST
     @Path("/password/request-reset")
     public Response requestPasswordReset(@Valid @Email @QueryParam("email") final String email) {
-        retry(() -> accountEndpoint.sendResetPasswordTokenAndChangePassword(email), accountEndpoint);
+        retry(() -> accountEndpoint.sendResetPasswordToken(email), accountEndpoint);
         log.info(() -> "Requested password reset by email: " + email);
         return Response.ok().build();
     }

@@ -46,6 +46,8 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
 
     protected static String POSTGRES_PORT;
 
+    protected DatabaseConnector databaseConnector;
+
     @BeforeAll
     protected void tokensSetup() {
         ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
@@ -113,6 +115,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
         String url = "jdbc:postgresql://localhost:" + postgres.getFirstMappedPort() + "/ssbd06?loggerLevel=OFF";
         String username = postgres.getUsername();
         String password = postgres.getPassword();
+        databaseConnector = new DatabaseConnector(POSTGRES_PORT);
 
         try (Connection conn = DriverManager.getConnection(url, username, password)) {
             InputStream inputStream = getClass().getResourceAsStream("/test-init.sql");

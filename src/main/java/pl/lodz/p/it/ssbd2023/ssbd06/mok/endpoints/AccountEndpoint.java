@@ -145,7 +145,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @PermitAll
-    public void sendResetPasswordTokenAndChangePassword(final String email) {
+    public void sendResetPasswordToken(final String email) {
         Optional<Account> optionalAccount = accountService.findByEmail(email);
         if (optionalAccount.isPresent()) {
             accountService.sendEmailToken(optionalAccount.get());

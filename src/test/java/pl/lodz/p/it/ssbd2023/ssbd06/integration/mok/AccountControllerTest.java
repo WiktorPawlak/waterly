@@ -31,6 +31,7 @@ import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.DatabaseConnector;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
@@ -91,7 +92,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldDeactivateActiveAccount() {
-        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
 
         //given
         boolean active = databaseConnector.executeQuery(
@@ -132,7 +132,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldActivateInactiveAccount() {
-        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
 
         //given
         given()
@@ -262,7 +261,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldConfirmRegisteredAccountWhenVerificationTokenCorrect() {
-        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
         // given
         CreateAccountDto accountDto = prepareCreateAccountDto();
 
@@ -342,7 +340,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @SneakyThrows
     @CsvSource({"/self/email", "/1/email"})
     void shouldEditEmailWhenEditAccepted(String path) {
-        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
         String email = "mati@mati.com";
 
         EditEmailDto dto = new EditEmailDto(email);
@@ -573,7 +570,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldChangePasswordRequestProperlyAfterUserChange() {
-        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
         String newPassword = "123jantes";
         PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto(newPassword);
         given()
@@ -649,7 +645,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void noMatchingEmailsForPasswordChangeRequest() {
-        String email = "tenEmailNieIstnieje@aaa.com";
+        String email = "thisEmailDoesNotExist@aaa.com";
         PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
@@ -660,6 +656,36 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode())
                 .body("message", equalTo("ERROR.NO_MATCHING_EMAILS"));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldFailChangePasswordByAdminWhenNewPasswordIsNotValid() {
+        String newPassword = "123jantes";
+        PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto(newPassword);
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .queryParam("email", getOwnerAccount().getEmail())
+                .body(passwordChangeByAdminDto)
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-change")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        String changePasswordToken = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
+        ).getString("token");
+
+        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, "X", TokenType.CHANGE_PASSWORD);
+        String test = given()
+                .body(changePasswordRequestDto)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract().jsonPath().getString("message");
+
+        assertEquals(test, "[size must be between 8 and 32]");
     }
 
     @Test
@@ -682,8 +708,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     @SneakyThrows
     void shouldRespondWith404WhenChangePasswordTokenWasAlreadyUsed() {
-        DatabaseConnector databaseConnector = new DatabaseConnector(POSTGRES_PORT);
         PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
+
         given()
                 .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                 .queryParam("email", getOwnerAccount().getEmail())
@@ -799,6 +825,202 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .then()
                 .statusCode(CONFLICT.getStatusCode())
                 .body("message", equalTo("ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION"));
+    }
+
+    @Test
+    void shouldChangeOwnPassword() {
+        given()
+                .body(new Credentials("admin", "admin12345"))
+                .when()
+                .post(AUTH_PATH + "/login")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        AccountPasswordDto passwordDto = new AccountPasswordDto("admin12345", "newPassword");
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(passwordDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .put(ACCOUNT_PATH + "/self/password")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        given()
+                .body(new Credentials("admin", "newPassword"))
+                .when()
+                .post(AUTH_PATH + "/login")
+                .then()
+                .statusCode(OK.getStatusCode());
+    }
+
+    @Test
+    void shouldFailChangeOwnPasswordWhenOldPasswordDoesNotMatch() {
+        AccountPasswordDto passwordDto = new AccountPasswordDto("12345admin", "newPassword");
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(passwordDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .put(ACCOUNT_PATH + "/self/password")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .body("message", equalTo("ERROR.NOT_MATCHING_PASSWORDS"));
+    }
+
+    @Test
+    void shouldFailChangeOwnPasswordWhenNewPasswordIsTheSameAsOld() {
+        AccountPasswordDto passwordDto = new AccountPasswordDto("admin12345", "admin12345");
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(passwordDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .put(ACCOUNT_PATH + "/self/password")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.IDENTICAL_PASSWORDS"));
+    }
+
+    @Test
+    void shouldFailChangeOwnPasswordWhenNewPasswordIsNotValid() {
+        AccountPasswordDto invalidPasswordDto = new AccountPasswordDto("admin12345", "X");
+        String test = given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(invalidPasswordDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .put(ACCOUNT_PATH + "/self/password")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract().jsonPath().getString("message");
+        assertEquals(test, "[size must be between 8 and 32]");
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldResetPasswordProperly() {
+
+        given()
+                .queryParam("email", getOwnerAccount().getEmail())
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-reset")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        String resetPasswordToken = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
+        ).getString("token");
+
+        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "resetedPassword", TokenType.PASSWORD_RESET);
+
+        given()
+                .body(resetDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        given()
+                .body(new Credentials("new", "resetedPassword"))
+                .when()
+                .post(AUTH_PATH + "/login")
+                .then()
+                .statusCode(OK.getStatusCode());
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldFailPasswordResetWhenNoMatchingEmailsForPasswordResetRequest() {
+        given()
+                .queryParam("email", "thisEmailDoesNotExist@aaa.com")
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-reset")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .body("message", equalTo("ERROR.NO_MATCHING_EMAILS"));
+    }
+
+    @Test
+    void shouldRespondWith404WhenResetPasswordTokenDoesntExist() {
+        String wrongToken = "11111111-1111-1111-1111-a4cbafae584d";
+        PasswordResetDto resetDto = new PasswordResetDto(wrongToken, "123jantes", TokenType.PASSWORD_RESET);
+
+        given()
+                .body(resetDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldRespondWith404WhenResetPasswordTokenWasAlreadyUsed() {
+
+        given()
+                .queryParam("email", getOwnerAccount().getEmail())
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-reset")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        String resetPasswordToken = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
+        ).getString("token");
+
+        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "resetedPassword", TokenType.PASSWORD_RESET);
+
+        given()
+                .body(resetDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        PasswordResetDto newResetDto = new PasswordResetDto(resetPasswordToken, "newResetedPassword", TokenType.PASSWORD_RESET);
+
+        given()
+                .body(newResetDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldFailPasswordResetWhenPasswordIsNotValid() {
+
+        given()
+                .queryParam("email", getOwnerAccount().getEmail())
+                .when()
+                .post(ACCOUNT_PATH + "/password/request-reset")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        String resetPasswordToken = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
+        ).getString("token");
+
+        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "X", TokenType.PASSWORD_RESET);
+
+        String test = given()
+                .body(resetDto)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(ACCOUNT_PATH + "/password/reset")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract().jsonPath().getString("message");
+
+        assertEquals(test, "[size must be between 8 and 32]");
     }
 
     private Stream<Arguments> providePatterns() {
