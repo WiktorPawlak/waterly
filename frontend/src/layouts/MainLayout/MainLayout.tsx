@@ -1,13 +1,18 @@
-import { Container, styled, Theme } from "@mui/material";
-import React, { ReactNode } from "react";
-import { Footer, Nav } from "../components";
+import { Container, styled } from "@mui/material";
+import { ReactNode } from "react";
+import { Nav } from "../components";
 
 export interface MainLayoutProps {
   hideMenuEntries?: boolean;
   children: ReactNode;
+  isOverflowHidden?: boolean;
 }
 
-export const MainLayout = ({ children, hideMenuEntries }: MainLayoutProps) => {
+export const MainLayout = ({
+  children,
+  hideMenuEntries,
+  isOverflowHidden = true,
+}: MainLayoutProps) => {
   return (
     <>
       <LayoutWrapper>
@@ -19,13 +24,15 @@ export const MainLayout = ({ children, hideMenuEntries }: MainLayoutProps) => {
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "background.default",
-            overflow: { xs: "visible", md: "hidden" },
+            overflow: {
+              xs: "visible",
+              md: isOverflowHidden ? "hidden" : "visible",
+            },
             px: { xs: 2, md: 15 },
           }}
         >
           {children}
         </Container>
-        {/* <Footer /> */}
       </LayoutWrapper>
     </>
   );

@@ -6,8 +6,8 @@ import EditAccountDetailsPage from "./pages/EditAccountDetailsPage";
 import { ManageUsersAdminPage } from "./pages/admin";
 import { VerifyUsersFMPage } from "./pages/facilityManager";
 import VerifyAccountPage from "./pages/VerifyAccountPage";
-import AccountDetailsPage from "./pages/AccountDetailsPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AccountDetailsPage from "./pages/admin/AccountDetailsPage/AccountDetailsPage";
 
 const Routing = createBrowserRouter([
   {

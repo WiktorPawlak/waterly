@@ -8,10 +8,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  --body-background-color: #f5f7f9;
 }
 
 body {
   margin: 0;
+  background-color: var(--body-background-color);
 }
 
 a {
