@@ -17,7 +17,7 @@ import jakarta.validation.constraints.Size;
 @Size(min = 8, max = 32)
 @NotBlank
 public @interface Password {
-    String message() default "Password is invalid";
+    String message() default "VALIDATION.PASSWORD";
 
     Class<?>[] groups() default {};
 

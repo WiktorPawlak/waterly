@@ -18,7 +18,7 @@ import jakarta.validation.Payload;
 @Range(min = 1, max = Integer.MAX_VALUE)
 public @interface Page {
 
-    String message() default "validation.invalid_page_number";
+    String message() default "VALIDATION.PAGE";
 
     Class<?>[] groups() default {};
 

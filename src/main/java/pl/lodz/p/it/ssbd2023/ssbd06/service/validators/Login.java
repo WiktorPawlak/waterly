@@ -16,12 +16,12 @@ import jakarta.validation.constraints.Size;
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
-@Size(min = 3, max = 36, message = "minimal 3 characters and maximal 36 characters")
+@Size(min = 3, max = 36, message = "VALIDATION.LOGIN_SIZE")
 @NotBlank
-@Pattern(regexp = ValidationRegex.LOGIN, message = "must only contain letters, characters and numbers")
+@Pattern(regexp = ValidationRegex.LOGIN, message = "VALIDATION.LOGIN_PATTERN")
 public @interface Login {
 
-    String message() default "Login is invalid";
+    String message() default "VALIDATION.LOGIN";
 
     Class<?>[] groups() default {};
 

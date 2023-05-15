@@ -16,10 +16,10 @@ import jakarta.validation.constraints.Pattern;
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
 @NotBlank
-@Pattern(regexp = ValidationRegex.LANGUAGE_TAG, message = "Invalid language tag pattern")
+@Pattern(regexp = ValidationRegex.LANGUAGE_TAG, message = "VALIDATION.LANGUAGE_TAG_PATTERN")
 public @interface LanguageTag {
 
-    String message() default "Language tag is invalid";
+    String message() default "VALIDATION.LANGUAGE_TAG";
 
     Class<?>[] groups() default {};
 

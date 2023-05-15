@@ -16,12 +16,12 @@ import jakarta.validation.constraints.Size;
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
-@Size(min = 2, max = 50, message = "minimal 2 characters and maximal 50 characters")
+@Size(min = 2, max = 50, message = "VALIDATION.LAST_NAME_SIZE")
 @NotBlank
-@Pattern(regexp = ValidationRegex.LAST_NAME, message = "must contain only letters and character: -")
+@Pattern(regexp = ValidationRegex.LAST_NAME, message = "VALIDATION.LAST_NAME_PATTERN")
 public @interface LastName {
 
-    String message() default "Last name is invalid";
+    String message() default "VALIDATION.LAST_NAME";
 
     Class<?>[] groups() default {};
 

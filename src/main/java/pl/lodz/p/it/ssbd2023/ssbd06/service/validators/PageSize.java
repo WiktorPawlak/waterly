@@ -18,7 +18,7 @@ import jakarta.validation.Payload;
 @Range(min = 1, max = 100)
 public @interface PageSize {
 
-    String message() default "validation.invalid_page_size";
+    String message() default "VALIDATION.PAGE_SIZE";
 
     Class<?>[] groups() default {};
 

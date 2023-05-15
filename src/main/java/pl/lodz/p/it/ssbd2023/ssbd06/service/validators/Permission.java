@@ -21,9 +21,9 @@ import jakarta.validation.constraints.Pattern;
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
 @NotBlank
-@Pattern(regexp = PERMISSION, message = "Invalid permission")
+@Pattern(regexp = PERMISSION, message = "VALIDATION.PERMISSION_PATTERN")
 public @interface Permission {
-    String message() default "No such permission";
+    String message() default "VALIDATION.PERMISSION";
 
     Class<?>[] groups() default {};
 

@@ -128,7 +128,7 @@
     "pageSize": "Ilość wierszy",
     "toastActivateSuccess": "Konto zostało odblokowane",
     "toastDeactivateSuccess": "Konto zostało zablokowane",
-    "toastFailure": "ZMIENIĆ NA ERROR JAK SZYMON RACZY DOKOŃCZYĆ ZADANIE"
+    "toastFailure": "nieznany błąd"
   },
   "verifyUsersFMPage": {
     "header": "Weryfikuj użytkowników",
@@ -152,11 +152,60 @@
   "apiError": {
     "accountWithPhoneNumberExist": "Konto z podanym numerem telefonu już istnieje, podaj inne",
     "accountWithEmailExist": "Konto z podanym emailem już istnieje, podaj inne",
-    "unkownError": "Nieznany błąd"
+    "accountWithLoginExist": "Konto z podanym loginem już istnieje, podaj inne",
+    "unknownError": "Nieznany błąd",
+    "accessDenied": "Nie masz dostępu do tego zasobu",
+    "permissionsAlreadyAdded": "nie możesz dodać ról obecnie przypisanych do konta",
+    "forbiddenOperation": "Nie możesz wykonać tej operacji",
+    "identicalPasswords": "Hasła nie różnią się od siebie",
+    "unsupportedOperation": "Niewspierana operacja",
+    "exceededToken": "Sesja wygasła",
+    "accountNotFound": "Takie konto nie istnieje",
+    "searchPreferencesNotFound": "Konto z takimi danymi nie istnieje",
+    "notAuthorized": "Nie jesteś upoważniony do wykonania tej operacji",
+    "authenticationError": "Błąd uwierzytelnienia, sprawdź swoje dane",
+    "passwordsNotMatch": "Hasła nie są identyczne",
+    "resourceNotFound": "Taki zasób nie istnieje",
+    "emailNotMatch": "Adresy email nie są identyczne",
+    "accountNotActive": "Konto jest nieaktywne",
+    "accountNotConfirmed": "Konto nie jest potwierdzone",
+    "accountNotWaitingForConfirmation": "Konto jest już potwierdzone"
+  },
+  "validation": {
+    "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",
+    "emailInvalid": "Nieprawidłowy adres e-mail",
+    "emailInvalidSize": "nieprawidłowy rozmiar adresu e-mail: minimalnie 5 i maksymalnie 320 znaków",
+    "emailInvalidPattern": "Nieprawidłowa struktura adresu e-mail",
+    "firstNameInvalidSize": "Nieprawidłowe imię: minimalnie 2 i maksymalnie 50 znaków",
+    "firstNameInvalidPattern": "Nieprawidłowa struktura: Imię musi zawierać tylko litery",
+    "firstNameInvalid": "Nieprawidłowe imię",
+    "passwordHashInvalidSize": "Nieprawidłowy hash hasła: musi składać się dokładnie z 60 znaków",
+    "passwordHashInvalid": "Nieprawidłowy hash hasła",
+    "languageTagInvalidPattern": "Nieprawidłowy wzorzec identyfikatora językowego",
+    "languageTagInvalid": "Nieprawidłowy identyfikator językowy",
+    "lastNameInvalidSize": "Nieprawidłowy rozmiar nazwiska: minimalnie 2 i maksymalnie 50 znaków",
+    "lastNameInvalidPattern": "Nieprawidłowy wzorzec nazwiska: musi zawierać tylko litery i znak: -",
+    "lastNameInvalid": "Nieprawidłowe nazwisko",
+    "loginInvalidSize": "Nieprawidłowy rozmiar loginu: minimalnie 3 i maksymalnie 36 znaków",
+    "loginInvalidPattern": "Nieprawidłowy wzorzec loginu: może zawierać tylko litery, znaki i cyfry",
+    "loginInvalid": "Nieprawidłowy login",
+    "orderInvalidNull": "Właściwość sortowania nie może być pusta",
+    "orderInvalidPattern": "Nieprawidłowy wzorzec sortowania: może być tylko 'asc' lub 'desc'",
+    "orderInvalid": "Nieprawidłowe sortowanie",
+    "pageInvalid": "Nieprawidłowy numer strony",
+    "pageSizeInvalid": "Nieprawidłowy rozmiar strony",
+    "passwordInvalid": "Nieprawidłowe hasło",
+    "permissionInvalidPattern": "Nieprawidłowy wzorzec uprawnień: może być tylko administrator, zarządca obiektu lub właściciel",
+    "permissionInvalid": "Nie ma takiego uprawnienia",
+    "phoneNumberInvalidSize": "Nieprawidłowy rozmiar numeru telefonu: minimalnie 8 i maksymalnie 9 cyfr",
+    "phoneNumberInvalidPattern": "Nieprawidłowy numer telefonu: może zawierać tylko cyfry",
+    "phoneNumberInvalid": "Nieprawidłowy numer telefonu",
+    "uuidInvalidPattern": "Nieprawidłowy wzorzec UUID",
+    "uuidInvalid": "Nieprawidłowe UUID"
   },
   "resetEmailSuccess": {
     "alert": {
-      "emailSent":"Na twoje konto pocztowe został wysłany email. Sprawdź pocztę."
+      "emailSent": "Na twoje konto pocztowe został wysłany email. Sprawdź pocztę."
     }
   },
   "resetPassword": {
@@ -174,7 +223,7 @@
       "passwordNotReseted": "Hasło nie zostało zresetowane."
     },
     "passwordsValidation": {
-        "passwordsDoNotMatch": "Podana hasła różnią się."
+      "passwordsDoNotMatch": "Podana hasła różnią się."
     }
   }
 }

@@ -16,12 +16,12 @@ import jakarta.validation.constraints.Size;
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
-@Size(min = 8, max = 9, message = "minimal 8 characters and maximal 9 characters")
+@Size(min = 8, max = 9, message = "VALIDATION.PHONE_NUMBER_SIZE")
 @NotBlank
-@Pattern(regexp = ValidationRegex.PHONE_NUMBER, message = "must contain only numbers")
+@Pattern(regexp = ValidationRegex.PHONE_NUMBER, message = "VALIDATION.PHONE_NUMBER_PATTERN")
 public @interface PhoneNumber {
 
-    String message() default "Tel number is invalid";
+    String message() default "VALIDATION.PHONE_NUMBER";
 
     Class<?>[] groups() default {};
 

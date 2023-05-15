@@ -13,9 +13,9 @@ import jakarta.validation.constraints.Pattern;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Constraint(validatedBy = {})
 @Retention(RUNTIME)
-@Pattern(regexp = ValidationRegex.UUID, message = "Invalid UUID")
+@Pattern(regexp = ValidationRegex.UUID, message = "VALIDATION.UUID_PATTERN")
 public @interface ValidUUID {
-    String message() default "Invalid UUID";
+    String message() default "VALIDATION.UUID";
 
     Class<?>[] groups() default {};
 

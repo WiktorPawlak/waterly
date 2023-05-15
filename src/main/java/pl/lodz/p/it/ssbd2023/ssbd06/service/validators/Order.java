@@ -14,10 +14,10 @@ import jakarta.validation.constraints.Pattern;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Constraint(validatedBy = {})
 @Retention(RUNTIME)
-@NotNull(message = "validation.sorting_order_can_not_be_null")
-@Pattern(regexp = ValidationRegex.ORDER, message = "validation.invalid_order")
+@NotNull(message = "VALIDATION.ORDER_NULL")
+@Pattern(regexp = ValidationRegex.ORDER, message = "VALIDATION.ORDER_PATTERN")
 public @interface Order {
-    String message() default "validation.invalid_order";
+    String message() default "VALIDATION.ORDER_INVALID";
 
     Class<?>[] groups() default {};
 

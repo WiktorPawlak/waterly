@@ -126,7 +126,7 @@
     "pageSize": "Page size",
     "toastActivateSuccess": "The account has been activated",
     "toastDeactivateSuccess": "The account has been deactivated",
-    "toastFailure": "ZMIENIĆ NA ERROR JAK SZYMON RACZY DOKOŃCZYĆ ZADANIE"
+    "toastFailure": "Toast failure"
   },
   "verifyUsersFMPage": {
     "header": "Verify users",
@@ -149,11 +149,62 @@
   "apiError": {
     "accountWithPhoneNumberExist": "Account with the given phone number already exists, select another one",
     "accountWithEmailExist": "Account with the given email already exists, select another one",
-    "unkownError": "Unkown error"
+    "unkownError": "Unkown error",
+    "accountWithLoginExist": "An account with this login already exists, please choose a different one",
+    "unknownError": "Unknown error",
+    "accessDenied": "You don't have access to this resource",
+    "permissionsAlreadyAdded": "You can't add roles that are already assigned to the account",
+    "forbiddenOperation": "You can't perform this operation",
+    "identicalPasswords": "The passwords are identical",
+    "unsupportedOperation": "Unsupported operation",
+    "exceededToken": "Session expired",
+    "accountNotFound": "This account does not exist",
+    "searchPreferencesNotFound": "An account with these data does not exist",
+    "notAuthorized": "You are not authorized to perform this operation",
+    "authenticationError": "Authentication error, please check your credentials",
+    "passwordsNotMatch": "Passwords do not match",
+    "resourceNotFound": "Resource not found",
+    "emailNotMatch": "Email addresses do not match",
+    "accountNotActive": "The account is not active",
+    "accountNotConfirmed": "The account is not confirmed",
+    "accountNotWaitingForConfirmation": "The account is already confirmed"
+  },
+  "validation": {
+    "unknownValidationError": "Unknown validation error",
+    "accountInvalidOrderBy": "invalid property: order by",
+    "emailInvalid": "Invalid email",
+    "emailInvalidSize": "invalid email size: minimal 5 characters and maximal 320 characters",
+    "emailInvalidPattern": "Email structure is invalid",
+    "firstNameInvalidSize": "Invalid first name: minimal 2 characters and maximal 50 characters",
+    "firstNameInvalidPattern": "First name must contain only letters",
+    "firstNameInvalid": "First name is invalid",
+    "passwordHashInvalidSize": "Invalid password hash: must consist of exactly 60 characters",
+    "passwordHashInvalid": "Password hash is invalid",
+    "languageTagInvalidPattern": "Invalid language tag pattern: ",
+    "languageTagInvalid": "Language tag is invalid",
+    "lastNameInvalidSize": "Invalid last name size: minimal 2 characters and maximal 50 characters",
+    "lastNameInvalidPattern": "Invalid last name pattern: must contain only letters and character: -",
+    "lastNameInvalid": "Last name is invalid",
+    "loginInvalidSize": "Invalid login size: minimal 3 characters and maximal 36 characters",
+    "loginInvalidPattern": "Invalid login pattern: must only contain letters, characters and numbers",
+    "loginInvalid": "Login is invalid",
+    "orderInvalidNull": "Order cannot be empty",
+    "orderInvalidPattern": "Invalid order pattern: can be either 'asc' or 'desc'",
+    "orderInvalid": "Invalid order",
+    "pageInvalid": "Invalid page number",
+    "pageSizeInvalid": "Invalid page size",
+    "passwordInvalid": "Password is invalid",
+    "permissionInvalidPattern": "Invalid permission pattern: can be only administrator, facility manager or owner",
+    "permissionInvalid": "No such permission",
+    "phoneNumberInvalidSize": "Invalid phone number size: minimal 8 characters and maximal 9 characters",
+    "phoneNumberInvalidPattern": "Invalid phone number: must contain only numbers",
+    "phoneNumberInvalid": "Phone number is invalid",
+    "uuidInvalidPattern": "Not a UUID pattern",
+    "uuidInvalid": "Invalid UUID"
   },
   "resetEmailSuccess": {
     "alert": {
-      "emailSent":"An email has been sent to your email address. Please check your inbox."
+      "emailSent": "An email has been sent to your email address. Please check your inbox."
     }
   },
   "resetPassword": {
@@ -171,7 +222,7 @@
       "passwordNotReseted": "Password not reseted successfully."
     },
     "passwordsValidation": {
-        "passwordsDoNotMatch": "Passwords do not match."
+      "passwordsDoNotMatch": "Passwords do not match."
     }
   }
 }

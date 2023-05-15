@@ -15,11 +15,11 @@ import jakarta.validation.constraints.Size;
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
-@Size(min = 60, max = 60, message = "Password hash must consist of exactly 60 characters")
+@Size(min = 60, max = 60, message = "VALIDATION.PASSWORD_HASH_SIZE")
 @NotBlank
 public @interface HashedPassword {
 
-    String message() default "Password hash is invalid";
+    String message() default "VALIDATION.PASSWORD_HASH";
 
     Class<?>[] groups() default {};
 

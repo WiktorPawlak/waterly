@@ -16,12 +16,12 @@ import jakarta.validation.constraints.Size;
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})
-@Size(min = 5, max = 320, message = "minimal 5 characters and maximal 320 characters")
+@Size(min = 5, max = 320, message = "VALIDATION.EMAIL_SIZE")
 @NotBlank
-@Pattern(regexp = ValidationRegex.EMAIL, message = "structure is invalid")
+@Pattern(regexp = ValidationRegex.EMAIL, message = "VALIDATION.EMAIL_PATTERN")
 public @interface Email {
 
-    String message() default "Email is invalid";
+    String message() default "VALIDATION.EMAIL";
 
     Class<?>[] groups() default {};
 
