@@ -3,7 +3,7 @@ const apiErrors = new Map<string, string>([
     ["ERROR.ACCOUNT_WITH_EMAIL_EXIST", "apiError.accountWithEmailExist"],
     ["ERROR.ACCOUNT_WITH_LOGIN_EXIST", "apiError.accountWithLoginExist"],
     ["ERROR.ACCESS_DENIED", "apiError.accessDenied"],
-    ["ERROR.ERROR_CANNOT_MODIFY_PERMISSIONS", "apiError.permissionsAlreadyAdded"],
+    ["ERROR.CANNOT_MODIFY_PERMISSIONS", "apiError.permissionsAlreadyAdded"],
     ["ERROR.FORBIDDEN_OPERATION", "apiError.forbiddenOperation"],
     ["ERROR.IDENTICAL_PASSWORDS", "apiError.identicalPasswords"],
     ["ERROR.UNSUPPORTED_OPERATION", "apiError.unsupportedOperation"],

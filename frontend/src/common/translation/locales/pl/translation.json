@@ -158,7 +158,7 @@
     "accountWithLoginExist": "Konto z podanym loginem już istnieje, podaj inne",
     "unknownError": "Nieznany błąd",
     "accessDenied": "Nie masz dostępu do tego zasobu",
-    "permissionsAlreadyAdded": "nie możesz dodać ról obecnie przypisanych do konta",
+    "permissionsAlreadyAdded": "Nie udało się zmodyfikować roli",
     "forbiddenOperation": "Nie możesz wykonać tej operacji",
     "identicalPasswords": "Stare i nowe hasło nie mogą być identyczne",
     "unsupportedOperation": "Niewspierana operacja",
@@ -249,5 +249,44 @@
     "unlock": "odblokować użytkownika?",
     "no": "Nie",
     "yes": "Tak"
+  },
+  "accountDetailsPage": {
+    "actions": {
+      "addRole": "Dodaj role",
+      "removeRole": "Odbierz role",
+      "edit": "Edytuj",
+      "changePassword": "Zmień hasło"
+    },
+    "headers": {
+      "detailsName": "Szczegóły konta",
+      "description": "Tutaj możesz zobaczyć szczegóły konta"
+    },
+    "detailsFields": {
+      "login": "Login",
+      "email": "Email",
+      "firstName": "Imie",
+      "lastName": "Nazwisko",
+      "phoneNumber": "Numer Telefonu",
+      "languageTag": "Preferowany Język",
+      "roles": "Role",
+      "active": "Aktywny",
+      "createdOn": "Data utworzenia",
+      "createdBy": "Utworzony przez",
+      "updatedOn": "Data ostatniej akutalizacji",
+      "updatedBy": "Zaktualizowany przez",
+      "lastSuccessAuth": "Ostatnie poprawne uwierzytelnienie",
+      "lastIncorrectAuth": "Ostatnie niepoprawne uwierzytelnienie",
+      "lastIpAddress": "Ostatni adres IP",
+      "incorrectAuthCount": "Ilość niepoprawnych uwierzytelnień"
+    }
+  },
+  "rolesModal": {
+    "selectRole": "Wybierz role",
+    "roleAddedSuccesfully": "Pomyślnie dodano role",
+    "roleRemovedSuccesfully": "Pomyślnie odebrano role"
+  },
+  "common": {
+    "close": "Zamknij",
+    "confirm": "Potwierdź"
   }
 }

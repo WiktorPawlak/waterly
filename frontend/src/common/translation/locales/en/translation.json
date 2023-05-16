@@ -156,7 +156,7 @@
     "accountWithLoginExist": "An account with this login already exists, please choose a different one",
     "unknownError": "Unknown error",
     "accessDenied": "You don't have access to this resource",
-    "permissionsAlreadyAdded": "You can't add roles that are already assigned to the account",
+    "permissionsAlreadyAdded": "You can not modify this role",
     "forbiddenOperation": "You can't perform this operation",
     "identicalPasswords": "Old and new password can not be identical",
     "unsupportedOperation": "Unsupported operation",
@@ -248,5 +248,44 @@
     "unlock": "unlock this user?",
     "no": "No",
     "yes": "Yes"
+  },
+  "accountDetailsPage": {
+    "actions": {
+      "addRole": "Add role",
+      "removeRole": "Remove role",
+      "edit": "Edit",
+      "changePassword": "Change Password"
+    },
+    "headers": {
+      "detailsName": "Account Details",
+      "description": "Here you can see user's details."
+    },
+    "detailsFields": {
+      "login": "Login",
+      "email": "Email",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "languageTag": "Language Tag",
+      "roles": "Roles",
+      "active": "Active",
+      "createdOn": "Created On",
+      "createdBy": "Created By",
+      "updatedOn": "Updated On",
+      "updatedBy": "Updated By",
+      "lastSuccessAuth": "Last Success Auth",
+      "lastIncorrectAuth": "Last Incorrect Auth",
+      "lastIpAddress": "Last IP Address",
+      "incorrectAuthCount": "Incorrect Auth Count"
+    }
+  },
+  "rolesModal": {
+    "selectRole": "Select role",
+    "roleAddedSuccesfully": "Role addedd successfully",
+    "roleRemovedSuccesfully": "Role removed successfully"
+  },
+  "common": {
+    "close": "Close",
+    "confirm": "Confirm"
   }
 }

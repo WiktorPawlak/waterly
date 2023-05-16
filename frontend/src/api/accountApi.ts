@@ -1,5 +1,6 @@
 import { EnumValues } from "zod";
-import { ApiResponse, get, post, postNoBody, put, putNoBody } from "./api";
+import {ApiResponse, get, post, postNoBody, put, putNoBody} from "./api";
+import { RoleOperation } from "../types";
 
 const ACCOUNTS_PATH = "/accounts";
 
@@ -80,6 +81,11 @@ export interface PasswordResetDto {
   type: TokenType;
 }
 
+export interface EditRolesDto {
+  operation: RoleOperation,
+  roles: string[]
+}
+
 export interface AccountPasswordDto {
   oldPassword: string;
   newPassword: string;
@@ -146,4 +152,12 @@ export async function getAccountsList(
   getPagedListDto: GetPagedAccountListDto
 ): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
   return post(`${ACCOUNTS_PATH}/list`, getPagedListDto);
+}
+
+
+export async function grantAccountPermissions(
+  accountId: number,
+  body: EditRolesDto
+) {
+  return put(`${ACCOUNTS_PATH}/${accountId}/roles`, body);
 }
