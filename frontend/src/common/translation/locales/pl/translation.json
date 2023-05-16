@@ -74,6 +74,9 @@
       "emailSuccesEdited": "Email zmieniony pomyślnie",
       "emailSuccesResended": "Email wysłany ponownie pomyślnie"
     },
+    "ownPasswordChange": {
+      "changePasswordButton": "Edytuj hasło"
+    },
     "resendAcceptMail": {
       "resendButton": "Wyślij email ponownie ",
       "modalHeader": "Wysłaliśmy email do ciebie",
@@ -157,14 +160,14 @@
     "accessDenied": "Nie masz dostępu do tego zasobu",
     "permissionsAlreadyAdded": "nie możesz dodać ról obecnie przypisanych do konta",
     "forbiddenOperation": "Nie możesz wykonać tej operacji",
-    "identicalPasswords": "Hasła nie różnią się od siebie",
+    "identicalPasswords": "Stare i nowe hasło nie mogą być identyczne",
     "unsupportedOperation": "Niewspierana operacja",
     "exceededToken": "Sesja wygasła",
     "accountNotFound": "Takie konto nie istnieje",
     "searchPreferencesNotFound": "Konto z takimi danymi nie istnieje",
     "notAuthorized": "Nie jesteś upoważniony do wykonania tej operacji",
     "authenticationError": "Błąd uwierzytelnienia, sprawdź swoje dane",
-    "passwordsNotMatch": "Hasła nie są identyczne",
+    "passwordsNotMatch": "Stare hasło podane błędnie",
     "resourceNotFound": "Taki zasób nie istnieje",
     "emailNotMatch": "Adresy email nie są identyczne",
     "accountNotActive": "Konto jest nieaktywne",
@@ -224,6 +227,20 @@
     },
     "passwordsValidation": {
       "passwordsDoNotMatch": "Podana hasła różnią się."
+    }
+  },
+  "changePassword": {
+    "header": "Zmień swoje hasło",
+    "description": "Aby zmienić swoje hasło wypełnij poniższy formularz",
+    "success": "Hasło zostało zmienione poprawnie",
+    "passwords": {
+      "newPasswordLabel": "Nowe hasło",
+      "oldPasswordLabel": "Stare hasło",
+      "confirmNewPasswordLabel": "Powtórz nowe hasło"
+    },
+    "buttons": {
+      "change": "Zapisz",
+      "cancel": "Anuluj"
     }
   }
 }

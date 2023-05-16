@@ -111,6 +111,23 @@ export const resetPasswordSchema = z.object({
   path: ['confirmPassword'],
 });
 
+export const changeOwnPasswordSchema = z.object({
+  oldPassword: z
+    .string()
+    .min(8, "logInPage.validation.password.min")
+    .max(32, "logInPage.validation.password.max"),
+  newPassword: z
+    .string()
+    .min(8, "logInPage.validation.password.min")
+    .max(32, "logInPage.validation.password.max"),
+  confirmPassword: z.string()
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: "resetPassword.passwordsValidation.passwordsDoNotMatch",
+  path: ['confirmPassword'],
+});
+
+export type ChangeOwnPasswordSchemaType = z.infer<typeof changeOwnPasswordSchema>;
+
 export type AccountDetailsSchemaType = z.infer<typeof accountDetailsSchema>;
 
 export type EditAccountDetailsSchemaType = z.infer<

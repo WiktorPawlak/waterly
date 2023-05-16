@@ -1,5 +1,5 @@
 import { EnumValues } from "zod";
-import {ApiResponse, get, post, postNoBody, put, putNoBody} from "./api";
+import { ApiResponse, get, post, postNoBody, put, putNoBody } from "./api";
 
 const ACCOUNTS_PATH = "/accounts";
 
@@ -80,6 +80,15 @@ export interface PasswordResetDto {
   type: TokenType;
 }
 
+export interface AccountPasswordDto {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export async function changeOwnPassword(body: AccountPasswordDto) {
+  return put(`${ACCOUNTS_PATH}/self/password`, body);
+}
+
 export async function editAccountDetails(body: EditAccountDetailsDto) {
   return put(`${ACCOUNTS_PATH}/self`, body);
 }
@@ -93,7 +102,7 @@ export async function resendEmailEditMail() {
 }
 
 export async function putVerifyAccount(token: string) {
-    return putNoBody(`${ACCOUNTS_PATH}/confirm-registration?token=` + token);
+  return putNoBody(`${ACCOUNTS_PATH}/confirm-registration?token=` + token);
 }
 
 export async function postSendResetPasswordEmail(email: string) {
@@ -105,13 +114,13 @@ export async function postResetPassword(body: PasswordResetDto) {
 }
 
 export async function postResendVerificationToken(accountId: string) {
-    return postNoBody(`${ACCOUNTS_PATH}/${accountId}/resend-verification-token`);
+  return postNoBody(`${ACCOUNTS_PATH}/${accountId}/resend-verification-token`);
 }
 
 export async function getSelfAccountDetails(): Promise<
-    ApiResponse<AccountDto>
+  ApiResponse<AccountDto>
 > {
-    return get(`${ACCOUNTS_PATH}/self`);
+  return get(`${ACCOUNTS_PATH}/self`);
 }
 
 export async function changeAccountActiveStatus(

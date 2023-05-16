@@ -10,6 +10,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
@@ -22,6 +24,7 @@ import { loginSchema, LoginSchemaType, resetPasswordEmailSchema, } from "../../.
 import { useToast } from "../../../../../hooks/useToast";
 import { Toast } from "../../../Toast";
 import { SendResetPasswordEmailSection } from "../../../SendResetPasswordEmailSection/SendResetPasswordEmailSection";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const LoginFormSection = () => {
   const navigation = useNavigate();
@@ -43,6 +46,7 @@ export const LoginFormSection = () => {
 
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { logInClient } = useUser();
 
   const signInButtonHandle = async () => {
@@ -50,6 +54,13 @@ export const LoginFormSection = () => {
       return <Box>Loading...</Box>;
     }
   };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword)
+  }
+  const handleMouseDownPassword = () => {
+    setShowPassword(!showPassword)
+  }
 
   return (
     <Box
@@ -118,7 +129,7 @@ export const LoginFormSection = () => {
         {...registerLogin("password")}
         error={!!passwordErrorMessage}
         helperText={passwordErrorMessage && t(passwordErrorMessage)}
-        type="password"
+        type={showPassword ? "text" : "password"}
         variant="standard"
         onChange={(e) => setPassword(e.target.value)}
         sx={{
@@ -129,6 +140,19 @@ export const LoginFormSection = () => {
           "& label.Mui-focused": {
             color: "primary.main",
           },
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          )
         }}
       />
       <SendResetPasswordEmailSection />

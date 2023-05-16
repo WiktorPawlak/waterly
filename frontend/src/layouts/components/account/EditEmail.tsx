@@ -52,7 +52,7 @@ export const EditEmail = ({ accountDetails }: Props) => {
         sx={{
           textTransform: "none",
           fontWeight: "700",
-          mb: { xs: 5, md: 6 },
+          mb: { xs: 5, md: 2 },
         }}
         onClick={handleSubmit(handleEditEmailButton)}
       >

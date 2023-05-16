@@ -72,6 +72,9 @@
       "emailSuccesEdited": "Email edited succesfully",
       "emailSuccesResended": "Email resended succesfully"
     },
+    "ownPasswordChange": {
+      "changePasswordButton": "Edit password"
+    },
     "resendAcceptMail": {
       "resendButton": "Resend email",
       "modalHeader": "We sended email to you",
@@ -155,14 +158,14 @@
     "accessDenied": "You don't have access to this resource",
     "permissionsAlreadyAdded": "You can't add roles that are already assigned to the account",
     "forbiddenOperation": "You can't perform this operation",
-    "identicalPasswords": "The passwords are identical",
+    "identicalPasswords": "Old and new password can not be identical",
     "unsupportedOperation": "Unsupported operation",
     "exceededToken": "Session expired",
     "accountNotFound": "This account does not exist",
     "searchPreferencesNotFound": "An account with these data does not exist",
     "notAuthorized": "You are not authorized to perform this operation",
     "authenticationError": "Authentication error, please check your credentials",
-    "passwordsNotMatch": "Passwords do not match",
+    "passwordsNotMatch": "Old password do not match",
     "resourceNotFound": "Resource not found",
     "emailNotMatch": "Email addresses do not match",
     "accountNotActive": "The account is not active",
@@ -223,6 +226,20 @@
     },
     "passwordsValidation": {
       "passwordsDoNotMatch": "Passwords do not match."
+    }
+  },
+  "changePassword": {
+    "header": "Change your password",
+    "description": "Fill the form below to change your password.",
+    "success": "Your password has been changed successfully",
+    "passwords": {
+      "newPasswordLabel": "New password",
+      "oldPasswordLabel": "Old password",
+      "confirmNewPasswordLabel": "Confirm new password"
+    },
+    "buttons": {
+      "change": "Save",
+      "cancel": "Cancel"
     }
   }
 }

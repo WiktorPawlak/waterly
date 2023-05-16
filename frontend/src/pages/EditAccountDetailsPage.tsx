@@ -27,6 +27,7 @@ import { EditEmail } from "../layouts/components/account/EditEmail";
 import { useToast } from "../hooks/useToast";
 import { Toast } from "../layouts/components/Toast";
 import { resolveApiError } from "../api/apiErrors";
+import { EditPassword } from "../layouts/components/account/EditPassword";
 
 const EditAccountDetailsPage = () => {
   const [accountDetails, setAccountDetails] = useState<AccountDto>();
@@ -106,6 +107,7 @@ const EditAccountDetailsPage = () => {
             width: { xs: "100%", md: "50%" },
           }}
         >
+          <EditPassword />
           <EditEmail accountDetails={accountDetails} />
           <Divider variant="middle" sx={{ my: 2 }} />
           <Button
@@ -113,7 +115,7 @@ const EditAccountDetailsPage = () => {
             sx={{
               textTransform: "none",
               fontWeight: "700",
-              mb: { xs: 5, md: 6 },
+              mb: { xs: 5, md: 2 },
             }}
             onClick={handleSubmit(handleEditButton)}
           >
