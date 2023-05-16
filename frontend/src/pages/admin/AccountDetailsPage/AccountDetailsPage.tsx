@@ -2,7 +2,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AccountDto, getUserById } from "../../../api/accountApi";
 import { MainLayout } from "../../../layouts/MainLayout";
-import { Box, CircularProgress, Typography, Button, Popover, MenuItem, Modal } from "@mui/material";
+import { Box, CircularProgress, Typography, Button } from "@mui/material";
 import { StyledTextField } from "./AccountDetailsPage.styled";
 import { useTranslation } from "react-i18next";
 import { EditRolesModal } from "../../../layouts/components/account/EditRolesModal";
@@ -13,7 +13,6 @@ const AccountDetailsPage = () => {
   const [addRoleModalOpen, setAddRoleModalOpen] = useState(false);
   const [removeRoleModalOpen, setRemoveRoleModalOpen] = useState(false);
   const { t } = useTranslation();
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   function translateRoles(roles: string[]): string[] {
     const convertedRoles = roles.map((role) => {
@@ -65,20 +64,14 @@ const AccountDetailsPage = () => {
           <Button
             sx={{ mr: 2, textTransform: "none", mb: 2 }}
             variant="contained"
-            onClick={(event: React.MouseEvent<HTMLElement>) => {
-              setAnchorEl(event.currentTarget);
-              setAddRoleModalOpen(true);
-            }}
+            onClick={() => setAddRoleModalOpen(true)}
           >
             {t("accountDetailsPage.actions.addRole")}
           </Button>
           <Button
             sx={{ mr: 2, textTransform: "none", mb: 2 }}
             variant="contained"
-            onClick={() => {
-              setRemoveRoleModalOpen(true);
-              setAnchorEl(null);
-            }}
+            onClick={() => setRemoveRoleModalOpen(true)}
           >
             {t("accountDetailsPage.actions.removeRole")}
           </Button>
