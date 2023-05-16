@@ -1,36 +1,35 @@
 import { useTranslation } from "react-i18next";
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { putVerifyAccount } from '../api/accountApi';
-import { useSnackbar } from 'notistack';
-import { Box, Grid, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { putVerifyAccount } from "../api/accountApi";
+import { useSnackbar } from "notistack";
+import { Box, Grid, Typography, CircularProgress } from "@mui/material";
 import verifyPose from "../assets/verifyPose.svg";
-import { CircularProgress } from "@mui/material";
-import { useSearchParams } from "react-router-dom";
 
 const VerifyAccountPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const [searchParams, setSearchParams] = useSearchParams();
   const token = searchParams.get("token") as string;
 
   useEffect(() => {
     putVerifyAccount(token)
-    .then((response) => {
-      if (response.status === 200) {
-        enqueueSnackbar(t("verifyAccountPage.toastSuccess"), {
-          variant: 'success',
-        });
-      } else {
-        enqueueSnackbar(t('verifyAccountPage.toastError'), {
-          variant: 'error',
-        });
-      }
-    }).finally(() => navigate("/"));
+      .then((response) => {
+        if (response.status === 200) {
+          enqueueSnackbar(t("verifyAccountPage.toastSuccess"), {
+            variant: "success",
+          });
+        } else {
+          enqueueSnackbar(t("verifyAccountPage.toastError"), {
+            variant: "error",
+          });
+        }
+      })
+      .finally(() => navigate("/"));
   }, []);
-  
+
   return (
     <Grid
       sx={{
@@ -102,7 +101,7 @@ const VerifyAccountPage = () => {
         >
           <img
             src={verifyPose}
-            alt="XD"
+            alt="verifyPose"
             style={{
               width: "100%",
               height: "100%",

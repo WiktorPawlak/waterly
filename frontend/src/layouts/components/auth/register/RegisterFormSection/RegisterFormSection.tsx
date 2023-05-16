@@ -1,13 +1,23 @@
-import {Box, Button, TextField, Typography, useMediaQuery, useTheme,} from "@mui/material";
-import {useTranslation} from "react-i18next";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
-import {useState} from "react";
-import {useUser} from "../../../../../hooks/useUser";
-import {languages} from "../../../../../types";
-import {useNavigate} from "react-router-dom";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useForm} from "react-hook-form";
-import {accountDetailsSchema, AccountDetailsSchemaType,} from "../../../../../validation/validationSchemas";
+import { useState } from "react";
+import { useUser } from "../../../../../hooks/useUser";
+import { languages } from "../../../../../types";
+import { useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  accountDetailsSchema,
+  AccountDetailsSchemaType,
+} from "../../../../../validation/validationSchemas";
 
 interface RegisterFormValues {
   login: string;
@@ -68,8 +78,6 @@ export const RegisterFormSection = () => {
   });
 
   const handleFormSubmit = () => {
-    //TODO usunąłem stąd (event: React.FormEvent<HTMLFormElement>) => { event.preventDefault();} bo nie działało.
-    //Werka usun ten komentarz jeśli jest to akceptowalne
     const { confirmPassword, ...user } = formValues;
 
     registerUser(user);
@@ -125,7 +133,7 @@ export const RegisterFormSection = () => {
       {isMobileWidth && (
         <img
           src={loginPose}
-          alt="XD"
+          alt="loginPose"
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       )}

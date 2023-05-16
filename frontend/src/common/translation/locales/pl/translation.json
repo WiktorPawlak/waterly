@@ -242,5 +242,12 @@
       "change": "Zapisz",
       "cancel": "Anuluj"
     }
+  },
+  "popup": {
+    "msg": "Czy na pewno chcesz:",
+    "lock": "zablokować użytkownika?",
+    "unlock": "odblokować użytkownika?",
+    "no": "Nie",
+    "yes": "Tak"
   }
 }

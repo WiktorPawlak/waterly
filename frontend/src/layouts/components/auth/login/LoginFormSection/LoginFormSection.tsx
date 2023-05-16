@@ -5,11 +5,6 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
   InputAdornment,
 } from "@mui/material";
@@ -20,9 +15,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, LoginSchemaType, resetPasswordEmailSchema, } from "../../../../../validation/validationSchemas";
+import {
+  loginSchema,
+  LoginSchemaType,
+} from "../../../../../validation/validationSchemas";
 import { useToast } from "../../../../../hooks/useToast";
-import { Toast } from "../../../Toast";
 import { SendResetPasswordEmailSection } from "../../../SendResetPasswordEmailSection/SendResetPasswordEmailSection";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -41,7 +38,6 @@ export const LoginFormSection = () => {
   const passwordErrorMessage = loginErrors?.password?.message;
 
   const theme = useTheme();
-  const toast = useToast();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
 
   const [login, setLogin] = useState("");
@@ -56,11 +52,11 @@ export const LoginFormSection = () => {
   };
 
   const handleClickShowPassword = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
   const handleMouseDownPassword = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   return (
     <Box
@@ -152,7 +148,7 @@ export const LoginFormSection = () => {
                 {showPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          )
+          ),
         }}
       />
       <SendResetPasswordEmailSection />

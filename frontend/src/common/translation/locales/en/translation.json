@@ -241,5 +241,12 @@
       "change": "Save",
       "cancel": "Cancel"
     }
+  },
+  "popup": {
+    "msg": "Are you sure you want to:",
+    "lock": "lock this user?",
+    "unlock": "unlock this user?",
+    "no": "No",
+    "yes": "Yes"
   }
 }

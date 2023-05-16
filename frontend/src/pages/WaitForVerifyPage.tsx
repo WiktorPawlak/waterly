@@ -1,6 +1,6 @@
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import { useTranslation } from "react-i18next";
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from "notistack";
 import { Box, Grid, Link, Typography } from "@mui/material";
 import verifyPose from "../assets/verifyPose.svg";
 import { postResendVerificationToken } from "../api/accountApi";
@@ -13,15 +13,14 @@ const WaitForVerifyPage = () => {
 
   const handleResendMail = () => {
     const accountId = state ? state.id : "-1";
-    postResendVerificationToken(accountId)
-    .then((response) => {
+    postResendVerificationToken(accountId).then((response) => {
       if (response.status === 200) {
         enqueueSnackbar(t("waitForVerifyPage.toastSuccess"), {
-          variant: 'success',
+          variant: "success",
         });
       } else {
-        enqueueSnackbar(t('waitForVerifyPage.toastError'), {
-          variant: 'error',
+        enqueueSnackbar(t("waitForVerifyPage.toastError"), {
+          variant: "error",
         });
       }
     });
@@ -93,8 +92,10 @@ const WaitForVerifyPage = () => {
             mb: { xs: 10, md: 0 },
             fontSize: { xs: "12px", md: "16px" },
           }}
-        > 
-        <Link sx={{ cursor: "pointer" }} onClick={handleResendMail}>{t("waitForVerifyPage.clickHere")}</Link>
+        >
+          <Link sx={{ cursor: "pointer" }} onClick={handleResendMail}>
+            {t("waitForVerifyPage.clickHere")}
+          </Link>
           {t("waitForVerifyPage.resendMailDescription")}
         </Typography>
         <Box
@@ -110,7 +111,7 @@ const WaitForVerifyPage = () => {
         >
           <img
             src={verifyPose}
-            alt="XD"
+            alt="verifyPose"
             style={{
               width: "100%",
               height: "100%",

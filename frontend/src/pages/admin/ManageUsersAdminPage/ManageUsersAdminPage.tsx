@@ -1,11 +1,32 @@
-import {MainLayout} from "../../layouts/MainLayout";
-import {useNavigate} from "react-router-dom";
-import {useTranslation} from "react-i18next";
-import {DataGrid, GridCellParams, GridColDef, GridColumnHeaderParams, GridSortModel,} from "@mui/x-data-grid";
-import {useCallback, useEffect, useState} from "react";
-import {getAccountsList, GetPagedAccountListDto, ListAccountDto, PaginatedList,} from "../../api/accountApi";
-import {Box, Button, FormControl, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Typography,} from "@mui/material";
-import {Lock} from "../../layouts/components/account";
+import { MainLayout } from "../../../layouts/MainLayout";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import {
+  DataGrid,
+  GridCellParams,
+  GridColDef,
+  GridColumnHeaderParams,
+  GridSortModel,
+} from "@mui/x-data-grid";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  getAccountsList,
+  GetPagedAccountListDto,
+  ListAccountDto,
+  PaginatedList,
+} from "../../../api/accountApi";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Pagination,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
+import { Lock } from "../../../layouts/components/account";
 
 export const ManageUsersAdminPage = () => {
   const navigate = useNavigate();
@@ -79,7 +100,7 @@ export const ManageUsersAdminPage = () => {
     setListRequest((old) => ({ ...old, order: sortModel[0]?.sort as string }));
   }, []);
 
-  function translateRoles(t) {
+  function translateRoles(t: any) {
     return (params: GridCellParams) => {
       return (
         <Box
@@ -179,6 +200,7 @@ export const ManageUsersAdminPage = () => {
           >
             {t("manageUsersPage.button")}
           </Button>
+
           <Box sx={{ height: 600, width: "100%" }}>
             <DataGrid
               autoHeight
@@ -212,7 +234,7 @@ export const ManageUsersAdminPage = () => {
                 <Select
                   labelId="demo-simple-select-standard-label"
                   id="demo-simple-select-standard"
-                  value={listRequest?.pageSize}
+                  value={listRequest?.pageSize?.toString()}
                   onChange={handlePageSizeChange}
                   label="pageSize"
                 >

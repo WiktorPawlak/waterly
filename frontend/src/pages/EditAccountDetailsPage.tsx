@@ -297,7 +297,7 @@ const EditAccountDetailsPage = () => {
         >
           <img
             src={loginPose}
-            alt="XD"
+            alt="loginPose"
             style={{
               width: "100%",
               height: "100%",
