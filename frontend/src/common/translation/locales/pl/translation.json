@@ -46,8 +46,8 @@
       "forgotPasswordLinkLabel": "Zapomniałeś hasła?",
       "forgotPasswordDescription": "Wpisz swój email poniżej a my wyślemy ci link pozwalający na reset hasła.",
       "submitButtonLabel": "Zarejestruj",
-      "registerText": "Masz już konto?",
-      "registerButton": "Zaloguj się"
+      "accountExistsQuestion": "Masz już konto?",
+      "loginButton": "Zaloguj się"
     }
   },
   "waitForVerifyPage": {

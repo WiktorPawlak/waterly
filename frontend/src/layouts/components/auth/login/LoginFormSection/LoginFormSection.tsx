@@ -19,37 +19,40 @@ import {
   loginSchema,
   LoginSchemaType,
 } from "../../../../../validation/validationSchemas";
-import { useToast } from "../../../../../hooks/useToast";
 import { SendResetPasswordEmailSection } from "../../../SendResetPasswordEmailSection/SendResetPasswordEmailSection";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { LoginRequestBody } from "../../../../../api/authApi";
 
 export const LoginFormSection = () => {
   const navigation = useNavigate();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
+
   const {
     register: registerLogin,
     handleSubmit: handleLoginSubmit,
     formState: { errors: loginErrors },
   } = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
+    defaultValues: {
+      login: "",
+      password: "",
+    },
   });
-
   const loginErrorMessage = loginErrors?.login?.message;
   const passwordErrorMessage = loginErrors?.password?.message;
 
-  const theme = useTheme();
-  const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
-
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const { logInClient } = useUser();
-
-  const signInButtonHandle = async () => {
-    if (!(await logInClient({ login, password }))) {
+  const handleFormSubmit = async (credentials: LoginRequestBody) => {
+    if (!(await logInClient(credentials))) {
       return <Box>Loading...</Box>;
     }
   };
+
+  const [showPassword, setShowPassword] = useState(false);
+  const { logInClient } = useUser();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -103,62 +106,65 @@ export const LoginFormSection = () => {
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       )}
-      <TextField
-        label={t("logInPage.form.loginLabel")}
-        {...registerLogin("login")}
-        error={!!loginErrorMessage}
-        helperText={loginErrorMessage && t(loginErrorMessage)}
-        variant="standard"
-        onChange={(e) => setLogin(e.target.value)}
-        sx={{
-          mb: 3,
-          "& label": {
-            color: "text.secondary",
-          },
-          "& label.Mui-focused": {
-            color: "primary.main",
-          },
-        }}
-      />
-      <TextField
-        label={t("logInPage.form.passwordLabel")}
-        {...registerLogin("password")}
-        error={!!passwordErrorMessage}
-        helperText={passwordErrorMessage && t(passwordErrorMessage)}
-        type={showPassword ? "text" : "password"}
-        variant="standard"
-        onChange={(e) => setPassword(e.target.value)}
-        sx={{
-          mb: 3,
-          "& label": {
-            color: "text.secondary",
-          },
-          "& label.Mui-focused": {
-            color: "primary.main",
-          },
-        }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-                onMouseDown={handleMouseDownPassword}
-              >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-      <SendResetPasswordEmailSection />
-      <Button
-        variant="contained"
-        sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
-        onClick={handleLoginSubmit(signInButtonHandle)}
-      >
-        {t("logInPage.form.submitButtonLabel")}
-      </Button>
+      <form onSubmit={handleLoginSubmit(handleFormSubmit)}>
+        <TextField
+          label={t("logInPage.form.loginLabel")}
+          {...registerLogin("login")}
+          error={!!loginErrorMessage}
+          helperText={loginErrorMessage && t(loginErrorMessage)}
+          variant="standard"
+          sx={{
+            mb: 3,
+            width: "100%",
+            "& label": {
+              color: "text.secondary",
+            },
+            "& label.Mui-focused": {
+              color: "primary.main",
+            },
+          }}
+        />
+        <TextField
+          label={t("logInPage.form.passwordLabel")}
+          {...registerLogin("password")}
+          error={!!passwordErrorMessage}
+          helperText={passwordErrorMessage && t(passwordErrorMessage)}
+          type={showPassword ? "text" : "password"}
+          variant="standard"
+          sx={{
+            mb: 3,
+            width: "100%",
+            "& label": {
+              color: "text.secondary",
+            },
+            "& label.Mui-focused": {
+              color: "primary.main",
+            },
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+        <SendResetPasswordEmailSection />
+
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{ textTransform: "none", width: "100%", mb: { xs: 3, md: 3 } }}
+        >
+          {t("logInPage.form.submitButtonLabel")}
+        </Button>
+      </form>
       <Box
         sx={{
           display: "flex",

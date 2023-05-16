@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
-import { useState } from "react";
 import { useUser } from "../../../../../hooks/useUser";
 import { languages } from "../../../../../types";
 import { useNavigate } from "react-router-dom";
@@ -19,22 +18,16 @@ import {
   AccountDetailsSchemaType,
 } from "../../../../../validation/validationSchemas";
 
-interface RegisterFormValues {
-  login: string;
-  password: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  confirmPassword: string;
-  phoneNumber: string;
-  languageTag: string;
-}
-
 export const RegisterFormSection = () => {
   const navigation = useNavigate();
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
+
+  const languageTagFromStorage = localStorage.getItem("preferredLanguage");
+  const formattedLanguageTag =
+    languages[languageTagFromStorage as keyof typeof languages];
+  const languageTag = formattedLanguageTag ?? languages.pl;
 
   const {
     register,
@@ -42,6 +35,17 @@ export const RegisterFormSection = () => {
     formState: { errors },
   } = useForm<AccountDetailsSchemaType>({
     resolver: zodResolver(accountDetailsSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
+    defaultValues: {
+      login: "",
+      password: "",
+      confirmPassword: "",
+      email: "",
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
+    },
   });
 
   const {
@@ -53,6 +57,7 @@ export const RegisterFormSection = () => {
     password: passwordError,
     confirmPassword: confirmPasswordError,
   } = errors;
+
   const emailErrorMessage = emailError?.message;
   const loginErrorMessage = loginError?.message;
   const firstNameErrorMessage = firstNameError?.message;
@@ -62,33 +67,11 @@ export const RegisterFormSection = () => {
   const confirmPasswordErrorMessage = confirmPasswordError?.message;
 
   const { registerUser } = useUser();
-  const languageTagFromStorage = localStorage.getItem("preferredLanguage");
-  const formattedLanguageTag =
-    languages[languageTagFromStorage as keyof typeof languages];
 
-  const [formValues, setFormValues] = useState<RegisterFormValues>({
-    login: "",
-    password: "",
-    confirmPassword: "",
-    email: "",
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    languageTag: formattedLanguageTag ?? languages.pl,
-  });
+  const handleFormSubmit = async (formData: AccountDetailsSchemaType) => {
+    const registerUserRequest = { ...formData, languageTag };
 
-  const handleFormSubmit = () => {
-    const { confirmPassword, ...user } = formValues;
-
-    registerUser(user);
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+    await registerUser(registerUserRequest);
   };
 
   return (
@@ -148,7 +131,6 @@ export const RegisterFormSection = () => {
             helperText={firstNameErrorMessage && t(firstNameErrorMessage)}
             variant="standard"
             name="firstName"
-            onChange={handleInputChange}
             sx={{
               mb: 3,
               mr: { xs: 0, md: 5 },
@@ -167,7 +149,6 @@ export const RegisterFormSection = () => {
             helperText={lastNameErrorMessage && t(lastNameErrorMessage)}
             variant="standard"
             name="lastName"
-            onChange={handleInputChange}
             sx={{
               mb: 3,
               "& label": {
@@ -189,7 +170,6 @@ export const RegisterFormSection = () => {
             helperText={emailErrorMessage && t(emailErrorMessage)}
             variant="standard"
             name="email"
-            onChange={handleInputChange}
             sx={{
               mb: 3,
               mr: { xs: 0, md: 5 },
@@ -208,7 +188,6 @@ export const RegisterFormSection = () => {
             helperText={loginErrorMessage && t(loginErrorMessage)}
             variant="standard"
             name="login"
-            onChange={handleInputChange}
             sx={{
               mb: 3,
               "& label": {
@@ -227,7 +206,6 @@ export const RegisterFormSection = () => {
           helperText={phoneNumberErrorMessage && t(phoneNumberErrorMessage)}
           name="phoneNumber"
           variant="standard"
-          onChange={handleInputChange}
           type="number"
           sx={{
             mb: 3,
@@ -249,7 +227,6 @@ export const RegisterFormSection = () => {
             {...register("password")}
             error={!!passwordErrorMessage}
             helperText={passwordErrorMessage && t(passwordErrorMessage)}
-            onChange={handleInputChange}
             variant="standard"
             name="password"
             type="password"
@@ -272,7 +249,6 @@ export const RegisterFormSection = () => {
               confirmPasswordErrorMessage && t(confirmPasswordErrorMessage)
             }
             variant="standard"
-            onChange={handleInputChange}
             type="password"
             name="confirmPassword"
             sx={{
@@ -293,26 +269,26 @@ export const RegisterFormSection = () => {
         >
           {t("registerPage.form.submitButtonLabel")}
         </Button>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            mb: 1,
-          }}
-        >
-          <Typography sx={{ fontSize: "14px", color: "text.secondary" }}>
-            {t("registerPage.form.registerText")}
-          </Typography>
-          <Button
-            variant="text"
-            sx={{ textTransform: "none" }}
-            onClick={() => navigation("/")}
-          >
-            {t("registerPage.form.registerButton")}
-          </Button>
-        </Box>
       </form>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mb: 1,
+        }}
+      >
+        <Typography sx={{ fontSize: "14px", color: "text.secondary" }}>
+          {t("registerPage.form.accountExistsQuestion")}
+        </Typography>
+        <Button
+          variant="text"
+          sx={{ textTransform: "none" }}
+          onClick={() => navigation("/")}
+        >
+          {t("registerPage.form.loginButton")}
+        </Button>
+      </Box>
     </Box>
   );
 };

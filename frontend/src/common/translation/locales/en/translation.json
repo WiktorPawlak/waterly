@@ -45,8 +45,8 @@
       "confirmPassword": "Confirm Password",
       "forgotPasswordLinkLabel": "Forgot password?",
       "submitButtonLabel": "Submit",
-      "registerText": "Already have an account?",
-      "registerButton": "Login"
+      "accountExistsQuestion": "Already have an account?",
+      "loginButton": "Login"
     }
   },
   "waitForVerifyPage": {
