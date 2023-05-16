@@ -49,6 +49,7 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_AUTHENTICATION = "ERROR.AUTHENTICATION";
     public static final String ERROR_PASSWORDS_DO_NOT_MATCH = "ERROR.NOT_MATCHING_PASSWORDS";
     public static final String ERROR_RESOURCE_NOT_FOUND = "ERROR.RESOURCE_NOT_FOUND";
+    public static final String ERROR_ROLE_NOT_FOUND = "ERROR.ROLE_NOT_FOUND";
 
     public static final String ERROR_EMAIL_DO_NOT_MATCH = "ERROR.NO_MATCHING_EMAILS";
     public static final String ERROR_ACCOUNT_NOT_ACTIVE = "ERROR.NOT_ACTIVE_ACCOUNT";

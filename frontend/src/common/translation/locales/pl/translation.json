@@ -72,6 +72,7 @@
   },
   "editAccountDetailsPage": {
     "header": "Edytuj dane konta",
+    "description" : "Tutaj możesz edytować swoje hasło, email lub dane personalne",
     "button": "Edytuj detale",
     "detailsButton": "Edytuj detale",
     "emailButton": "Edytuj email",
@@ -178,7 +179,8 @@
     "emailNotMatch": "Adresy email nie są identyczne",
     "accountNotActive": "Konto jest nieaktywne",
     "accountNotConfirmed": "Konto nie jest potwierdzone",
-    "accountNotWaitingForConfirmation": "Konto jest już potwierdzone"
+    "accountNotWaitingForConfirmation": "Konto jest już potwierdzone",
+    "apiError.entityIntegrityViolated": "Niedozwolona modyfikacja"
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",

@@ -1,7 +1,12 @@
-import { AxiosResponse } from "axios";
+import {
+  AxiosResponse,
+  AxiosResponseHeaders,
+  RawAxiosResponseHeaders,
+} from "axios";
 import { axiosClient } from "./axois/axoisInstance";
 
 export interface ApiResponse<T> {
+  headers?: any;
   status?: number;
   data?: T;
   error?: string;
@@ -17,7 +22,11 @@ export async function get<T>(
       params: { params },
     })
     .then((response) => {
-      return { data: response.data, status: response.status };
+      return {
+        data: response.data,
+        headers: response.headers,
+        status: response.status
+      };
     })
     .catch((error: unknown) => {
       return { error: (error as Error).message };
@@ -68,6 +77,23 @@ export async function postNoBody<T>(url: string): Promise<ApiResponse<T>> {
 export async function put<T>(url: string, body: any): Promise<ApiResponse<T>> {
   return axiosClient
     .put(url, body)
+    .then((response) => {
+      return { data: response.data, status: response.status };
+    })
+    .catch(function (error) {
+      return { error: error.response?.data?.message };
+    });
+}
+
+export async function putWithHeaders<T>(
+  url: string,
+  body: any,
+  headers: any
+): Promise<ApiResponse<T>> {
+  return axiosClient
+    .put(url, body, {
+      headers: headers,
+    })
     .then((response) => {
       return { data: response.data, status: response.status };
     })

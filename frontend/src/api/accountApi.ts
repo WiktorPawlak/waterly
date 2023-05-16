@@ -1,13 +1,23 @@
-import { ApiResponse, get, post, postNoBody, put, putNoBody } from "./api";
+import {
+  ApiResponse,
+  get,
+  post,
+  postNoBody,
+  put,
+  putNoBody,
+  putWithHeaders,
+} from "./api";
 import { RoleOperation } from "../types";
 
 const ACCOUNTS_PATH = "/accounts";
 
 export interface EditAccountDetailsDto {
+  id: number;
   firstName: string;
   lastName: string;
   phoneNumber: string;
   languageTag: string;
+  version: number;
 }
 
 export interface EditEmailDto {
@@ -32,6 +42,7 @@ export interface AccountDto {
   lastIncorrectAuth: string;
   lastIpAddress: string;
   incorrectAuthCount: string;
+  version: number;
 }
 
 export interface PaginatedList<T> {
@@ -97,8 +108,13 @@ export async function changeOwnPassword(body: AccountPasswordDto) {
   return put(`${ACCOUNTS_PATH}/self/password`, body);
 }
 
-export async function editAccountDetails(body: EditAccountDetailsDto) {
-  return put(`${ACCOUNTS_PATH}/self`, body);
+export async function editAccountDetails(
+  body: EditAccountDetailsDto,
+  etag: string
+) {
+  return putWithHeaders(`${ACCOUNTS_PATH}/self`, body, {
+    "If-Match": etag,
+  });
 }
 
 export async function editEmail(body: EditEmailDto) {
@@ -169,7 +185,10 @@ export async function grantAccountPermissions(
 
 export async function putAccountDetails(
   accountId: number,
-  body: EditAccountDetailsDto
+  body: EditAccountDetailsDto,
+  etag: string
 ) {
-  return put(`${ACCOUNTS_PATH}/${accountId}`, body);
+  return putWithHeaders(`${ACCOUNTS_PATH}/${accountId}`, body, {
+    "If-Match": etag,
+  });
 }

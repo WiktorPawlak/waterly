@@ -71,6 +71,7 @@
   },
   "editAccountDetailsPage": {
     "header": "Edit account details",
+    "description" : "Here you can change your email, password or personal data",
     "detailsButton": "Edit details",
     "emailButton": "Edit email",
     "alert": {
@@ -176,7 +177,8 @@
     "emailNotMatch": "Email addresses do not match",
     "accountNotActive": "The account is not active",
     "accountNotConfirmed": "The account is not confirmed",
-    "accountNotWaitingForConfirmation": "The account is already confirmed"
+    "accountNotWaitingForConfirmation": "The account is already confirmed",
+    "apiError.entityIntegrityViolated": "Unauthorized modification"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",

@@ -12,14 +12,16 @@ import {Loading} from "../layouts/components/Loading";
 const EditAccountDetailsPage = () => {
     const [accountDetails, setAccountDetails] = useState<AccountDto>();
     const {enqueueSnackbar} = useSnackbar();
+    const [etag, setEtag] = useState("");
     const {t} = useTranslation();
 
     const fetchAccountDetails = async () => {
         const response = await getSelfAccountDetails();
         if (response.status === 200) {
             setAccountDetails(response.data);
-        } else {
-            enqueueSnackbar(t(resolveApiError(response.error)), {
+            setEtag(response.headers['etag']);
+      } else {
+        enqueueSnackbar(t(resolveApiError(response.error)), {
                 variant: "error",
             });
         }
@@ -47,11 +49,12 @@ const EditAccountDetailsPage = () => {
                 </Typography>
 
                 <Typography sx={{mb: {xs: 5, md: 5}, color: "text.secondary"}}>
-                    {t("manageUsersPage.description")}
+                    {t("editAccountDetailsPage.description")}
                 </Typography>
                 <EditAccountDetailsForm
                     account={accountDetails}
                     fetchAccountDetails={fetchAccountDetails}
+                    etag = {etag} 
                 />
                 <Box
                     sx={{

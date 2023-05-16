@@ -9,6 +9,7 @@ const apiErrors = new Map<string, string>([
     ["ERROR.UNSUPPORTED_OPERATION", "apiError.unsupportedOperation"],
     ["ERROR.TOKEN_EXCEEDED_HALF_TIME", "apiError.exceededToken"],
     ["ERROR.ACCOUNT_NOT_FOUND", "apiError.accountNotFound"],
+    ["ERROR.ENTITY_INTEGRITY_VIOLATED", "apiError.entityIntegrityViolated"],
     ["ERROR.ACCOUNT_SEARCH_PREFERENCES_NOT_FOUND", "apiError.searchPreferencesNotFound"],
     ["ERROR.NOT_AUTHORIZED", "apiError.notAuthorized"],
     ["ERROR.AUTHENTICATION", "apiError.authenticationError"],

@@ -32,6 +32,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.RoleNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
@@ -45,6 +46,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ListSearchPreferences;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
@@ -475,6 +477,11 @@ public class AccountService {
         }
         if (Objects.equals(account.getAccountState(), TO_CONFIRM)) {
             account.setAccountState(CONFIRMED);
+            Role ownerRole = account.getRoles().stream()
+                    .filter(Owner.class::isInstance)
+                    .findFirst()
+                    .orElseThrow(RoleNotFoundException::new);
+            ownerRole.setActive(true);
             accountFacade.update(account);
             notificationsProvider.notifyAccountAccepted(account);
         } else {

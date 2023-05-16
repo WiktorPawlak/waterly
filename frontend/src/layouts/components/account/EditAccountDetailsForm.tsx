@@ -14,11 +14,13 @@ import {languages} from "../../../types";
 interface Props {
     account: AccountDto;
     fetchAccountDetails: VoidFunction;
+    etag: string
 }
 
 export const EditAccountDetailsForm = ({
                                            account,
                                            fetchAccountDetails,
+                                           etag
                                        }: Props) => {
     const {enqueueSnackbar} = useSnackbar();
     const {t} = useTranslation();
@@ -52,7 +54,9 @@ export const EditAccountDetailsForm = ({
             const response = await editAccountDetails({
                 ...editAccountDto,
                 languageTag,
-            });
+                id: account.id,
+                version: account.version
+            }, etag);
             if (response.status === 204) {
                 enqueueSnackbar(t("editAccountDetailsPage.alert.detailsSuccesEdited"), {
                     variant: "success",

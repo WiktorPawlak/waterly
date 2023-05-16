@@ -46,6 +46,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 
@@ -74,7 +75,7 @@ public class AccountController extends RepeatableTransactionController {
     @PUT
     @Path("/self")
     @Consumes(MediaType.APPLICATION_JSON)
-//    @EtagValidationFilter
+    @EtagValidationFilter
     public Response editOwnAccountDetails(@NotNull @Valid final EditAccountDetailsDto dto) throws ApplicationBaseException {
         retry(() -> accountEndpoint.editOwnAccountDetails(dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
@@ -93,7 +94,7 @@ public class AccountController extends RepeatableTransactionController {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-//    @EtagValidationFilter
+    @EtagValidationFilter
     public Response editAccountDetails(@PathParam("id") final long id, @NotNull @Valid final EditAccountDetailsDto dto)
             throws ApplicationBaseException {
         retry(() -> accountEndpoint.editAccountDetails(id, dto), accountEndpoint);
