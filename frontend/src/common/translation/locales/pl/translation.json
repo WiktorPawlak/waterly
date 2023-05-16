@@ -288,5 +288,9 @@
   "common": {
     "close": "Zamknij",
     "confirm": "Potwierdź"
+  },
+  "editAccountDialog": {
+    "editAccount": "Edit account",
+    "accountEditedSuccessfully": "Pomyślnie zedytowano konto"
   }
 }

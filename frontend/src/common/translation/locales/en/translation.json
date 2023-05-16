@@ -287,5 +287,9 @@
   "common": {
     "close": "Close",
     "confirm": "Confirm"
+  },
+  "editAccountDialog": {
+    "editAccount": "Edit account",
+    "accountEditedSuccessfully": "Account edited successfully"
   }
 }
