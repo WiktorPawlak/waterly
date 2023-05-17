@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <glassfish-web-app>
-    <context-root>/</context-root>
 
     <security-role-mapping>
         <role-name>ADMINISTRATOR</role-name>
         <principal-name>Admin</principal-name>
     </security-role-mapping>
+
 </glassfish-web-app>

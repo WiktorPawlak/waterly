@@ -63,7 +63,7 @@ public class PayaraContainerInitializer {
             .withNetwork(network)
             .withEnv(PAYARA_ENVS)
             .dependsOn(postgres)
-            .waitingFor(Wait.forHttp("/" + APP_NAME + "/api/health").forPort(8080).forStatusCode(200));
+            .waitingFor(Wait.forHttp("/api/health").forPort(PORT).forStatusCode(200));
 
     @BeforeAll
     protected void setup() {
@@ -75,7 +75,7 @@ public class PayaraContainerInitializer {
         }
 
         RestAssured.requestSpecification = new RequestSpecBuilder()
-                .setBasePath("/" + APP_NAME + "/api")
+                .setBasePath("/api")
                 .setPort(payaraServer.getMappedPort(PORT))
                 .setContentType(JSON)
                 .build();
