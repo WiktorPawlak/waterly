@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Password;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ValidUUID;
 
@@ -18,7 +17,5 @@ public class PasswordResetDto {
     @NotNull
     @Password
     private String newPassword;
-    @NotNull
-    private TokenType type;
 }
 

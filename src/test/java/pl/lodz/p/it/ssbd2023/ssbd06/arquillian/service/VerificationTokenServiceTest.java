@@ -163,7 +163,7 @@ public class VerificationTokenServiceTest extends BaseArquillianTest {
 
         userTransaction.begin();
         verificationTokenService.confirmPassword(UUID.fromString(preparePasswordResetDto(verificationTokenService
-                .findAllTokens().get(0).getToken()).getToken()),token.getTokenType());
+                .findAllTokens().get(0).getToken()).getToken()));
         List<VerificationToken> verificationTokenListAfter = verificationTokenService.findAllTokens();
         userTransaction.commit();
 
@@ -191,7 +191,6 @@ public class VerificationTokenServiceTest extends BaseArquillianTest {
         PasswordResetDto passwordResetDto = new PasswordResetDto();
         passwordResetDto.setNewPassword("newPassword");
         passwordResetDto.setToken(token);
-        passwordResetDto.setType(PASSWORD_RESET);
         return passwordResetDto;
     }
 }

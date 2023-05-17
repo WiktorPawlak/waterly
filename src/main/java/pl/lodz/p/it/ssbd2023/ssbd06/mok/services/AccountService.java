@@ -46,7 +46,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ListSearchPreferences;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
-import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
@@ -292,8 +291,7 @@ public class AccountService {
 
     @PermitAll
     public void resetPassword(final PasswordResetDto passwordResetDto) throws TokenNotFoundException {
-        TokenType type = passwordResetDto.getType();
-        Account account = verificationTokenService.confirmPassword(UUID.fromString(passwordResetDto.getToken()), type);
+        Account account = verificationTokenService.confirmPassword(UUID.fromString(passwordResetDto.getToken()));
         if (!account.isActive()) {
             throw ApplicationBaseException.notActiveAccountException();
         }

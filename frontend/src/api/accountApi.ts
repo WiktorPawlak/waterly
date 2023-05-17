@@ -1,4 +1,4 @@
-import {ApiResponse, get, post, postNoBody, put, putNoBody} from "./api";
+import { ApiResponse, get, post, postNoBody, put, putNoBody } from "./api";
 import {RoleOperation} from "../types";
 
 const ACCOUNTS_PATH = "/accounts";
@@ -67,17 +67,9 @@ export interface AccountActiveStatusDto {
     active: boolean;
 }
 
-export enum TokenType {
-    Registration = "REGISTRATION",
-    PasswordReset = "PASSWORD_RESET",
-    ChangePassword = "CHANGE_PASSWORD",
-    EmailUpdate = "EMAIL_UPDATE",
-}
-
 export interface PasswordResetDto {
-    token: string;
-    newPassword: string;
-    type: TokenType;
+  token: string;
+  newPassword: string;
 }
 
 export interface EditRolesDto {
@@ -88,6 +80,14 @@ export interface EditRolesDto {
 export interface AccountPasswordDto {
     oldPassword: string;
     newPassword: string;
+}
+
+export interface PasswordChangeByAdminDto {
+    newPassword: string;
+}
+
+export async function postChangePasswordByAdmin(email: string, body: PasswordChangeByAdminDto) {
+    return post(`${ACCOUNTS_PATH}/password/request-change?email=` + email, body)
 }
 
 export async function changeOwnPassword(body: AccountPasswordDto) {

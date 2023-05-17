@@ -41,7 +41,7 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
     }
 
     @PermitAll
-    public Optional<VerificationToken> findValidByToken(final String token, final TokenType tokenType) {
+    public Optional<VerificationToken> findValidByTokenAndTokenType(final String token, final TokenType tokenType) {
         TypedQuery<VerificationToken> verificationTokenTypedQuery =
                 em.createNamedQuery("VerificationToken.findValidByTokenAndTokenType", VerificationToken.class)
                         .setFlushMode(FlushModeType.COMMIT)
@@ -53,6 +53,21 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
             return Optional.empty();
         }
     }
+
+    @PermitAll
+    public Optional<VerificationToken> findValidByToken(final String token) {
+        TypedQuery<VerificationToken> verificationTokenTypedQuery =
+                em.createNamedQuery("VerificationToken.findValidByToken", VerificationToken.class)
+                        .setFlushMode(FlushModeType.COMMIT)
+                        .setParameter("token", token);
+        try {
+            return Optional.of(verificationTokenTypedQuery.getSingleResult());
+        } catch (final NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+
 
     @PermitAll
     public List<VerificationToken> findAll() {

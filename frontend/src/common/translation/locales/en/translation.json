@@ -291,5 +291,10 @@
   "editAccountDialog": {
     "editAccount": "Edit account",
     "accountEditedSuccessfully": "Account edited successfully"
+  },
+  "editPasswordByAdminDialog": {
+    "header": "Change user's password",
+    "description": "Fill the form below to change user's password",
+    "success": "The password has been changed and the user has been informed by e-mail about the possibility of changing the password"
   }
 }

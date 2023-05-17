@@ -417,7 +417,6 @@ class AccountServiceTest extends BaseArquillianTest {
         PasswordResetDto passwordResetDto = new PasswordResetDto();
         passwordResetDto.setNewPassword("newPassword");
         passwordResetDto.setToken(token);
-        passwordResetDto.setType(PASSWORD_RESET);
         return passwordResetDto;
     }
 

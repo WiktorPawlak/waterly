@@ -1,20 +1,22 @@
-import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
-import {AccountDto, getUserById} from "../../../api/accountApi";
-import {MainLayout} from "../../../layouts/MainLayout";
-import {Box, Button, CircularProgress, Typography} from "@mui/material";
-import {StyledTextField} from "./AccountDetailsPage.styled";
-import {useTranslation} from "react-i18next";
-import {EditRolesModal} from "../../../layouts/components/account/EditRolesModal";
-import {EditAccountDialog} from "../../../layouts/components/account/EditAccountDialog";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { AccountDto, getUserById } from "../../../api/accountApi";
+import { MainLayout } from "../../../layouts/MainLayout";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { StyledTextField } from "./AccountDetailsPage.styled";
+import { useTranslation } from "react-i18next";
+import { EditRolesModal } from "../../../layouts/components/account/EditRolesModal";
+import { EditAccountDialog } from "../../../layouts/components/account/EditAccountDialog";
+import { EditPasswordByAdmin } from "../../../layouts/components/account/EditPasswordByAdmin";
 
 const AccountDetailsPage = () => {
-    const {id} = useParams();
+    const { id } = useParams();
     const [account, setAccount] = useState<AccountDto>();
     const [addRoleModalOpen, setAddRoleModalOpen] = useState(false);
     const [removeRoleModalOpen, setRemoveRoleModalOpen] = useState(false);
     const [editAccountDialogOpen, setEditAccountDialogOpen] = useState(false);
-    const {t} = useTranslation();
+    const [editPasswordDialogOpen, setEditPasswordDialogOpen] = useState(false);
+    const { t } = useTranslation();
 
 
     function translateRoles(roles: string[]): string[] {
@@ -43,42 +45,42 @@ const AccountDetailsPage = () => {
 
     return (
         <MainLayout isOverflowHidden={false}>
-            <EditRolesModal accountId={account.id} accountRoles={account.roles} isOpen={addRoleModalOpen} isGrant={true} setIsOpen={setAddRoleModalOpen}/>
+            <EditRolesModal accountId={account.id} accountRoles={account.roles} isOpen={addRoleModalOpen} isGrant={true} setIsOpen={setAddRoleModalOpen} />
             <EditRolesModal accountId={account.id} accountRoles={account.roles} isOpen={removeRoleModalOpen} isGrant={false}
-                            setIsOpen={setRemoveRoleModalOpen}/>
+                setIsOpen={setRemoveRoleModalOpen} />
+            <EditAccountDialog accountId={account.id} accountDto={account} isOpen={editAccountDialogOpen} setIsOpen={setEditAccountDialogOpen} />
+            <EditPasswordByAdmin isOpen={editPasswordDialogOpen} setIsOpen={setEditPasswordDialogOpen} email={account.email} />
             <EditAccountDialog accountId={account.id} accountDto={account} isOpen={editAccountDialogOpen} setIsOpen={setEditAccountDialogOpen}/>
             <Box
                 sx={{
                     height: "100vh",
-                    mx: {xs: 2, md: 2},
+                    mx: { xs: 2, md: 2 },
                 }}
             >
-                <Typography variant="h4" sx={{fontWeight: "700", mb: 2}}>
+                <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>
                     {t("accountDetailsPage.headers.detailsName")}
                 </Typography>
-                <Typography sx={{mb: 3, color: "text.secondary"}}>
+                <Typography sx={{ mb: 3, color: "text.secondary" }}>
                     {t("accountDetailsPage.headers.description")}
                 </Typography>
                 <Box
                     sx={{
                         display: "flex",
-                        flexDirection: {xs: "column", md: "row"},
-                        mb: {xs: 6, md: 10},
+                        flexDirection: { xs: "column", md: "row" },
+                        mb: { xs: 6, md: 10 },
                     }}
                 >
                     <Button
-                        sx={{mr: 2, textTransform: "none", mb: 2}}
+                        sx={{ mr: 2, textTransform: "none", mb: 2 }}
                         variant="contained"
-                        onClick={() =>
-                            setAddRoleModalOpen(true)}
+                        onClick={() => setAddRoleModalOpen(true)}
                     >
                         {t("accountDetailsPage.actions.addRole")}
                     </Button>
                     <Button
-                        sx={{mr: 2, textTransform: "none", mb: 2}}
+                        sx={{ mr: 2, textTransform: "none", mb: 2 }}
                         variant="contained"
-                        onClick={() =>
-                            setRemoveRoleModalOpen(true)}
+                        onClick={() => setRemoveRoleModalOpen(true)}
                     >
                         {t("accountDetailsPage.actions.removeRole")}
                     </Button>
@@ -93,7 +95,7 @@ const AccountDetailsPage = () => {
                     </Button>
                     <Button
                         sx={{mr: 2, textTransform: "none", mb: 2}}
-                        variant="contained"
+                        variant="contained"onClick={() => setEditPasswordDialogOpen(true)}
                     >
                         {t("accountDetailsPage.actions.changePassword")}
                     </Button>

@@ -1,85 +1,75 @@
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputAdornment } from "@mui/material";
-import { Box } from "@mui/system";
-import { useState } from "react"
 import { useTranslation } from "react-i18next";
-import { useToast } from "../../../hooks/useToast";
+import { useToast } from "../../../hooks/useToast"
+import React, { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, InputAdornment, IconButton, DialogActions } from "@mui/material";
+import { Box } from "@mui/system";
 import { Toast } from "../Toast";
-import { changeOwnPassword } from "../../../api/accountApi";
-import React from "react";
+import { postChangePasswordByAdmin } from "../../../api/accountApi";
 import { resolveApiError } from "../../../api/apiErrors";
-import { Label, Visibility, VisibilityOff } from "@mui/icons-material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ChangeOwnPasswordSchemaType, changeOwnPasswordSchema } from "../../../validation/validationSchemas";
+import { ChangePasswordByAdminSchema, changeOwnPasswordSchema, changePasswordByAdminSchema } from "../../../validation/validationSchemas";
 
-export const EditPassword = () => {
-    const [oldPassword, setOldPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [open, setOpen] = React.useState(false);
-    const [showOldPassword, setShowOldPassword] = useState(false);
-    const [showNewPassword, setShowNewPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+interface Props {
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+    email: string;
+}
 
+export const EditPasswordByAdmin = ({ isOpen, setIsOpen, email }: Props) => {
     const toast = useToast();
     const { t } = useTranslation();
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<ChangeOwnPasswordSchemaType>({
-        resolver: zodResolver(changeOwnPasswordSchema),
+    } = useForm<ChangePasswordByAdminSchema>({
+        resolver: zodResolver(changePasswordByAdminSchema),
     });
 
-    const oldPasswordErrorMessage = errors?.oldPassword?.message;
     const newPasswordErrorMessage = errors?.newPassword?.message;
-    const passwordRepeatMessage = errors?.confirmPassword?.message;
+    const confirmedPasswordErrorMessage = errors?.confirmPassword?.message;
 
-    const handleClickShowOldPassword = () => {
-        setShowOldPassword(!showOldPassword)
-    }
-    const handleClickShowNewPassword = () => {
-        setShowNewPassword(!showNewPassword)
-    }
     const handleClickShowConfirmPassword = () => {
         setShowConfirmPassword(!showConfirmPassword)
     }
 
-    const handleMouseDownOldPassword = () => {
-        setShowOldPassword(!showOldPassword);
+    const handleClickShowNewPassword = () => {
+        setShowNewPassword(!showNewPassword)
     }
+
     const handleMouseDownNewPassword = () => {
         setShowNewPassword(!showNewPassword);
     }
+
     const handleMouseDownConfirmPassword = () => {
         setShowConfirmPassword(!showConfirmPassword);
     }
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
     const handleClose = () => {
-        setOpen(false);
-        setOldPassword("");
+        setIsOpen(false);
         setNewPassword("");
         setConfirmPassword("");
     };
 
-    async function changeOwnPasswordHandle() {
-        const accountPasswordDto = {
-            oldPassword: oldPassword,
+    async function postChangePasswordByAdminHandle() {
+        const passwordChangeByAdminDto = {
             newPassword: newPassword
         }
-        const response = await changeOwnPassword(accountPasswordDto);
+        const response = await postChangePasswordByAdmin(email, passwordChangeByAdminDto);
         if (response.status === 200) {
-            toast.showSuccessToast(t("changePassword.success"));
+            toast.showSuccessToast(t("editPasswordByAdminDialog.success"));
             handleClose();
-        }
-        else {
+        } else {
             toast.showErrorToast(t(resolveApiError(response.error)));
         }
+
     }
 
     return (
@@ -89,49 +79,12 @@ export const EditPassword = () => {
                 flexDirection: "column",
                 width: "100%",
             }}>
-            <Button
-                variant="contained"
-                sx={{
-                    textTransform: "none",
-                    fontWeight: "700",
-                    mb: { xs: 5, md: 1 },
-                }}
-                onClick={handleClickOpen}>
-                {t("editAccountDetailsPage.ownPasswordChange.changePasswordButton")}
-            </Button>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>{t("changePassword.header")}</DialogTitle>
+            <Dialog open={isOpen} onClose={handleClose}>
+                <DialogTitle>{t("editPasswordByAdminDialog.header")}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        {t("changePassword.description")}
+                        {t("editPasswordByAdminDialog.description")}
                     </DialogContentText>
-                    <TextField
-                        {...register("oldPassword")}
-                        error={!!oldPasswordErrorMessage}
-                        helperText={oldPasswordErrorMessage && t(oldPasswordErrorMessage)}
-                        value={oldPassword}
-                        onChange={(e) => setOldPassword(e.target.value)}
-                        autoFocus
-                        margin="dense"
-                        label={t("changePassword.passwords.oldPasswordLabel")}
-                        type={showOldPassword ? "text" : "password"}
-                        fullWidth
-                        variant="standard"
-                        sx={{ mb: { md: 2 } }}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowOldPassword}
-                                        onMouseDown={handleMouseDownOldPassword}
-                                    >
-                                        {showOldPassword ? <Visibility /> : <VisibilityOff />}
-                                    </IconButton>
-                                </InputAdornment>
-                            )
-                        }}
-                    />
                     <TextField
                         {...register("newPassword")}
                         error={!!newPasswordErrorMessage}
@@ -161,8 +114,8 @@ export const EditPassword = () => {
                     />
                     <TextField
                         {...register("confirmPassword")}
-                        error={!!passwordRepeatMessage}
-                        helperText={passwordRepeatMessage && t(passwordRepeatMessage)}
+                        error={!!confirmedPasswordErrorMessage}
+                        helperText={confirmedPasswordErrorMessage && t(confirmedPasswordErrorMessage)}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         autoFocus
@@ -193,11 +146,10 @@ export const EditPassword = () => {
                     </Button>
                     <Button
                         disabled={
-                            oldPassword.length === 0 ||
                             newPassword.length === 0 ||
                             confirmPassword.length === 0
                         }
-                        onClick={handleSubmit(async () => { await changeOwnPasswordHandle() })}
+                        onClick={handleSubmit(async () => { await postChangePasswordByAdminHandle() })}
                     >
                         {t("changePassword.buttons.change")}
                     </Button>
@@ -211,4 +163,4 @@ export const EditPassword = () => {
             />
         </Box>
     );
-};
+}

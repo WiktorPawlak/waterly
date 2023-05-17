@@ -47,7 +47,7 @@ public class VerificationTokenService {
 
     @PermitAll
     public VerificationToken findValidToken(final String token, final TokenType tokenType) throws TokenNotFoundException {
-        return verificationTokenFacade.findValidByToken(token, tokenType)
+        return verificationTokenFacade.findValidByTokenAndTokenType(token, tokenType)
                 .orElseThrow(TokenNotFoundException::new);
     }
 
@@ -163,11 +163,15 @@ public class VerificationTokenService {
     }
 
     @PermitAll
-    public Account confirmPassword(final UUID token, final TokenType type) throws TokenNotFoundException {
+    public Account confirmPassword(final UUID token) throws TokenNotFoundException {
         VerificationToken verificationToken = verificationTokenFacade
-                .findValidByToken(token.toString(), type)
+                .findValidByToken(token.toString())
                 .orElseThrow(TokenNotFoundException::new);
-        verificationTokenFacade.delete(verificationToken);
-        return verificationToken.getAccount();
+        if (verificationToken.getTokenType() == PASSWORD_RESET || verificationToken.getTokenType() == CHANGE_PASSWORD){
+            verificationTokenFacade.delete(verificationToken);
+            return verificationToken.getAccount();
+        } else {
+            throw new TokenNotFoundException();
+        }
     }
 }

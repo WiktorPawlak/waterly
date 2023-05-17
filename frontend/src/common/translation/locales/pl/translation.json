@@ -292,5 +292,10 @@
   "editAccountDialog": {
     "editAccount": "Edit account",
     "accountEditedSuccessfully": "Pomyślnie zedytowano konto"
+  },
+  "editPasswordByAdminDialog": {
+    "header": "Zmień hasło użytkownika",
+    "description": "Wypełnij poniższy formularz aby zmienić hasło użytkownika",
+    "success": "Hasło zostało zmienione a użytkownik został mailowo poinformowany o możliwości zmiany hasła"
   }
 }

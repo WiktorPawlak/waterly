@@ -1,11 +1,4 @@
-import { useTranslation } from "react-i18next";
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { postResetPassword, PasswordResetDto } from '../api/accountApi';
-import { useSnackbar } from 'notistack';
-import { Box, Grid, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { CircularProgress } from "@mui/material";
-import { useSearchParams } from "react-router-dom";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { MainLayout } from "../layouts/MainLayout/MainLayout";
 import loginPose from "../assets/loginPose.svg";
 import { ResetPasswordFormSection } from "../layouts/components/ResetPasswordFormSection/ResetPasswordFormSection";

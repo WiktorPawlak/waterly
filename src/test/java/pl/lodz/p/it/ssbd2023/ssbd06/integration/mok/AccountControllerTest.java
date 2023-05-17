@@ -580,7 +580,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
         ).getString("token");
 
         String newPassword1 = "1234jantes";
-        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword1, TokenType.CHANGE_PASSWORD);
+        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword1);
         given()
                 .body(changePasswordRequestDto)
                 .when()
@@ -670,7 +670,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
         ).getString("token");
 
-        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, "X", TokenType.CHANGE_PASSWORD);
+        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, "X");
         String test = given()
                 .body(changePasswordRequestDto)
                 .when()
@@ -686,7 +686,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     void shouldRespondWith404WhenChangePasswordTokenDoesntExist() {
         String newPassword = "123jantes";
         String thisTokenIsNotCorrect = "11111111-1111-1111-1111-a4cbafae584d";
-        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(thisTokenIsNotCorrect, newPassword, TokenType.CHANGE_PASSWORD);
+        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(thisTokenIsNotCorrect, newPassword);
 
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
@@ -718,7 +718,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
         ).getString("token");
 
         String newPassword = "124jantes";
-        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword, TokenType.CHANGE_PASSWORD);
+        PasswordResetDto changePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword);
         given()
                 //.header(AUTHORIZATION, OWNER_TOKEN)
                 .body(changePasswordRequestDto)
@@ -729,7 +729,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .statusCode(OK.getStatusCode());
 
         String newPassword1 = "125jantes";
-        PasswordResetDto newChangePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword1, TokenType.CHANGE_PASSWORD);
+        PasswordResetDto newChangePasswordRequestDto = new PasswordResetDto(changePasswordToken, newPassword1);
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
                 .body(newChangePasswordRequestDto)
@@ -905,7 +905,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
         ).getString("token");
 
-        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "resetedPassword", TokenType.PASSWORD_RESET);
+        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "resetedPassword");
 
         given()
                 .body(resetDto)
@@ -938,7 +938,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Test
     void shouldRespondWith404WhenResetPasswordTokenDoesntExist() {
         String wrongToken = "11111111-1111-1111-1111-a4cbafae584d";
-        PasswordResetDto resetDto = new PasswordResetDto(wrongToken, "123jantes", TokenType.PASSWORD_RESET);
+        PasswordResetDto resetDto = new PasswordResetDto(wrongToken, "123jantes");
 
         given()
                 .body(resetDto)
@@ -964,7 +964,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
         ).getString("token");
 
-        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "resetedPassword", TokenType.PASSWORD_RESET);
+        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "resetedPassword");
 
         given()
                 .body(resetDto)
@@ -974,7 +974,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 .then()
                 .statusCode(OK.getStatusCode());
 
-        PasswordResetDto newResetDto = new PasswordResetDto(resetPasswordToken, "newResetedPassword", TokenType.PASSWORD_RESET);
+        PasswordResetDto newResetDto = new PasswordResetDto(resetPasswordToken, "newResetedPassword");
 
         given()
                 .body(newResetDto)
@@ -1000,7 +1000,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 "SELECT token FROM verification_token WHERE account_id = " + getOwnerAccount().getId()
         ).getString("token");
 
-        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "X", TokenType.PASSWORD_RESET);
+        PasswordResetDto resetDto = new PasswordResetDto(resetPasswordToken, "X");
 
         String test = given()
                 .body(resetDto)

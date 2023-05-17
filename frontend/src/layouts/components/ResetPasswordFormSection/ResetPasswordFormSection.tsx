@@ -2,7 +2,7 @@ import { Box, Button, IconButton, InputAdornment, TextField, Typography } from "
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { postResetPassword, TokenType } from "../../../api/accountApi";
+import { postResetPassword } from "../../../api/accountApi";
 import { resetPasswordSchema, resetPasswordSchemaType } from "../../../validation/validationSchemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,10 +48,10 @@ export const ResetPasswordFormSection = () => {
 
   async function postResetPasswordHandle() {
     const passwordResetDto = {
-      token: token,
-      newPassword: newPassword,
-      type: TokenType.PasswordReset
+      token,
+      newPassword,
     }
+
     const response = await postResetPassword(passwordResetDto);
     if (response.status === 200) {
       toast.showSuccessToast(t
