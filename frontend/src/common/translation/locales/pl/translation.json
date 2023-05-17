@@ -72,7 +72,7 @@
   },
   "editAccountDetailsPage": {
     "header": "Edytuj dane konta",
-    "description" : "Tutaj możesz edytować swoje hasło, email lub dane personalne",
+    "description": "Tutaj możesz edytować swoje hasło, email lub dane personalne",
     "button": "Edytuj detale",
     "detailsButton": "Edytuj detale",
     "emailButton": "Edytuj email",
@@ -127,6 +127,7 @@
     "header": "Zarządzaj użytkownikami",
     "description": "Tutaj możesz zmieniać role użytkownikom oraz dodawać nowe konta.",
     "button": "+ Dodaj użytkownika",
+    "searchLabel": "Szukaj...",
     "dataGrid": {
       "header": {
         "login": "Login",

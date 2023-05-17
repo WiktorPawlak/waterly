@@ -71,7 +71,7 @@
   },
   "editAccountDetailsPage": {
     "header": "Edit account details",
-    "description" : "Here you can change your email, password or personal data",
+    "description": "Here you can change your email, password or personal data",
     "detailsButton": "Edit details",
     "emailButton": "Edit email",
     "alert": {
@@ -125,6 +125,7 @@
     "header": "Manage users",
     "description": "Here you can add new users or edit existing ones.",
     "button": "+ Add user",
+    "searchLabel": "Search...",
     "dataGrid": {
       "header": {
         "login": "Login",

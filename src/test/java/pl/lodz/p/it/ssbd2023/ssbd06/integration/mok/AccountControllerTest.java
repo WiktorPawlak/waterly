@@ -39,7 +39,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.ListAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
-import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 class AccountControllerTest extends IntegrationTestsConfig {
@@ -368,6 +367,39 @@ class AccountControllerTest extends IntegrationTestsConfig {
     }
 
     @ParameterizedTest
+    @SneakyThrows
+    @CsvSource({"/self/email", "/1/email"})
+    void WhenEditEmailAndEditAlreadyAcceptedShouldReturnNotFound(String path) {
+        String email = "mati@mati.com";
+
+        EditEmailDto dto = new EditEmailDto(email);
+
+        given()
+                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                .body(dto)
+                .when()
+                .put(ACCOUNT_PATH + path)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        String token = databaseConnector.executeQuery(
+                "SELECT token FROM verification_token WHERE account_id = " + getAdministratorAccount().getId()
+        ).getString("token");
+
+        given()
+                .when()
+                .post(ACCOUNT_PATH + "/email/accept?token=" + token)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .when()
+                .post(ACCOUNT_PATH + "/email/accept?token=" + token)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @ParameterizedTest
     @CsvSource({
             "''",
             "mati@mati",
@@ -518,9 +550,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
         String firstName = "Kamil";
         String lastName = "Kowalski-Nowak";
         String phoneNumber = "000000000";
-        String email = "mati@mati.com";
         String languageTag = "pl-PL";
-
 
         Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
 

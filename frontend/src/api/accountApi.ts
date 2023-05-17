@@ -1,12 +1,4 @@
-import {
-  ApiResponse,
-  get,
-  post,
-  postNoBody,
-  put,
-  putNoBody,
-  putWithHeaders,
-} from "./api";
+import { ApiResponse, get, post, put } from "./api";
 import { RoleOperation } from "../types";
 
 const ACCOUNTS_PATH = "/accounts";
@@ -112,7 +104,7 @@ export async function editAccountDetails(
   body: EditAccountDetailsDto,
   etag: string
 ) {
-  return putWithHeaders(`${ACCOUNTS_PATH}/self`, body, {
+  return put(`${ACCOUNTS_PATH}/self`, body, {
     "If-Match": etag,
   });
 }
@@ -130,11 +122,11 @@ export async function postAcceptEmail(token: string) {
 }
 
 export async function putVerifyAccount(token: string) {
-  return putNoBody(`${ACCOUNTS_PATH}/confirm-registration?token=` + token);
+  return put(`${ACCOUNTS_PATH}/confirm-registration?token=` + token);
 }
 
 export async function postSendResetPasswordEmail(email: string) {
-  return postNoBody(`${ACCOUNTS_PATH}/password/request-reset?email=` + email);
+  return put(`${ACCOUNTS_PATH}/password/request-reset?email=` + email);
 }
 
 export async function postResetPassword(body: PasswordResetDto) {
@@ -142,7 +134,7 @@ export async function postResetPassword(body: PasswordResetDto) {
 }
 
 export async function postResendVerificationToken(accountId: string) {
-  return postNoBody(`${ACCOUNTS_PATH}/${accountId}/resend-verification-token`);
+  return put(`${ACCOUNTS_PATH}/${accountId}/resend-verification-token`);
 }
 
 export async function getSelfAccountDetails(): Promise<
@@ -171,9 +163,10 @@ export async function getSelfSearchPreferences(): Promise<
 }
 
 export async function getAccountsList(
-  getPagedListDto: GetPagedAccountListDto
+  getPagedListDto: GetPagedAccountListDto,
+  pattern: string
 ): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
-  return post(`${ACCOUNTS_PATH}/list`, getPagedListDto);
+  return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, { pattern: pattern });
 }
 
 export async function grantAccountPermissions(
@@ -188,7 +181,7 @@ export async function putAccountDetails(
   body: EditAccountDetailsDto,
   etag: string
 ) {
-  return putWithHeaders(`${ACCOUNTS_PATH}/${accountId}`, body, {
+  return put(`${ACCOUNTS_PATH}/${accountId}`, body, {
     "If-Match": etag,
   });
 }

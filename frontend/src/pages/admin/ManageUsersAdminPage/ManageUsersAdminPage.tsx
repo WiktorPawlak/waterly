@@ -24,6 +24,7 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Lock } from "../../../layouts/components/account";
@@ -31,6 +32,7 @@ import { Lock } from "../../../layouts/components/account";
 export const ManageUsersAdminPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [pattern, setPattern] = useState("");
 
   const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
     data: [],
@@ -47,19 +49,15 @@ export const ManageUsersAdminPage = () => {
   });
 
   useEffect(() => {
-    getAccountsList(listRequest).then((response) => {
+    getAccountsList(listRequest, pattern).then((response) => {
+      console.log(pattern);
       if (response.status === 200) {
         setPageState(response.data!);
       } else {
         console.error(response.error);
       }
     });
-  }, [
-    listRequest.page,
-    listRequest.pageSize,
-    listRequest.order,
-    listRequest.orderBy,
-  ]);
+  }, [listRequest, pattern]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -200,7 +198,11 @@ export const ManageUsersAdminPage = () => {
           >
             {t("manageUsersPage.button")}
           </Button>
-
+          <TextField
+            onChange={(e) => setPattern(e.target.value)}
+            label={t("manageUsersPage.searchLabel")}
+            sx={{ color: "text.secondary", marginBottom: "15px" }}
+          />
           <Box sx={{ height: 600, width: "100%" }}>
             <DataGrid
               autoHeight

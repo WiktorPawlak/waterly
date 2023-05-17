@@ -1,8 +1,4 @@
-import {
-  AxiosResponse,
-  AxiosResponseHeaders,
-  RawAxiosResponseHeaders,
-} from "axios";
+import { AxiosResponse } from "axios";
 import { axiosClient } from "./axois/axoisInstance";
 
 export interface ApiResponse<T> {
@@ -51,10 +47,13 @@ export async function getNoResponse(
 
 export async function post<T>(
   url: string,
-  body?: any
+  body?: any,
+  params?: Record<string, unknown>
 ): Promise<ApiResponse<T>> {
   return axiosClient
-    .post(url, body)
+    .post(url, body, {
+      params: params,
+    })
     .then((response) => {
       return { data: response.data, status: response.status };
     })
@@ -63,32 +62,10 @@ export async function post<T>(
     });
 }
 
-export async function postNoBody<T>(url: string): Promise<ApiResponse<T>> {
-  return axiosClient
-    .post(url)
-    .then((response) => {
-      return { data: response.data, status: response.status };
-    })
-    .catch((error: unknown) => {
-      return { error: (error as Error).message };
-    });
-}
-
-export async function put<T>(url: string, body: any): Promise<ApiResponse<T>> {
-  return axiosClient
-    .put(url, body)
-    .then((response) => {
-      return { data: response.data, status: response.status };
-    })
-    .catch(function (error) {
-      return { error: error.response?.data?.message };
-    });
-}
-
-export async function putWithHeaders<T>(
+export async function put<T>(
   url: string,
-  body: any,
-  headers: any
+  body?: any,
+  headers?: any
 ): Promise<ApiResponse<T>> {
   return axiosClient
     .put(url, body, {
@@ -99,16 +76,5 @@ export async function putWithHeaders<T>(
     })
     .catch(function (error) {
       return { error: error.response?.data?.message };
-    });
-}
-
-export async function putNoBody<T>(url: string): Promise<ApiResponse<T>> {
-  return axiosClient
-    .put(url)
-    .then((response) => {
-      return { data: response.data, status: response.status };
-    })
-    .catch((error: unknown) => {
-      return { error: (error as Error).message };
     });
 }
