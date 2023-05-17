@@ -17,11 +17,10 @@ export async function get<T>(
       params: { params },
     })
     .then((response) => {
-      return { data: response.data };
+      return { data: response.data, status: response.status };
     })
     .catch((error: unknown) => {
-      const message = (error as Error).message;
-      return { error: message };
+      return { error: (error as Error).message };
     });
 }
 

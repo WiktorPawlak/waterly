@@ -152,7 +152,7 @@ public class VerificationTokenService {
     }
 
     @PermitAll
-    public VerificationToken createAcceptAccountDetailToken(final Account account) {
+    public VerificationToken createAcceptEmailToken(final Account account) {
         VerificationToken token = prepareToken(
                 account,
                 timeProvider.currentDate(),
@@ -167,7 +167,7 @@ public class VerificationTokenService {
         VerificationToken verificationToken = verificationTokenFacade
                 .findValidByToken(token.toString())
                 .orElseThrow(TokenNotFoundException::new);
-        if (verificationToken.getTokenType() == PASSWORD_RESET || verificationToken.getTokenType() == CHANGE_PASSWORD){
+        if (verificationToken.getTokenType() == PASSWORD_RESET || verificationToken.getTokenType() == CHANGE_PASSWORD) {
             verificationTokenFacade.delete(verificationToken);
             return verificationToken.getAccount();
         } else {

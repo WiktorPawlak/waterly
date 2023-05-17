@@ -8,9 +8,8 @@ import {
 } from "@mui/material";
 import { resendEmailEditMail } from "../../../api/accountApi";
 import { resolveApiError } from "../../../api/apiErrors";
-import { Toast } from "../Toast";
-import { useToast } from "../../../hooks/useToast";
 import { useTranslation } from "react-i18next";
+import { useSnackbar } from "notistack";
 
 interface Props {
   isOpen: boolean;
@@ -19,17 +18,19 @@ interface Props {
 
 export const ResendEditMailDialog = ({ isOpen, setIsOpen }: Props) => {
   const { t } = useTranslation();
-  const toast = useToast();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleResendEmail = async () => {
     const response = await resendEmailEditMail();
 
     if (response.status === 200) {
-      toast.showSuccessToast(
-        t("editAccountDetailsPage.alert.emailSuccesResended")
-      );
+      enqueueSnackbar(t("editAccountDetailsPage.alert.emailSuccesResended"), {
+        variant: "success",
+      });
     } else {
-      toast.showErrorToast(t(resolveApiError(response.error)));
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
     }
   };
 
@@ -60,12 +61,6 @@ export const ResendEditMailDialog = ({ isOpen, setIsOpen }: Props) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Toast
-        isToastOpen={toast.isToastOpen}
-        setIsToastOpen={toast.setIsToastOpen}
-        message={toast.message}
-        severity={toast.severity}
-      />
     </>
   );
 };

@@ -63,6 +63,12 @@
     "toastSuccess": "The account has been activated.",
     "toastError": "Account verification error. The token is inactive."
   },
+  "acceptEmailPage": {
+    "header": "Accepting email...",
+    "description": "This may take a while.",
+    "toastSuccess": "The email has been changed.",
+    "toastError": "Email accepting error. The token is inactive."
+  },
   "editAccountDetailsPage": {
     "header": "Edit account details",
     "detailsButton": "Edit details",

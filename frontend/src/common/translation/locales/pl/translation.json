@@ -64,6 +64,12 @@
     "toastSuccess": "Konto zostało zweryfikowane.",
     "toastError": "Błąd weryfikacji konta. Token jest nieaktywny."
   },
+  "acceptEmailPage": {
+    "header": "Aktywowanie emaila...",
+    "description": "To może chwilę zająć.",
+    "toastSuccess": "Email został zmieniony.",
+    "toastError": "Błąd akceptacji emaila. Token jest nieaktywny."
+  },
   "editAccountDetailsPage": {
     "header": "Edytuj dane konta",
     "button": "Edytuj detale",
@@ -153,9 +159,9 @@
     "FACILITY_MANAGER": "Zarządca"
   },
   "apiError": {
-    "accountWithPhoneNumberExist": "Konto z podanym numerem telefonu już istnieje, podaj inne",
-    "accountWithEmailExist": "Konto z podanym emailem już istnieje, podaj inne",
-    "accountWithLoginExist": "Konto z podanym loginem już istnieje, podaj inne",
+    "accountWithPhoneNumberExist": "Konto z podanym numerem telefonu już istnieje, podaj inny",
+    "accountWithEmailExist": "Konto z podanym emailem już istnieje, podaj inny",
+    "accountWithLoginExist": "Konto z podanym loginem już istnieje, podaj inny",
     "unknownError": "Nieznany błąd",
     "accessDenied": "Nie masz dostępu do tego zasobu",
     "permissionsAlreadyAdded": "Nie udało się zmodyfikować roli",

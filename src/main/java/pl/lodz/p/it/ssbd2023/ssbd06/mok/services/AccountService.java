@@ -431,7 +431,7 @@ public class AccountService {
 
             account.setWaitingEmail(email);
             accountFacade.update(account);
-            tokenSender.sendEmailUpdateAcceptToken(verificationTokenService.createAcceptAccountDetailToken(account));
+            tokenSender.sendEmailUpdateAcceptToken(verificationTokenService.createAcceptEmailToken(account));
             log.info("Added account email waiting for accept: " + account.getId());
         }
     }

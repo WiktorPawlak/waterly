@@ -8,6 +8,7 @@ import { VerifyUsersFMPage } from "./pages/facilityManager";
 import VerifyAccountPage from "./pages/VerifyAccountPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AccountDetailsPage from "./pages/admin/AccountDetailsPage/AccountDetailsPage";
+import { AcceptEmailPage } from "./pages/AcceptEmailPage";
 
 const Routing = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const Routing = createBrowserRouter([
   {
     path: "/verify-account",
     element: <VerifyAccountPage />,
+  },
+  {
+    path: "/accept-email",
+    element: <AcceptEmailPage />,
   },
   {
     path: "/edit-profile",
@@ -45,7 +50,7 @@ const Routing = createBrowserRouter([
   {
     path: "/password/reset",
     element: <ResetPasswordPage />,
-  }
+  },
 ]);
 
 export default function App() {
