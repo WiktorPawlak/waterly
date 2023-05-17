@@ -50,7 +50,6 @@ export const ManageUsersAdminPage = () => {
 
   useEffect(() => {
     getAccountsList(listRequest, pattern).then((response) => {
-      console.log(pattern);
       if (response.status === 200) {
         setPageState(response.data!);
       } else {
@@ -94,7 +93,6 @@ export const ManageUsersAdminPage = () => {
   };
 
   const handleSortModelChange = useCallback((sortModel: GridSortModel) => {
-    console.log(sortModel);
     setListRequest((old) => ({ ...old, order: sortModel[0]?.sort as string }));
   }, []);
 

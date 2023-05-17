@@ -1,62 +1,71 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import LogInPage from "./pages/LogInPage";
-import RegisterPage from "./pages/RegisterPage";
-import WaitForVerifyPage from "./pages/WaitForVerifyPage";
-import EditAccountDetailsPage from "./pages/EditAccountDetailsPage";
-import { ManageUsersAdminPage } from "./pages/admin";
-import { VerifyUsersFMPage } from "./pages/facilityManager";
-import VerifyAccountPage from "./pages/VerifyAccountPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import AccountDetailsPage from "./pages/admin/AccountDetailsPage/AccountDetailsPage";
-import { AcceptEmailPage } from "./pages/AcceptEmailPage";
+import { Navigate, Route, Routes, BrowserRouter } from "react-router-dom";
+import { roles } from "./types";
+import { useEffect, useState } from "react";
+import { Loading } from "./layouts/components/Loading";
+import {
+  publicRoutes,
+  facilityManagerRoutes,
+  adminRoutes,
+  ownerRoutes,
+  Pathnames,
+} from "./routing/routes";
 
-const Routing = createBrowserRouter([
-  {
-    path: "/",
-    element: <LogInPage />,
-  },
-  {
-    path: "/register",
-    element: <RegisterPage />,
-  },
-  {
-    path: "/wait-for-verify",
-    element: <WaitForVerifyPage />,
-  },
-  {
-    path: "/verify-account",
-    element: <VerifyAccountPage />,
-  },
-  {
-    path: "/accept-email",
-    element: <AcceptEmailPage />,
-  },
-  {
-    path: "/edit-profile",
-    element: <EditAccountDetailsPage />,
-  },
-  {
-    path: "/manage-users",
-    element: <ManageUsersAdminPage />,
-  },
-  {
-    path: "/verify-users",
-    element: <VerifyUsersFMPage />,
-  },
-  {
-    path: "/accounts/:id/details",
-    element: <AccountDetailsPage />,
-  },
-  {
-    path: "/password/reset",
-    element: <ResetPasswordPage />,
-  },
-]);
+export const RoutesComponent = () => {
+  const [userRoles, setUserRoles] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user") || "{}")
+      : {};
+    const roles = user?.roles || [];
+    setUserRoles(roles);
+    setLoading(false);
+  }, []);
+
+  const hasRole = (requiredRoles: string[]): boolean => {
+    return requiredRoles.some((requiredRole) =>
+      userRoles.includes(requiredRole)
+    );
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  return (
+    <Routes>
+      {publicRoutes.map(({ path, Component }) => (
+        <Route key={path} path={path} element={<Component />} />
+      ))}
+
+      {hasRole([roles.owner]) &&
+        ownerRoutes.map(({ path, Component }) => (
+          <Route key={path} path={path} element={<Component />} />
+        ))}
+
+      {hasRole([roles.facilityManager]) &&
+        facilityManagerRoutes.map(({ path, Component }) => (
+          <Route key={path} path={path} element={<Component />} />
+        ))}
+
+      {hasRole([roles.administrator]) &&
+        adminRoutes.map(({ path, Component }) => (
+          <Route key={path} path={path} element={<Component />} />
+        ))}
+
+      <Route
+        path="*"
+        element={<Navigate to={Pathnames.public.notFound} replace />}
+      />
+    </Routes>
+  );
+};
 
 export default function App() {
   return (
-    <>
-      <RouterProvider router={Routing} />
-    </>
+    <BrowserRouter>
+      <RoutesComponent />
+    </BrowserRouter>
   );
 }

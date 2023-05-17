@@ -1,30 +1,10 @@
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import HelpIcon from "@mui/icons-material/Help";
 import { useTranslation } from "react-i18next";
-import { useSnackbar } from "notistack";
-import { Box, Grid, Link, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import verifyPose from "../assets/verifyPose.svg";
-import { postResendVerificationToken } from "../api/accountApi";
-import { useLocation } from "react-router-dom";
 
-const WaitForVerifyPage = () => {
+const NotFound = () => {
   const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
-  const { state } = useLocation();
-
-  const handleResendMail = () => {
-    const accountId = state ? state.id : "-1";
-    postResendVerificationToken(accountId).then((response) => {
-      if (response.status === 200) {
-        enqueueSnackbar(t("waitForVerifyPage.toastSuccess"), {
-          variant: "success",
-        });
-      } else {
-        enqueueSnackbar(t("waitForVerifyPage.toastError"), {
-          variant: "error",
-        });
-      }
-    });
-  };
 
   return (
     <Grid
@@ -62,7 +42,7 @@ const WaitForVerifyPage = () => {
             alignItems: "center",
           }}
         >
-          <MailOutlineIcon sx={{ fontSize: { xs: "80px", md: "96px" } }} />
+          <HelpIcon sx={{ fontSize: { xs: "80px", md: "96px" } }} />
         </Box>
         <Typography
           variant="h2"
@@ -72,7 +52,7 @@ const WaitForVerifyPage = () => {
             fontWeight: "700",
           }}
         >
-          {t("waitForVerifyPage.header")}
+          404 Not Found
         </Typography>
         <Typography
           sx={{
@@ -82,20 +62,7 @@ const WaitForVerifyPage = () => {
             fontSize: { xs: "16px", md: "20px" },
           }}
         >
-          {t("waitForVerifyPage.description")}
-        </Typography>
-        <Typography
-          sx={{
-            mt: 2,
-            color: "text.secondary",
-            mb: { xs: 10, md: 0 },
-            fontSize: { xs: "12px", md: "16px" },
-          }}
-        >
-          <Link sx={{ cursor: "pointer" }} onClick={handleResendMail}>
-            {t("waitForVerifyPage.clickHere")}
-          </Link>
-          {t("waitForVerifyPage.resendMailDescription")}
+          The page you are looking for does not exist.
         </Typography>
         <Box
           sx={{
@@ -123,4 +90,4 @@ const WaitForVerifyPage = () => {
   );
 };
 
-export default WaitForVerifyPage;
+export default NotFound;

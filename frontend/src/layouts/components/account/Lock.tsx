@@ -18,7 +18,7 @@ export interface LockProps {
 export const Lock = ({ accountId }: LockProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [isLocked, setIsLocked] = useState(true);
+  const [isLocked, setIsLocked] = useState(false);
 
   const handleLockClick = async () => {
     const accountActiveStatusDto: AccountActiveStatusDto = {

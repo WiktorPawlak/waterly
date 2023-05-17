@@ -13,7 +13,7 @@ import {
 import TranslateIcon from "@mui/icons-material/Translate";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavEntry, SlideNav } from "./Nav.styled";
 import { Twirl } from "hamburger-react";
 import { ProfileCard } from "../ProfileCard";
@@ -23,7 +23,49 @@ interface NavProps {
   window?: () => Window;
 }
 
-export const Nav = ({ hideMenuEntries, window }: NavProps) => {
+type NavRouteType = {
+  path: string;
+  name: string;
+};
+
+interface NavEntryProps {
+  to: string;
+  name: string;
+}
+
+export type NavEntriesProps = {
+  routes: NavRouteType[];
+};
+
+const NavEntryWithDelay = ({ to, name }: NavEntryProps) => {
+  useEffect(() => {
+    const delayRedirect = setTimeout(() => {}, 2000);
+
+    return () => {
+      clearTimeout(delayRedirect);
+    };
+  }, [to]);
+
+  return (
+    <NavEntry to={to} sx={{ mr: 2 }}>
+      {name}
+    </NavEntry>
+  );
+};
+
+const NavEntries = ({ routes }: NavEntriesProps) => (
+  <>
+    {routes.map((route) => (
+      <NavEntryWithDelay key={route.path} to={route.path} name={route.name} />
+    ))}
+  </>
+);
+
+export const Nav = ({
+  hideMenuEntries,
+  window,
+  routes,
+}: NavProps & NavEntriesProps) => {
   const { i18n } = useTranslation();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -66,7 +108,9 @@ export const Nav = ({ hideMenuEntries, window }: NavProps) => {
   const logout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("user");
-    navigate("/");
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
   };
 
   return (
@@ -125,7 +169,10 @@ export const Nav = ({ hideMenuEntries, window }: NavProps) => {
                     }}
                   >
                     {user.username ? (
-                      <ProfileCard onCLick={logout} />
+                      <>
+                        <NavEntries routes={routes} />
+                        <ProfileCard onCLick={logout} />
+                      </>
                     ) : (
                       <>
                         <NavEntry to="/">{t("navigation.login")}</NavEntry>
@@ -140,7 +187,10 @@ export const Nav = ({ hideMenuEntries, window }: NavProps) => {
               {!isMobileWidth && (
                 <Box sx={{ display: "flex", flexDirection: "row" }}>
                   {user.username ? (
-                    <ProfileCard onCLick={logout} />
+                    <>
+                      <NavEntries routes={routes} />
+                      <ProfileCard onCLick={logout} />
+                    </>
                   ) : (
                     <>
                       <NavEntry to="/">{t("navigation.login")}</NavEntry>

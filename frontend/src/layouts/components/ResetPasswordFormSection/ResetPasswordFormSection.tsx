@@ -1,9 +1,19 @@
-import { Box, Button, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { postResetPassword } from "../../../api/accountApi";
-import { resetPasswordSchema, resetPasswordSchemaType } from "../../../validation/validationSchemas";
+import {
+  resetPasswordSchema,
+  resetPasswordSchemaType,
+} from "../../../validation/validationSchemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "../../../hooks/useToast";
@@ -31,41 +41,36 @@ export const ResetPasswordFormSection = () => {
   });
 
   const passwordErrorMessage = errors?.password?.message;
-  const passwordRepeatMessage = errors?.confirmPassword?.message
+  const passwordRepeatMessage = errors?.confirmPassword?.message;
 
   const handleClickShowNewPasswordRepeat = () => {
-    setShowPasswordRepeat(!showPasswordRepeat)
-  }
+    setShowPasswordRepeat(!showPasswordRepeat);
+  };
   const handleClickShowNewPassword = () => {
-    setShowNewPassword(!showNewPassword)
-  }
+    setShowNewPassword(!showNewPassword);
+  };
   const handleMouseDownNewPasswordRepeat = () => {
     setShowPasswordRepeat(!showPasswordRepeat);
-  }
+  };
   const handleMouseDownNewPassword = () => {
     setShowNewPassword(!showNewPassword);
-  }
+  };
 
   async function postResetPasswordHandle() {
     const passwordResetDto = {
       token,
       newPassword,
-    }
+    };
 
     const response = await postResetPassword(passwordResetDto);
     if (response.status === 200) {
-      toast.showSuccessToast(t
-        ("resetPassword.alert.passwordReseted")
-      );
+      toast.showSuccessToast(t("resetPassword.alert.passwordReseted"));
       setTimeout(() => {
         navigation("/");
       }, 3000);
     } else {
-      toast.showErrorToast(
-        t("resetPassword.alert.passwordNotReseted")
-      );
+      toast.showErrorToast(t("resetPassword.alert.passwordNotReseted"));
     }
-    console.log(passwordResetDto);
   }
 
   return (
@@ -74,7 +79,8 @@ export const ResetPasswordFormSection = () => {
         flexDirection: "column",
         display: "flex",
         width: "60%",
-      }}>
+      }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -133,7 +139,7 @@ export const ResetPasswordFormSection = () => {
                 {showNewPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          )
+          ),
         }}
       />
       <TextField
@@ -164,13 +170,16 @@ export const ResetPasswordFormSection = () => {
                 {showPasswordRepeat ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          )
+          ),
         }}
       />
       <Button
         variant="contained"
         sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
-        onClick={handleSubmit(async () => { await postResetPasswordHandle() })}>
+        onClick={handleSubmit(async () => {
+          await postResetPasswordHandle();
+        })}
+      >
         {t("resetPassword.form.submitPasswordReset")}
       </Button>
       <Toast

@@ -59,7 +59,7 @@ export const useUser = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("user");
     setUser(null);
-    navigate("/login");
+    navigate("/");
   };
 
   const registerUser = async (userData: NewUser) => {

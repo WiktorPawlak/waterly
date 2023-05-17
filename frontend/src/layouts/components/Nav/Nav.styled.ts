@@ -3,8 +3,6 @@ import { NavLink } from "react-router-dom";
 
 export const NavEntry = styled(NavLink)(({ theme }) => ({
   padding: theme.spacing(2, 0),
-  //paddingBottom: `calc(${theme.spacing(3.3125)} - 4px)`,
-  //width: "max-content",
   textDecorationLine: "none",
   justifyContent: "center",
   alignItems: "center",
