@@ -19,14 +19,20 @@ import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.GRANT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Set;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import io.restassured.response.Response;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -50,7 +56,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.ListAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 class AccountControllerTest extends IntegrationTestsConfig {
@@ -560,16 +568,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     }
 
     @Nested
-    class ChangeOwnPassword {
-
-    }
-
-    @Nested
-    class ChangeOtherAccountPassword {
-
-    }
-
-    @Nested
     class ChangeOwnAccountDetails {
 
     }
@@ -870,11 +868,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     }
 
     @Nested
-    class ResetPassword {
-
-    }
-
-    @Nested
     class ConfirmRegistration {
         @Test
         @SneakyThrows
@@ -927,9 +920,116 @@ class AccountControllerTest extends IntegrationTestsConfig {
         }
     }
 
-    //need to group this tests to specific UC classes (ResetPassword, ChangeOwnPassword, ChangeOtherAccountPassword)
     @Nested
-    class ChangeAccountPassword {
+    class ChangeOwnPassword {
+        @Test
+        void shouldChangeOwnPassword() {
+            given()
+                    .body(new Credentials("admin", "admin12345"))
+                    .when()
+                    .post(AUTH_PATH + "/login")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            AccountPasswordDto passwordDto = new AccountPasswordDto("admin12345", "newPassword");
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(passwordDto)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .when()
+                    .put(ACCOUNT_PATH + "/self/password")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            given()
+                    .body(new Credentials("admin", "newPassword"))
+                    .when()
+                    .post(AUTH_PATH + "/login")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+        }
+
+        @Test
+        void shouldFailChangeOwnPasswordWhenOldPasswordDoesNotMatch() {
+            AccountPasswordDto passwordDto = new AccountPasswordDto("12345admin", "newPassword");
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(passwordDto)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .when()
+                    .put(ACCOUNT_PATH + "/self/password")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("message", equalTo("ERROR.NOT_MATCHING_PASSWORDS"));
+        }
+
+        @Test
+        void shouldFailChangeOwnPasswordWhenNewPasswordIsTheSameAsOld() {
+            AccountPasswordDto passwordDto = new AccountPasswordDto("admin12345", "admin12345");
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(passwordDto)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .when()
+                    .put(ACCOUNT_PATH + "/self/password")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.IDENTICAL_PASSWORDS"));
+        }
+
+        @Test
+        void shouldFailChangeOwnPasswordWhenNewPasswordIsNotValid() {
+            AccountPasswordDto invalidPasswordDto = new AccountPasswordDto("admin12345", "X");
+            String test = given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(invalidPasswordDto)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .when()
+                    .put(ACCOUNT_PATH + "/self/password")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .extract().jsonPath().getString("message");
+            assertEquals(test, "[size must be between 8 and 32]");
+        }
+
+        @Test
+        void ShouldChangeOwnPasswordOnlyOnceWithConcurrentRequest() throws BrokenBarrierException, InterruptedException {
+            int threadNumber = 10;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            List<Integer> responseCodes = new ArrayList<>(); // New list to store response codes
+            AtomicInteger finished = new AtomicInteger();
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    AccountPasswordDto passwordDto = new AccountPasswordDto("admin12345", "newPassword");
+                    Response response = given()
+                            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                            .body(passwordDto)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .when()
+                            .put(ACCOUNT_PATH + "/self/password")
+                            .then()
+                            .extract().response();
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    finished.getAndIncrement();
+                }));
+            }
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (finished.get() != threadNumber){
+            }
+            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
+        }
+    }
+
+    @Nested
+    class ChangeOtherAccountPassword {
         @Test
         @SneakyThrows
         void shouldChangePasswordRequestProperlyAfterUserChange() {
@@ -1111,58 +1211,39 @@ class AccountControllerTest extends IntegrationTestsConfig {
         }
 
         @Test
-        void shouldChangeOwnPassword() {
-            given()
-                    .body(new Credentials("admin", "admin12345"))
-                    .when()
-                    .post(AUTH_PATH + "/login")
-                    .then()
-                    .statusCode(OK.getStatusCode());
-
-            AccountPasswordDto passwordDto = new AccountPasswordDto("admin12345", "newPassword");
-            given()
-                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                    .body(passwordDto)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .when()
-                    .put(ACCOUNT_PATH + "/self/password")
-                    .then()
-                    .statusCode(OK.getStatusCode());
-
-            given()
-                    .body(new Credentials("admin", "newPassword"))
-                    .when()
-                    .post(AUTH_PATH + "/login")
-                    .then()
-                    .statusCode(OK.getStatusCode());
-        }
-
-        @Test
-        void shouldFailChangeOwnPasswordWhenOldPasswordDoesNotMatch() {
-            AccountPasswordDto passwordDto = new AccountPasswordDto("12345admin", "newPassword");
-            given()
-                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                    .body(passwordDto)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .when()
-                    .put(ACCOUNT_PATH + "/self/password")
-                    .then()
-                    .statusCode(BAD_REQUEST.getStatusCode())
-                    .body("message", equalTo("ERROR.NOT_MATCHING_PASSWORDS"));
-        }
-
-        @Test
-        void shouldFailChangeOwnPasswordWhenNewPasswordIsTheSameAsOld() {
-            AccountPasswordDto passwordDto = new AccountPasswordDto("admin12345", "admin12345");
-            given()
-                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                    .body(passwordDto)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .when()
-                    .put(ACCOUNT_PATH + "/self/password")
-                    .then()
-                    .statusCode(CONFLICT.getStatusCode())
-                    .body("message", equalTo("ERROR.IDENTICAL_PASSWORDS"));
+        void ShouldChangeUsersPasswordEverytimeWithConcurrentRequest() throws BrokenBarrierException, InterruptedException {
+            int threadNumber = 3;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            List<Integer> responseCodes = new ArrayList<>(); // New list to store response codes
+            AtomicInteger finished = new AtomicInteger();
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
+                    Response response = given()
+                            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                            .queryParam("email", getOwnerAccount().getEmail())
+                            .body(passwordChangeByAdminDto)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .when()
+                            .post(ACCOUNT_PATH + "/password/request-change")
+                            .then()
+                            .extract().response();
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    finished.getAndIncrement();
+                }));
+            }
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (finished.get() != threadNumber) {
+            }
+            assertEquals(3, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
         }
 
         @Test
@@ -1179,7 +1260,10 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .extract().jsonPath().getString("message");
             assertEquals("[size must be between 8 and 32]", test);
         }
+    }
 
+    @Nested
+    class ResetPassword {
         @Test
         @SneakyThrows
         void shouldResetPasswordProperly() {
