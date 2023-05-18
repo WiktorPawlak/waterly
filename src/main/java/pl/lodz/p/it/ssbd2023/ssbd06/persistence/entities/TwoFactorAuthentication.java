@@ -26,9 +26,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 @Entity
 @Setter
 @Getter
-@NamedQuery(name = "TwoFactorAuthentication.findByAccountId",
+@NamedQuery(name = "TwoFactorAuthentication.findByAccount",
         query = "SELECT two_factor_authenthication FROM TwoFactorAuthentication two_factor_authenthication" +
-                " WHERE two_factor_authenthication.account.id = :id")
+                " WHERE two_factor_authenthication.account = :account ORDER BY two_factor_authenthication.tokenCreationDate DESC")
 @Table(name = "two_factor_authentication", indexes = {
         @Index(name = "two_factor_authenthication_idx", columnList = "account_id")}
 )
@@ -50,6 +50,6 @@ public class TwoFactorAuthentication extends AbstractEntity {
     @ToString.Exclude
     @NotNull
     @OneToOne(cascade = {REFRESH}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", nullable = false, updatable = false, unique = true)
+    @JoinColumn(name = "account_id", nullable = false, updatable = false)
     private Account account;
 }

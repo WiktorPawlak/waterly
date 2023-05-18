@@ -94,7 +94,8 @@
       "firstNameLabel": "Imię",
       "lastNameLabel": "Nazwisko",
       "phoneNumberLabel": "Nr telefonu",
-      "preferedLanguageLabel": "Preferowany język"
+      "preferedLanguageLabel": "Preferowany język",
+      "twoFactor": "Dwufazowe uwierzytelnianie"
     },
     "validation": {
       "email": {
@@ -287,7 +288,8 @@
       "lastSuccessAuth": "Ostatnie poprawne uwierzytelnienie",
       "lastIncorrectAuth": "Ostatnie niepoprawne uwierzytelnienie",
       "lastIpAddress": "Ostatni adres IP",
-      "incorrectAuthCount": "Ilość niepoprawnych uwierzytelnień"
+      "incorrectAuthCount": "Ilość niepoprawnych uwierzytelnień",
+      "twoFaEnabled": "Dwuetapowa weryfikacja"
     }
   },
   "rolesModal": {
@@ -307,5 +309,16 @@
     "header": "Zmień hasło użytkownika",
     "description": "Wypełnij poniższy formularz aby zmienić hasło użytkownika",
     "success": "Hasło zostało zmienione a użytkownik został mailowo poinformowany o możliwości zmiany hasła"
+  },
+  "twoFactor": {
+    "yes": "włączone",
+    "no": "wyłączone",
+    "header": "Dwufazowe uwierzytelnianie",
+    "description": "Aby zalogować się podaj swój kod dwuetapowej weryfikacji",
+    "button": "Zatwierdź",
+    "cancel": "Anuluj"
+  },
+  "loginPage": {
+    "succesfulLogin": "Zalogowano pomyślnie"
   }
 }

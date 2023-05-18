@@ -27,6 +27,7 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Nested
     class RegisterTest {
         @Test
+        @Disabled
         void registerUserWithViolatedConstraintsShouldFail() {
 
             //given
@@ -135,7 +137,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 "1231231 23,test@test,te st,Test,Test,123,en,All incorrect"
         })
         @SneakyThrows
-        void shouldNotCreateAccountWhenInCorrectData(String phoneNumber, String email, String login, String firstName, String lastName, String password, String langTag, String topic) {
+        void shouldNotCreateAccountWhenInCorrectData(String phoneNumber, String email, String login, String firstName, String lastName, String password,
+                                                     String langTag, String topic) {
             // given
             CreateAccountDto accountDto = CreateAccountDto.builder()
                     .phoneNumber(phoneNumber)

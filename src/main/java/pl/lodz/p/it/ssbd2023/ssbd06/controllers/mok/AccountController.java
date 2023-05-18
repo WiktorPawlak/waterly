@@ -154,9 +154,10 @@ public class AccountController extends RepeatableTransactionController {
     @POST
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response registerAccount(@NotNull @Valid final CreateAccountDto account, final @NotNull @Valid @QueryParam("recaptchaResponse") String recaptchaResponse) {
-            CreatedAccountDto createdAccountDto = accountEndpoint.registerUser(account, recaptchaResponse);
-            return Response.status(Response.Status.CREATED).entity(createdAccountDto).build();
+    public Response registerAccount(@NotNull @Valid final CreateAccountDto account,
+                                    final @NotNull @Valid @QueryParam("recaptchaResponse") String recaptchaResponse) {
+        CreatedAccountDto createdAccountDto = accountEndpoint.registerUser(account, recaptchaResponse);
+        return Response.status(Response.Status.CREATED).entity(createdAccountDto).build();
     }
 
 

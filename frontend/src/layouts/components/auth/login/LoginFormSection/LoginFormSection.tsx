@@ -21,18 +21,26 @@ import {
 } from "../../../../../validation/validationSchemas";
 import { SendResetPasswordEmailSection } from "../../../SendResetPasswordEmailSection/SendResetPasswordEmailSection";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { LoginRequestBody } from "../../../../../api/authApi";
+import { LoginRequestBody, LoginResponse } from "../../../../../api/authApi";
+import jwt_decode from "jwt-decode";
+import { EnterTwoFACodeModal } from "../EnterTwoFACodeModal";
+import { Toast } from "../../../Toast";
+import { useToast } from "../../../../../hooks/useToast";
+import { resolveApiError } from "../../../../../api/apiErrors";
 
 export const LoginFormSection = () => {
   const navigation = useNavigate();
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
+  const [twoFAEnter, setTwoFAEnter] = useState(false);
+  const toast = useToast();
 
   const {
     register: registerLogin,
     handleSubmit: handleLoginSubmit,
     formState: { errors: loginErrors },
+    getValues
   } = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
@@ -46,8 +54,33 @@ export const LoginFormSection = () => {
   const passwordErrorMessage = loginErrors?.password?.message;
 
   const handleFormSubmit = async (credentials: LoginRequestBody) => {
-    if (!(await logInClient(credentials))) {
-      return <Box>Loading...</Box>;
+    const response: LoginResponse<string> | null = await logInClient(credentials);
+    if(response?.status === 200) {
+      toast.showSuccessToast(t("loginPage.succesfulLogin"));
+      if (response?.data) {
+        const token = response.data;
+        const decodedToken: any = jwt_decode(token);
+        if (decodedToken) {
+          const roles = decodedToken.roles;
+          const username = decodedToken.jti;
+
+          const user = {
+            username,
+            roles,
+          };
+
+          localStorage.setItem("jwtToken", token);
+          localStorage.setItem("user", JSON.stringify(user));
+          navigation("/edit-profile");
+          return true;
+        }
+      }
+    }
+    if(response?.status === 202) {
+      setTwoFAEnter(true);
+    }
+    else {
+      toast.showErrorToast(t(resolveApiError(response!.error)));
     }
   };
 
@@ -69,6 +102,7 @@ export const LoginFormSection = () => {
         width: "60%",
       }}
     >
+      <EnterTwoFACodeModal isOpen={twoFAEnter} setIsOpen={setTwoFAEnter} login={getValues().login} password={getValues().password} />
       <Box
         sx={{
           display: "flex",
@@ -184,6 +218,12 @@ export const LoginFormSection = () => {
           {t("logInPage.form.registerButton")}
         </Button>
       </Box>
+      <Toast
+                isToastOpen={toast.isToastOpen}
+                setIsToastOpen={toast.setIsToastOpen}
+                message={toast.message}
+                severity={toast.severity}
+            />
     </Box>
   );
 };

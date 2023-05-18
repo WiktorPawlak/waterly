@@ -30,29 +30,9 @@ export const useUser = () => {
   const logInClient = async (credentials: LoginRequestBody) => {
     if (credentials) {
       const response: LoginResponse<string> = await postLogin(credentials);
-
-      if (response.data) {
-        const token = response.data;
-        const decodedToken: any = jwt_decode(token);
-        if (decodedToken) {
-          const roles = decodedToken.roles;
-          const username = decodedToken.jti;
-
-          const user = {
-            username,
-            roles,
-          };
-          setUser(user);
-
-          localStorage.setItem("jwtToken", token);
-          localStorage.setItem("user", JSON.stringify(user));
-          navigate("/edit-profile");
-          return true;
-        }
-      }
+      return response;
     }
-
-    return false;
+    return null;
   };
 
   const logout = () => {

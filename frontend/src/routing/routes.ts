@@ -18,8 +18,8 @@ export const Pathnames = {
     editAccountDetails: "/edit-profile",
     waitForVerify: "/wait-for-verify",
     acceptMail: "/accept-email",
-    resetPassword: "/reset-password",
-    verifyAcc: "/verify",
+    resetPassword: "/password/reset",
+    verifyAcc: "/verify-account",
   },
   owner: {
     editAccountDetails: "/edit-profile",

@@ -58,7 +58,6 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     @Inject
     @BCryptHash
     private PasswordHash hashProvider;
-
     @Inject
     private ReCAPTCHA recaptchaVerifier;
     @Inject
@@ -92,9 +91,10 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
             Long accountId = accountService.registerUser(account);
             return new CreatedAccountDto(accountId);
         } else {
-           throw ApplicationBaseException.invalidRecaptchaException();
+            throw ApplicationBaseException.invalidRecaptchaException();
         }
     }
+
     @RolesAllowed(ADMINISTRATOR)
     public void createAccount(final CreateAccountDto account) {
         accountService.createAccount(account);
@@ -259,4 +259,11 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         return pattern != null && !pattern.isBlank() ? pattern.strip() : null;
     }
 
+    public String generateOTPPassword(final Account account) {
+        return accountService.generateOTPPassword(account);
+    }
+
+    public boolean verifyOTP(final Account account, final String code) {
+        return accountService.verifyOTP(account, code);
+    }
 }

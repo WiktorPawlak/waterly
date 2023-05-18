@@ -92,7 +92,8 @@
       "firstNameLabel": "First name",
       "lastNameLabel": "Last name",
       "phoneNumberLabel": "Phone number",
-      "preferedLanguageLabel": "Prefered language"
+      "preferedLanguageLabel": "Prefered language",
+      "twoFactor": "Two factor"
     },
     "validation": {
       "email": {
@@ -180,7 +181,7 @@
     "accountNotConfirmed": "The account is not confirmed",
     "accountNotWaitingForConfirmation": "The account is already confirmed",
     "entityIntegrityViolated": "Unauthorized modification",
-    "optimisticLock" : "Failed to update data. It appears that they have been modified by another user."
+    "optimisticLock": "Failed to update data. It appears that they have been modified by another user."
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -286,7 +287,8 @@
       "lastSuccessAuth": "Last Success Auth",
       "lastIncorrectAuth": "Last Incorrect Auth",
       "lastIpAddress": "Last IP Address",
-      "incorrectAuthCount": "Incorrect Auth Count"
+      "incorrectAuthCount": "Incorrect Auth Count",
+      "twoFaEnabled": "Two Factor"
     }
   },
   "rolesModal": {
@@ -306,5 +308,16 @@
     "header": "Change user's password",
     "description": "Fill the form below to change user's password",
     "success": "The password has been changed and the user has been informed by e-mail about the possibility of changing the password"
+  },
+  "twoFactor": {
+    "yes": "On",
+    "no": "Off",
+    "header": "Two factor",
+    "description": "To log in enter the two factor code from your email",
+    "button": "enter",
+    "cancel": "cancel"
+  },
+  "loginPage": {
+    "succesfulLogin": "Logged in succesfully"
   }
 }

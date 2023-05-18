@@ -10,6 +10,7 @@ export interface EditAccountDetailsDto {
   phoneNumber: string;
   languageTag: string;
   version: number;
+  twoFAEnabled: boolean;
 }
 
 export interface EditEmailDto {
@@ -35,6 +36,7 @@ export interface AccountDto {
   lastIpAddress: string;
   incorrectAuthCount: string;
   version: number;
+  twoFAEnabled: boolean;
 }
 
 export interface PaginatedList<T> {
@@ -118,7 +120,7 @@ export async function resendEmailEditMail() {
 }
 
 export async function postAcceptEmail(token: string) {
-  return postNoBody(`${ACCOUNTS_PATH}/email/accept?token=` + token);
+  return post(`${ACCOUNTS_PATH}/email/accept?token=` + token);
 }
 
 export async function putVerifyAccount(token: string) {
@@ -126,7 +128,7 @@ export async function putVerifyAccount(token: string) {
 }
 
 export async function postSendResetPasswordEmail(email: string) {
-  return put(`${ACCOUNTS_PATH}/password/request-reset?email=` + email);
+  return post(`${ACCOUNTS_PATH}/password/request-reset?email=` + email);
 }
 
 export async function postResetPassword(body: PasswordResetDto) {

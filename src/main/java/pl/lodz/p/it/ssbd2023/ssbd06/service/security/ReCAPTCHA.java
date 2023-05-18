@@ -22,6 +22,7 @@ public class ReCAPTCHA {
     @Inject
     @Property("recaptcha.site.verify")
     private String recaptchaSiteVerify;
+
     public boolean verifyRecaptcha(final String recaptchaResponse) {
         try {
             String url = recaptchaSiteVerify;
@@ -45,7 +46,7 @@ public class ReCAPTCHA {
 
                 return response.contains("\"success\": true");
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
         return false;

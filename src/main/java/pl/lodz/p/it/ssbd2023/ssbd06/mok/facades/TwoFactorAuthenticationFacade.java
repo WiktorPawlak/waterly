@@ -12,6 +12,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TwoFactorAuthentication;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
@@ -36,10 +37,12 @@ public class TwoFactorAuthenticationFacade extends AbstractFacade<TwoFactorAuthe
     }
 
     @OnlyGuest
-    public TwoFactorAuthentication findByAccountId(final long accountId) {
-        return em.createNamedQuery("TwoFactorAuthentication.findByAccountId", TwoFactorAuthentication.class)
+    public TwoFactorAuthentication findByAccount(final Account account) {
+        return em.createNamedQuery("TwoFactorAuthentication.findByAccount", TwoFactorAuthentication.class)
                 .setFlushMode(FlushModeType.COMMIT)
-                .setParameter("accountId", accountId)
+                .setParameter("account", account)
+                .setFirstResult(0)
+                .setMaxResults(1)
                 .getSingleResult();
     }
 

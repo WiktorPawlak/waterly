@@ -1,5 +1,5 @@
-TRUNCATE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences CASCADE;
-TRUNCATE TABLE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences RESTART IDENTITY;
+TRUNCATE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication CASCADE;
+TRUNCATE TABLE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication RESTART IDENTITY;
 INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on)
 VALUES (nextval('account_details_id_seq'), 0, 'kontomat@gmail.com', 'Mateusz', 'Strzelecki', '123456789', now(), now());
 INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled, otp_secret)

@@ -64,7 +64,7 @@ public class AuthController {
             if (credentials.getTwoFACode() == null) {
                 accountEndpoint.requestForTwoFACode(credentials.getLogin());
                 throw ApplicationBaseException.twoFARequestedException();
-            } else if (!otpProvider.verifyOTP(account, credentials.getTwoFACode())) {
+            } else if (!accountEndpoint.verifyOTP(account, credentials.getTwoFACode())) {
                 accountEndpoint.saveFailedAuthAttempt(LocalDateTime.now(), credentials.getLogin());
                 throw ApplicationBaseException.authenticationException();
             }

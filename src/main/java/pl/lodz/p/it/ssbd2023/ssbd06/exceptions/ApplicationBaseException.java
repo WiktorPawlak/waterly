@@ -13,6 +13,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotEx
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.InvalidOTPException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NoMatchingEmailException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotActiveAccountException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotConfirmedAccountException;
@@ -62,6 +63,7 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static final String ERROR_IF_RECAPTCHA_INVALID = "ERROR.IF_RECAPTCHA_INVALID";
     public static final String ERROR_IF_MATCH_HEADER_MISSING = "ERROR.IF_MATCH_HEADER_MISSING";
+    public static final String ERROR_INVALID_OTP = "ERROR.INVALID_OTP";
 
     protected static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
 
@@ -189,5 +191,9 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static TwoFARequestedException twoFARequestedException() {
         return new TwoFARequestedException();
+    }
+
+    public static InvalidOTPException invalidOTPException() {
+        return new InvalidOTPException();
     }
 }

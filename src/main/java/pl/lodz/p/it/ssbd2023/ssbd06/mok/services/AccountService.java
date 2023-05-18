@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import io.vavr.Tuple2;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
@@ -40,6 +41,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.AccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.ListSearchPreferencesFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.RoleFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.facades.TwoFactorAuthenticationFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers.AccountActivationTimer;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers.AccountVerificationTimer;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
@@ -49,6 +51,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ListSearchPreferences;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TwoFactorAuthentication;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
@@ -91,6 +94,8 @@ public class AccountService {
     private PasswordHash hashProvider;
     @Inject
     private OTPProvider otpProvider;
+    @Inject
+    private TwoFactorAuthenticationFacade twoFactorAuthenticationFacade;
 
     @Inject
     @Property("auth.attempts")
@@ -286,7 +291,7 @@ public class AccountService {
 
     @PermitAll
     public void send2FAToken(final Account account) {
-        String twoFAToken = otpProvider.generateOTPPassword(account);
+        String twoFAToken = generateOTPPassword(account);
         if (!account.isActive()) {
             throw ApplicationBaseException.notActiveAccountException();
         }
@@ -510,4 +515,16 @@ public class AccountService {
     private boolean isModifyingAnotherUser(final Account account) {
         return !account.getLogin().equals(authenticatedAccount.getLogin());
     }
+
+    public String generateOTPPassword(final Account account) {
+        Tuple2<TwoFactorAuthentication, String> otp = otpProvider.generateOTPPassword(account);
+        twoFactorAuthenticationFacade.create(otp._1);
+        return otp._2;
+    }
+
+    public boolean verifyOTP(final Account account, final String code) {
+        TwoFactorAuthentication twoFA = twoFactorAuthenticationFacade.findByAccount(account);
+        return otpProvider.verifyOTP(code, twoFA);
+    }
+
 }

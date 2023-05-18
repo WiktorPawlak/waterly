@@ -13,6 +13,7 @@ interface User {
 export interface LoginRequestBody {
   login: string;
   password: string;
+  twoFACode?: string
 }
 
 export interface LoginResponse<T> extends ApiResponse<T> {

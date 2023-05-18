@@ -208,6 +208,12 @@ const AccountDetailsPage = () => {
               label={t("accountDetailsPage.detailsFields.incorrectAuthCount")}
               variant="standard"
               value={account.incorrectAuthCount}
+              sx={{ mr: { xs: 0, md: 3 } }}
+            />
+            <StyledTextField
+              label={t("accountDetailsPage.detailsFields.twoFaEnabled")}
+              variant="standard"
+              value={account.twoFAEnabled}
             />
           </Box>
           <Toast
