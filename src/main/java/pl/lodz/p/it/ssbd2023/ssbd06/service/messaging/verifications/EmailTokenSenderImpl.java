@@ -6,6 +6,8 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.CHANGE_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.CHANGE_PASSWORD_MAIL_TOPIC;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.RESET_PASSWORD_MAIL_BODY;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.RESET_PASSWORD_MAIL_TOPIC;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.TWO_FA_VERIFICATION_MAIL_BODY;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.TWO_FA_VERIFICATION_MAIL_TOPIC;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.VERIFICATION_MAIL_BODY;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.VERIFICATION_MAIL_TOPIC;
 
@@ -86,6 +88,18 @@ public class EmailTokenSenderImpl implements TokenSender {
                 i18n.getMessage(ACCOUNT_DETAILS_ACCEPT_MAIL_BODY, locale) + " " + account.getAccountDetails()
                         .getEmail() + " ==> " + account.getWaitingEmail() + "\n"
                         + emailConfig.getAccountDetailsAcceptUrl() + "?token=" + token.getToken()
+        );
+    }
+
+    @Override
+    public void send2FAToken(final String token, final Account account) {
+        Locale locale = account.getLocale();
+        String email = account.getAccountDetails().getEmail();
+
+        emailSenderProvider.sendEmail(
+                email,
+                i18n.getMessage(TWO_FA_VERIFICATION_MAIL_TOPIC, locale),
+                i18n.getMessage(TWO_FA_VERIFICATION_MAIL_BODY, locale) + ": " + token
         );
     }
 }

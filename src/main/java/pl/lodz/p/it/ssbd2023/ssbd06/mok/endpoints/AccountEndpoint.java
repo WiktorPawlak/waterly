@@ -196,7 +196,8 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @PermitAll
     public void requestForTwoFACode(final String login) {
-
+        Account account = accountService.findByLogin(login);
+        accountService.send2FAToken(account);
     }
 
     @PermitAll

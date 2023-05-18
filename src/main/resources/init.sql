@@ -16,6 +16,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE role TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE verification_token TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE auth_info TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE list_search_preferences TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE  two_factor_authenthication TO ssbd06mok;
 
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_details_id_seq TO ssbd06mok;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_id_seq TO ssbd06mok;
@@ -23,6 +24,8 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE auth_info_id_seq TO ssbd06mok;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE role_id_seq TO ssbd06mok;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE verification_token_id_seq TO ssbd06mok;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE list_search_preferences_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE two_factor_authenthication_seq TO ssbd06mok;
+
 
 
 --ssbd06mol

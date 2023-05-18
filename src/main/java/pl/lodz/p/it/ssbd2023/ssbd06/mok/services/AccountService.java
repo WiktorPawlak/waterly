@@ -56,6 +56,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.verifications.TokenSender;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.otp.OTPProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 @Monitored
@@ -88,6 +89,8 @@ public class AccountService {
     @Inject
     @BCryptHash
     private PasswordHash hashProvider;
+    @Inject
+    private OTPProvider otpProvider;
 
     @Inject
     @Property("auth.attempts")
@@ -279,6 +282,15 @@ public class AccountService {
             throw ApplicationBaseException.notActiveAccountException();
         }
         tokenSender.sendResetToken(token);
+    }
+
+    @PermitAll
+    public void send2FAToken(final Account account) {
+        String twoFAToken = otpProvider.generateOTPPassword(account);
+        if (!account.isActive()) {
+            throw ApplicationBaseException.notActiveAccountException();
+        }
+        tokenSender.send2FAToken(twoFAToken, account);
     }
 
     @RolesAllowed({ADMINISTRATOR})

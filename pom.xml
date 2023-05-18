@@ -69,6 +69,7 @@
         <jose-jwt.version>9.31</jose-jwt.version>
         <google-api-client.version>1.32.1</google-api-client.version>
         <google-http-client-jackson2.version>1.40.0</google-http-client-jackson2.version>
+        <otp-generator.version>2.0.1</otp-generator.version>
     </properties>
 
     <dependencies>
@@ -212,6 +213,13 @@
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client-jackson2</artifactId>
             <version>${google-http-client-jackson2.version}</version>
+        </dependency>
+
+        <!--2FA-->
+        <dependency>
+            <groupId>com.github.bastiaanjansen</groupId>
+            <artifactId>otp-java</artifactId>
+            <version>${otp-generator.version}</version>
         </dependency>
     </dependencies>
 

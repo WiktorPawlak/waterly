@@ -37,6 +37,8 @@ public class I18nProviderImpl implements I18nProvider {
     public static final String ACCOUNT_DELETED_NOTIFICATION_MAIL_BODY = "mail.notification.account-deleted.body";
     public static final String ACCOUNT_VERIFIED_NOTIFICATION_MAIL_TOPIC = "mail.notification.account-verified.topic";
     public static final String ACCOUNT_VERIFIED_NOTIFICATION_MAIL_BODY = "mail.notification.account-verified.body";
+    public static final String TWO_FA_VERIFICATION_MAIL_TOPIC = "mail.two.fa.verification.topic";
+    public static final String TWO_FA_VERIFICATION_MAIL_BODY = "mail.two.fa.verification.body";
 
     public String getMessage(final String key, final Locale locale) {
         return getResourceBundle(locale).getString(key);
