@@ -11,6 +11,7 @@ import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
+import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
@@ -1306,6 +1307,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Nested
     class AcceptOwnerAccount {
         @Test
+        @SneakyThrows
         void shouldAcceptOwnerAccountSuccessfully() {
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -1322,6 +1324,10 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .log().all()
                     .statusCode(OK.getStatusCode())
                     .body("accountState", equalTo("CONFIRMED"));
+
+            String accountState =
+                    databaseConnector.executeQuery("SELECT account_state FROM account WHERE id = '" + NOT_CONFIRMED_OWNER_ID + "'").getString("account_state");
+            assertEquals("CONFIRMED", accountState);
         }
 
         @Test
@@ -1333,6 +1339,73 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(CONFLICT.getStatusCode())
                     .body("message", equalTo("ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION"));
+        }
+
+        @Test
+        void shouldFailAcceptOwnerAccountWhenUserIsNotAuthorized() {
+            given()
+                    .header(AUTHORIZATION, OWNER_TOKEN)
+                    .when()
+                    .post(ACCOUNT_PATH + "/" + OWNER_ID + "/accept")
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode())
+                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+        }
+
+        @Test
+        void shouldFailAcceptWhenOwnerAccountNotExist() {
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .post(ACCOUNT_PATH + "/" + NONE_EXISTENT_ACCOUNT_ID + "/accept")
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode())
+                    .body("message", equalTo("ERROR.RESOURCE_NOT_FOUND"));
+        }
+
+        @Test
+        void shouldFailAcceptOwnerAccountWhenInvalidAccountIdIsPassed() {
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .post(ACCOUNT_PATH + "/qwerty/accept")
+                    .then()
+                    .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                    .body("message", equalTo("ERROR.UNKNOWN"));
+        }
+
+        @Test
+        void shouldAcceptOnlyOnceWithConcurrentRequests() throws BrokenBarrierException, InterruptedException {
+            int threadNumber = 10;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            AtomicInteger numberFinished = new AtomicInteger();
+            List<Integer> responseCodes = new ArrayList<>();
+
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Response response = given()
+                            .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                            .when()
+                            .post(ACCOUNT_PATH + "/" + NOT_CONFIRMED_OWNER_ID + "/accept")
+                            .then()
+                            .extract().response();
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    numberFinished.getAndIncrement();
+                }));
+            }
+
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (numberFinished.get() != threadNumber) {
+            }
+            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
         }
     }
 
@@ -1356,7 +1429,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
         }
 
         @Test
-        void shouldForbidNotFacilityManagerUsersRejectOwnerAccount() {
+        void shouldFailRejectOwnerAccountWhenUserIsNotAuthorized() {
             given()
                     .header(AUTHORIZATION, OWNER_TOKEN)
                     .when()
@@ -1378,7 +1451,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
         }
 
         @Test
-        void shouldFailRejectOwnerAccountWhenAccountDoesNotExist() {
+        void shouldFailRejectOwnerAccountWhenAccountNotExist() {
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .when()
@@ -1386,6 +1459,51 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(NOT_FOUND.getStatusCode())
                     .body("message", equalTo("ERROR.RESOURCE_NOT_FOUND"));
+        }
+
+        @Test
+        void shouldFailRejectOwnerAccountWhenInvalidAccountIdIsPassed() {
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .delete(ACCOUNT_PATH + "/qwerty/reject")
+                    .then()
+                    .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                    .body("message", equalTo("ERROR.UNKNOWN"));
+        }
+
+        @Test
+        void shouldAcceptOnlyOnceWithConcurrentRequests() throws BrokenBarrierException, InterruptedException {
+            int threadNumber = 10;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            AtomicInteger numberFinished = new AtomicInteger();
+            List<Integer> responseCodes = new ArrayList<>();
+
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Response response = given()
+                            .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                            .when()
+                            .delete(ACCOUNT_PATH + "/" + NOT_CONFIRMED_OWNER_ID + "/reject")
+                            .then()
+                            .extract().response();
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    numberFinished.getAndIncrement();
+                }));
+            }
+
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (numberFinished.get() != threadNumber) {
+            }
+            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
         }
     }
 
