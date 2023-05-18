@@ -59,6 +59,8 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_JWS_PROCESSING = "ERROR.JWS_PROCESSING";
     public static final String ERROR_NO_ETAG_PAYLOAD = "ERROR.NO_ETAG_PAYLOAD";
     public static final String ERROR_ENTITY_INTEGRITY_VIOLATED = "ERROR.ENTITY_INTEGRITY_VIOLATED";
+
+    public static final String ERROR_IF_RECAPTCHA_INVALID = "ERROR.IF_RECAPTCHA_INVALID";
     public static final String ERROR_IF_MATCH_HEADER_MISSING = "ERROR.IF_MATCH_HEADER_MISSING";
 
     protected static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
@@ -111,6 +113,10 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static OperationUnsupportedException operationUnsupportedException() {
         return new OperationUnsupportedException();
+    }
+
+    public static InvalidRecaptchaException invalidRecaptchaException() {
+        return new InvalidRecaptchaException();
     }
 
     public static TokenExceededHalfTimeException tokenExceededHalfTimeException() {

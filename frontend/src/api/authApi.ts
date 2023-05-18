@@ -26,4 +26,5 @@ export async function postLogin<T>(
   return post("/auth/login", body);
 }
 
-export const registerApi = (user: User) => post(`/accounts/register`, user);
+export const registerApi = (user: User, recaptchaResponse: string | null) =>
+  post(`/accounts/register?recaptchaResponse=${recaptchaResponse}`, user);

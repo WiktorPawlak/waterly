@@ -17,6 +17,9 @@ import {
   accountDetailsSchema,
   AccountDetailsSchemaType,
 } from "../../../../../validation/validationSchemas";
+import ReCAPTCHA from "react-google-recaptcha";
+import React from "react";
+import { siteKey } from "../../../../../config";
 
 export const RegisterFormSection = () => {
   const navigation = useNavigate();
@@ -68,11 +71,20 @@ export const RegisterFormSection = () => {
 
   const { registerUser } = useUser();
 
+  const recaptchaRef = React.createRef<ReCAPTCHA>();
+
   const handleFormSubmit = async (formData: AccountDetailsSchemaType) => {
+    const recaptchaResponse = recaptchaRef.current?.getValue();
     const registerUserRequest = { ...formData, languageTag };
 
-    await registerUser(registerUserRequest);
+    await registerUser(registerUserRequest, recaptchaResponse || null);
   };
+
+  const [isVerified, setIsVerified] = React.useState(false);
+
+  function onChange(value: String | null) {
+    setIsVerified(true);
+  }
 
   return (
     <Box
@@ -262,7 +274,9 @@ export const RegisterFormSection = () => {
             }}
           />
         </Box>
+        <ReCAPTCHA ref={recaptchaRef} sitekey={siteKey} onChange={onChange} />
         <Button
+          disabled={!isVerified}
           variant="contained"
           type="submit"
           sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}

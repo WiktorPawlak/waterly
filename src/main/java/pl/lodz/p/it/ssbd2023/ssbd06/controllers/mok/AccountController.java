@@ -46,6 +46,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.ReCAPTCHA;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
@@ -61,6 +62,9 @@ public class AccountController extends RepeatableTransactionController {
 
     @Inject
     private PayloadSigner payloadSigner;
+
+    @Inject
+    private ReCAPTCHA recaptchaVerifier;
 
     @RolesAllowed(ADMINISTRATOR)
     @PUT
@@ -150,11 +154,11 @@ public class AccountController extends RepeatableTransactionController {
     @POST
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response registerAccount(@NotNull @Valid final CreateAccountDto account) {
-        CreatedAccountDto createdAccountDto = retry(() -> accountEndpoint.registerUser(account), accountEndpoint);
-        log.info(() -> "Registering account: " + account);
-        return Response.status(CREATED).entity(createdAccountDto).build();
+    public Response registerAccount(@NotNull @Valid final CreateAccountDto account, final @NotNull @Valid @QueryParam("recaptchaResponse") String recaptchaResponse) {
+            CreatedAccountDto createdAccountDto = accountEndpoint.registerUser(account, recaptchaResponse);
+            return Response.status(Response.Status.CREATED).entity(createdAccountDto).build();
     }
+
 
     @RolesAllowed(ADMINISTRATOR)
     @POST

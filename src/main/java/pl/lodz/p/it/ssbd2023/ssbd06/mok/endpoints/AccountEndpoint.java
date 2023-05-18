@@ -42,6 +42,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.ReCAPTCHA;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
 @Monitored
@@ -58,6 +59,8 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     @BCryptHash
     private PasswordHash hashProvider;
 
+    @Inject
+    private ReCAPTCHA recaptchaVerifier;
     @Inject
     @Property("default.list.page.size")
     private int defaultListPageSize;
@@ -82,11 +85,16 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @OnlyGuest
-    public CreatedAccountDto registerUser(final CreateAccountDto account) {
-        Long accountId = accountService.registerUser(account);
-        return new CreatedAccountDto(accountId);
-    }
+    public CreatedAccountDto registerUser(final CreateAccountDto account, final String recaptchaResponse) {
+        boolean isRecaptchaValid = recaptchaVerifier.verifyRecaptcha(recaptchaResponse);
 
+        if (isRecaptchaValid) {
+            Long accountId = accountService.registerUser(account);
+            return new CreatedAccountDto(accountId);
+        } else {
+           throw ApplicationBaseException.invalidRecaptchaException();
+        }
+    }
     @RolesAllowed(ADMINISTRATOR)
     public void createAccount(final CreateAccountDto account) {
         accountService.createAccount(account);

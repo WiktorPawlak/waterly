@@ -62,9 +62,12 @@ export const useUser = () => {
     navigate("/");
   };
 
-  const registerUser = async (userData: NewUser) => {
+  const registerUser = async (
+    userData: NewUser,
+    recaptchaResponse: string | null
+  ) => {
     try {
-      const response = await registerApi(userData);
+      const response = await registerApi(userData, recaptchaResponse);
 
       if (response.status === 201) {
         navigate("/wait-for-verify", { state: response.data });
