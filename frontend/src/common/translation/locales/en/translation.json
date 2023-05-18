@@ -179,7 +179,8 @@
     "accountNotActive": "The account is not active",
     "accountNotConfirmed": "The account is not confirmed",
     "accountNotWaitingForConfirmation": "The account is already confirmed",
-    "apiError.entityIntegrityViolated": "Unauthorized modification"
+    "entityIntegrityViolated": "Unauthorized modification",
+    "optimisticLock" : "Failed to update data. It appears that they have been modified by another user."
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",

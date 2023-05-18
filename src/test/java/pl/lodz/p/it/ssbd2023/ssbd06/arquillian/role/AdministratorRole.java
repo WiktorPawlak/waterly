@@ -36,8 +36,8 @@ public class AdministratorRole {
         accountService.updateFailedAuthInfo(authenticationDate, login);
     }
 
-    public void updateAccountDetails(final long id, final AccountDetails accountDetails, String languageTag) {
-        accountService.editAccountDetails(id, accountDetails, languageTag);
+    public void updateAccountDetails(final Account account, final AccountDetails accountDetails, String languageTag) {
+        accountService.editAccountDetails(account, accountDetails, languageTag);
     }
 
     public String getVerificationToken() {
@@ -60,8 +60,8 @@ public class AdministratorRole {
         accountService.changePasswordByAdmin(password, account);
     }
 
-    public void updateOwnAccountDetails(String login, AccountDetails accountDetails, String languageTag) {
-        accountService.editOwnAccountDetails(login, accountDetails, languageTag);
+    public void updateOwnAccountDetails(Account account, AccountDetails accountDetails, String languageTag) {
+        accountService.editOwnAccountDetails(account, accountDetails, languageTag);
     }
 
     public void editAccountRoles(long id, EditAccountRolesDto editAccountRolesDto) {

@@ -103,4 +103,8 @@ public class Account extends AbstractEntity {
     public boolean inRole(final String role) {
         return roles.stream().anyMatch(it -> Objects.equals(it.getPermissionLevel(), role) && it.isActive());
     }
+
+    public long calculateVersion() {
+        return this.getVersion() + this.getAccountDetails().getVersion();
+    }
 }

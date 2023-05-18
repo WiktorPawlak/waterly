@@ -105,6 +105,11 @@ public class AccountService {
     }
 
     @PermitAll
+    public Account findById(final Long id) {
+        return accountFacade.findById(id);
+    }
+
+    @PermitAll
     public void changeAccountActiveStatus(final long id, final boolean active) {
         Account account = accountFacade.findById(id);
         account.setActive(active);
@@ -147,8 +152,7 @@ public class AccountService {
     }
 
     @RolesAllowed({ADMINISTRATOR})
-    public void editAccountDetails(final long id, final AccountDetails accountDetails, final String languageTag) {
-        Account account = accountFacade.findById(id);
+    public void editAccountDetails(final Account account, final AccountDetails accountDetails, final String languageTag) {
         updateAccountDetails(accountDetails, account, languageTag);
     }
 
@@ -165,8 +169,7 @@ public class AccountService {
     }
 
     @PermitAll
-    public void editOwnAccountDetails(final String login, final AccountDetails accountDetails, final String languageTag) {
-        Account account = findByLogin(login);
+    public void editOwnAccountDetails(final Account account, final AccountDetails accountDetails, final String languageTag) {
         updateAccountDetails(accountDetails, account, languageTag);
     }
 

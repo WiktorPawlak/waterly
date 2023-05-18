@@ -69,7 +69,11 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed(ADMINISTRATOR)
     public void editAccountDetails(final long id, final EditAccountDetailsDto dto) {
-        accountService.editAccountDetails(id, dto.toDomain(), dto.getLanguageTag());
+        Account account = accountService.findById(id);
+        if (account.calculateVersion() != dto.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
+        accountService.editAccountDetails(account, dto.toDomain(), dto.getLanguageTag());
     }
 
     @PermitAll
@@ -100,7 +104,11 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @PermitAll
     public void editOwnAccountDetails(final EditAccountDetailsDto dto) {
-        accountService.editOwnAccountDetails(authenticatedAccount.getLogin(), dto.toDomain(), dto.getLanguageTag());
+        Account account = accountService.findByLogin(authenticatedAccount.getLogin());
+        if (account.calculateVersion() != dto.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
+        accountService.editOwnAccountDetails(account, dto.toDomain(), dto.getLanguageTag());
     }
 
     @PermitAll

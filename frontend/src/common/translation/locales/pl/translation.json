@@ -181,7 +181,8 @@
     "accountNotActive": "Konto jest nieaktywne",
     "accountNotConfirmed": "Konto nie jest potwierdzone",
     "accountNotWaitingForConfirmation": "Konto jest już potwierdzone",
-    "apiError.entityIntegrityViolated": "Niedozwolona modyfikacja"
+    "entityIntegrityViolated": "Niedozwolona modyfikacja",
+    "optimisticLock": "Nie udało się zaktualizować danych. Wygląda na to, że zostały one zmienione przez innego użytkownika."
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",

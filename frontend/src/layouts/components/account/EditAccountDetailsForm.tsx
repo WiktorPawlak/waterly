@@ -91,6 +91,7 @@ export const EditAccountDetailsForm = ({
                 <Button
                     variant="contained"
                     sx={{
+                        width:"100%",
                         textTransform: "none",
                         fontWeight: "700",
                         mb: {xs: 5, md: 2},

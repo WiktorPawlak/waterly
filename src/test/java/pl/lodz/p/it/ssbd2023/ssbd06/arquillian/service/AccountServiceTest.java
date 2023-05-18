@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.PASSWORD_RESET;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
 
 import java.time.LocalDateTime;
@@ -12,10 +11,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.security.enterprise.identitystore.PasswordHash;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.identitystore.PasswordHash;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.arquillian.config.BaseArquillianTest;
 import pl.lodz.p.it.ssbd2023.ssbd06.arquillian.role.AdministratorRole;
@@ -186,7 +185,7 @@ class AccountServiceTest extends BaseArquillianTest {
 
         //when
         userTransaction.begin();
-        administratorRole.updateAccountDetails(createdAccount.getId(), accountDetails, createdAccount.getLocale().toLanguageTag());
+        administratorRole.updateAccountDetails(createdAccount, accountDetails, createdAccount.getLocale().toLanguageTag());
         userTransaction.commit();
 
         userTransaction.begin();
@@ -213,7 +212,7 @@ class AccountServiceTest extends BaseArquillianTest {
 
         //when
         userTransaction.begin();
-        administratorRole.updateOwnAccountDetails(createdAccount.getLogin(), accountDetails, createdAccount.getLocale().toLanguageTag());
+        administratorRole.updateOwnAccountDetails(createdAccount, accountDetails, createdAccount.getLocale().toLanguageTag());
         userTransaction.commit();
 
         userTransaction.begin();
