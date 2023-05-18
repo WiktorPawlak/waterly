@@ -154,7 +154,7 @@ public class AccountService {
 
     @RolesAllowed({ADMINISTRATOR})
     public void editAccountDetails(final Account account, final AccountDetails accountDetails, final String languageTag) {
-        updateAccountDetails(accountDetails, account, languageTag);
+        updateAccountDetails(accountDetails, account, languageTag, account.isTwoFAEnabled());
     }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
@@ -170,8 +170,8 @@ public class AccountService {
     }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
-    public void editOwnAccountDetails(final Account account, final AccountDetails accountDetails, final String languageTag) {
-        updateAccountDetails(accountDetails, account, languageTag);
+    public void editOwnAccountDetails(final Account account, final AccountDetails accountDetails, final String languageTag, final boolean twoFAEnabled) {
+        updateAccountDetails(accountDetails, account, languageTag, twoFAEnabled);
     }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
@@ -387,6 +387,8 @@ public class AccountService {
             role.setAccount(accountEntity);
         });
         accountEntity.setRoles(roles);
+        accountEntity.setTwoFAEnabled(account.isTwoFAEnabled());
+        accountEntity.setOtpSecret(UUID.randomUUID().toString());
         accountEntity.setLocale(Locale.forLanguageTag(account.getLanguageTag()));
 
         return accountEntity;
@@ -447,8 +449,9 @@ public class AccountService {
         });
     }
 
-    private void updateAccountDetails(final AccountDetails newAccountDetails, final Account account, final String languageTag) {
+    private void updateAccountDetails(final AccountDetails newAccountDetails, final Account account, final String languageTag, final boolean twoFAEnabled) {
         account.setLocale(Locale.forLanguageTag(languageTag));
+        account.setTwoFAEnabled(twoFAEnabled);
         AccountDetails accountDetails = account.getAccountDetails();
 
         accountDetails.setFirstName(newAccountDetails.getFirstName());

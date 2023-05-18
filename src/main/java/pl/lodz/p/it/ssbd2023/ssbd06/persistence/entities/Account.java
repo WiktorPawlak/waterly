@@ -90,6 +90,17 @@ public class Account extends AbstractEntity {
     @Column(unique = true)
     private String waitingEmail;
 
+    @NotNull
+    @Column(name = "two_factor_enabled", nullable = false)
+    @Setter
+    private boolean twoFAEnabled;
+
+    @NotNull
+    @Column(name = "otp_secret", nullable = false)
+    @ToString.Exclude
+    @Setter
+    private String otpSecret;
+
     public Account(final String login, final String password, final AccountDetails accountDetails,
                    final AuthInfo authInfo) {
         this.login = login;

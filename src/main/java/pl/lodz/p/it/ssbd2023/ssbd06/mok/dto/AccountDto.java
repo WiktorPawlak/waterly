@@ -54,6 +54,7 @@ public class AccountDto implements Signable {
     private String lastIpAddress;
     private int incorrectAuthCount;
     private String accountState;
+    private boolean twoFAEnabled;
 
     public AccountDto(final Account account) {
         this.id = account.getId();
@@ -91,6 +92,7 @@ public class AccountDto implements Signable {
                 : "---";
         this.incorrectAuthCount = authInfo.getIncorrectAuthCount();
         account.getRoles().stream().filter(Role::isActive).forEach(role -> roles.add(role.getPermissionLevel()));
+        this.twoFAEnabled = account.isTwoFAEnabled();
     }
 
     @Override

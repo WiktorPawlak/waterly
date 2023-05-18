@@ -20,10 +20,12 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.AccountIdentityStore;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.JwtProvider;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.otp.OTPProvider;
 
 
 @Path(value = "/auth")
@@ -42,15 +44,30 @@ public class AuthController {
     private HttpServletRequest httpServletRequest;
     @Inject
     private AccountEndpoint accountEndpoint;
+    @Inject
+    private OTPProvider otpProvider;
 
     @OnlyGuest
     @POST
     @Path("/login")
     public Response login(@NotNull @Valid final Credentials credentials) {
         CredentialValidationResult validationResult = accountIdentityStore.validate(credentials);
+
         if (validationResult.getStatus() != VALID) {
             accountEndpoint.saveFailedAuthAttempt(LocalDateTime.now(), credentials.getLogin());
             throw ApplicationBaseException.authenticationException();
+        }
+
+        Account account = accountEndpoint.findByLogin(credentials.getLogin());
+
+        if (account.isTwoFAEnabled()) {
+            if (credentials.getTwoFACode() == null) {
+                accountEndpoint.requestForTwoFACode(credentials.getLogin());
+                throw ApplicationBaseException.twoFARequestedException();
+            } else if (!otpProvider.verifyOTP(credentials.getTwoFACode())) {
+                accountEndpoint.saveFailedAuthAttempt(LocalDateTime.now(), credentials.getLogin());
+                throw ApplicationBaseException.authenticationException();
+            }
         }
 
         accountEndpoint.saveSuccessfulAuthAttempt(LocalDateTime.now(), credentials.getLogin(), httpServletRequest.getRemoteAddr());

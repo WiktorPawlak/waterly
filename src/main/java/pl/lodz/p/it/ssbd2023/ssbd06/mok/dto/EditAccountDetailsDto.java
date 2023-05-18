@@ -29,7 +29,19 @@ public class EditAccountDetailsDto implements Signable {
     @LanguageTag
     private String languageTag;
 
+    private boolean twoFAEnabled;
+
     private long version;
+
+    public EditAccountDetailsDto(final long id, final String firstName, final String lastName, final String phoneNumber, final String languageTag,
+                                 final long version) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.languageTag = languageTag;
+        this.version = version;
+    }
 
     public AccountDetails toDomain() {
         return AccountDetails.builder()

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
@@ -49,6 +50,7 @@ class AccountFacadeTest extends BaseArquillianTest {
                 accountDetails, authInfo);
         authInfo.setAccount(accountEntity);
         accountEntity.setAuthInfo(authInfo);
+        accountEntity.setOtpSecret(UUID.randomUUID().toString());
         Set<Role> roles = Set.of(Role.valueOf("ADMINISTRATOR"));
         roles.forEach(role -> {
             role.setActive(false);

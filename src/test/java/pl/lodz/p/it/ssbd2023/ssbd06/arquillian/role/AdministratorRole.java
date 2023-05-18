@@ -65,7 +65,7 @@ public class AdministratorRole {
     }
 
     public void updateOwnAccountDetails(Account account, AccountDetails accountDetails, String languageTag) {
-        accountService.editOwnAccountDetails(account, accountDetails, languageTag);
+        accountService.editOwnAccountDetails(account, accountDetails, languageTag, account.isTwoFAEnabled());
     }
 
     public void editAccountRoles(long id, EditAccountRolesDto editAccountRolesDto) {

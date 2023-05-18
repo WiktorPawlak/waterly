@@ -38,4 +38,6 @@ public class CreateAccountDto {
     @LanguageTag
     private String languageTag;
 
+    private boolean twoFAEnabled;
+
 }

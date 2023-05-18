@@ -108,7 +108,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         if (account.calculateVersion() != dto.getVersion()) {
             throw ApplicationBaseException.optimisticLockException();
         }
-        accountService.editOwnAccountDetails(account, dto.toDomain(), dto.getLanguageTag());
+        accountService.editOwnAccountDetails(account, dto.toDomain(), dto.getLanguageTag(), dto.isTwoFAEnabled());
     }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
@@ -184,6 +184,16 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
     public AccountDto retrieveOwnAccountDetails() {
         Account account = accountService.findByLogin(authenticatedAccount.getLogin());
         return new AccountDto(account);
+    }
+
+    @PermitAll
+    public void requestForTwoFACode(final String login) {
+
+    }
+
+    @PermitAll
+    public Account findByLogin(final String login) {
+        return accountService.findByLogin(login);
     }
 
     @RolesAllowed(ADMINISTRATOR)
