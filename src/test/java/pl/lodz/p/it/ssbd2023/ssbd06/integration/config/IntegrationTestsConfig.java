@@ -9,12 +9,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Scanner;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Named;
-import org.junit.jupiter.params.provider.Arguments;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
@@ -40,9 +37,9 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final long FACILITY_MANAGER_ID = 3;
     protected static final String IF_MATCH_HEADER_NAME = "If-Match";
 
-    protected String ADMINISTRATOR_TOKEN;
-    protected String OWNER_TOKEN;
-    protected String FACILITY_MANAGER_TOKEN;
+    protected static String ADMINISTRATOR_TOKEN;
+    protected static String OWNER_TOKEN;
+    protected static String FACILITY_MANAGER_TOKEN;
 
     protected static String POSTGRES_PORT;
 
@@ -100,13 +97,6 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
         String eTag = given().header(AUTHORIZATION, ADMINISTRATOR_TOKEN).get(ACCOUNT_PATH + "/" + id).getHeader("ETag");
         AccountDto dto = given().header(AUTHORIZATION, ADMINISTRATOR_TOKEN).get(ACCOUNT_PATH + "/" + id).as(AccountDto.class);
         return Tuple.of(dto, eTag);
-    }
-
-    protected Stream<Arguments> provideTokensForParameterizedTests() {
-        return Stream.of(
-                Arguments.of(Named.of("Owner permission level", OWNER_TOKEN)),
-                Arguments.of(Named.of("Facility Manager permission level", FACILITY_MANAGER_TOKEN))
-        );
     }
 
     @BeforeEach
