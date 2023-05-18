@@ -15,8 +15,15 @@ import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
+import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.GRANT;
+import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Named;
@@ -27,6 +34,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.restassured.response.Response;
 import io.vavr.Tuple2;
 import jakarta.ws.rs.core.MediaType;
 import lombok.SneakyThrows;
@@ -35,6 +43,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.ListAccountDto;
@@ -215,11 +224,338 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Nested
     class GrantRole {
 
+        @Test
+        void grantRoleGreenPathTest() {
+            //given
+            AccountDto ownerAccount = getOwnerAccount();
+            assertEquals(1, ownerAccount.getRoles().size());
+            assertEquals("OWNER", ownerAccount.getRoles().get(0));
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("ADMINISTRATOR"));
+            editAccountRolesDto.setOperation(GRANT);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + ownerAccount.getId() + "/roles")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            ownerAccount = getOwnerAccount();
+            assertEquals(2, ownerAccount.getRoles().size());
+            assertTrue(ownerAccount.getRoles().contains("OWNER"));
+            assertTrue(ownerAccount.getRoles().contains("ADMINISTRATOR"));
+        }
+
+        @ParameterizedTest
+        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mok.AccountControllerTest#provideTokensForParameterizedTests")
+        void shouldFailIfNonAdministratorTriesToGrantRoles(String token) {
+            AccountDto ownerAccount = getOwnerAccount();
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("ADMINISTRATOR"));
+            editAccountRolesDto.setOperation(GRANT);
+
+            given()
+                    .header(AUTHORIZATION, token)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + ownerAccount.getId() + "/roles")
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @Test
+        void shouldFailGrantRolesIfAccountDontExists() {
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("ADMINISTRATOR"));
+            editAccountRolesDto.setOperation(GRANT);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/12/roles")
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode());
+        }
+
+        @Test
+        void shouldFailGrantRolesIfRequestBodyIsSyntaticalyIncorrect() {
+            EditAccountRolesDto bodyWithWrongPermissions = new EditAccountRolesDto();
+            bodyWithWrongPermissions.setOperation(GRANT);
+            bodyWithWrongPermissions.setRoles(Set.of("SHOULD_FAIL"));
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(bodyWithWrongPermissions)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
+        }
+
+        @Test
+        void shouldFailGrantRolesIfRoleIsAlreadyAdded() {
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("OWNER"));
+            editAccountRolesDto.setOperation(GRANT);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.CANNOT_MODIFY_PERMISSIONS"));
+        }
+
+        @Test
+        void shouldFailWhenTryingToAddSamePermissionTwice() {
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("ADMINISTRATOR"));
+            editAccountRolesDto.setOperation(GRANT);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.CANNOT_MODIFY_PERMISSIONS"));
+        }
+
+        @Test
+        void shouldFailWhenTryingToModifyOwnPermissions() {
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("ADMINISTRATOR"));
+            editAccountRolesDto.setOperation(GRANT);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getAdministratorAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @Test
+        void shouldCreateOnlyOneRentWithConcurrentRequests() throws BrokenBarrierException, InterruptedException {
+            int threadNumber = 10;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            AtomicInteger numberFinished = new AtomicInteger();
+            List<Integer> responseCodes = new ArrayList<>();
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("ADMINISTRATOR"));
+            editAccountRolesDto.setOperation(GRANT);
+
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Response response = given()
+                            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                            .body(editAccountRolesDto)
+                            .when()
+                            .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                            .then()
+                            .extract().response();
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    numberFinished.getAndIncrement();
+                }));
+            }
+
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (numberFinished.get() != threadNumber) {
+
+            }
+
+            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
+        }
+
     }
 
     @Nested
     class RevokeRole {
+        @Test
+        void revokeRoleGreenPathTest() {
+            //given
+            AccountDto ownerAccount = getOwnerAccount();
+            assertEquals(1, ownerAccount.getRoles().size());
+            assertEquals("OWNER", ownerAccount.getRoles().get(0));
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("OWNER"));
+            editAccountRolesDto.setOperation(REVOKE);
 
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + ownerAccount.getId() + "/roles")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            ownerAccount = getOwnerAccount();
+            assertEquals(0, ownerAccount.getRoles().size());
+        }
+
+        @ParameterizedTest
+        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mok.AccountControllerTest#provideTokensForParameterizedTests")
+        void shouldFailIfNonAdministratorTriesToRevokeRole(String token) {
+            AccountDto ownerAccount = getOwnerAccount();
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("OWNER"));
+            editAccountRolesDto.setOperation(REVOKE);
+
+            given()
+                    .header(AUTHORIZATION, token)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + ownerAccount.getId() + "/roles")
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @Test
+        void shouldFailRevokeRolesIfAccountDontExists() {
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("OWNER"));
+            editAccountRolesDto.setOperation(REVOKE);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/12/roles")
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode());
+        }
+
+        @Test
+        void shouldFailGrantRolesIfRequestBodyIsSyntaticalyIncorrect() {
+            EditAccountRolesDto bodyWithWrongPermissions = new EditAccountRolesDto();
+            bodyWithWrongPermissions.setOperation(REVOKE);
+            bodyWithWrongPermissions.setRoles(Set.of("SHOULD_FAIL"));
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(bodyWithWrongPermissions)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
+        }
+
+        @Test
+        void shouldFailRevokeRolesIfRoleIsNotPresent() {
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("ADMINISTRATOR"));
+            editAccountRolesDto.setOperation(REVOKE);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.CANNOT_MODIFY_PERMISSIONS"));
+        }
+
+        @Test
+        void shouldFailWhenTryingToRemoveSamePermissionTwice() {
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("OWNER"));
+            editAccountRolesDto.setOperation(REVOKE);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.CANNOT_MODIFY_PERMISSIONS"));
+        }
+
+        @Test
+        void shouldFailWhenTryingToModifyOwnPermissions() {
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("ADMINISTRATOR"));
+            editAccountRolesDto.setOperation(REVOKE);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(editAccountRolesDto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + getAdministratorAccount().getId() + "/roles")
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @Test
+        void shouldCreateOnlyOneRentWithConcurrentRequests() throws BrokenBarrierException, InterruptedException {
+            int threadNumber = 10;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            AtomicInteger numberFinished = new AtomicInteger();
+            List<Integer> responseCodes = new ArrayList<>();
+            EditAccountRolesDto editAccountRolesDto = new EditAccountRolesDto();
+            editAccountRolesDto.setRoles(Set.of("OWNER"));
+            editAccountRolesDto.setOperation(REVOKE);
+
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Response response = given()
+                            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                            .body(editAccountRolesDto)
+                            .when()
+                            .put(ACCOUNT_PATH + "/" + getOwnerAccount().getId() + "/roles")
+                            .then()
+                            .extract().response();
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    numberFinished.getAndIncrement();
+                }));
+            }
+
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (numberFinished.get() != threadNumber) {
+            }
+
+            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
+        }
     }
 
     @Nested
@@ -306,39 +642,39 @@ class AccountControllerTest extends IntegrationTestsConfig {
         }
 
         @ParameterizedTest
-    @SneakyThrows
-    @CsvSource({"/self/email", "/1/email"})
-    void WhenEditEmailAndEditAlreadyAcceptedShouldReturnNotFound(String path) {
-        String email = "mati@mati.com";
+        @SneakyThrows
+        @CsvSource({"/self/email", "/1/email"})
+        void WhenEditEmailAndEditAlreadyAcceptedShouldReturnNotFound(String path) {
+            String email = "mati@mati.com";
 
-        EditEmailDto dto = new EditEmailDto(email);
+            EditEmailDto dto = new EditEmailDto(email);
 
-        given()
-                .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                .body(dto)
-                .when()
-                .put(ACCOUNT_PATH + path)
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(dto)
+                    .when()
+                    .put(ACCOUNT_PATH + path)
+                    .then()
+                    .statusCode(NO_CONTENT.getStatusCode());
 
-        String token = databaseConnector.executeQuery(
-                "SELECT token FROM verification_token WHERE account_id = " + getAdministratorAccount().getId()
-        ).getString("token");
+            String token = databaseConnector.executeQuery(
+                    "SELECT token FROM verification_token WHERE account_id = " + getAdministratorAccount().getId()
+            ).getString("token");
 
-        given()
-                .when()
-                .post(ACCOUNT_PATH + "/email/accept?token=" + token)
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
+            given()
+                    .when()
+                    .post(ACCOUNT_PATH + "/email/accept?token=" + token)
+                    .then()
+                    .statusCode(NO_CONTENT.getStatusCode());
 
-        given()
-                .when()
-                .post(ACCOUNT_PATH + "/email/accept?token=" + token)
-                .then()
-                .statusCode(NOT_FOUND.getStatusCode());
-    }
+            given()
+                    .when()
+                    .post(ACCOUNT_PATH + "/email/accept?token=" + token)
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode());
+        }
 
-    @ParameterizedTest
+        @ParameterizedTest
         @CsvSource({
                 "''",
                 "mati@mati",
