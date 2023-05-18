@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
@@ -12,6 +13,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Password;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PhoneNumber;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateAccountDto {

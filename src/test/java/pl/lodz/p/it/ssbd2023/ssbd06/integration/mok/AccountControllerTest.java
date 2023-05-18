@@ -19,20 +19,14 @@ import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.GRANT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Set;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import io.restassured.response.Response;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -56,9 +50,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.GetPagedAccountListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.ListAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
-import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 class AccountControllerTest extends IntegrationTestsConfig {
@@ -109,7 +101,159 @@ class AccountControllerTest extends IntegrationTestsConfig {
     }
 
     @Nested
-    class createAccountTest {
+    class CreateAccountTest {
+
+        @Test
+        @SneakyThrows
+        void shouldCreateAccountWhenCorrectData() {
+            // given
+            CreateAccountDto accountDto = prepareCreateAccountDto();
+
+            // when
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(accountDto)
+                    .when()
+                    .post(ACCOUNT_PATH)
+                    .then()
+                    .statusCode(CREATED.getStatusCode());
+
+            // then
+            String accountStateBefore = databaseConnector.executeQuery(
+                    "SELECT account_state FROM account WHERE login = 'test'"
+            ).getString("account_state");
+
+            assertEquals(accountStateBefore, AccountState.CONFIRMED.name());
+        }
+
+        @ParameterizedTest(name = "{7}")
+        @CsvSource({
+                ",,,,,,,All null",
+                "'','','','','','','',All blank",
+                "' ',' ',' ',' ',' ',' ',' ', All while space",
+                "1231231 23,test@test,te st,Test,Test,123,en,All incorrect"
+        })
+        @SneakyThrows
+        void shouldNotCreateAccountWhenInCorrectData(String phoneNumber, String email, String login, String firstName, String lastName, String password, String langTag, String topic) {
+            // given
+            CreateAccountDto accountDto = CreateAccountDto.builder()
+                    .phoneNumber(phoneNumber)
+                    .email(email)
+                    .login(login)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .password(password)
+                    .languageTag(langTag)
+                    .build();
+
+            // then
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(accountDto)
+                    .when()
+                    .post(ACCOUNT_PATH)
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
+        }
+
+        @ParameterizedTest(name = "Violation = {3}")
+        @CsvSource({
+                "123123123,kontomat@gmail.com,test1,ERROR.ACCOUNT_WITH_EMAIL_EXIST",
+                "123456789,test@test.com,test2,ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST",
+                "111111111,test@test.test,admin,ERROR.ACCOUNT_WITH_LOGIN_EXIST",
+        })
+        @SneakyThrows
+        void shouldNotCreateAccountWhenConstraintViolation(String phoneNumber, String email, String login, String error) {
+            // given
+            CreateAccountDto accountDto = CreateAccountDto.builder()
+                    .phoneNumber(phoneNumber)
+                    .email(email)
+                    .login(login)
+                    .firstName("Test")
+                    .lastName("Test")
+                    .password("p@ssword")
+                    .languageTag("en-US")
+                    .build();
+
+            // then
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(accountDto)
+                    .when()
+                    .post(ACCOUNT_PATH)
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo(error));
+        }
+
+        @ParameterizedTest
+        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mok.AccountControllerTest#provideTokensForParameterizedTests")
+        void shouldForbidCreateAccountWhenInvokedByUnauthorizedUser(String token) {
+            // given
+            CreateAccountDto accountDto = prepareCreateAccountDto();
+
+            // then
+            given()
+                    .header(AUTHORIZATION, token)
+                    .body(accountDto)
+                    .when()
+                    .post(ACCOUNT_PATH)
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @Test
+        void shouldForbidCreateAccountWhenInvokedByFacilityManager() {
+            // given
+            CreateAccountDto accountDto = prepareCreateAccountDto();
+
+            // then
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(accountDto)
+                    .when()
+                    .post(ACCOUNT_PATH)
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @Test
+        void shouldCreateOnlyOneAccountWithConcurrentRequests() throws BrokenBarrierException, InterruptedException {
+            int threadNumber = 10;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            AtomicInteger numberFinished = new AtomicInteger();
+            List<Integer> responseCodes = new ArrayList<>(); // New list to store response codes
+            CreateAccountDto accountDto = prepareCreateAccountDto();
+
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Response response = given()
+                            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                            .body(accountDto)
+                            .when()
+                            .post(ACCOUNT_PATH)
+                            .then()
+                            .extract().response();
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    numberFinished.getAndIncrement();
+                }));
+            }
+
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (numberFinished.get() != threadNumber) {
+
+            }
+
+            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == CREATED.getStatusCode()).toList().size());
+        }
 
     }
 
@@ -869,46 +1013,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
     @Nested
     class ConfirmRegistration {
-        @Test
-        @SneakyThrows
-        void shouldConfirmRegisteredAccountWhenVerificationTokenCorrect() {
-            // given
-            CreateAccountDto accountDto = prepareCreateAccountDto();
-
-            // when
-            given()
-                    .body(accountDto)
-                    .when()
-                    .post(ACCOUNT_PATH + "/register")
-                    .then()
-                    .statusCode(CREATED.getStatusCode());
-
-            // then
-            String accountStateBefore = databaseConnector.executeQuery(
-                    "SELECT account_state FROM account WHERE login = 'test'"
-            ).getString("account_state");
-
-            assertEquals(accountStateBefore, AccountState.NOT_CONFIRMED.name());
-
-            // given
-            String token = databaseConnector.executeQuery(
-                    "SELECT token FROM verification_token vt JOIN account ON account_id = vt.account_id WHERE login = 'test'"
-            ).getString("token");
-
-            // when
-            given()
-                    .when()
-                    .put(ACCOUNT_PATH + "/confirm-registration?token=" + token)
-                    .then()
-                    .statusCode(OK.getStatusCode());
-
-            //then
-            String accountStateAfter = databaseConnector.executeQuery(
-                    "SELECT account_state FROM account WHERE login = 'test'"
-            ).getString("account_state");
-
-            assertEquals(accountStateAfter, AccountState.TO_CONFIRM.name());
-        }
 
         @Test
         void shouldRespondWith404WhenVerificationTokenDoesntExist() {
@@ -1664,15 +1768,15 @@ class AccountControllerTest extends IntegrationTestsConfig {
     }
 
     protected static CreateAccountDto prepareCreateAccountDto() {
-        CreateAccountDto accountDto = new CreateAccountDto();
-        accountDto.setPhoneNumber("123123123");
-        accountDto.setEmail("test@test.test");
-        accountDto.setLogin("test");
-        accountDto.setFirstName("Test");
-        accountDto.setLastName("Test");
-        accountDto.setPassword("p@ssw0rd");
-        accountDto.setLanguageTag("en-US");
-        return accountDto;
+        return CreateAccountDto.builder()
+                .phoneNumber("123123123")
+                .email("test@test.test")
+                .login("test")
+                .firstName("Test")
+                .lastName("Test")
+                .password("p@ssw0rd")
+                .languageTag("en-US")
+                .build();
     }
 
     private static Stream<Arguments> provideTokensForParameterizedTests() {
