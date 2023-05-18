@@ -1,9 +1,13 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
-import java.util.List;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
+
 import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -32,36 +36,24 @@ public class ListSearchPreferencesFacade extends AbstractFacade<ListSearchPrefer
     }
 
     @Override
+    @PermitAll
     protected EntityManager getEntityManager() {
         return em;
     }
 
-    @PermitAll
+    @Override
+    @RolesAllowed(ADMINISTRATOR)
     public ListSearchPreferences create(final ListSearchPreferences entity) {
         return super.create(entity);
     }
 
-    @PermitAll
+    @Override
+    @RolesAllowed(ADMINISTRATOR)
     public ListSearchPreferences update(final ListSearchPreferences entity) {
         return super.update(entity);
     }
 
-    @PermitAll
-    public void delete(final ListSearchPreferences entity) {
-        super.delete(entity);
-    }
-
-    @PermitAll
-    public ListSearchPreferences findById(final Long id) {
-        return super.findById(id);
-    }
-
-    @PermitAll
-    public List<ListSearchPreferences> findAll() {
-        return super.findAll();
-    }
-
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public Optional<ListSearchPreferences> findByAccount(final Account account) {
         try {
             TypedQuery<ListSearchPreferences> namedQuery = em.createNamedQuery("ListSearchPreferences.findByAccount", ListSearchPreferences.class);

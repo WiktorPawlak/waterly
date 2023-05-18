@@ -80,16 +80,14 @@ class AccountControllerTest extends IntegrationTestsConfig {
             accountDto = prepareCreateAccountDto();
             accountDto.setPhoneNumber("123456789");
 
-            // when && then
-            given()
-                    .body(accountDto)
-                    .when()
-                    .post(ACCOUNT_PATH + "/register")
-                    .then()
-                    .statusCode(CONFLICT.getStatusCode())
-                    .body("message", equalTo("ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST"));
-
-        }
+        // when && then
+        given()
+                .body(accountDto)
+                .when()
+                .post(ACCOUNT_PATH + "/register")
+                .then()
+                .statusCode(CONFLICT.getStatusCode())
+                .body("message", equalTo("ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST"));}
     }
 
     @Nested
@@ -713,7 +711,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .statusCode(BAD_REQUEST.getStatusCode())
                     .extract().jsonPath().getString("message");
 
-            assertEquals(test, "[size must be between 8 and 32]");
+            assertEquals("[size must be between 8 and 32]", test);
         }
 
         @Test
@@ -842,7 +840,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(BAD_REQUEST.getStatusCode())
                     .extract().jsonPath().getString("message");
-            assertEquals(test, "[size must be between 8 and 32]");
+            assertEquals("[size must be between 8 and 32]", test);
         }
 
         @Test
@@ -965,7 +963,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .statusCode(BAD_REQUEST.getStatusCode())
                     .extract().jsonPath().getString("message");
 
-            assertEquals(test, "[size must be between 8 and 32]");
+            assertEquals("[size must be between 8 and 32]", test);
         }
     }
 

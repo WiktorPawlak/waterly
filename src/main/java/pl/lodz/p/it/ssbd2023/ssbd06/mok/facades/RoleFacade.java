@@ -1,7 +1,11 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+
 import java.util.Optional;
 
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -22,17 +26,19 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 public class RoleFacade extends AbstractFacade<Role> {
 
     @PersistenceContext(unitName = "mokPU")
-    EntityManager em;
+    private EntityManager em;
 
     public RoleFacade() {
         super(Role.class);
     }
 
     @Override
+    @PermitAll
     protected EntityManager getEntityManager() {
         return em;
     }
 
+    @RolesAllowed({ADMINISTRATOR})
     public Optional<Role> findRoleByAccountAndPermissionLevel(final Account account, final String permissionLevel) {
         TypedQuery<Role> accountTypedQuery = em.createNamedQuery("Role.findByAccountAndPermissionLevel", Role.class);
         accountTypedQuery.setFlushMode(FlushModeType.COMMIT);

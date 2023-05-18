@@ -7,6 +7,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.EMAIL_
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -118,7 +119,7 @@ public class AccountService {
         notificationsProvider.notifyAccountActiveStatusChanged(account, active);
     }
 
-    @PermitAll
+    @OnlyGuest
     public void updateSuccessfulAuthInfo(final LocalDateTime authenticationDate, final String login, final String ipAddress) {
         var account = findByLogin(login);
         var accountAuthInfo = account.getAuthInfo();
@@ -134,7 +135,7 @@ public class AccountService {
         }
     }
 
-    @PermitAll
+    @OnlyGuest
     public void updateFailedAuthInfo(final LocalDateTime authenticationDate, final String login) {
         var account = findByLogin(login);
         var accountAuthInfo = account.getAuthInfo();
@@ -156,30 +157,30 @@ public class AccountService {
         updateAccountDetails(accountDetails, account, languageTag);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void editEmail(final long id, final String email) {
         Account account = accountFacade.findById(id);
         addAccountEmailToUpdate(account, email);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void changePassword(final Account account, final String hashedPassword) {
         account.setPassword(hashedPassword);
         accountFacade.update(account);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void editOwnAccountDetails(final Account account, final AccountDetails accountDetails, final String languageTag) {
         updateAccountDetails(accountDetails, account, languageTag);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void editOwnEmail(final String login, final String email) {
         Account account = findByLogin(login);
         addAccountEmailToUpdate(account, email);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void resendEmailToAcceptEmailUpdate(final String login) {
         Account account = findByLogin(login);
 
@@ -199,7 +200,7 @@ public class AccountService {
         verificationTokenService.clearTokens(account.getId(), EMAIL_UPDATE);
     }
 
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR})
     public void editAccountRoles(final long id, final EditAccountRolesDto editAccountRolesDto) throws ApplicationBaseException {
         var account = accountFacade.findById(id);
         if (isModifyingAnotherUser(account)) {
@@ -266,12 +267,12 @@ public class AccountService {
         verificationTokenService.clearTokens(account.getId(), REGISTRATION);
     }
 
-    @PermitAll
+    @OnlyGuest
     public Optional<Account> findByEmail(final String email) {
         return accountFacade.findByEmail(email);
     }
 
-    @PermitAll
+    @OnlyGuest
     public void sendEmailToken(final Account account) {
         VerificationToken token = verificationTokenService.createResetToken(account);
         if (!account.isActive()) {
@@ -280,7 +281,7 @@ public class AccountService {
         tokenSender.sendResetToken(token);
     }
 
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR})
     public void sendChangePasswordToken(final Account account) {
         VerificationToken token = verificationTokenService.createChangePasswordToken(account);
         checkAccountStatus(account);
@@ -304,8 +305,7 @@ public class AccountService {
         changePassword(account, hashedNewPassword);
     }
 
-    @PermitAll
-    public void checkAccountStatus(final Account account) {
+    private void checkAccountStatus(final Account account) {
         if (!account.isActive()) {
             throw ApplicationBaseException.notActiveAccountException();
         }
@@ -314,7 +314,7 @@ public class AccountService {
         }
     }
 
-    @PermitAll
+    @RolesAllowed(ADMINISTRATOR)
     public List<Account> getAccountsList(final String pattern,
                                          final Integer page,
                                          final Integer pageSize,
@@ -334,18 +334,18 @@ public class AccountService {
                 orderBy);
     }
 
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public ListSearchPreferences getAccountSearchPreferences() {
         Account account = findByLogin(authenticatedAccount.getLogin());
         return listSearchPreferencesFacade.findByAccount(account).orElseThrow(AccountSearchPreferencesNotExistException::new);
     }
 
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR})
     public Long getAccountListCount(final String pattern) {
         return accountFacade.count(pattern);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public Account getAccountById(final long id) {
         return accountFacade.findById(id);
     }

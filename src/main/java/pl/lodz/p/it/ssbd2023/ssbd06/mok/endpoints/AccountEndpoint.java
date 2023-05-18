@@ -76,7 +76,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         accountService.editAccountDetails(account, dto.toDomain(), dto.getLanguageTag());
     }
 
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR})
     public void editEmail(final long id, final EditEmailDto dto) {
         accountService.editEmail(id, dto.getEmail().toLowerCase());
     }
@@ -102,7 +102,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         accountService.confirmRegistration(token);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void editOwnAccountDetails(final EditAccountDetailsDto dto) {
         Account account = accountService.findByLogin(authenticatedAccount.getLogin());
         if (account.calculateVersion() != dto.getVersion()) {
@@ -111,17 +111,17 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         accountService.editOwnAccountDetails(account, dto.toDomain(), dto.getLanguageTag());
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void editOwnEmail(final EditEmailDto dto) {
         accountService.editOwnEmail(authenticatedAccount.getLogin(), dto.getEmail().toLowerCase());
     }
 
-    @PermitAll
+    @OnlyGuest
     public void saveSuccessfulAuthAttempt(final LocalDateTime authenticationDate, final String login, final String ipAddress) {
         accountService.updateSuccessfulAuthInfo(authenticationDate, login, ipAddress);
     }
 
-    @PermitAll
+    @OnlyGuest
     public void saveFailedAuthAttempt(final LocalDateTime authenticationDate, final String login) {
         accountService.updateFailedAuthInfo(authenticationDate, login);
     }
@@ -144,7 +144,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         accountService.acceptEmailUpdate(token);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void resendEmailToAcceptAccountDetailsUpdate() {
         accountService.resendEmailToAcceptEmailUpdate(authenticatedAccount.getLogin());
     }
@@ -154,7 +154,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         accountService.editAccountRoles(id, dto);
     }
 
-    @PermitAll
+    @OnlyGuest
     public void sendResetPasswordToken(final String email) {
         Optional<Account> optionalAccount = accountService.findByEmail(email);
         if (optionalAccount.isPresent()) {

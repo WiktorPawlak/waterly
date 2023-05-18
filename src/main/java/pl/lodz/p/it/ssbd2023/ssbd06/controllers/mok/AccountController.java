@@ -136,6 +136,7 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().build();
     }
 
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     @PUT
     @Path("/self/password")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -190,6 +191,7 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().entity(dto).build();
     }
 
+    @OnlyGuest
     @POST
     @Path("/password/request-reset")
     public Response requestPasswordReset(@Valid @Email @QueryParam("email") final String email) {
@@ -208,6 +210,7 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().build();
     }
 
+    @PermitAll
     @POST
     @Path("/password/reset")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -232,6 +235,7 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().build();
     }
 
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     @GET
     @Path("/self")
     @Produces(MediaType.APPLICATION_JSON)

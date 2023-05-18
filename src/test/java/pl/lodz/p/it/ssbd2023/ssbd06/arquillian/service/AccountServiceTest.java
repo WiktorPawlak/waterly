@@ -370,7 +370,7 @@ class AccountServiceTest extends BaseArquillianTest {
         userTransaction.commit();
 
         userTransaction.begin();
-        accountService.resetPassword(preparePasswordResetDto(verificationTokenService.findAllTokens().get(0).getToken()));
+        administratorRole.resetPassword(preparePasswordResetDto(verificationTokenService.findAllTokens().get(0).getToken()));
         Account changedPasswordAccount = accountService.findByLogin(accountDto.getLogin());
         var hashedPassword = hashProvider.generate(changedPasswordAccount.getPassword().toCharArray());
         userTransaction.commit();
@@ -389,13 +389,13 @@ class AccountServiceTest extends BaseArquillianTest {
 
         //when
         userTransaction.begin();
-        accountService.confirmRegistration(verificationTokenService.findAllTokens().get(0).getToken());
+        administratorRole.confirmRegistration(verificationTokenService.findAllTokens().get(0).getToken());
         Account registeredAccount = accountService.findByLogin(accountDto.getLogin());
         List<VerificationToken> verificationTokensAfter = verificationTokenService.findAllTokens();
         userTransaction.commit();
 
         //then
-        assertEquals(registeredAccount.getAccountState(), AccountState.TO_CONFIRM);
+        assertEquals(AccountState.TO_CONFIRM, registeredAccount.getAccountState());
         assertTrue(registeredAccount.isActive());
         assertEquals(0, verificationTokensAfter.size());
     }

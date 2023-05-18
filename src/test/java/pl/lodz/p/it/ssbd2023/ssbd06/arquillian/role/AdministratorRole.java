@@ -3,6 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.arquillian.role;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.annotation.security.RunAs;
 import jakarta.ejb.Stateless;
@@ -10,10 +11,13 @@ import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordChangeByAdminDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 
 @Stateless
 @RunAs(ADMINISTRATOR)
@@ -68,4 +72,27 @@ public class AdministratorRole {
         accountService.editAccountRoles(id, editAccountRolesDto);
     }
 
+    public VerificationToken findLatestToken(final long accountId, final TokenType tokenType) {
+        return verificationTokenService.findLatestToken(accountId, tokenType);
+    }
+
+    public void resetPassword(final PasswordResetDto dto) {
+        accountService.resetPassword(dto);
+    }
+
+    public Account confirmPassword(final UUID token) {
+        return verificationTokenService.confirmPassword(token);
+    }
+
+    public VerificationToken createPrimaryFullTimeToken(final Account account) {
+        return verificationTokenService.createPrimaryFullTimeToken(account);
+    }
+
+    public VerificationToken findOrCreateSecondaryHalfTimeToken(final Account account) {
+        return verificationTokenService.findOrCreateSecondaryHalfTimeToken(account);
+    }
+
+    public void confirmRegistration(final String token) {
+        accountService.confirmRegistration(token);
+    }
 }

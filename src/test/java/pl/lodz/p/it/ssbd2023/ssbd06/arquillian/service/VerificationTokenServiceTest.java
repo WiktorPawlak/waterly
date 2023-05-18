@@ -1,9 +1,16 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.arquillian.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.PASSWORD_RESET;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+
 import jakarta.inject.Inject;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
 import pl.lodz.p.it.ssbd2023.ssbd06.arquillian.config.BaseArquillianTest;
 import pl.lodz.p.it.ssbd2023.ssbd06.arquillian.role.AdministratorRole;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
@@ -12,12 +19,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
-
-import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.PASSWORD_RESET;
-import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
-
-import java.util.List;
-import java.util.UUID;
 
 public class VerificationTokenServiceTest extends BaseArquillianTest {
 
@@ -66,9 +67,9 @@ public class VerificationTokenServiceTest extends BaseArquillianTest {
 
         //when
         userTransaction.begin();
-        verificationTokenService.createPrimaryFullTimeToken(createdAccount);
+        administratorRole.createPrimaryFullTimeToken(createdAccount);
         List<VerificationToken> verificationTokenListAfter = verificationTokenService.findAllTokens();
-        VerificationToken createdPrimaryFullTimeToken = verificationTokenService.findLatestToken(createdAccount.getId(), REGISTRATION);
+        VerificationToken createdPrimaryFullTimeToken = administratorRole.findLatestToken(createdAccount.getId(), REGISTRATION);
         userTransaction.commit();
 
         //then
@@ -91,7 +92,7 @@ public class VerificationTokenServiceTest extends BaseArquillianTest {
         userTransaction.begin();
         verificationTokenService.createResetToken(createdAccount);
         List<VerificationToken> verificationTokenListAfter = verificationTokenService.findAllTokens();
-        VerificationToken createdResetToken = verificationTokenService.findLatestToken(createdAccount.getId(), PASSWORD_RESET);
+        VerificationToken createdResetToken = administratorRole.findLatestToken(createdAccount.getId(), PASSWORD_RESET);
         userTransaction.commit();
 
         //then
@@ -110,15 +111,15 @@ public class VerificationTokenServiceTest extends BaseArquillianTest {
         userTransaction.commit();
 
         userTransaction.begin();
-        verificationTokenService.createPrimaryFullTimeToken(createdAccount);
-        verificationTokenService.createPrimaryFullTimeToken(createdAccount);
+        administratorRole.createPrimaryFullTimeToken(createdAccount);
+        administratorRole.createPrimaryFullTimeToken(createdAccount);
         List<VerificationToken> verificationTokenListAfterTokenCreation = verificationTokenService.findAllTokens();
         VerificationToken createdPrimaryFullTimeToken = verificationTokenListAfterTokenCreation.get(0);
         userTransaction.commit();
 
         //when
         userTransaction.begin();
-        VerificationToken foundHalfTimeToken = verificationTokenService.findOrCreateSecondaryHalfTimeToken(createdAccount);
+        VerificationToken foundHalfTimeToken = administratorRole.findOrCreateSecondaryHalfTimeToken(createdAccount);
         userTransaction.commit();
 
         //then
@@ -135,8 +136,8 @@ public class VerificationTokenServiceTest extends BaseArquillianTest {
         assertEquals(0, verificationTokenListAfterClearingToken.size());
 
         userTransaction.begin();
-        verificationTokenService.createPrimaryFullTimeToken(createdAccount);
-        VerificationToken createdHalfTimeToken = verificationTokenService.findOrCreateSecondaryHalfTimeToken(createdAccount);
+        administratorRole.createPrimaryFullTimeToken(createdAccount);
+        VerificationToken createdHalfTimeToken = administratorRole.findOrCreateSecondaryHalfTimeToken(createdAccount);
         List<VerificationToken> verificationTokenListAfterHalfTimeTokenCreation = verificationTokenService.findAllTokens();
         userTransaction.commit();
 
@@ -158,11 +159,11 @@ public class VerificationTokenServiceTest extends BaseArquillianTest {
         userTransaction.begin();
         accountService.sendEmailToken(createdAccount);
         List<VerificationToken> verificationTokenListBefore = verificationTokenService.findAllTokens();
-        VerificationToken token = verificationTokenService.findLatestToken(createdAccount.getId(), PASSWORD_RESET);
+        VerificationToken token = administratorRole.findLatestToken(createdAccount.getId(), PASSWORD_RESET);
         userTransaction.commit();
 
         userTransaction.begin();
-        verificationTokenService.confirmPassword(UUID.fromString(preparePasswordResetDto(verificationTokenService
+        administratorRole.confirmPassword(UUID.fromString(preparePasswordResetDto(verificationTokenService
                 .findAllTokens().get(0).getToken()).getToken()));
         List<VerificationToken> verificationTokenListAfter = verificationTokenService.findAllTokens();
         userTransaction.commit();
@@ -172,7 +173,6 @@ public class VerificationTokenServiceTest extends BaseArquillianTest {
         assertEquals(PASSWORD_RESET, token.getTokenType());
         assertEquals(0, verificationTokenListAfter.size());
     }
-
 
 
     private CreateAccountDto prepareAccountDto() {

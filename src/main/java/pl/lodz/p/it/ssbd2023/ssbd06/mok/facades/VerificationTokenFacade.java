@@ -1,9 +1,14 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
+
 import java.util.List;
 import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -16,6 +21,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandl
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 
 @Stateless
 @FacadeExceptionHandler
@@ -30,6 +36,7 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
     }
 
     @Override
+    @PermitAll
     protected EntityManager getEntityManager() {
         return em;
     }
@@ -68,7 +75,7 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
     }
 
 
-
+    @Override
     @PermitAll
     public List<VerificationToken> findAll() {
         return em.createNamedQuery("VerificationToken.findAll", VerificationToken.class)
@@ -76,7 +83,7 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
                 .getResultList();
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public Optional<VerificationToken> findLatestVerificationToken(final long accountId, final TokenType tokenType) {
         TypedQuery<VerificationToken> verificationTokenTypedQuery =
                 em.createNamedQuery("VerificationToken.findLatestVerificationToken", VerificationToken.class)
@@ -90,7 +97,7 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
         }
     }
 
-    @PermitAll
+    @OnlyGuest
     public List<VerificationToken> findByAccountIdAndTokenType(final long accountId, final TokenType tokenType) {
         return em.createNamedQuery("VerificationToken.findByAccountIdAndTokenType", VerificationToken.class)
                 .setFlushMode(FlushModeType.COMMIT)
@@ -113,11 +120,4 @@ public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
     public void delete(final VerificationToken entity) {
         super.delete(entity);
     }
-
-    @Override
-    @PermitAll
-    public VerificationToken findById(final Long id) {
-        return super.findById(id);
-    }
-
 }

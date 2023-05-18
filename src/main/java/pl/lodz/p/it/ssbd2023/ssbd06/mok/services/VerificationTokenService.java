@@ -4,6 +4,9 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.CHANGE
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.EMAIL_UPDATE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.PASSWORD_RESET;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGISTRATION;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -11,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -25,6 +29,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @Monitored
@@ -51,6 +56,7 @@ public class VerificationTokenService {
                 .orElseThrow(TokenNotFoundException::new);
     }
 
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public VerificationToken findLatestToken(final long accountId, final TokenType tokenType) throws TokenNotFoundException {
         return verificationTokenFacade.findLatestVerificationToken(accountId, tokenType)
                 .orElseThrow(TokenNotFoundException::new);
@@ -61,7 +67,7 @@ public class VerificationTokenService {
         return verificationTokenFacade.findAll();
     }
 
-    @PermitAll
+    @OnlyGuest
     public VerificationToken createPrimaryFullTimeToken(final Account account) {
         VerificationToken token = prepareToken(
                 account,
@@ -72,7 +78,7 @@ public class VerificationTokenService {
         return verificationTokenFacade.create(token);
     }
 
-    @PermitAll
+    @OnlyGuest
     public VerificationToken findOrCreateSecondaryHalfTimeToken(final Account account)
             throws TokenExceededHalfTimeException, TokenNotFoundException {
         List<VerificationToken> verificationTokens = verificationTokenFacade.findByAccountIdAndTokenType(account.getId(), TokenType.REGISTRATION);
@@ -129,7 +135,7 @@ public class VerificationTokenService {
         return UUID.randomUUID().toString();
     }
 
-    @PermitAll
+    @OnlyGuest
     public VerificationToken createResetToken(final Account account) {
         VerificationToken token = prepareToken(
                 account,
@@ -140,7 +146,7 @@ public class VerificationTokenService {
         return verificationTokenFacade.create(token);
     }
 
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR})
     public VerificationToken createChangePasswordToken(final Account account) {
         VerificationToken token = prepareToken(
                 account,
@@ -151,7 +157,7 @@ public class VerificationTokenService {
         return verificationTokenFacade.create(token);
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public VerificationToken createAcceptEmailToken(final Account account) {
         VerificationToken token = prepareToken(
                 account,

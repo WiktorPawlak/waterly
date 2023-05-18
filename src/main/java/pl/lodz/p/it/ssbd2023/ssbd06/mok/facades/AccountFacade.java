@@ -1,11 +1,12 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.TO_CONFIRM;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTRATOR;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -24,20 +25,21 @@ import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.AccountFacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 
+@Log
 @Monitored
 @Stateless
 @AccountFacadeExceptionHandler
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AccountFacade extends AbstractFacade<Account> {
-
-    private final Logger log = Logger.getLogger(AccountFacade.class.getName());
 
     @PersistenceContext(unitName = "mokPU")
     private EntityManager em;
@@ -88,7 +90,7 @@ public class AccountFacade extends AbstractFacade<Account> {
         }
     }
 
-    @PermitAll
+    @OnlyGuest
     public Optional<Account> findByEmail(final String email) {
         try {
             TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findAccountByEmail", Account.class);
@@ -100,7 +102,7 @@ public class AccountFacade extends AbstractFacade<Account> {
         }
     }
 
-    @PermitAll
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public Optional<Account> findByWaitingEmail(final String email) {
         try {
             TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByEmailAndWaitingEmail", Account.class);
@@ -118,7 +120,7 @@ public class AccountFacade extends AbstractFacade<Account> {
         return super.findAll();
     }
 
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR})
     public List<Account> findAccounts(final String pattern,
                                       final int page,
                                       final int pageSize,
@@ -144,7 +146,7 @@ public class AccountFacade extends AbstractFacade<Account> {
                 .getResultList();
     }
 
-    @PermitAll
+    @RolesAllowed({ADMINISTRATOR})
     public Long count(final String pattern) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
