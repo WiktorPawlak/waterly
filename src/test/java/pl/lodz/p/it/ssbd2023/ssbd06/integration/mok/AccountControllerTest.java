@@ -742,16 +742,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
     @Nested
     class ChangeOwnAccountDetails {
 
-    }
-
-    @Nested
-    class ChangeOtherAccountDetails {
-
-    }
-
-    //group this tests to the UC classes (ChangeOwnAccountDetails, ChangeOtherAccountDetails)
-    @Nested
-    class EditAccountDetails {
         @Test
         void shouldEditSelfAccountDetails() {
             String firstName = "Kamil";
@@ -779,6 +769,222 @@ class AccountControllerTest extends IntegrationTestsConfig {
             assertEquals(lastName, getOwnerAccount().getLastName());
             assertEquals(phoneNumber, getOwnerAccount().getPhoneNumber());
         }
+
+        @ParameterizedTest
+        @CsvSource({
+                "''",
+                "mati@mati",
+                "mati.com",
+        })
+        void whenEditOwnEmailAndDataIsIncorrectShouldReturnBadRequest(String email) {
+            EditEmailDto dto = new EditEmailDto(email);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(dto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/self")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("[0].field", notNullValue())
+                    .body("[0].message", notNullValue());
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                ",,,,",
+                "' ',' ',' ',' '",
+                "'','','',''",
+                "mati mati,mati 123,mati mati,mati mati",
+        })
+        void whenUpdateSelfAccountDetailsAndDataIsIncorrectShouldReturnBadRequest(String firstName, String lastName, String phoneNumber, String languageTag) {
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+            EditAccountDetailsDto dto =
+                    new EditAccountDetailsDto(ownerAccount._1.getId(),
+                            firstName,
+                            lastName,
+                            phoneNumber,
+                            languageTag,
+                            ownerAccount._1.getVersion());
+
+            given()
+                    .header(AUTHORIZATION, OWNER_TOKEN)
+                    .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
+                    .when()
+                    .put(ACCOUNT_PATH + "/self")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("[0].field", notNullValue())
+                    .body("[0].message", notNullValue());
+        }
+
+        @Test
+        void shouldEditOwnAccountAccountDetails() {
+            String firstName = "Kamil";
+            String lastName = "Kowalski-Nowak";
+            String phoneNumber = "000000000";
+            String languageTag = "pl-PL";
+
+            Tuple2<AccountDto, String> administratorAccount = getAdministratorAccountWithEtag();
+
+            EditAccountDetailsDto dto = new EditAccountDetailsDto(administratorAccount._1.getId(),
+                    firstName,
+                    lastName,
+                    phoneNumber,
+                    languageTag,
+                    administratorAccount._1.getVersion());
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, administratorAccount._2)
+                    .when()
+                    .put(ACCOUNT_PATH + "/self")
+                    .then()
+                    .statusCode(NO_CONTENT.getStatusCode());
+
+            assertEquals(firstName, getAdministratorAccount().getFirstName());
+            assertEquals(lastName, getAdministratorAccount().getLastName());
+            assertEquals(phoneNumber, getAdministratorAccount().getPhoneNumber());
+        }
+    }
+
+    @Nested
+    class ChangeOtherAccountDetails {
+
+        @ParameterizedTest
+        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mok.AccountControllerTest#provideTokensForParameterizedTests")
+        void shouldForbidNonAdminUsersToUpdateOtherAccountsEmail(String token) {
+            String email = "mati@mati.com";
+
+            EditEmailDto dto = new EditEmailDto(email);
+
+            given()
+                    .header(AUTHORIZATION, token)
+                    .body(dto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/2/email")
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode())
+                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "''",
+                "mati@mati",
+                "mati.com",
+        })
+        void whenEditOtherAccountEmailAndDataIsIncorrectShouldReturnBadRequest(String email) {
+            EditEmailDto dto = new EditEmailDto(email);
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(dto)
+                    .when()
+                    .put(ACCOUNT_PATH + "/1")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("[0].field", notNullValue())
+                    .body("[0].message", notNullValue());
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                ",,,,",
+                "' ',' ',' ',' '",
+                "'','','',''",
+                "mati mati,mati 123,mati mati,mati mati",
+        })
+        void whenUpdateOtherAccountDetailsAndDataIsIncorrectShouldReturnBadRequest(String firstName, String lastName, String phoneNumber, String languageTag) {
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+            EditAccountDetailsDto dto =
+                    new EditAccountDetailsDto(ownerAccount._1.getId(),
+                            firstName,
+                            lastName,
+                            phoneNumber,
+                            languageTag,
+                            ownerAccount._1.getVersion());
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
+                    .when()
+                    .put(ACCOUNT_PATH + "/1")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("[0].field", notNullValue())
+                    .body("[0].message", notNullValue());
+        }
+
+        @Test
+        void shouldEditOtherAccountAccountDetails() {
+            String firstName = "Kamil";
+            String lastName = "Kowalski-Nowak";
+            String phoneNumber = "000000000";
+            String languageTag = "pl-PL";
+
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+            EditAccountDetailsDto dto = new EditAccountDetailsDto(ownerAccount._1.getId(),
+                    firstName,
+                    lastName,
+                    phoneNumber,
+                    languageTag,
+                    ownerAccount._1.getVersion());
+
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + OWNER_ID)
+                    .then()
+                    .statusCode(NO_CONTENT.getStatusCode());
+
+            assertEquals(firstName, getOwnerAccount().getFirstName());
+            assertEquals(lastName, getOwnerAccount().getLastName());
+            assertEquals(phoneNumber, getOwnerAccount().getPhoneNumber());
+        }
+
+        @ParameterizedTest
+        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mok.AccountControllerTest#provideTokensForParameterizedTests")
+        void shouldForbidNonAdminUsersToUpdateOtherAccountsAccountDetails(String token) {
+            String firstName = "Kamil";
+            String lastName = "Kowalski-Nowak";
+            String phoneNumber = "000000000";
+            String languageTag = "pl-PL";
+
+
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+            EditAccountDetailsDto dto =
+                    new EditAccountDetailsDto(ownerAccount._1.getId(),
+                            firstName,
+                            lastName,
+                            phoneNumber,
+                            languageTag,
+                            ownerAccount._1.getVersion());
+
+            given()
+                    .header(AUTHORIZATION, token)
+                    .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + ADMIN_ID)
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode())
+                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+        }
+    }
+
+    @Nested
+    class EditAccountDetails {
 
         @ParameterizedTest
         @SneakyThrows
@@ -845,55 +1051,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .statusCode(NOT_FOUND.getStatusCode());
         }
 
-        @ParameterizedTest
-        @CsvSource({
-                "''",
-                "mati@mati",
-                "mati.com",
-        })
-        void whenEditEmailAndDataIsIncorrectShouldReturnBadRequest(String email) {
-            EditEmailDto dto = new EditEmailDto(email);
-
-            given()
-                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                    .body(dto)
-                    .when()
-                    .put(ACCOUNT_PATH + "/self")
-                    .then()
-                    .statusCode(BAD_REQUEST.getStatusCode())
-                    .body("[0].field", notNullValue())
-                    .body("[0].message", notNullValue());
-        }
-
-        @ParameterizedTest
-        @CsvSource({
-                ",,,,",
-                "' ',' ',' ',' '",
-                "'','','',''",
-                "mati mati,mati 123,mati mati,mati mati",
-        })
-        void whenUpdateSelfAccountDetailsAndDataIsIncorrectShouldReturnBadRequest(String firstName, String lastName, String phoneNumber, String languageTag) {
-            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
-
-            EditAccountDetailsDto dto =
-                    new EditAccountDetailsDto(ownerAccount._1.getId(),
-                            firstName,
-                            lastName,
-                            phoneNumber,
-                            languageTag,
-                            ownerAccount._1.getVersion());
-
-            given()
-                    .header(AUTHORIZATION, OWNER_TOKEN)
-                    .body(dto)
-                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
-                    .when()
-                    .put(ACCOUNT_PATH + "/self")
-                    .then()
-                    .statusCode(BAD_REQUEST.getStatusCode())
-                    .body("[0].field", notNullValue())
-                    .body("[0].message", notNullValue());
-        }
 
         @ParameterizedTest
         @CsvSource({"/self/email", "/1/email"})
@@ -960,83 +1117,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .body("message", equalTo("ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST"));
         }
 
-        @Test
-        void shouldEditOtherAccountAccountDetails() {
-            String firstName = "Kamil";
-            String lastName = "Kowalski-Nowak";
-            String phoneNumber = "000000000";
-            String languageTag = "pl-PL";
-
-            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
-
-            EditAccountDetailsDto dto = new EditAccountDetailsDto(ownerAccount._1.getId(),
-                    firstName,
-                    lastName,
-                    phoneNumber,
-                    languageTag,
-                    ownerAccount._1.getVersion());
-
-            given()
-                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                    .body(dto)
-                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
-                    .when()
-                    .put(ACCOUNT_PATH + "/" + OWNER_ID)
-                    .then()
-                    .statusCode(NO_CONTENT.getStatusCode());
-
-            assertEquals(firstName, getOwnerAccount().getFirstName());
-            assertEquals(lastName, getOwnerAccount().getLastName());
-            assertEquals(phoneNumber, getOwnerAccount().getPhoneNumber());
-        }
-
-        @ParameterizedTest
-        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mok.AccountControllerTest#provideTokensForParameterizedTests")
-        void shouldForbidNonAdminUsersToUpdateOtherAccountsAccountDetails(String token) {
-            String firstName = "Kamil";
-            String lastName = "Kowalski-Nowak";
-            String phoneNumber = "000000000";
-            String languageTag = "pl-PL";
-
-
-            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
-
-            EditAccountDetailsDto dto =
-                    new EditAccountDetailsDto(ownerAccount._1.getId(),
-                            firstName,
-                            lastName,
-                            phoneNumber,
-                            languageTag,
-                            ownerAccount._1.getVersion());
-
-            given()
-                    .header(AUTHORIZATION, token)
-                    .body(dto)
-                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
-                    .when()
-                    .put(ACCOUNT_PATH + "/" + ADMIN_ID)
-                    .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
-        }
-
-        @ParameterizedTest
-        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mok.AccountControllerTest#provideTokensForParameterizedTests")
-        void shouldForbidNonAdminUsersToUpdateOtherAccountsEmail(String token) {
-            String email = "mati@mati.com";
-
-            EditEmailDto dto = new EditEmailDto(email);
-
-            given()
-                    .header(AUTHORIZATION, token)
-                    .body(dto)
-                    .when()
-                    .put(ACCOUNT_PATH + "/2/email")
-                    .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
-
-        }
     }
 
     @Nested
