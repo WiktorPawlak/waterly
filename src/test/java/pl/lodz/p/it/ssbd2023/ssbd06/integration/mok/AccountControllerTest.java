@@ -90,14 +90,15 @@ class AccountControllerTest extends IntegrationTestsConfig {
             accountDto = prepareCreateAccountDto();
             accountDto.setPhoneNumber("123456789");
 
-        // when && then
-        given()
-                .body(accountDto)
-                .when()
-                .post(ACCOUNT_PATH + "/register")
-                .then()
-                .statusCode(CONFLICT.getStatusCode())
-                .body("message", equalTo("ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST"));}
+            // when && then
+            given()
+                    .body(accountDto)
+                    .when()
+                    .post(ACCOUNT_PATH + "/register")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.ACCOUNT_WITH_PHONE_NUMBER_EXIST"));
+        }
     }
 
     @Nested
@@ -371,6 +372,30 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(OK.getStatusCode())
                     .body(notNullValue());
+        }
+
+        @Test
+        void shouldRespondWith404WhenAccountNotFoundDuringActivation() {
+            given()
+                    .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
+                    .body(ACTIVATE_ACCOUNT)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + NONE_EXISTENT_ACCOUNT_ID + "/active")
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode());
+        }
+
+        @ParameterizedTest
+        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mok.AccountControllerTest#provideTokensForParameterizedTests")
+        void shouldForbidNonAdminUsersToActivateAccount(String token) {
+            given()
+                    .header(AUTHORIZATION, token)
+                    .body(ACTIVATE_ACCOUNT)
+                    .when()
+                    .put(ACCOUNT_PATH + "/" + ADMIN_ID + "/active")
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode())
+                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
         }
     }
 
@@ -1126,7 +1151,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
             }
             threads.forEach(Thread::start);
             cyclicBarrier.await();
-            while (finished.get() != threadNumber){
+            while (finished.get() != threadNumber) {
             }
             assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
         }
