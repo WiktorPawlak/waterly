@@ -136,7 +136,7 @@ export async function postResetPassword(body: PasswordResetDto) {
 }
 
 export async function postResendVerificationToken(accountId: string) {
-  return put(`${ACCOUNTS_PATH}/${accountId}/resend-verification-token`);
+  return post(`${ACCOUNTS_PATH}/${accountId}/resend-verification-token`);
 }
 
 export async function getSelfAccountDetails(): Promise<
