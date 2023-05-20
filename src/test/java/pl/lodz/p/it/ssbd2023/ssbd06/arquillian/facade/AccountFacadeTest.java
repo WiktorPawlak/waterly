@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -18,6 +19,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AuthInfo;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 
+@Order(1)
 class AccountFacadeTest extends BaseArquillianTest {
 
     @Inject

@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -32,6 +33,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
+@Order(2)
 class AccountServiceTest extends BaseArquillianTest {
 
     @Inject

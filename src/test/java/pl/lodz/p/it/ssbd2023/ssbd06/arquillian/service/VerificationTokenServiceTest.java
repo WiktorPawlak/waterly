@@ -7,6 +7,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGIST
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -20,7 +21,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 
-public class VerificationTokenServiceTest extends BaseArquillianTest {
+@Order(3)
+class VerificationTokenServiceTest extends BaseArquillianTest {
 
 
     @Inject

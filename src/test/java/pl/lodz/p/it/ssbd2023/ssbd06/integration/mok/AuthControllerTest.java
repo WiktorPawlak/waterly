@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,6 +22,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
+@Order(5)
 class AuthControllerTest extends IntegrationTestsConfig {
 
     @Test
@@ -79,7 +81,7 @@ class AuthControllerTest extends IntegrationTestsConfig {
                 .body("[0].field", notNullValue())
                 .body("[0].message", notNullValue());
     }
-    
+
     @Test
     void shouldReturnUnauthorizedWhenAuthorizationHeaderIsNotProvided() {
         given()
