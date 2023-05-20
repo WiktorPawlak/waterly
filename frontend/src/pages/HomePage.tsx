@@ -10,7 +10,6 @@ const HomePage = () => {
   const { t } = useTranslation();
   const { account } = useAccount();
 
-  console.log(account);
   return (
     <MainLayout isHomePage={true}>
       <Box
