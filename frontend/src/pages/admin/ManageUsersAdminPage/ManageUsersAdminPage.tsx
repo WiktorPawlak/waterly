@@ -164,7 +164,7 @@ export const ManageUsersAdminPage = () => {
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 80,
-      renderCell: (params) => <Lock accountId={params.row.id} />,
+      renderCell: (params) => <Lock accountId={params.row.id} active={params.row.active} />,
     },
   ];
 

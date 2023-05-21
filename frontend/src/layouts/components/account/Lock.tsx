@@ -10,24 +10,26 @@ import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { Popup } from "../Popup";
 import { Box, Typography } from "@mui/material";
+import { resolveApiError } from "../../../api/apiErrors";
 
 export interface LockProps {
   accountId: any;
+  active: boolean
 }
 
-export const Lock = ({ accountId }: LockProps) => {
+export const Lock = ({ accountId, active }: LockProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [isLocked, setIsLocked] = useState(false);
+  const [isActive, setIsActive] = useState(active);
 
   const handleLockClick = async () => {
     const accountActiveStatusDto: AccountActiveStatusDto = {
-      active: !isLocked,
+      active: !active,
     };
     await changeAccountActiveStatus(accountId, accountActiveStatusDto).then(
       (response) => {
         if (response.status === 200) {
-          if (isLocked) {
+          if (!isActive) {
             enqueueSnackbar(t("manageUsersPage.toastActivateSuccess"), {
               variant: "success",
             });
@@ -36,10 +38,10 @@ export const Lock = ({ accountId }: LockProps) => {
               variant: "success",
             });
           }
-          setIsLocked(!isLocked);
+          setIsActive(!isActive);
           setAnchorEl(null);
         } else {
-          enqueueSnackbar(t("manageUsersPage.toastFailure"), {
+          enqueueSnackbar(t(resolveApiError(response.error)), {
             variant: "error",
           });
           console.error(response.error);
@@ -49,10 +51,10 @@ export const Lock = ({ accountId }: LockProps) => {
   };
 
   const renderLockIcon = () => {
-    if (isLocked) {
-      return <LockOutlinedIcon sx={{ color: "red" }} />;
-    } else {
+    if (isActive) {
       return <LockOpenIcon sx={{ color: "green" }} />;
+    } else {
+      return <LockOutlinedIcon sx={{ color: "red" }} />;
     }
   };
 
@@ -79,10 +81,10 @@ export const Lock = ({ accountId }: LockProps) => {
         onClose={handlePopoverClose}
         popoverContent={
           <>
-            {isLocked ? (
-              <Typography>{t("popup.unlock")}</Typography>
-            ) : (
+            {isActive ? (
               <Typography>{t("popup.lock")}</Typography>
+            ) : (
+              <Typography>{t("popup.unlock")}</Typography>
             )}
             <Box
               sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
