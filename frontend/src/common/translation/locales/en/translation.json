@@ -1,4 +1,9 @@
 {
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "mode": "Choose mode"
+  },
   "logInPage": {
     "header": {
       "title": "Welcome back!",

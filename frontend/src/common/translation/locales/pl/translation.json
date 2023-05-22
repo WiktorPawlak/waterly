@@ -1,4 +1,9 @@
 {
+  "theme": {
+    "light": "Jasny",
+    "dark": "Ciemny",
+    "mode": "Wybierz motyw"
+  },
   "logInPage": {
     "header": {
       "title": "Witaj ponownie!",
