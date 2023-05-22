@@ -182,6 +182,12 @@ export async function getAccountsList(
     return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, {pattern: pattern});
 }
 
+export async function getAccountNames(
+  pattern: string
+): Promise<ApiResponse<String[]>> {
+  return get(`${ACCOUNTS_PATH}/list/name-suggestions`, { pattern: pattern });
+}
+
 export async function grantAccountPermissions(
     accountId: number,
     body: EditRolesDto

@@ -15,13 +15,13 @@ export async function get<T>(
 ): Promise<ApiResponse<T>> {
   return axiosClient
     .get(url, {
-      params: { params },
+      params: params,
     })
     .then((response) => {
       return {
         data: response.data,
         headers: response.headers,
-        status: response.status
+        status: response.status,
       };
     })
     .catch((error: unknown) => {

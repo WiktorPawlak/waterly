@@ -147,6 +147,22 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     @RolesAllowed({ADMINISTRATOR})
+    public List<String> findAccountsNames(final String pattern) {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<Account> account = query.from(Account.class);
+        Join<Account, AccountDetails> join = account.join("accountDetails");
+        query.select(join.get("email"));
+
+        if (pattern != null) {
+            Predicate emailPredicate = cb.like(cb.upper(join.get("email")), "%" + pattern.toUpperCase() + "%");
+            query.where(emailPredicate);
+        }
+
+        return getEntityManager().createQuery(query).getResultList();
+    }
+
+    @RolesAllowed({ADMINISTRATOR})
     public Long count(final String pattern) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);

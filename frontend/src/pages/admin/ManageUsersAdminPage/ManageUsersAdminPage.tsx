@@ -10,12 +10,14 @@ import {
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  getAccountNames,
   getAccountsList,
   GetPagedAccountListDto,
   ListAccountDto,
   PaginatedList,
 } from "../../../api/accountApi";
 import {
+  Autocomplete,
   Box,
   Button,
   FormControl,
@@ -37,6 +39,8 @@ export const ManageUsersAdminPage = () => {
   const [createAccountByAdminDialogOpen, setEditAccountDialogOpen] =
     useState(false);
 
+  const [nameSuggestions, setNamesuggestions] = useState<String[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
     data: [],
     pageNumber: 1,
@@ -52,14 +56,26 @@ export const ManageUsersAdminPage = () => {
   });
 
   useEffect(() => {
+    setIsLoading(true);
     getAccountsList(listRequest, pattern).then((response) => {
       if (response.status === 200) {
         setPageState(response.data!);
       } else {
         console.error(response.error);
       }
+      setIsLoading(false);
     });
   }, [listRequest, pattern]);
+
+  useEffect(() => {
+    getAccountNames(pattern).then((response) => {
+      if (response.status === 200) {
+        setNamesuggestions(response.data!);
+      } else {
+        console.error(response.error);
+      }
+    });
+  }, [pattern]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -206,14 +222,26 @@ export const ManageUsersAdminPage = () => {
           >
             {t("manageUsersPage.button")}
           </Button>
-          <TextField
-            onChange={(e) => setPattern(e.target.value)}
-            label={t("manageUsersPage.searchLabel")}
-            sx={{ color: "text.secondary", marginBottom: "15px" }}
+          <Autocomplete
+            disablePortal
+            freeSolo
+            options={nameSuggestions}
+            sx={{ width: "45vw" }}
+            onInputChange={(event, newInputValue) => {
+              setPattern(newInputValue);
+            }}
+            renderInput={(params) => (
+              <TextField
+                label={t("manageUsersPage.searchLabel")}
+                sx={{ color: "text.secondary", marginBottom: "15px" }}
+                {...params}
+              />
+            )}
           />
           <Box sx={{ height: 600, width: "100%" }}>
             <DataGrid
               autoHeight
+              loading={isLoading}
               rows={pageState?.data ?? []}
               columns={columns}
               onColumnHeaderClick={handleOnColumnHeaderClick}

@@ -351,6 +351,12 @@ public class AccountService {
                 orderBy);
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    public List<String> getNameSuggestions(final String pattern) {
+
+        return accountFacade.findAccountsNames(pattern);
+    }
+
     @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public ListSearchPreferences getAccountSearchPreferences() {
         Account account = findByLogin(authenticatedAccount.getLogin());
