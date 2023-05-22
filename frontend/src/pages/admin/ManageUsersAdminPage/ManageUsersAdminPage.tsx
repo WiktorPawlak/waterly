@@ -13,6 +13,7 @@ import {
   getAccountNames,
   getAccountsList,
   GetPagedAccountListDto,
+  getSelfSearchPreferences,
   ListAccountDto,
   PaginatedList,
 } from "../../../api/accountApi";
@@ -35,6 +36,7 @@ import { CreateAccountByAdminDialog } from "../../../layouts/components/account/
 export const ManageUsersAdminPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [fetchSearchPreferencesCompleted, setFetchSearchPreferencesCompleted] = useState(false);
   const [pattern, setPattern] = useState("");
   const [createAccountByAdminDialogOpen, setEditAccountDialogOpen] =
     useState(false);
@@ -56,15 +58,33 @@ export const ManageUsersAdminPage = () => {
   });
 
   useEffect(() => {
-    setIsLoading(true);
-    getAccountsList(listRequest, pattern).then((response) => {
+    getSelfSearchPreferences().then((response) => {
       if (response.status === 200) {
-        setPageState(response.data!);
+        setListRequest((prevState) => ({
+          ...prevState,
+          pageSize: response.data?.pageSize || prevState.pageSize,
+          order: response.data?.order || prevState.order,
+          orderBy: response.data?.orderBy || prevState.orderBy,
+        }));
       } else {
         console.error(response.error);
       }
-      setIsLoading(false);
+      setFetchSearchPreferencesCompleted(true);
     });
+  }, []);
+
+  useEffect(() => {
+    if (fetchSearchPreferencesCompleted && listRequest) {
+      setIsLoading(true);
+      getAccountsList(listRequest, pattern).then((response) => {
+        if (response.status === 200) {
+          setPageState(response.data!);
+        } else {
+          console.error(response.error);
+        }
+        setIsLoading(false);
+      });
+    }
   }, [listRequest, pattern]);
 
   useEffect(() => {
