@@ -277,4 +277,13 @@ public class AccountController extends RepeatableTransactionController {
         PaginatedList<ListAccountDto> accounts = retry(() -> accountEndpoint.getAccountsList(pattern, dto), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
+
+    @RolesAllowed({ADMINISTRATOR})
+    @GET
+    @Path("/list/name-suggestions")
+    public Response getNameSuggestions(@QueryParam("pattern") final String pattern)
+            throws ApplicationBaseException {
+        List<String> names = retry(() -> accountEndpoint.getNameSuggestions(pattern), accountEndpoint);
+        return Response.ok().entity(names).build();
+    }
 }

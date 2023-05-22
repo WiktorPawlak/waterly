@@ -229,6 +229,13 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
                 (long) Math.ceil(accountService.getAccountListCount(preparedPattern).doubleValue() / pageSizeResolved));
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    public List<String> getNameSuggestions(final String pattern) {
+        String preparedPattern = preparePattern(pattern);
+
+        return accountService.getNameSuggestions(preparedPattern);
+    }
+
     @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public AccountSearchPreferencesDto getAccountsSearchPreferences() {
         return new AccountSearchPreferencesDto(accountService.getAccountSearchPreferences());
