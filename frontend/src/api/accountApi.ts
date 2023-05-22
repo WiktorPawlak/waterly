@@ -1,189 +1,206 @@
-import { ApiResponse, get, post, put } from "./api";
-import { RoleOperation } from "../types";
+import {ApiResponse, get, post, put} from "./api";
+import {RoleOperation} from "../types";
+import {AccountDetailsSchemaType} from "../validation/validationSchemas";
 
 const ACCOUNTS_PATH = "/accounts";
 
 export interface EditAccountDetailsDto {
-  id: number;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  languageTag: string;
-  version: number;
-  twoFAEnabled: boolean;
+    id: number;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    languageTag: string;
+    version: number;
+    twoFAEnabled: boolean;
 }
 
 export interface EditEmailDto {
-  email: string;
+    email: string;
 }
 
 export interface AccountDto {
-  id: number;
-  login: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  languageTag: string;
-  roles: string[];
-  active: boolean;
-  createdOn: string;
-  createdBy: string;
-  updatedOn: string;
-  updatedBy: string;
-  lastSuccessAuth: string;
-  lastIncorrectAuth: string;
-  lastIpAddress: string;
-  incorrectAuthCount: string;
-  version: number;
-  twoFAEnabled: boolean;
+    id: number;
+    login: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    languageTag: string;
+    roles: string[];
+    active: boolean;
+    createdOn: string;
+    createdBy: string;
+    updatedOn: string;
+    updatedBy: string;
+    lastSuccessAuth: string;
+    lastIncorrectAuth: string;
+    lastIpAddress: string;
+    incorrectAuthCount: string;
+    version: number;
+    twoFAEnabled: boolean;
 }
 
 export interface PaginatedList<T> {
-  data: T[];
-  pageNumber: number;
-  itemsInPage: number;
-  totalPages: number;
+    data: T[];
+    pageNumber: number;
+    itemsInPage: number;
+    totalPages: number;
 }
 
 export interface ListAccountDto {
-  id: number;
-  login: string;
-  firstName: string;
-  lastName: string;
-  active: boolean;
-  roles: string[];
+    id: number;
+    login: string;
+    firstName: string;
+    lastName: string;
+    active: boolean;
+    roles: string[];
 }
 
 export interface AccountSearchPreferencesDto {
-  pageSize: number;
-  order: string;
-  orderBy: string;
+    pageSize: number;
+    order: string;
+    orderBy: string;
 }
 
 export interface GetPagedAccountListDto {
-  page: number | null;
-  pageSize: number | null;
-  order: string;
-  orderBy: string;
+    page: number | null;
+    pageSize: number | null;
+    order: string;
+    orderBy: string;
 }
 
 export interface AccountActiveStatusDto {
-  active: boolean;
+    active: boolean;
 }
 
 export interface PasswordResetDto {
-  token: string;
-  newPassword: string;
+    token: string;
+    newPassword: string;
 }
 
 export interface EditRolesDto {
-  operation: RoleOperation;
-  roles: string[];
+    operation: RoleOperation;
+    roles: string[];
 }
 
 export interface AccountPasswordDto {
-  oldPassword: string;
-  newPassword: string;
+    oldPassword: string;
+    newPassword: string;
 }
 
 export interface PasswordChangeByAdminDto {
-  newPassword: string;
+    newPassword: string;
+}
+
+interface User {
+    login: string;
+    password: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    languageTag: string;
 }
 
 export async function postChangePasswordByAdmin(
-  email: string,
-  body: PasswordChangeByAdminDto
+    email: string,
+    body: PasswordChangeByAdminDto
 ) {
-  return post(`${ACCOUNTS_PATH}/password/request-change?email=` + email, body);
+    return post(`${ACCOUNTS_PATH}/password/request-change?email=` + email, body);
 }
 
 export async function changeOwnPassword(body: AccountPasswordDto) {
-  return put(`${ACCOUNTS_PATH}/self/password`, body);
+    return put(`${ACCOUNTS_PATH}/self/password`, body);
 }
 
 export async function editAccountDetails(
-  body: EditAccountDetailsDto,
-  etag: string
+    body: EditAccountDetailsDto,
+    etag: string
 ) {
-  return put(`${ACCOUNTS_PATH}/self`, body, {
-    "If-Match": etag,
-  });
+    return put(`${ACCOUNTS_PATH}/self`, body, {
+        "If-Match": etag,
+    });
 }
 
 export async function editEmail(body: EditEmailDto) {
-  return put(`${ACCOUNTS_PATH}/self/email`, body);
+    return put(`${ACCOUNTS_PATH}/self/email`, body);
 }
 
 export async function resendEmailEditMail() {
-  return post(`${ACCOUNTS_PATH}/self/email/resend-accept-email`);
+    return post(`${ACCOUNTS_PATH}/self/email/resend-accept-email`);
 }
 
 export async function postAcceptEmail(token: string) {
-  return post(`${ACCOUNTS_PATH}/email/accept?token=` + token);
+    return post(`${ACCOUNTS_PATH}/email/accept?token=` + token);
 }
 
 export async function putVerifyAccount(token: string) {
-  return put(`${ACCOUNTS_PATH}/confirm-registration?token=` + token);
+    return put(`${ACCOUNTS_PATH}/confirm-registration?token=` + token);
 }
 
 export async function postSendResetPasswordEmail(email: string) {
-  return post(`${ACCOUNTS_PATH}/password/request-reset?email=` + email);
+    return post(`${ACCOUNTS_PATH}/password/request-reset?email=` + email);
 }
 
 export async function postResetPassword(body: PasswordResetDto) {
-  return post(`${ACCOUNTS_PATH}/password/reset`, body);
+    return post(`${ACCOUNTS_PATH}/password/reset`, body);
 }
 
 export async function postResendVerificationToken(accountId: string) {
-  return post(`${ACCOUNTS_PATH}/${accountId}/resend-verification-token`);
+    return post(`${ACCOUNTS_PATH}/${accountId}/resend-verification-token`);
 }
 
 export async function getSelfAccountDetails(): Promise<
-  ApiResponse<AccountDto>
+    ApiResponse<AccountDto>
 > {
-  return get(`${ACCOUNTS_PATH}/self`);
+    return get(`${ACCOUNTS_PATH}/self`);
 }
 
 export async function changeAccountActiveStatus(
-  accountId: string,
-  body: AccountActiveStatusDto
+    accountId: string,
+    body: AccountActiveStatusDto
 ) {
-  return put(`${ACCOUNTS_PATH}/${accountId}/active`, body);
+    return put(`${ACCOUNTS_PATH}/${accountId}/active`, body);
 }
 
 export async function getUserById(
-  accountId: number
+    accountId: number
 ): Promise<ApiResponse<AccountDto>> {
-  return get(`${ACCOUNTS_PATH}/${accountId}`);
+    return get(`${ACCOUNTS_PATH}/${accountId}`);
 }
 
 export async function getSelfSearchPreferences(): Promise<
-  ApiResponse<AccountSearchPreferencesDto>
+    ApiResponse<AccountSearchPreferencesDto>
 > {
-  return get(`${ACCOUNTS_PATH}/self/preferences`);
+    return get(`${ACCOUNTS_PATH}/self/preferences`);
 }
 
 export async function getAccountsList(
-  getPagedListDto: GetPagedAccountListDto,
-  pattern: string
+    getPagedListDto: GetPagedAccountListDto,
+    pattern: string
 ): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
-  return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, { pattern: pattern });
+    return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, {pattern: pattern});
 }
 
 export async function grantAccountPermissions(
-  accountId: number,
-  body: EditRolesDto
+    accountId: number,
+    body: EditRolesDto
 ) {
-  return put(`${ACCOUNTS_PATH}/${accountId}/roles`, body);
+    return put(`${ACCOUNTS_PATH}/${accountId}/roles`, body);
 }
 
 export async function putAccountDetails(
-  accountId: number,
-  body: EditAccountDetailsDto,
-  etag: string
+    accountId: number,
+    body: EditAccountDetailsDto,
+    etag: string
 ) {
-  return put(`${ACCOUNTS_PATH}/${accountId}`, body, {
-    "If-Match": etag,
-  });
+    return put(`${ACCOUNTS_PATH}/${accountId}`, body, {
+        "If-Match": etag,
+    });
+}
+
+export async function createAccountByAdmin(
+    body: AccountDetailsSchemaType
+) {
+    return post(`${ACCOUNTS_PATH}/`, body);
 }

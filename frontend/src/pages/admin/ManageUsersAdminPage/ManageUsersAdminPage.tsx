@@ -28,11 +28,14 @@ import {
   Typography,
 } from "@mui/material";
 import { Lock } from "../../../layouts/components/account";
+import { CreateAccountByAdminDialog } from "../../../layouts/components/account/CreateAccountByAdminDialog";
 
 export const ManageUsersAdminPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [pattern, setPattern] = useState("");
+  const [createAccountByAdminDialogOpen, setEditAccountDialogOpen] =
+    useState(false);
 
   const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
     data: [],
@@ -164,12 +167,18 @@ export const ManageUsersAdminPage = () => {
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 80,
-      renderCell: (params) => <Lock accountId={params.row.id} active={params.row.active} />,
+      renderCell: (params) => (
+        <Lock accountId={params.row.id} active={params.row.active} />
+      ),
     },
   ];
 
   return (
     <MainLayout>
+      <CreateAccountByAdminDialog
+        isOpen={createAccountByAdminDialogOpen}
+        setIsOpen={setEditAccountDialogOpen}
+      />
       <Box
         sx={{
           height: "100vh",
@@ -193,6 +202,7 @@ export const ManageUsersAdminPage = () => {
           <Button
             variant="contained"
             sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
+            onClick={() => setEditAccountDialogOpen(true)}
           >
             {t("manageUsersPage.button")}
           </Button>
