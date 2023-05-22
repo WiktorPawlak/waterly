@@ -1,18 +1,17 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.controllers;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import jakarta.ejb.EJBTransactionRolledbackException;
 import jakarta.inject.Inject;
+import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationOptimisticLockException;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.TransactionRollbackException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionAware;
 
+@Log
 public abstract class RepeatableTransactionController {
-
-    private final Logger log = Logger.getLogger(RepeatableTransactionController.class.getName());
 
     @Inject
     @Property("transactions.retry-count")
@@ -28,14 +27,12 @@ public abstract class RepeatableTransactionController {
             result = method.execute();
             markedForRollback = transactionalBean.isLastTransactionRollback();
             if (markedForRollback) {
-                log.log(Level.WARNING, "Transaction {0} has been marked for rollback during {1}. Retry: {2}",
-                        prepareTransactionInfo(transactionalBean, retryCounter));
+                logMarkedForRollback(transactionalBean, retryCounter);
             }
-        } catch (final EJBTransactionRolledbackException | ApplicationOptimisticLockException e) {
+        } catch (final TransactionRollbackException | ApplicationOptimisticLockException e) {
             markedForRollback = true;
-            log.log(Level.WARNING, "Transaction {0} has been marked for rollback, because of optimistic lock exception during {1}. Retry: {2}",
-                    prepareTransactionInfo(transactionalBean, retryCounter));
-            if (retryCounter < 2) {
+            logMarkedForRollback(transactionalBean, retryCounter);
+            if (retryCounter > 2) {
                 throw e;
             }
         } while (markedForRollback && ++retryCounter <= transactionRetryCount);
@@ -56,13 +53,11 @@ public abstract class RepeatableTransactionController {
             method.execute();
             markedForRollback = transactionalBean.isLastTransactionRollback();
             if (markedForRollback) {
-                log.log(Level.WARNING, "Transaction {0} has been marked for rollback during {1}. Retry: {2}",
-                        prepareTransactionInfo(transactionalBean, retryCounter));
+                logMarkedForRollback(transactionalBean, retryCounter);
             }
-        } catch (final EJBTransactionRolledbackException | ApplicationOptimisticLockException e) {
+        } catch (final TransactionRollbackException | ApplicationOptimisticLockException e) {
             markedForRollback = true;
-            log.log(Level.WARNING, "Transaction {0} has been marked for rollback, because of optimistic lock exception during {1}. Retry: {2}",
-                    prepareTransactionInfo(transactionalBean, retryCounter));
+            logMarkedForRollback(transactionalBean, retryCounter);
             if (retryCounter > 2) {
                 throw e;
             }
@@ -73,7 +68,12 @@ public abstract class RepeatableTransactionController {
         }
     }
 
-    private static Object[] prepareTransactionInfo(final TransactionAware transactionalBean, final int retryCounter) {
+    private void logMarkedForRollback(final TransactionAware transactionalBean, final int retryCounter) {
+        log.log(Level.WARNING, "Transaction {0} has been marked for rollback during {1}. Retry: {2}",
+                prepareTransactionInfo(transactionalBean, retryCounter));
+    }
+
+    private Object[] prepareTransactionInfo(final TransactionAware transactionalBean, final int retryCounter) {
         return new Object[]{
                 transactionalBean.getTransactionId(),
                 transactionalBean.getClass().toGenericString(),

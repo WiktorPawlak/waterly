@@ -117,7 +117,7 @@ public class AccountService {
     public Account findById(final Long id) {
         return accountFacade.findById(id);
     }
-
+    
     @PermitAll
     public void changeAccountActiveStatus(final long id, final boolean active) {
         Account account = accountFacade.findById(id);

@@ -6,6 +6,7 @@ const apiErrors = new Map<string, string>([
     ["ERROR.CANNOT_MODIFY_PERMISSIONS", "apiError.permissionsAlreadyAdded"],
     ["ERROR.FORBIDDEN_OPERATION", "apiError.forbiddenOperation"],
     ["ERROR.IDENTICAL_PASSWORDS", "apiError.identicalPasswords"],
+    ["ERROR.TRANSACTION_ROLLBACK", "apiError.transactionRollback"],
     ["ERROR.OPTIMISTIC_LOCK", "apiError.optimisticLock"],
     ["ERROR.UNSUPPORTED_OPERATION", "apiError.unsupportedOperation"],
     ["ERROR.TOKEN_EXCEEDED_HALF_TIME", "apiError.exceededToken"],

@@ -183,7 +183,8 @@
     "accountNotConfirmed": "Konto nie jest potwierdzone",
     "accountNotWaitingForConfirmation": "Konto jest już potwierdzone",
     "entityIntegrityViolated": "Niedozwolona modyfikacja",
-    "optimisticLock": "Nie udało się zaktualizować danych. Wygląda na to, że zostały one zmienione przez innego użytkownika."
+    "optimisticLock": "Nie udało się zaktualizować danych. Wygląda na to, że zostały one zmienione przez innego użytkownika.",
+    "transactionRollback": "Przekroczono maksymalny czas wykonywania operacji. Spróbuj ponownie później lub skontaktuj się z naszym serwisem."
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",

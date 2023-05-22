@@ -14,7 +14,7 @@ import { resolveApiError } from "../../../api/apiErrors";
 
 export interface LockProps {
   accountId: any;
-  active: boolean
+  active: boolean;
 }
 
 export const Lock = ({ accountId, active }: LockProps) => {
@@ -26,6 +26,7 @@ export const Lock = ({ accountId, active }: LockProps) => {
     const accountActiveStatusDto: AccountActiveStatusDto = {
       active: !active,
     };
+    setAnchorEl(null);
     await changeAccountActiveStatus(accountId, accountActiveStatusDto).then(
       (response) => {
         if (response.status === 200) {
@@ -39,7 +40,6 @@ export const Lock = ({ accountId, active }: LockProps) => {
             });
           }
           setIsActive(!isActive);
-          setAnchorEl(null);
         } else {
           enqueueSnackbar(t(resolveApiError(response.error)), {
             variant: "error",
