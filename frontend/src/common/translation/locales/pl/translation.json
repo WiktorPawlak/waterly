@@ -75,6 +75,10 @@
     "toastSuccess": "Email został zmieniony.",
     "toastError": "Błąd akceptacji emaila. Token jest nieaktywny."
   },
+  "createAccountDialog": {
+    "createAccount": "Utwórz konto",
+    "accountCreatedSuccessfully": "Konto zostało utworzone"
+  },
   "editAccountDetailsPage": {
     "header": "Edytuj dane konta",
     "description": "Tutaj możesz edytować swoje hasło, email lub dane personalne",

@@ -310,6 +310,10 @@
     "editAccount": "Edit account",
     "accountEditedSuccessfully": "Account edited successfully"
   },
+  "createAccountDialog": {
+    "createAccount": "Create account",
+    "accountCreatedSuccessfully": "Account created successfully"
+  },
   "editPasswordByAdminDialog": {
     "header": "Change user's password",
     "description": "Fill the form below to change user's password",
