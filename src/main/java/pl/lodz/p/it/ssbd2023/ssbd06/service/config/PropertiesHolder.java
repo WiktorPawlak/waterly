@@ -6,17 +6,20 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.inject.Singleton;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 
-@ApplicationScoped
+@Singleton
 public class PropertiesHolder {
 
+    public static final String ENVIRONMENT_KEY = "SSBD_ENVIRONMENT";
     private final Logger log = Logger.getLogger(PropertiesHolder.class.getName());
 
     private Properties properties;
+
+    private String environment;
 
     @Property
     @Produces
@@ -49,8 +52,18 @@ public class PropertiesHolder {
 
     @PostConstruct
     public void init() {
+        try {
+            environment = System.getenv(ENVIRONMENT_KEY);
+            if (environment == null) {
+                handleFallback();
+            }
+        } catch (final Exception e) {
+            handleFallback();
+        }
+
         this.properties = new Properties();
-        final InputStream stream = PropertiesHolder.class.getResourceAsStream("/application.properties");
+        final String propertiesFile = "/application-" + environment.toLowerCase() + ".properties";
+        final InputStream stream = PropertiesHolder.class.getResourceAsStream(propertiesFile);
         if (stream == null) {
             log.severe("Properties file not found");
             throw ApplicationBaseException.generalErrorException();
@@ -61,5 +74,10 @@ public class PropertiesHolder {
             log.severe("Properties could not be loaded");
             throw ApplicationBaseException.generalErrorException(e);
         }
+    }
+
+    private void handleFallback() {
+        log.severe("Environment not specified, performing fallback to dev environment");
+        environment = "dev";
     }
 }

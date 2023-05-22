@@ -44,7 +44,7 @@ public class BaseArquillianTest {
         return ShrinkWrap.create(WebArchive.class)
                 .addAsLibraries(libraries)
                 .addPackages(true, Filters.exclude(JDBCConfig.class, AccountVerificationStartup.class), "pl.lodz.p.it.ssbd2023.ssbd06")
-                .addAsResource(new File("src/test/resources/test.properties"), "application.properties")
+                .addAsResource(new File("src/test/resources/test.properties"), "application-dev.properties")
                 .addAsResource(new File("src/main/resources/i18n"), "i18n")
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource("test-glassfish-web.xml", "glassfish-web.xml")

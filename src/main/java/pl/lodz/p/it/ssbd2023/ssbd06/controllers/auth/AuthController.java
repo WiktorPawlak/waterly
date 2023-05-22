@@ -21,11 +21,11 @@ import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.endpoints.AccountEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.AccountIdentityStore;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.JwtProvider;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.otp.OTPProvider;
 
 
 @Path(value = "/auth")
@@ -44,8 +44,14 @@ public class AuthController {
     private HttpServletRequest httpServletRequest;
     @Inject
     private AccountEndpoint accountEndpoint;
+
     @Inject
-    private OTPProvider otpProvider;
+    @Property("ip.resolve.strategy")
+    private String ipResolvingStrategy;
+
+    @Inject
+    @Property("real.ip.header.name")
+    private String realIpHeaderName;
 
     @OnlyGuest
     @POST
@@ -70,8 +76,15 @@ public class AuthController {
             }
         }
 
-        accountEndpoint.saveSuccessfulAuthAttempt(LocalDateTime.now(), credentials.getLogin(), httpServletRequest.getRemoteAddr());
-        log.info("User " + credentials.getLogin() + " authenticated with IP " + httpServletRequest.getRemoteAddr());
+        String authenticationIpAddress = "";
+        if ("header".equals(ipResolvingStrategy)) {
+            authenticationIpAddress = httpServletRequest.getHeader(realIpHeaderName);
+        } else {
+            authenticationIpAddress = httpServletRequest.getRemoteAddr();
+        }
+
+        accountEndpoint.saveSuccessfulAuthAttempt(LocalDateTime.now(), credentials.getLogin(), authenticationIpAddress);
+        log.info("User " + credentials.getLogin() + " authenticated with IP " + authenticationIpAddress);
 
         return Response.ok()
                 .entity(jwtProvider.createToken(validationResult))
