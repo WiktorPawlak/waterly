@@ -26,6 +26,7 @@ ENV DB_MOK_PASSWORD=${db_mok_pass}
 ENV DB_MOL_PASSWORD=${db_mol_pass}
 ENV APP_WAR_TARGET_FOLDER=/app-backend/target/${app_name}.war
 ENV APP_DEPLOYMENT_FOLDER=/opt/payara/deployments/${app_name}.war
+ENV SSBD_ENVIRONMENT=PROD
 
 COPY --from=build-stage-backend ${APP_WAR_TARGET_FOLDER} ${APP_DEPLOYMENT_FOLDER}
 
