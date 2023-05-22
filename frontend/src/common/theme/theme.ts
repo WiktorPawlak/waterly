@@ -32,3 +32,36 @@ export const theme = createTheme({
     },
   },
 });
+
+export const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#42A7C2",
+      contrastText: "#ffffff",
+    },
+    secondary: {
+      50: "#E7D428",
+      100: "#E1935A",
+      main: "#EE6F2D",
+    },
+    text: {
+      primary: "#ffffff",
+      secondary: "#BEBEBE",
+    },
+    background: {
+      paper: "#1A1C20",
+      default: "#121B2A",
+    },
+  },
+  spacing: 8,
+  shape: {
+    borderRadius: 35,
+  },
+  typography: {
+    fontFamily: "Inter, sans-serif",
+    allVariants: {
+      color: "#ffffff",
+    },
+  },
+});

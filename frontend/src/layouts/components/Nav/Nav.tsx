@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import { NavEntry, SlideNav } from "./Nav.styled";
 import { Twirl } from "hamburger-react";
 import { ProfileCard } from "../ProfileCard";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 interface NavProps {
   hideMenuEntries?: boolean;
@@ -73,27 +74,44 @@ export const Nav = ({
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
 
   const preferredLanguage = localStorage.getItem("preferredLanguage") ?? "pl";
+  const preferredTheme = localStorage.getItem("themeMode") ?? "light";
 
   const handleLanguageChange = (lng: string) => {
     localStorage.setItem("preferredLanguage", lng);
     i18n.changeLanguage(lng);
   };
+  const handleThemeChange = (preferedThemeMode: string) => {
+    localStorage.setItem("themeMode", preferedThemeMode);
+    location.reload();
+  };
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
+  const [anchorElTheme, setAnchorElTheme] =
+    React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleClickTheme = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElTheme(event.currentTarget);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  const handleCloseTheme = () => {
+    setAnchorElTheme(null);
+  };
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const open = Boolean(anchorEl);
+
+  const openTheme = Boolean(anchorElTheme);
 
   const trigger = useScrollTrigger({
     target: window ? window() : undefined,
@@ -241,6 +259,46 @@ export const Nav = ({
                         }
                       >
                         PL
+                      </Button>
+                    </Box>
+                  </Popover>
+                  <Button onClick={handleClickTheme}>
+                    <DarkModeIcon />
+                  </Button>
+                  <Popover
+                    open={openTheme}
+                    anchorEl={anchorElTheme}
+                    onClose={handleCloseTheme}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Button
+                        onClick={() => handleThemeChange("light")}
+                        variant={
+                          preferredTheme === "light" ? "contained" : "outlined"
+                        }
+                      >
+                        {t("theme.light")}
+                      </Button>
+                      <Button
+                        onClick={() => handleThemeChange("dark")}
+                        variant={
+                          preferredTheme === "dark" ? "contained" : "outlined"
+                        }
+                      >
+                        {t("theme.dark")}
                       </Button>
                     </Box>
                   </Popover>
