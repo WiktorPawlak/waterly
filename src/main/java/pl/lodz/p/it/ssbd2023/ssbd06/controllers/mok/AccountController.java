@@ -261,11 +261,11 @@ public class AccountController extends RepeatableTransactionController {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    @GET
+    @POST
     @Path("/to-verify")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNotConfirmedAccounts() {
-        List<ListAccountDto> accounts = retry(() -> accountEndpoint.getNotConfirmedAccounts(), accountEndpoint);
+    public Response getNotConfirmedAccounts(@NotNull @Valid final GetPagedAccountListDto dto, @QueryParam("pattern") final String pattern) {
+        PaginatedList<ListAccountDto> accounts = retry(() -> accountEndpoint.getNotConfirmedAccounts(pattern, dto), accountEndpoint);
         return Response.ok().entity(accounts).build();
     }
 
@@ -278,7 +278,7 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().entity(accounts).build();
     }
 
-    @RolesAllowed({ADMINISTRATOR})
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER})
     @GET
     @Path("/list/name-suggestions")
     public Response getNameSuggestions(@QueryParam("pattern") final String pattern)

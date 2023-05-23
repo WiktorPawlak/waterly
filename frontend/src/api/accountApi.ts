@@ -1,6 +1,6 @@
-import {ApiResponse, get, post, put} from "./api";
-import {RoleOperation} from "../types";
-import {AccountDetailsSchemaType} from "../validation/validationSchemas";
+import { ApiResponse, get, post, put } from "./api";
+import { RoleOperation } from "../types";
+import { AccountDetailsSchemaType } from "../validation/validationSchemas";
 
 const ACCOUNTS_PATH = "/accounts";
 
@@ -179,13 +179,20 @@ export async function getAccountsList(
     getPagedListDto: GetPagedAccountListDto,
     pattern: string
 ): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
-    return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, {pattern: pattern});
+    return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, { pattern: pattern });
+}
+
+export async function getNotConfirmedAccoutsList(
+    getPagedListDto: GetPagedAccountListDto,
+    pattern: string
+): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
+    return post(`${ACCOUNTS_PATH}/to-verify`, getPagedListDto, { pattern: pattern });
 }
 
 export async function getAccountNames(
-  pattern: string
+    pattern: string
 ): Promise<ApiResponse<String[]>> {
-  return get(`${ACCOUNTS_PATH}/list/name-suggestions`, { pattern: pattern });
+    return get(`${ACCOUNTS_PATH}/list/name-suggestions`, { pattern: pattern });
 }
 
 export async function grantAccountPermissions(

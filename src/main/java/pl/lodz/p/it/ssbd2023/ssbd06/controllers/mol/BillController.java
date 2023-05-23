@@ -18,6 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillsDto;
 public class BillController extends RepeatableTransactionController {
 
     @GET
+    @Path("/dopoprawy")
     public List<BillsDto> getBillsByOwnerId(@QueryParam("ownerId") final long ownerId) {
         throw new NotSupportedException();
     }

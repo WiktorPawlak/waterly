@@ -42,13 +42,13 @@ public class ListSearchPreferencesFacade extends AbstractFacade<ListSearchPrefer
     }
 
     @Override
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public ListSearchPreferences create(final ListSearchPreferences entity) {
         return super.create(entity);
     }
 
     @Override
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER, OWNER})
     public ListSearchPreferences update(final ListSearchPreferences entity) {
         return super.update(entity);
     }

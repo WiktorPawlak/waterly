@@ -351,7 +351,7 @@ public class AccountService {
                 orderBy);
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER})
     public List<String> getNameSuggestions(final String pattern) {
 
         return accountFacade.findAccountsNames(pattern);
@@ -373,9 +373,29 @@ public class AccountService {
         return accountFacade.findById(id);
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
-    public List<Account> getNotConfirmedAccounts() {
-        return accountFacade.findNotConfirmedAccounts();
+    @RolesAllowed(FACILITY_MANAGER)
+    public List<Account> getNotConfirmedAccounts(final String pattern,
+                                         final Integer page,
+                                         final Integer pageSize,
+                                         final String order,
+                                         final String orderBy) {
+        boolean ascOrder = "asc".equalsIgnoreCase(order);
+
+        Account account = findByLogin(authenticatedAccount.getLogin());
+
+        Optional<ListSearchPreferences> accountSearchPreferences = listSearchPreferencesFacade.findByAccount(account);
+        updateOrCreateAccountSearchPreferences(order, orderBy, pageSize, account, accountSearchPreferences);
+
+        return accountFacade.findNotConfirmedAccounts(pattern,
+                page,
+                pageSize,
+                ascOrder,
+                orderBy);
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public Long getNotConfirmedAccountsCount(final String pattern){
+        return accountFacade.countNotConfirmedAccounts(pattern);
     }
 
     private void updateOrCreateAccountSearchPreferences(final String order,
