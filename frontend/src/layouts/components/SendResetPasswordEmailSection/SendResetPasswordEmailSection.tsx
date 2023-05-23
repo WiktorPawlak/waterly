@@ -16,6 +16,7 @@ import { postSendResetPasswordEmail } from "../../../api/accountApi";
 import { useToast } from "../../../hooks/useToast";
 import { useTranslation } from "react-i18next";
 import { Toast } from "../Toast";
+import { resolveApiError } from "../../../api/apiErrors";
 
 export const SendResetPasswordEmailSection = () => {
   const {
@@ -42,8 +43,12 @@ export const SendResetPasswordEmailSection = () => {
 
   async function postSendResetPasswordEmailHandle() {
     const response = await postSendResetPasswordEmail(email);
-    handleClose();
-    toast.showSuccessToast(t("resetEmailSuccess.alert.emailSent"));
+    if (response.status === 200) {
+      handleClose();
+      toast.showSuccessToast(t("resetEmailSuccess.alert.emailSent"));
+    } else {
+      toast.showErrorToast(t(resolveApiError(response.error)));
+    }
   }
 
   return (

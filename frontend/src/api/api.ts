@@ -57,8 +57,8 @@ export async function post<T>(
     .then((response) => {
       return { data: response.data, status: response.status };
     })
-    .catch((error: unknown) => {
-      return { error: (error as Error).message };
+    .catch(function (error) {
+      return { error: error.response?.data?.message };
     });
 }
 
