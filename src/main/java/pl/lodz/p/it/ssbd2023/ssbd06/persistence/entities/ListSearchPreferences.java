@@ -31,7 +31,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
 public class ListSearchPreferences extends AbstractEntity {
 
     @OneToOne(cascade = {REFRESH})
-    @JoinColumn(name = "account_id", updatable = false, foreignKey = @ForeignKey(name = "list_search_preferences_account_fk"))
+    @JoinColumn(name = "account_id", updatable = false, foreignKey = @ForeignKey(name = "list_search_preferences_account_fk"), unique = true)
     private Account account;
     @Column(name = "page_size")
     @Setter

@@ -1,50 +1,177 @@
-import { MainLayout } from "../../layouts/MainLayout";
-import { Box, Button, Typography } from "@mui/material";
+
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridColumnHeaderParams,
+  GridSortModel,
+} from "@mui/x-data-grid";
+import React, { useCallback, useEffect, useState } from "react";
+
+import {
+  Autocomplete,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Pagination,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { PaginatedList, ListAccountDto, GetPagedAccountListDto, getSelfSearchPreferences, getAccountsList, getAccountNames, getNotConfirmedAccoutsList } from "../../api/accountApi";
+import { MainLayout } from "../../layouts/MainLayout";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 
+
 export const VerifyUsersFMPage = () => {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const [fetchSearchPreferencesCompleted, setFetchSearchPreferencesCompleted] = useState(false);
+  const [pattern, setPattern] = useState("");
+
+  const [nameSuggestions, setNamesuggestions] = useState<String[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
+    data: [],
+    pageNumber: 1,
+    itemsInPage: 0,
+    totalPages: 0,
+  });
+
+  const [listRequest, setListRequest] = useState<GetPagedAccountListDto>({
+    page: 1,
+    pageSize: 10,
+    order: "asc",
+    orderBy: "login",
+  });
+
+  useEffect(() => {
+    getSelfSearchPreferences().then((response) => {
+      if (response.status === 200) {
+        setListRequest((prevState) => ({
+          ...prevState,
+          pageSize: response.data?.pageSize || prevState.pageSize,
+          order: response.data?.order || prevState.order,
+          orderBy: response.data?.orderBy || prevState.orderBy,
+        }));
+      } else {
+        console.error(response.error);
+      }
+      setFetchSearchPreferencesCompleted(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (fetchSearchPreferencesCompleted && listRequest) {
+      setIsLoading(true);
+      getNotConfirmedAccoutsList(listRequest, pattern).then((response) => {
+        if (response.status === 200) {
+          setPageState(response.data!);
+        } else {
+          console.error(response.error);
+        }
+        setIsLoading(false);
+      });
+    }
+  }, [listRequest, pattern]);
+
+  useEffect(() => {
+    getAccountNames(pattern).then((response) => {
+      if (response.status === 200) {
+        setNamesuggestions(response.data!);
+      } else {
+        console.error(response.error);
+      }
+    });
+  }, [pattern]);
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setListRequest((prevListRequest) => ({
+      ...prevListRequest,
+      page: page,
+    }));
+  };
+
+  const handlePageSizeChange = (event: SelectChangeEvent) => {
+    setListRequest((prevListRequest) => ({
+      ...prevListRequest,
+      page: 1,
+      pageSize: parseInt(event.target.value),
+    }));
+  };
+
+  const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
+    if (
+      column.field != "id" &&
+      column.field != "roles" &&
+      column.field != "actions"
+    )
+      setListRequest((old) => ({ ...old, orderBy: column.field }));
+  };
+
+  const handleSortModelChange = useCallback((sortModel: GridSortModel) => {
+    setListRequest((old) => ({ ...old, order: sortModel[0]?.sort as string }));
+  }, []);
+
   const columns: GridColDef[] = [
     {
       field: "id",
       renderHeader: () => <strong>{"ID"}</strong>,
       width: 70,
+      filterable: false,
+      sortable: false,
+      disableColumnMenu: true,
+      disableReorder: true,
     },
     {
-      field: "name",
-      renderHeader: () => <strong>{"Name"}</strong>,
-      width: 330,
+      field: "login",
+      renderHeader: () => (
+        <strong>{t("manageUsersPage.dataGrid.header.login")}</strong>
+      ),
+      width: 120,
     },
     {
-      field: "actions",
-      headerName: "",
+      field: "firstName",
+      renderHeader: () => (
+        <strong>{t("manageUsersPage.dataGrid.header.firstName")}</strong>
+      ),
+      width: 150,
+    },
+    {
+      field: "lastName",
+      renderHeader: () => (
+        <strong>{t("manageUsersPage.dataGrid.header.lastName")}</strong>
+      ),
+      width: 150,
+    },
+    {
+      field: "accept",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
-      width: 150,
-      renderCell: () => {
-        return (
-          <>
-            <Button variant="text">
-              <CheckIcon sx={{ color: "green" }} />
-            </Button>
-            <Button variant="text">
-              <ClearIcon sx={{ color: "red" }} />
-            </Button>
-          </>
-        );
-      },
+      width: 80,
+      renderCell: (params) => (
+        <CheckIcon sx={{ color: "green" }} />
+      ),
     },
+    {
+      field: "reject",
+      description: "This column has a value getter and is not sortable.",
+      sortable: false,
+      width: 80,
+      renderCell: (params) => (
+        <ClearIcon sx={{ color: "red" }} />
+      ),
+    }
   ];
 
-  const rows = [
-    { id: 1, name: "John Snow" },
-    { id: 2, name: "Jan Kowalski" },
-    { id: 3, name: "Alina Przykladowa" },
-  ];
-
-  const { t } = useTranslation();
   return (
     <MainLayout>
       <Box
@@ -67,12 +194,65 @@ export const VerifyUsersFMPage = () => {
             width: "100%",
           }}
         >
-          <Box sx={{ height: 400, width: "560px" }}>
+          <Autocomplete
+            disablePortal
+            freeSolo
+            options={nameSuggestions}
+            sx={{ width: "35vw" }}
+            onInputChange={(event, newInputValue) => {
+              setPattern(newInputValue);
+            }}
+            renderInput={(params) => (
+              <TextField
+                label={t("manageUsersPage.searchLabel")}
+                sx={{ color: "text.secondary", marginBottom: "15px" }}
+                {...params}
+              />
+            )}
+          />
+          <Box sx={{ height: 600, width: "75%" }}>
             <DataGrid
-              rows={rows}
+              autoHeight
+              loading={isLoading}
+              rows={pageState?.data ?? []}
               columns={columns}
-              paginationModel={{ page: 0, pageSize: 10 }}
+              onColumnHeaderClick={handleOnColumnHeaderClick}
+              sortingMode="server"
+              onSortModelChange={handleSortModelChange}
+              disableColumnMenu={true}
+              hideFooterPagination={true}
+              sortingOrder={["asc", "desc"]}
             />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <Pagination
+                count={pageState.totalPages as number}
+                page={listRequest.page as number}
+                onChange={handlePageChange}
+              />
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                <InputLabel id="demo-simple-select-standard-label">
+                  {t("manageUsersPage.pageSize")}
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  id="demo-simple-select-standard"
+                  value={listRequest?.pageSize?.toString()}
+                  onChange={handlePageSizeChange}
+                  label="pageSize"
+                >
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                  <MenuItem value={30}>30</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
           </Box>
         </Box>
       </Box>

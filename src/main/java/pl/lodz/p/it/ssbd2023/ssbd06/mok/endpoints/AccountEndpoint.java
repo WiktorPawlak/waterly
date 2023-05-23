@@ -229,7 +229,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
                 (long) Math.ceil(accountService.getAccountListCount(preparedPattern).doubleValue() / pageSizeResolved));
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER})
     public List<String> getNameSuggestions(final String pattern) {
         String preparedPattern = preparePattern(pattern);
 
@@ -247,11 +247,26 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         return new AccountDto(account);
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
-    public List<ListAccountDto> getNotConfirmedAccounts() {
-        return accountService.getNotConfirmedAccounts().stream()
+    @RolesAllowed(FACILITY_MANAGER)
+    public PaginatedList<ListAccountDto> getNotConfirmedAccounts(final String pattern, final GetPagedAccountListDto dto) {
+        int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;
+        int pageSizeResolved = dto.getPageSize() != null ? dto.getPageSize() : defaultListPageSize;
+        String orderByResolved = dto.getOrderBy() != null ? dto.getOrderBy() : "login";
+
+        String preparedPattern = preparePattern(pattern);
+
+        List<ListAccountDto> accountDtoList = accountService.getNotConfirmedAccounts(preparedPattern,
+                        pageResolved,
+                        pageSizeResolved,
+                        dto.getOrder(),
+                        orderByResolved).stream()
                 .map(ListAccountDto::new)
                 .toList();
+
+        return new PaginatedList<>(accountDtoList,
+                pageSizeResolved,
+                accountDtoList.size(),
+                (long) Math.ceil(accountService.getNotConfirmedAccountsCount(preparedPattern).doubleValue() / pageSizeResolved));
     }
 
     @RolesAllowed(FACILITY_MANAGER)

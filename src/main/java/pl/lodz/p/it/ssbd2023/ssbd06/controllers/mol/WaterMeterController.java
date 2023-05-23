@@ -25,6 +25,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMetersDto;
 public class WaterMeterController extends RepeatableTransactionController {
 
     @GET
+    @Path("/dopoprawy")
     public List<WaterMetersDto> getWaterMeters() {
         throw new NotSupportedException();
     }

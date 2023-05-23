@@ -146,7 +146,7 @@ public class AccountFacade extends AbstractFacade<Account> {
                 .getResultList();
     }
 
-    @RolesAllowed({ADMINISTRATOR})
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER})
     public List<String> findAccountsNames(final String pattern) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<String> query = cb.createQuery(String.class);
@@ -178,12 +178,54 @@ public class AccountFacade extends AbstractFacade<Account> {
         return em.createQuery(query).getSingleResult();
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
+    public Long countNotConfirmedAccounts(final String pattern) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Account> account = query.from(Account.class);
+        Join<Account, AccountDetails> join = account.join("accountDetails");
+
+        if (pattern != null) {
+            Predicate[] patternPredicate = getFilterByPatternPredicates(pattern, cb, account, join);
+            Predicate accountStatePredicate = cb.equal(account.get("accountState"), TO_CONFIRM);
+            query.select(cb.count(account))
+                    .where(cb.and(cb.or(patternPredicate), accountStatePredicate));
+        } else {
+            query.select(cb.count(account))
+                    .where(cb.equal(account.get("accountState"), TO_CONFIRM));
+        }
+
+        return em.createQuery(query).getSingleResult();
+    }
+
     @RolesAllowed({FACILITY_MANAGER})
-    public List<Account> findNotConfirmedAccounts() {
-        TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByAccountState", Account.class);
-        accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
-        accountTypedQuery.setParameter("accountState", TO_CONFIRM);
-        return accountTypedQuery.getResultList();
+    public List<Account> findNotConfirmedAccounts(final String pattern,
+                                      final int page,
+                                      final int pageSize,
+                                      final boolean ascOrder,
+                                      final String orderBy) {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Account> query = cb.createQuery(Account.class);
+        Root<Account> account = query.from(Account.class);
+        Join<Account, AccountDetails> join = account.join("accountDetails");
+        if (ascOrder) {
+            query.orderBy(cb.asc(resolveFieldClass(join, orderBy).get(orderBy)));
+        } else {
+            query.orderBy(cb.desc(resolveFieldClass(join, orderBy).get(orderBy)));
+        }
+
+        if (pattern != null) {
+            Predicate[] patternPredicate = getFilterByPatternPredicates(pattern, cb, account, join);
+            Predicate accountStatePredicate = cb.equal(account.get("accountState"), TO_CONFIRM);
+            query.where(cb.and(cb.or(patternPredicate), accountStatePredicate));
+        } else {
+            query.where(cb.equal(account.get("accountState"), TO_CONFIRM));
+        }
+
+        return getEntityManager().createQuery(query)
+                .setFirstResult(pageSize * (page - 1))
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
     private Predicate[] getFilterByPatternPredicates(final String pattern, final CriteriaBuilder cb, final Root<Account> account,
