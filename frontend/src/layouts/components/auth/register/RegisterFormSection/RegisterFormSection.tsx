@@ -73,18 +73,16 @@ export const RegisterFormSection = () => {
 
   const recaptchaRef = React.createRef<ReCAPTCHA>();
 
+  const [isRegisterClicked, setRegisterClicked] = React.useState(false);
+
   const handleFormSubmit = async (formData: AccountDetailsSchemaType) => {
     const recaptchaResponse = recaptchaRef.current?.getValue();
     const registerUserRequest = { ...formData, languageTag };
-
-    await registerUser(registerUserRequest, recaptchaResponse || null);
+    if (isRegisterClicked) {
+      await registerUser(registerUserRequest, recaptchaResponse || null);
+    }
+    setRegisterClicked(!isRegisterClicked);
   };
-
-  const [isVerified, setIsVerified] = React.useState(false);
-
-  function onChange(value: String | null) {
-    setIsVerified(true);
-  }
 
   return (
     <Box
@@ -274,12 +272,17 @@ export const RegisterFormSection = () => {
             }}
           />
         </Box>
-        <ReCAPTCHA ref={recaptchaRef} sitekey={siteKey} onChange={onChange} />
+        {isRegisterClicked && (
+          <ReCAPTCHA ref={recaptchaRef} sitekey={siteKey} />
+        )}
         <Button
-          disabled={!isVerified}
           variant="contained"
           type="submit"
-          sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
+          sx={{
+            textTransform: "none",
+            mb: { xs: 3, md: 6 },
+            mt: isRegisterClicked ? 1 : 0,
+          }}
         >
           {t("registerPage.form.submitButtonLabel")}
         </Button>
