@@ -10,8 +10,8 @@
       "description": "Log in to Waterly..."
     },
     "form": {
-      "loginLabel": "Login",
-      "passwordLabel": "Password",
+      "loginLabel": "Login *",
+      "passwordLabel": "Password *",
       "submitButtonLabel": "Log in",
       "forgotPasswordLinkLabel": "Forgot password?",
       "forgotPasswordDescription": "Enter your email address below and if your account is active, we'll send you a password reset link.",
@@ -42,12 +42,12 @@
       "description": "Create your account in Waterly..."
     },
     "form": {
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "emailLabel": "Email",
-      "phoneNumber": "Phone Number",
-      "passwordLabel": "Password",
-      "confirmPassword": "Confirm Password",
+      "firstName": "First Name *",
+      "lastName": "Last Name *",
+      "emailLabel": "Email *",
+      "phoneNumber": "Phone Number *",
+      "passwordLabel": "Password *",
+      "confirmPassword": "Confirm Password *",
       "forgotPasswordLinkLabel": "Forgot password?",
       "submitButtonLabel": "Submit",
       "accountExistsQuestion": "Already have an account?",
@@ -181,7 +181,7 @@
     "authenticationError": "Authentication error, please check your credentials",
     "passwordsNotMatch": "Old password do not match",
     "resourceNotFound": "Resource not found",
-    "emailNotMatch": "Email addresses do not match",
+    "emailNotMatch": "Such email is not registered in our system",
     "accountNotActive": "The account is not active",
     "accountNotConfirmed": "The account is not confirmed",
     "accountNotWaitingForConfirmation": "The account is already confirmed",
@@ -224,7 +224,8 @@
   },
   "resetEmailSuccess": {
     "alert": {
-      "emailSent": "An email has been sent to your email address. Please check your inbox."
+      "emailSent": "An email has been sent to your email address. Please check your inbox.",
+      "noMatchingEmail": "There is no matching email that is registered"
     }
   },
   "resetPassword": {
@@ -233,8 +234,8 @@
       "description": "Fill the form below to reset your password."
     },
     "form": {
-      "newPasswordLabel": "New password.",
-      "newPasswordRepeatLabel": "Repeat new password.",
+      "newPasswordLabel": "New password *",
+      "newPasswordRepeatLabel": "Repeat new password *",
       "submitPasswordReset": "Reset password"
     },
     "alert": {
@@ -250,9 +251,9 @@
     "description": "Fill the form below to change your password.",
     "success": "Your password has been changed successfully",
     "passwords": {
-      "newPasswordLabel": "New password",
-      "oldPasswordLabel": "Old password",
-      "confirmNewPasswordLabel": "Confirm new password"
+      "newPasswordLabel": "New password *",
+      "oldPasswordLabel": "Old password *",
+      "confirmNewPasswordLabel": "Confirm new password *"
     },
     "buttons": {
       "change": "Save",

@@ -194,7 +194,7 @@ export const RegisterFormSection = () => {
             }}
           />
           <TextField
-            label="Login"
+            label="Login *"
             {...register("login")}
             error={!!loginErrorMessage}
             helperText={loginErrorMessage && t(loginErrorMessage)}

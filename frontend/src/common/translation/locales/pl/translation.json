@@ -10,8 +10,8 @@
       "description": "Zaloguj się do Waterly..."
     },
     "form": {
-      "loginLabel": "Login",
-      "passwordLabel": "Hasło",
+      "loginLabel": "Login *",
+      "passwordLabel": "Hasło *",
       "submitButtonLabel": "Zaloguj",
       "forgotPasswordLinkLabel": "Zapomniałeś hasła?",
       "forgotPasswordDescription": "Wpisz swój adres email poniżej a jeżeli twoje konto jest aktywne, my wyślemy ci link pozwalający na reset hasła.",
@@ -42,12 +42,12 @@
       "description": "Załóż swoje konto w Waterly..."
     },
     "form": {
-      "firstName": "Imię",
-      "lastName": "Nazwisko",
-      "emailLabel": "Email",
-      "phoneNumber": "Numer Telefonu",
-      "passwordLabel": "Hasło",
-      "confirmPassword": "Powtórz hasło",
+      "firstName": "Imię *",
+      "lastName": "Nazwisko *",
+      "emailLabel": "Email *",
+      "phoneNumber": "Numer Telefonu *",
+      "passwordLabel": "Hasło *",
+      "confirmPassword": "Powtórz hasło *",
       "forgotPasswordLinkLabel": "Zapomniałeś hasła?",
       "forgotPasswordDescription": "Wpisz swój email poniżej a my wyślemy ci link pozwalający na reset hasła.",
       "submitButtonLabel": "Zarejestruj",
@@ -187,7 +187,7 @@
     "authenticationError": "Błąd uwierzytelnienia, sprawdź swoje dane",
     "passwordsNotMatch": "Stare hasło podane błędnie",
     "resourceNotFound": "Taki zasób nie istnieje",
-    "emailNotMatch": "Adresy email nie są identyczne",
+    "emailNotMatch": "Taki adres email nie istnieje w systemie",
     "accountNotActive": "Konto jest nieaktywne",
     "accountNotConfirmed": "Konto nie jest potwierdzone",
     "accountNotWaitingForConfirmation": "Konto jest już potwierdzone",
@@ -229,7 +229,8 @@
   },
   "resetEmailSuccess": {
     "alert": {
-      "emailSent": "Na twoje konto pocztowe został wysłany email. Sprawdź pocztę."
+      "emailSent": "Na twoje konto pocztowe został wysłany email. Sprawdź pocztę.",
+      "noMatchingEmail": "Podany mail nie jest zarejestrowany w systemie"
     }
   },
   "resetPassword": {
@@ -238,8 +239,8 @@
       "description": "Aby zresetować hasło wypełnij poniższy formularz."
     },
     "form": {
-      "newPasswordLabel": "Nowe hasło.",
-      "newPasswordRepeatLabel": "Powtórz nowe hasło.",
+      "newPasswordLabel": "Nowe hasło *",
+      "newPasswordRepeatLabel": "Powtórz nowe hasło *",
       "submitPasswordReset": "Zresetuj hasło"
     },
     "alert": {
@@ -255,9 +256,9 @@
     "description": "Aby zmienić swoje hasło wypełnij poniższy formularz",
     "success": "Hasło zostało zmienione poprawnie",
     "passwords": {
-      "newPasswordLabel": "Nowe hasło",
-      "oldPasswordLabel": "Stare hasło",
-      "confirmNewPasswordLabel": "Powtórz nowe hasło"
+      "newPasswordLabel": "Nowe hasło *",
+      "oldPasswordLabel": "Stare hasło *",
+      "confirmNewPasswordLabel": "Powtórz nowe hasło *"
     },
     "buttons": {
       "change": "Zapisz",
