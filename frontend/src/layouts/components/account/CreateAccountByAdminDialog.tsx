@@ -35,6 +35,7 @@ export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm<AccountDetailsSchemaType>({
     resolver: zodResolver(accountDetailsSchema),
     mode: "onChange",
@@ -52,6 +53,10 @@ export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
 
   const handleClose = () => {
     setIsOpen(false);
+  };
+
+  const handleReset = () => {
+    reset();
   };
 
   const {
@@ -86,6 +91,7 @@ export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
         t("createAccountDialog.accountCreatedSuccessfully")
       );
       setIsOpen(false);
+      handleReset();
     } else {
       toast.showErrorToast(t(resolveApiError(response.error)));
       setIsOpen(false);
@@ -176,7 +182,7 @@ export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
                 }}
               >
                 <TextField
-                  label="Login"
+                  label="Login *"
                   {...register("login")}
                   error={!!loginErrorMessage}
                   helperText={loginErrorMessage && t(loginErrorMessage)}
@@ -184,6 +190,7 @@ export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
                   name="login"
                   sx={{
                     mb: 3,
+                    mr: { xs: 0, md: 5 },
                     "& label": {
                       color: "text.secondary",
                     },
@@ -201,7 +208,6 @@ export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
                   name="email"
                   sx={{
                     mb: 3,
-                    mr: { xs: 0, md: 5 },
                     "& label": {
                       color: "text.secondary",
                     },

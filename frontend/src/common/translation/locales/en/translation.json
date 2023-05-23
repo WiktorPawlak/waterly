@@ -147,7 +147,9 @@
   },
   "verifyUsersFMPage": {
     "header": "Verify users",
-    "description": "Here you can accept or remove users."
+    "description": "Here you can accept or remove users.",
+    "toastAcceptSuccess": "User accepted",
+    "toastRejectSuccess": "User rejected"
   },
   "navigation": {
     "login": "Log in",
@@ -265,7 +267,9 @@
     "lock": "lock this user?",
     "unlock": "unlock this user?",
     "no": "No",
-    "yes": "Yes"
+    "yes": "Yes",
+    "accept": "accept this user?",
+    "reject": "reject this user?"
   },
   "accountDetailsPage": {
     "actions": {

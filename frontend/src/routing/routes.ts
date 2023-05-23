@@ -24,15 +24,18 @@ export const Pathnames = {
         verifyAcc: PATHS.VERIFY_ACCOUNT,
     },
     owner: {
+        home: PATHS.HOME,
         editAccountDetails: PATHS.EDIT_PROFILE,
         notFound: PATHS.NOT_FOUND,
     },
     facilityManager: {
+        home: PATHS.HOME,
         editAccountDetails: PATHS.EDIT_PROFILE,
         notFound: PATHS.NOT_FOUND,
         verifyUsers: PATHS.VERIFY_USERS,
     },
     admin: {
+        home: PATHS.HOME,
         manageUsers: PATHS.MANAGE_USERS,
         editAccountDetails: PATHS.EDIT_PROFILE,
         notFound: PATHS.NOT_FOUND,
@@ -46,6 +49,10 @@ export type RouteType = {
 };
 
 export const adminRoutes: RouteType[] = [
+    {
+        path: Pathnames.public.home,
+        Component: HomePage,
+    },
     {
         path: Pathnames.admin.manageUsers,
         Component: ManageUsersAdminPage,
@@ -66,6 +73,10 @@ export const adminRoutes: RouteType[] = [
 
 export const ownerRoutes: RouteType[] = [
     {
+        path: Pathnames.public.home,
+        Component: HomePage,
+    },
+    {
         path: Pathnames.owner.editAccountDetails,
         Component: EditAccountDetailsPage,
     },
@@ -76,6 +87,10 @@ export const ownerRoutes: RouteType[] = [
 ];
 
 export const facilityManagerRoutes: RouteType[] = [
+    {
+        path: Pathnames.public.home,
+        Component: HomePage,
+    },
     {
         path: Pathnames.facilityManager.editAccountDetails,
         Component: EditAccountDetailsPage,
