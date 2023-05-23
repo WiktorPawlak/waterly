@@ -1,6 +1,10 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
+
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -30,5 +34,11 @@ public class WaterMeterCheckFacade extends AbstractFacade<WaterMeterCheck> {
     @PermitAll
     protected EntityManager getEntityManager() {
         return em;
+    }
+
+    @Override
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
+    public WaterMeterCheck create(final WaterMeterCheck entity) {
+        return super.create(entity);
     }
 }

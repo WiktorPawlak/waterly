@@ -24,12 +24,12 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 public class ApartmentController extends RepeatableTransactionController {
 
     @GET
-    @Path("/dopoprawy")
     public List<ApartmentsDto> getApartments() {
         throw new NotSupportedException();
     }
 
     @GET
+    @Path("/owner")
     public List<ApartmentsDto> getApartmentsByOwnerId(@QueryParam("ownerId") final String ownerId) {
         throw new NotSupportedException();
     }
