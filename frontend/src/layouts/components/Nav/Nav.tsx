@@ -18,6 +18,8 @@ import { NavEntry, SlideNav } from "./Nav.styled";
 import { Twirl } from "hamburger-react";
 import { ProfileCard } from "../ProfileCard";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { useAccount } from "../../../hooks/useAccount";
+import { PATHS } from "../../../routing/paths";
 
 interface NavProps {
   hideMenuEntries?: boolean;
@@ -70,6 +72,7 @@ export const Nav = ({
   const { i18n } = useTranslation();
   const theme = useTheme();
   const { t } = useTranslation();
+  const { logout } = useAccount();
 
   const isMobileWidth = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -183,8 +186,8 @@ export const Nav = ({
                       </>
                     ) : (
                       <>
-                        <NavEntry to="/">{t("navigation.login")}</NavEntry>
-                        <NavEntry to="/register">
+                        <NavEntry to={PATHS.LOGIN}>{t("navigation.login")}</NavEntry>
+                        <NavEntry to={PATHS.REGISTER}>
                           {t("navigation.register")}
                         </NavEntry>
                       </>
@@ -201,11 +204,11 @@ export const Nav = ({
                     </>
                   ) : (
                     <>
-                      <NavEntry to="/">{t("navigation.login")}</NavEntry>
-                      <Link to="/register">
+                      <NavEntry to={PATHS.LOGIN}>{t("navigation.login")}</NavEntry>
+                      <Link to={PATHS.REGISTER}>
                         <Button
                           variant="contained"
-                          sx={{ textTransform: "none", ml: 4 }}
+                          sx={{ textTransform: "none", ml: 4, mt: "10px" }}
                         >
                           {t("navigation.register")}
                         </Button>

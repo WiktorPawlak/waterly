@@ -58,7 +58,7 @@ const AccountDetailsPage = () => {
       <Box
         sx={{
           height: "100vh",
-          mx: { xs: 2, md: 2 },
+          mx: { xs: 2, md: 4 },
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>

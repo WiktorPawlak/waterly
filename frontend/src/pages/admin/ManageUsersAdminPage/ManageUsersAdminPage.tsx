@@ -110,7 +110,7 @@ export const ManageUsersAdminPage = () => {
   const handleCellClick = (params: GridCellParams) => {
     if (params.field != "actions") {
       const accountId = params.row.id;
-      navigate(`/accounts/${accountId}/details`);
+      navigate(`/accounts/${accountId}`);
     }
   };
 

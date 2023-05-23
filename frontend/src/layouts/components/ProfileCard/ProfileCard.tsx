@@ -127,7 +127,7 @@ export const ProfileCard = ({ onCLick }: ProfileCardProps) => {
             </Box>
           </Box>
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Link to="/edit-profile">
+            <Link to="/profile">
               <Button sx={{ textTransform: "none" }}>
                 <Box
                   sx={{

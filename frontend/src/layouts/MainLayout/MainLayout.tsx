@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { Nav } from "../components";
 import { PATHS } from "../../routing/paths";
 import { roles } from "../../types/rolesEnum";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 export interface MainLayoutProps {
   hideMenuEntries?: boolean;
@@ -66,6 +67,7 @@ export const MainLayout = ({
             px: { xs: 2, md: 15 },
           }}
         >
+          <Breadcrumbs/>
           {children}
         </Container>
       </LayoutWrapper>

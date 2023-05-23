@@ -63,7 +63,7 @@ export const EnterTwoFACodeModal = ({ isOpen, setIsOpen, login, password }: Prop
 
           localStorage.setItem("jwtToken", token);
           localStorage.setItem("user", JSON.stringify(user));
-          navigation("/edit-profile");
+          navigation("/profile");
           return true;
         }
     }

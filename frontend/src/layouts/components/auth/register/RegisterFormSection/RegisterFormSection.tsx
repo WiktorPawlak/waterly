@@ -20,6 +20,7 @@ import {
 import ReCAPTCHA from "react-google-recaptcha";
 import React from "react";
 import { siteKey } from "../../../../../config";
+import { PATHS } from "../../../../../routing/paths";
 
 export const RegisterFormSection = () => {
   const navigation = useNavigate();
@@ -301,7 +302,7 @@ export const RegisterFormSection = () => {
         <Button
           variant="text"
           sx={{ textTransform: "none" }}
-          onClick={() => navigation("/")}
+          onClick={() => navigation(PATHS.LOGIN)}
         >
           {t("registerPage.form.loginButton")}
         </Button>

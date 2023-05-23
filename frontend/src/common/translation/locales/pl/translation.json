@@ -331,5 +331,11 @@
   },
   "loginPage": {
     "succesfulLogin": "Zalogowano pomyślnie"
+  },
+  "breadcrumbs": {
+    "homePage": "Strona główna",
+    "accounts": "Zarządzaj użytkownikami",
+		"verify-users": "Weryfikuj użytkowników",
+		"profile": "Profil"
   }
 }

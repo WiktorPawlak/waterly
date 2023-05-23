@@ -330,5 +330,11 @@
   },
   "loginPage": {
     "succesfulLogin": "Logged in succesfully"
+  },
+  "breadcrumbs": {
+    "homePage": "Home",
+    "accounts": "Manage users",
+		"verify-users": "Verify users",
+		"profile": "Profile"
   }
 }

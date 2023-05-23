@@ -1,3 +1,4 @@
+import HomePage from "./../pages/HomePage";
 import LogInPage from "./../pages/LogInPage";
 import RegisterPage from "./../pages/RegisterPage";
 import WaitForVerifyPage from "./../pages/WaitForVerifyPage";
@@ -13,6 +14,7 @@ import {PATHS} from "./paths";
 
 export const Pathnames = {
     public: {
+        home: PATHS.HOME,
         login: PATHS.LOGIN,
         register: PATHS.REGISTER,
         notFound: PATHS.NOT_FOUND,
@@ -89,6 +91,10 @@ export const facilityManagerRoutes: RouteType[] = [
 ];
 
 export const publicRoutes: RouteType[] = [
+    {
+      path: Pathnames.public.home,
+      Component: HomePage,
+    },
     {
         path: Pathnames.public.login,
         Component: LogInPage,
