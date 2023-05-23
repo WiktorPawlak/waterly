@@ -16,7 +16,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import io.vavr.Tuple2;
 import jakarta.annotation.security.PermitAll;
@@ -27,6 +26,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.PasswordHash;
 import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
@@ -62,6 +62,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.otp.OTPProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
+@Log
 @Monitored
 @ServiceExceptionHandler
 @Stateless
@@ -69,7 +70,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 public class AccountService {
 
     public static final int FIRST_PAGE = 1;
-    private final Logger log = Logger.getLogger(AccountService.class.getName());
 
     @Inject
     private AccountFacade accountFacade;
@@ -117,7 +117,7 @@ public class AccountService {
     public Account findById(final Long id) {
         return accountFacade.findById(id);
     }
-    
+
     @PermitAll
     public void changeAccountActiveStatus(final long id, final boolean active) {
         Account account = accountFacade.findById(id);

@@ -31,4 +31,6 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
     protected EntityManager getEntityManager() {
         return em;
     }
+
+
 }

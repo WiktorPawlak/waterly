@@ -41,7 +41,7 @@ public class WaterMeter extends AbstractEntity {
     private BigDecimal startingValue;
     @NotNull
     @Column(nullable = false)
-    private Date epxiryDate;
+    private Date expiryDate;
     @NotNull
     @Column(nullable = false)
     private BigDecimal expectedUsage;
