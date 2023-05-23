@@ -1,8 +1,14 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.controllers.mol;
 
+import static jakarta.ws.rs.core.Response.Status.CREATED;
+import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+
 import java.util.List;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
@@ -11,43 +17,57 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.ApartmentEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 
 @Path("/apartments")
 @RequestScoped
 public class ApartmentController extends RepeatableTransactionController {
 
+    @Inject
+    private ApartmentEndpoint apartmentEndpoint;
+
     @GET
-    public List<ApartmentsDto> getApartments() {
-        throw new NotSupportedException();
+    @RolesAllowed({FACILITY_MANAGER})
+    public Response getApartments() {
+        List<ApartmentsDto> apartments = apartmentEndpoint.getOwnerAllAccounts();
+        return Response.ok().entity(apartments).build();
     }
 
     @GET
-    @Path("/owner")
-    public List<ApartmentsDto> getApartmentsByOwnerId(@QueryParam("ownerId") final String ownerId) {
-        throw new NotSupportedException();
+    @RolesAllowed({FACILITY_MANAGER})
+    @Path("/owner/{ownerId}")
+    public Response getApartmentsByOwnerId(@PathParam("ownerId") final long ownerId) {
+        List<ApartmentsDto> apartments = apartmentEndpoint.getOwnerAllAccounts(ownerId);
+        return Response.ok().entity(apartments).build();
     }
 
     @GET
+    @RolesAllowed({FACILITY_MANAGER})
     @Path("/{id}")
-    public ApartmentDto getApartmentById(@PathParam("id") final long apartmentId) {
-        throw new NotSupportedException();
+    public Response getApartmentById(@PathParam("id") final long apartmentId) {
+        Apartment apartment = apartmentEndpoint.getApartmentById(apartmentId);
+        return Response.ok().entity(apartment).build();
     }
 
     @POST
-    public void establishApartment(@NotNull @Valid final CreateApartmentDto dto) {
-        throw new NotSupportedException();
+    @RolesAllowed({FACILITY_MANAGER})
+    public Response createApartment(@NotNull @Valid final CreateApartmentDto dto) {
+        apartmentEndpoint.createApartment(dto);
+        return Response.status(CREATED).build();
     }
 
     @PUT
-    public void updateApartmentDetails(@NotNull @Valid final EditApartmentDetailsDto dto) {
-        throw new NotSupportedException();
+    @RolesAllowed({FACILITY_MANAGER})
+    public Response updateApartment(@NotNull @Valid final EditApartmentDetailsDto dto) {
+        apartmentEndpoint.updateApartment(dto);
+        return Response.status(NO_CONTENT).build();
     }
 
     @PUT

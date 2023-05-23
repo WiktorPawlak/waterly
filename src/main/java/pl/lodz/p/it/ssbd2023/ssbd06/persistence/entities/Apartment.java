@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -21,12 +22,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 
 @ToString(callSuper = true)
 @Entity
-@Table(
-        name = "apartment",
-        indexes = {
-                @Index(name = "apartment_owner_idx", columnList = "owner_id")
-        }
-)
+@Table(name = "apartment", indexes = {
+        @Index(name = "apartment_owner_idx", columnList = "owner_id")
+})
+@NamedQuery(name = "Apartment.findByOwner_Id", query = "select a from Apartment a where a.owner.id = :id")
 @Getter
 @NoArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})
