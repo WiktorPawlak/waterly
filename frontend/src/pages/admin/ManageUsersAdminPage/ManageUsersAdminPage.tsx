@@ -36,9 +36,8 @@ import { CreateAccountByAdminDialog } from "../../../layouts/components/account/
 export const ManageUsersAdminPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [fetchSearchPreferencesCompleted, setFetchSearchPreferencesCompleted] = useState(false);
   const [pattern, setPattern] = useState("");
-  const [createAccountByAdminDialogOpen, setEditAccountDialogOpen] =
+  const [createAccountByAdminDialogOpen, setCreateAccountByAdminDialogOpen] =
     useState(false);
 
   const [nameSuggestions, setNamesuggestions] = useState<String[]>([]);
@@ -69,13 +68,18 @@ export const ManageUsersAdminPage = () => {
       } else {
         console.error(response.error);
       }
-      setFetchSearchPreferencesCompleted(true);
     });
+    fetchData();
   }, []);
 
   useEffect(() => {
-    if (fetchSearchPreferencesCompleted && listRequest) {
-      setIsLoading(true);
+    if (listRequest) {
+      fetchData();
+    }
+  }, [listRequest, pattern, createAccountByAdminDialogOpen]);
+
+  const fetchData = () => {
+          setIsLoading(true);
       getAccountsList(listRequest, pattern).then((response) => {
         if (response.status === 200) {
           setPageState(response.data!);
@@ -84,8 +88,7 @@ export const ManageUsersAdminPage = () => {
         }
         setIsLoading(false);
       });
-    }
-  }, [listRequest, pattern]);
+    };
 
   useEffect(() => {
     getAccountNames(pattern).then((response) => {
@@ -213,7 +216,7 @@ export const ManageUsersAdminPage = () => {
     <MainLayout>
       <CreateAccountByAdminDialog
         isOpen={createAccountByAdminDialogOpen}
-        setIsOpen={setEditAccountDialogOpen}
+        setIsOpen={setCreateAccountByAdminDialogOpen}
       />
       <Box
         sx={{
@@ -238,7 +241,7 @@ export const ManageUsersAdminPage = () => {
           <Button
             variant="contained"
             sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
-            onClick={() => setEditAccountDialogOpen(true)}
+            onClick={() => setCreateAccountByAdminDialogOpen(true)}
           >
             {t("manageUsersPage.button")}
           </Button>

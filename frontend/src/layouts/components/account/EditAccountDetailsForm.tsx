@@ -17,11 +17,12 @@ import {
 import { EditEmail } from "./EditEmail";
 import { resolveApiError } from "../../../api/apiErrors";
 import { EditPassword } from "./EditPassword";
-import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { languages } from "../../../types";
 import i18n from "../../../i18n";
+import { useToast } from "../../../hooks/useToast";
+import { Toast } from "../Toast";
 
 interface Props {
   account: AccountDto;
@@ -34,8 +35,8 @@ export const EditAccountDetailsForm = ({
   fetchAccountDetails,
   etag,
 }: Props) => {
-  const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
+  const toast = useToast();
 
   const [languageTag, setLanguageTag] = useState(
     localStorage.getItem("preferredLanguage") || "pl"
@@ -85,14 +86,12 @@ export const EditAccountDetailsForm = ({
         localStorage.setItem("preferredLanguage", languageTag);
         i18n.changeLanguage(languageTag);
         localStorage.setItem("themeMode", themeMode);
-        enqueueSnackbar(t("editAccountDetailsPage.alert.detailsSuccesEdited"), {
+        toast.showSuccessToast(t("editAccountDetailsPage.alert.detailsSuccesEdited"), {
           variant: "success",
         });
         location.reload();
       } else {
-        enqueueSnackbar(t(resolveApiError(response.error)), {
-          variant: "error",
-        });
+        toast.showErrorToast(t(resolveApiError(response.error)));
       }
       fetchAccountDetails();
     }
@@ -335,6 +334,12 @@ export const EditAccountDetailsForm = ({
           </Box>
         </Box>
       </Box>
+      <Toast
+            isToastOpen={toast.isToastOpen}
+            setIsToastOpen={toast.setIsToastOpen}
+            message={toast.message}
+            severity={toast.severity}
+          />
       <Divider variant="middle" sx={{ my: 2 }} />
     </Box>
   );

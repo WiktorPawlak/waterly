@@ -12,7 +12,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   Autocomplete,
   Box,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -22,20 +21,19 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PaginatedList, ListAccountDto, GetPagedAccountListDto, getSelfSearchPreferences, getAccountsList, getAccountNames, getNotConfirmedAccoutsList } from "../../api/accountApi";
+import { PaginatedList, ListAccountDto, GetPagedAccountListDto, getSelfSearchPreferences, getAccountsList, getAccountNames, getNotConfirmedAccoutsList, acceptAccount, rejectAccount } from "../../api/accountApi";
 import { MainLayout } from "../../layouts/MainLayout";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
+import { AcceptOrRejectAccount } from "../../layouts/components/account/AcceptOrRejectAccount";
 
 
 export const VerifyUsersFMPage = () => {
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const [fetchSearchPreferencesCompleted, setFetchSearchPreferencesCompleted] = useState(false);
   const [pattern, setPattern] = useState("");
 
   const [nameSuggestions, setNamesuggestions] = useState<String[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [shouldFetchData, setShouldFetchData] = useState(false);
   const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
     data: [],
     pageNumber: 1,
@@ -64,21 +62,26 @@ export const VerifyUsersFMPage = () => {
       }
       setFetchSearchPreferencesCompleted(true);
     });
+    fetchData();
   }, []);
 
   useEffect(() => {
-    if (fetchSearchPreferencesCompleted && listRequest) {
-      setIsLoading(true);
-      getNotConfirmedAccoutsList(listRequest, pattern).then((response) => {
-        if (response.status === 200) {
-          setPageState(response.data!);
-        } else {
-          console.error(response.error);
-        }
-        setIsLoading(false);
-      });
+    if (listRequest) {
+      fetchData();
     }
-  }, [listRequest, pattern]);
+  }, [listRequest, pattern, shouldFetchData]);
+
+  const fetchData = () => {
+    setIsLoading(true);
+    getNotConfirmedAccoutsList(listRequest, pattern).then((response) => {
+      if (response.status === 200) {
+        setPageState(response.data!);
+      } else {
+        console.error(response.error);
+      }
+      setIsLoading(false);
+    });
+  };
 
   useEffect(() => {
     getAccountNames(pattern).then((response) => {
@@ -153,21 +156,23 @@ export const VerifyUsersFMPage = () => {
       width: 150,
     },
     {
+      headerName: "",
       field: "accept",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 80,
       renderCell: (params) => (
-        <CheckIcon sx={{ color: "green" }} />
+        <AcceptOrRejectAccount accountId={params.row.id} shouldFetchData={shouldFetchData} setShouldFetchData={setShouldFetchData} accept={true} />
       ),
     },
     {
+      headerName: "",
       field: "reject",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 80,
       renderCell: (params) => (
-        <ClearIcon sx={{ color: "red" }} />
+        <AcceptOrRejectAccount accountId={params.row.id} shouldFetchData={shouldFetchData} setShouldFetchData={setShouldFetchData} accept={false} />
       ),
     }
   ];

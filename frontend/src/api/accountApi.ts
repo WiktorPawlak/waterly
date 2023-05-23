@@ -217,3 +217,15 @@ export async function createAccountByAdmin(
 ) {
     return post(`${ACCOUNTS_PATH}/`, body);
 }
+
+export async function acceptAccount(
+    accountId: number,
+) {
+    return post(`${ACCOUNTS_PATH}/${accountId}/accept`, null);
+}
+
+export async function rejectAccount(
+    accountId: number,
+) {
+    return post(`${ACCOUNTS_PATH}/${accountId}/reject`, null);
+}
