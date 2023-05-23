@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import loginPose from "../../../../../assets/loginPose.svg";
-import { useUser } from "../../../../../hooks/useUser";
+import { useAccount } from "../../../../../hooks/useAccount";
 import { languages } from "../../../../../types";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,7 +69,7 @@ export const RegisterFormSection = () => {
   const passwordErrorMessage = passwordError?.message;
   const confirmPasswordErrorMessage = confirmPasswordError?.message;
 
-  const { registerUser } = useUser();
+  const { registerUser } = useAccount();
 
   const recaptchaRef = React.createRef<ReCAPTCHA>();
 

@@ -121,16 +121,6 @@ export const Nav = ({
     ? JSON.parse(localStorage.getItem("user") || "{}")
     : {};
 
-  const navigate = useNavigate();
-
-  const logout = () => {
-    localStorage.removeItem("jwtToken");
-    localStorage.removeItem("user");
-    setTimeout(() => {
-      navigate("/");
-    }, 1000);
-  };
-
   return (
     <SlideNav appear={false} direction="down" in={!trigger || isMobileMenuOpen}>
       <AppBar
