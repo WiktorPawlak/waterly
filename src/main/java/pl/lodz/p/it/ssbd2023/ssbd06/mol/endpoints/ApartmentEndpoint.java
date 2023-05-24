@@ -62,7 +62,6 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
     public void changeApartmentOwner(final long id, final ChangeApartmentOwnerDto dto) {
         apartmentService.deleteApartmentOwner(id);
         apartmentService.addApartmentOwner(id, dto);
-
     }
 
 }

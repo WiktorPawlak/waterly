@@ -24,6 +24,11 @@ public class BillService {
     @Inject
     private BillFacade billFacade;
 
+    @RolesAllowed({OWNER})
+    public List<Bill> getBillsByOwnerId(final long ownerId) {
+        return billFacade.findByOwnerId(ownerId);
+    }
+
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public List<Bill> getBillsByApartmentId(final long apartmentId) {
         return billFacade.findByApartmentId(apartmentId);

@@ -1,9 +1,15 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.TariffFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
@@ -11,4 +17,12 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class TariffService {
+
+    @Inject
+    TariffFacade tariffFacade;
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public void addTariff(final Tariff tariff){
+        tariffFacade.create(tariff);
+    }
 }

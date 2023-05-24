@@ -37,6 +37,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 )
 @Getter
 @NamedQuery(name = "Bill.findBillsByApartmentId", query = "select b from Bill b where b.apartment.id = :apartmentId")
+@NamedQuery(name = "Bill.findBillsByOwnerId", query = "select b from Bill b where b.owner.id = :ownerId")
 @NoArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})
 public class Bill extends AbstractEntity {

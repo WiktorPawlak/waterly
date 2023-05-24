@@ -11,10 +11,12 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotSupportedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.ApartmentFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
@@ -39,17 +41,12 @@ public class ApartmentService {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public void changeApartmentOwner(final long id, final EditApartmentDetailsDto dto) {
+    public void deleteApartmentOwner(final long id) {
         apartmentFacade.findById(id);
         apartmentFacade.update(new Apartment());
     }
 
-    @RolesAllowed(FACILITY_MANAGER)
-    public void deleteApartmentOwner(final long id) {
-        throw new NotSupportedException();
-    }
-
-    @RolesAllowed(FACILITY_MANAGER)
+    @RolesAllowed({FACILITY_MANAGER})
     public void addApartmentOwner(final long id, final ChangeApartmentOwnerDto dto) {
         apartmentFacade.findById(id);
         apartmentFacade.update(new Apartment());
@@ -69,4 +66,5 @@ public class ApartmentService {
     public Apartment getApartmentById(final long apartmentId) {
         return apartmentFacade.findById(apartmentId);
     }
+
 }

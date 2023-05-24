@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.BillService;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
@@ -28,6 +29,12 @@ public class BillEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @Inject
     private BillService billService;
+
+    @RolesAllowed({OWNER})
+    public List<BillsDto> getBillsByOwnerId(final long ownerId) {
+        billService.getBillsByOwnerId(ownerId);
+        return Collections.emptyList();
+    }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public List<ApartmentBillsDto> getBillsByApartmentId(final long apartmentId) {

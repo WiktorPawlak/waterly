@@ -73,6 +73,7 @@ public class ApartmentController extends RepeatableTransactionController {
 
     @PUT
     @Path("/{id}/owner")
+    @RolesAllowed({FACILITY_MANAGER})
     public void changeApartmentOwner(@PathParam("id") final long id, final ChangeApartmentOwnerDto dto) {
         apartmentEndpoint.changeApartmentOwner(id, dto);
     }
