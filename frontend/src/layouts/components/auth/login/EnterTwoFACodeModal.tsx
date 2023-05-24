@@ -1,11 +1,14 @@
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField,} from "@mui/material";
-import {Box} from "@mui/system";
-import {useState} from "react";
-import {useTranslation} from "react-i18next";
-import {LoginRequestBody, LoginResponse, postLogin,} from "../../../../api/authApi";
-import {useAccount} from "../../../../hooks/useAccount";
-import {enqueueSnackbar} from "notistack";
-import {resolveApiError} from "../../../../api/apiErrors";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, } from "@mui/material";
+import { Box } from "@mui/system";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { LoginRequestBody, LoginResponse, postLogin, } from "../../../../api/authApi";
+import { useAccount } from "../../../../hooks/useAccount";
+import { enqueueSnackbar } from "notistack";
+import { resolveApiError } from "../../../../api/apiErrors";
+import { TwoFactorCodeSchema, twoFactorCodeSchema } from "../../../../validation/validationSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 interface Props {
     isOpen: boolean;
@@ -15,24 +18,39 @@ interface Props {
 }
 
 export const EnterTwoFACodeModal = ({
-                                        isOpen,
-                                        setIsOpen,
-                                        login,
-                                        password,
-                                    }: Props) => {
-    const [twoFactorCode, setTwoFactor] = useState("");
-    const {addUserToStorage} = useAccount();
-    const {t} = useTranslation();
+    isOpen,
+    setIsOpen,
+    login,
+    password,
+}: Props) => {
+    const { addUserToStorage } = useAccount();
+    const { t } = useTranslation();
 
     const handleClose = () => {
         setIsOpen(false);
     };
 
-    const handleSubmit = async () => {
+    const {
+        register,
+        handleSubmit,
+        getValues,
+        formState: { errors },
+    } = useForm<TwoFactorCodeSchema>({
+        resolver: zodResolver(twoFactorCodeSchema),
+        mode: "onChange",
+        reValidateMode: "onChange",
+        defaultValues: {
+            code: ""
+        }
+    });
+
+    const twoFactorCodeError = errors?.code?.message;
+
+    const handleConfirm = async () => {
         const loginDto: LoginRequestBody = {
             login: login,
             password: password,
-            twoFACode: twoFactorCode,
+            twoFACode: getValues().code,
         };
         const response: LoginResponse<string> | null = await postLogin(loginDto);
 
@@ -58,28 +76,30 @@ export const EnterTwoFACodeModal = ({
             }}
         >
             <Dialog open={isOpen} onClose={handleClose}>
-                <DialogTitle>{t("twoFactor.header")}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>{t("twoFactor.description")}</DialogContentText>
-                    <TextField
-                        onChange={(e) => setTwoFactor(e.target.value)}
-                        autoFocus
-                        margin="dense"
-                        type="email"
-                        fullWidth
-                        variant="standard"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>{t("twoFactor.cancel")}</Button>
-                    <Button
-                        variant="contained"
-                        disabled={twoFactorCode.length === 0}
-                        onClick={handleSubmit}
-                    >
-                        {t("twoFactor.button")}
-                    </Button>
-                </DialogActions>
+                <form onSubmit={handleSubmit(handleConfirm)}>
+                    <DialogTitle>{t("twoFactor.header")}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>{t("twoFactor.description")}</DialogContentText>
+                        <TextField
+                            {...register("code")}
+                            error={!!twoFactorCodeError}
+                            helperText={twoFactorCodeError && t(twoFactorCodeError)}
+                            autoFocus
+                            margin="dense"
+                            fullWidth
+                            variant="standard"
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>{t("twoFactor.cancel")}</Button>
+                        <Button
+                            variant="contained"
+                            type="submit"
+                        >
+                            {t("twoFactor.button")}
+                        </Button>
+                    </DialogActions>
+                </form>
             </Dialog>
         </Box>
     );

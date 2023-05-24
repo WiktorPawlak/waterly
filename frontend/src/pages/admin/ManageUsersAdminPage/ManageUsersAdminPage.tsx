@@ -272,6 +272,8 @@ export const ManageUsersAdminPage = () => {
           <Box sx={{ height: 600, width: "100%" }}>
             <DataGrid
               autoHeight
+              hideFooter
+              rowHeight={65}
               loading={isLoading}
               rows={pageState?.data ?? []}
               columns={columns}

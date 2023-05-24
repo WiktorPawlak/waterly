@@ -5,6 +5,7 @@ export const NavEntry = styled(NavLink)(({ theme }) => ({
   padding: theme.spacing(2, 0),
   textDecorationLine: "none",
   justifyContent: "center",
+  marginRight: "16px",
   alignItems: "center",
   borderBottom: "2px solid transparent",
   color: theme.palette.text.primary,

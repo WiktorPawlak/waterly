@@ -165,12 +165,13 @@
   "general": {
     "role": "Role: ",
     "showProfile": "Show profile",
-    "logout": "Log out"
+    "logout": "Log out",
+    "changeRole": "Change role"
   },
   "roles": {
     "ADMINISTRATOR": "Administrator",
     "OWNER": "Owner",
-    "FACILITY_MANAGER": "Facility manager"
+    "FACILITY_MANAGER": "Facility Manager"
   },
   "apiError": {
     "accountWithPhoneNumberExist": "Account with the given phone number already exists, select another one",
@@ -196,7 +197,8 @@
     "accountNotWaitingForConfirmation": "The account is already confirmed",
     "entityIntegrityViolated": "Unauthorized modification",
     "optimisticLock": "Failed to update data. It appears that they have been modified by another user.",
-    "transactionRollback": "Operation has been canceled. Try again later or contact our service."
+    "transactionRollback": "Operation has been canceled. Try again later or contact our service.",
+    "accountLocked": "Account locked, try contacting Administrator"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -229,7 +231,8 @@
     "phoneNumberInvalidPattern": "Invalid phone number: must contain only numbers",
     "phoneNumberInvalid": "Phone number is invalid",
     "uuidInvalidPattern": "Not a UUID pattern",
-    "uuidInvalid": "Invalid UUID"
+    "uuidInvalid": "Invalid UUID",
+    "twoFactorCode": "Two factor authentication code must contain 8 numbers"
   },
   "resetEmailSuccess": {
     "alert": {

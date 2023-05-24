@@ -15,7 +15,6 @@ import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
-import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.GRANT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
 
@@ -301,8 +300,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .post(AUTH_PATH + "/login")
                     .then()
-                    .statusCode(UNAUTHORIZED.getStatusCode())
-                    .body("message", equalTo("ERROR.AUTHENTICATION"));
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.ACCOUNT_LOCKED"));
         }
 
         @Test
@@ -353,8 +352,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .post(AUTH_PATH + "/login")
                     .then()
-                    .statusCode(UNAUTHORIZED.getStatusCode())
-                    .body("message", equalTo("ERROR.AUTHENTICATION"));
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.ACCOUNT_LOCKED"));
 
             //when
             given()

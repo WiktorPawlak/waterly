@@ -219,7 +219,7 @@ export const Nav = ({
                       <Link to={PATHS.REGISTER}>
                         <Button
                           variant="contained"
-                          sx={{ textTransform: "none", ml: 4, mt: "10px" }}
+                          sx={{ textTransform: "none", mt: "10px" }}
                         >
                           {t("navigation.register")}
                         </Button>

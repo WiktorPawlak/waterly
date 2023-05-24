@@ -51,7 +51,11 @@ public class AccountIdentityStore {
     }
 
     private boolean canAuthenticate(final Account account) {
-        return account.isActive() && account.getAccountState() == CONFIRMED;
+        if (account.isActive() && account.getAccountState() == CONFIRMED) {
+            return true;
+        } else {
+            throw ApplicationBaseException.accountLockedException();
+        }
     }
 
 }

@@ -78,3 +78,19 @@ export async function put<T>(
       return { error: error.response?.data?.message };
     });
 }
+
+export async function remove<T>(
+  url: string,
+  headers?: any
+): Promise<ApiResponse<T>> {
+  return axiosClient
+    .delete(url, {
+      headers: headers,
+    })
+    .then((response) => {
+      return { data: response.data, status: response.status };
+    })
+    .catch(function (error) {
+      return { error: error.response?.data?.message };
+    });
+}
