@@ -1,0 +1,43 @@
+@startuml
+actor "Administrator, Właściciel, Zarządca"
+"Administrator, Właściciel, Zarządca" -> "Strona danych konta" : Kliknięcie przycisku\nprowadzącego do szczegółów konta
+activate "Strona danych konta"
+"Strona danych konta" -> AccountController : Wysłanie żadania pobrania danych konta
+activate AccountController
+AccountController -> AccountEndpoint : getAccountDetails()
+activate AccountEndpoint
+group TransactionAttribute.REQUIRES_NEW
+    AccountEndpoint -> AccountService : getAccountDetails()
+    activate AccountService
+    entity Account
+    entity AccountDetails
+    group TransactionAttribute.MANDATORY
+        group RO read committed
+            AccountService -> AccountFacade : findById()
+            activate AccountFacade
+            alt znalezione zostało konto
+                AccountFacade --> AccountService : AccountEntity
+                activate Account
+                AccountService --> Account : getAccountDetails()
+                Account --> AccountDetails : getAccountDetails()
+                activate AccountDetails
+                AccountDetails --> Account : AccountDetailsEntity
+                deactivate AccountDetails
+                Account --> AccountService : AccountDetailsEntity
+                deactivate Account
+            else nie znaleziono konta
+                AccountFacade --> AccountService : Error
+                deactivate AccountFacade
+            end
+        end
+    end
+    AccountService --> AccountEndpoint : Przekazanie pobranych danych konta
+end
+deactivate AccountService
+AccountEndpoint --> AccountController : Przekazanie pobranych danych konta
+deactivate AccountEndpoint
+AccountController --> "Strona danych konta" : Przekazanie pobranych danych konta
+deactivate AccountController
+"Strona danych konta" --> "Administrator, Właściciel, Zarządca" : Wyświetlenie pobranych danych konta
+deactivate "Strona danych konta"
+@enduml
