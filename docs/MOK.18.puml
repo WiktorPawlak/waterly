@@ -1,0 +1,55 @@
+@startuml
+actor Zarządca
+Zarządca -> "Lista kont oczekujących" : Wybór konta do zatwierdzenia
+activate "Lista kont oczekujących"
+
+"Lista kont oczekujących" -> "Przycisk odrzuć" : Wciśnięcie przycisku
+activate "Przycisk odrzuć"
+"Przycisk odrzuć" -> AccountController : Wysłanie żądania odrzucenia konta
+deactivate "Przycisk odrzuć"
+activate AccountController
+AccountController -> AccountEndpoint : rejectOwnerAccount
+group TransactionalAttribute.REQUIRES_NEW
+group RW read commited
+        activate AccountEndpoint
+        AccountEndpoint -> AccountService : rejectOwnerAccount
+        activate AccountService
+        entity Account
+            alt Konto nie istnieje
+                AccountService -> AccountFacade : findById
+                 activate AccountFacade
+                AccountFacade --> AccountService : error
+                deactivate AccountFacade
+                AccountService --> AccountEndpoint: Informacja o niepowodzeniu
+            else Konto nie oczekuje na zatwierdzenie
+                AccountService -> AccountFacade : findById
+                activate AccountFacade
+                AccountFacade --> AccountService : Account
+                deactivate AccountFacade
+                AccountService --> AccountEndpoint: Informacja o niepowodzeniu
+            else Konto istnieje i jest w stanie oczekującym
+                AccountService -> AccountFacade : findById
+                activate AccountFacade
+                AccountFacade --> AccountService : Account
+                activate Account
+                AccountService -> AccountFacade : delete
+                deactivate Account
+                AccountFacade --> AccountService
+                deactivate AccountFacade
+                 note left : Wykonując metodę delete na encji \nAccount usuwamy jednocześnie\npowiązane z nią encje AccountDetails,\nAuthInfo oraz Role(Adminsitrator,Owner,\nFacilityManager) dzięki kaskadzie REMOVE
+            end
+        AccountService --> AccountEndpoint : Informacja zwrotna
+        deactivate AccountEndpoint
+end
+end
+AccountService -> NotificationsProvider : notifyAccountRejected
+activate NotificationsProvider
+NotificationsProvider --> AccountService
+deactivate AccountService
+deactivate NotificationsProvider
+AccountEndpoint --> AccountController : Informacja zwrotna
+AccountController --> "Lista kont oczekujących" :  Informacja zwrotna
+deactivate AccountController
+return Lista Kont
+deactivate Zarządca
+@enduml
