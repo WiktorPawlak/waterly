@@ -153,7 +153,11 @@
   },
   "navigation": {
     "login": "Log in",
-    "register": "Register"
+    "register": "Register",
+    "home": "Home",
+    "manageUsers": "Manage users",
+    "verifyUsers": "Verify users",
+    "editAccountDetails": "Edit account details"
   },
   "general": {
     "role": "Role: ",
@@ -338,7 +342,7 @@
   "breadcrumbs": {
     "homePage": "Home",
     "accounts": "Manage users",
-		"verify-users": "Verify users",
-		"profile": "Profile"
+    "verify-users": "Verify users",
+    "profile": "Profile"
   }
 }
