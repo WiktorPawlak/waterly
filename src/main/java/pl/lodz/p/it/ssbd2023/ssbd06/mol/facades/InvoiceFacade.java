@@ -48,4 +48,11 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
     public Invoice create(final Invoice entity) {
         return super.create(entity);
     }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    @Override
+    public Invoice update(final Invoice invoice) {
+        return super.update(invoice);
+    }
+
 }

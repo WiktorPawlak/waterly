@@ -2,6 +2,9 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
+import java.util.List;
+
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
@@ -21,8 +24,18 @@ public class TariffService {
     @Inject
     TariffFacade tariffFacade;
 
+    @PermitAll
+    public List<Tariff> getAllTariffs() {
+        return tariffFacade.findAll();
+    }
+
     @RolesAllowed({FACILITY_MANAGER})
-    public void addTariff(final Tariff tariff){
+    public void addTariff(final Tariff tariff) {
         tariffFacade.create(tariff);
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public void updateTariff(final Tariff tariff) {
+        tariffFacade.update(tariff);
     }
 }

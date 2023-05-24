@@ -2,6 +2,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
+import java.util.List;
+
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
@@ -31,6 +33,12 @@ public class TariffFacade extends AbstractFacade<Tariff> {
 
     @Override
     @PermitAll
+    public List<Tariff> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @PermitAll
     protected EntityManager getEntityManager() {
         return em;
     }
@@ -40,4 +48,11 @@ public class TariffFacade extends AbstractFacade<Tariff> {
     public Tariff create(final Tariff entity) {
         return super.create(entity);
     }
+
+    @Override
+    @RolesAllowed({FACILITY_MANAGER})
+    public Tariff update(final Tariff entity) {
+        return super.update(entity);
+    }
+
 }

@@ -40,6 +40,12 @@ public class BillFacade extends AbstractFacade<Bill> {
         return em;
     }
 
+    @RolesAllowed({FACILITY_MANAGER})
+    public Bill create(final Bill bill) {
+        return super.create(bill);
+    }
+
+
     @RolesAllowed({OWNER})
     public List<Bill> findByOwnerId(final long ownerId) {
         TypedQuery<Bill> billsByOwnerIdTypedQuery = em.createNamedQuery("Bill.findBillsByOwnerId", Bill.class);

@@ -35,8 +35,9 @@ public class InvoiceController extends RepeatableTransactionController {
 
     @PUT
     @Path("/{id}")
+    @RolesAllowed({FACILITY_MANAGER})
     public void updateInvoice(@PathParam("id") final long id, @NotNull @Valid final UpdateInvoiceDto dto) {
-        throw new NotSupportedException();
+        invoiceEndpoint.updateInvoice(id, dto);
     }
 
     @POST
