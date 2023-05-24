@@ -38,4 +38,5 @@ public class BillService {
     public Bill getBillById(final long billId) {
         return billFacade.findById(billId);
     }
+
 }

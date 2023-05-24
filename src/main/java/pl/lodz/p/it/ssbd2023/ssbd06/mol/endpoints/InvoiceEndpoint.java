@@ -10,7 +10,9 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.InvoiceService;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
 
@@ -24,8 +26,13 @@ public class InvoiceEndpoint extends TransactionBoundariesTracingEndpoint {
     @Inject
     private InvoiceService invoiceService;
 
-    @RolesAllowed(FACILITY_MANAGER)
+    @RolesAllowed({FACILITY_MANAGER})
     public void addInvoice(final CreateInvoiceDto dto) {
-        invoiceService.addInvoice(dto);
+        invoiceService.createInvoice(dto);
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public void updateInvoice(final long id, final UpdateInvoiceDto dto) {
+        invoiceService.updateInvoice(new Invoice());
     }
 }

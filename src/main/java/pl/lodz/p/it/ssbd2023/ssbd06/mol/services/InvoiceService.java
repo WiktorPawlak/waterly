@@ -22,9 +22,20 @@ public class InvoiceService {
     @Inject
     private InvoiceFacade invoiceFacade;
 
-    @RolesAllowed(FACILITY_MANAGER)
-    public void addInvoice(final CreateInvoiceDto dto) {
+    @Inject
+    private GenerateBillsService generateBillsService;
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public void createInvoice(final CreateInvoiceDto invoice) {
         //dto -> Invoice
         invoiceFacade.create(new Invoice());
+        generateBillsService.generateBills(new Invoice());
     }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public void updateInvoice(final Invoice invoice) {
+        invoiceFacade.update(invoice);
+        //recalculate bills
+    }
+
 }
