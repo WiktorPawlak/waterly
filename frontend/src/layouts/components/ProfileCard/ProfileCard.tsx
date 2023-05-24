@@ -1,12 +1,22 @@
-import { Box, Button, Popover, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Popover,
+  Typography,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { RolesEnum, statusClasses } from "../../../types";
+import { statusClasses } from "../../../types";
+import { useAccount } from "../../../hooks/useAccount";
 
 interface ProfileCardProps {
   onCLick: () => void;
@@ -14,6 +24,12 @@ interface ProfileCardProps {
 
 export const ProfileCard = ({ onCLick }: ProfileCardProps) => {
   const { t } = useTranslation();
+
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpand = () => {
+    setExpanded(!expanded);
+  };
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -29,19 +45,22 @@ export const ProfileCard = ({ onCLick }: ProfileCardProps) => {
 
   const open = Boolean(anchorEl);
 
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") || "{}")
-    : {};
+  const { account, setCurrentRole } = useAccount();
 
-  const userRoles = user.roles.sort(
-    (a: string, b: string) =>
-      RolesEnum[a as keyof typeof RolesEnum] -
-      RolesEnum[b as keyof typeof RolesEnum]
+  const [currentUserRole, setCurrentUserRole] = React.useState(
+    account?.currentRole
   );
 
-  const highestRole = userRoles[0];
-  const statusClass = statusClasses[highestRole as keyof typeof statusClasses];
+  const statusClass =
+    statusClasses[currentUserRole as unknown as keyof typeof statusClasses];
   const color = statusClass ? statusClass.color : "";
+
+  const handleChangeRole = (clickedRole: string) => {
+    if (account) {
+      setCurrentUserRole(clickedRole);
+      setCurrentRole(clickedRole);
+    }
+  };
 
   return (
     <Box
@@ -66,11 +85,11 @@ export const ProfileCard = ({ onCLick }: ProfileCardProps) => {
             color: "primary.contrastText",
           }}
         >
-          {user.username}
+          {account?.username}
         </Typography>
         <Typography sx={{ fontSize: "14px", color: "primary.contrastText" }}>
           {t("general.role")}
-          {userRoles[0]}
+          {currentUserRole}
         </Typography>
       </Box>
       <Button onClick={handleClick}>
@@ -118,11 +137,11 @@ export const ProfileCard = ({ onCLick }: ProfileCardProps) => {
             />
             <Box>
               <Typography sx={{ fontSize: "14px", fontWeight: "700" }}>
-                {user.username}
+                {account?.username}
               </Typography>
               <Typography sx={{ color: "text.secondary", fontSize: "14px" }}>
                 {t("general.role")}
-                {userRoles[0]}
+                {currentUserRole}
               </Typography>
             </Box>
           </Box>
@@ -151,6 +170,52 @@ export const ProfileCard = ({ onCLick }: ProfileCardProps) => {
                 </Box>
               </Button>
             </Link>
+
+            <Button
+              sx={{
+                textTransform: "none",
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+              }}
+              onClick={handleExpand}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  color: "text.secondary",
+                }}
+              >
+                <ManageAccountsIcon />
+                <Typography
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    ml: 1,
+                  }}
+                >
+                  Change Role
+                </Typography>
+              </Box>
+            </Button>
+            <Accordion
+              expanded={expanded}
+              onChange={() => setExpanded(!expanded)}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>{currentUserRole}</Typography>
+              </AccordionSummary>
+              {account?.roles
+                ?.filter((role) => role !== currentUserRole)
+                .map((role) => (
+                  <AccordionDetails key={role}>
+                    <Button onClick={() => handleChangeRole(role)}>
+                      <Typography>{role}</Typography>
+                    </Button>
+                  </AccordionDetails>
+                ))}
+            </Accordion>
             <Button
               sx={{
                 textTransform: "none",

@@ -1,9 +1,16 @@
 import { Container, styled } from "@mui/material";
 import { ReactNode } from "react";
 import { Nav } from "../components";
-import { PATHS } from "../../routing/paths";
-import { roles } from "../../types/rolesEnum";
 import Breadcrumbs from "../components/Breadcrumbs";
+import {
+  adminRoutes,
+  ownerRoutes,
+  facilityManagerRoutes,
+  publicRoutes,
+  RouteType,
+} from "../../routing/routes";
+import { useAccount } from "../../hooks/useAccount";
+import { useTranslation } from "react-i18next";
 
 export interface MainLayoutProps {
   hideMenuEntries?: boolean;
@@ -16,38 +23,28 @@ export const MainLayout = ({
   hideMenuEntries,
   isOverflowHidden = true,
 }: MainLayoutProps) => {
-  const routes = [
-    {
-      path: PATHS.MANAGE_USERS,
-      name: "Manage users",
-      role: [roles.administrator],
-    },
-    {
-      path: PATHS.VERIFY_USERS,
-      name: "Verify users",
-      role: [roles.facilityManager],
-    },
-    {
-      path: PATHS.LOGIN,
-      name: "Login",
-      role: undefined,
-    },
-    {
-      path: PATHS.REGISTER,
-      name: "REGISTER",
-      role: undefined,
-    },
-  ];
+  const roleRoutesMap: { [key: string]: RouteType[] } = {
+    administrator: adminRoutes,
+    owner: ownerRoutes,
+    facility_manager: facilityManagerRoutes,
+    public: publicRoutes,
+  };
+  const { t } = useTranslation();
 
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") || "{}")
-    : {};
+  const getRoutesForRole = (role: string) => {
+    const routes = roleRoutesMap[role];
 
-  const userRoles = user?.roles;
+    const translatedRoutes = routes.map((route) => ({
+      ...route,
+      name: route.name ? t(route.name) : "",
+    }));
+    return translatedRoutes ? translatedRoutes : [];
+  };
 
-  const filteredRoutes = routes.filter((route) =>
-    route.role?.some((allowedRole) => userRoles?.includes(allowedRole))
-  );
+  const { account } = useAccount();
+
+  const userRole = account?.currentRole.toLowerCase() || "public";
+  const filteredRoutes = getRoutesForRole(userRole);
 
   return (
     <>
@@ -67,7 +64,7 @@ export const MainLayout = ({
             px: { xs: 2, md: 15 },
           }}
         >
-          <Breadcrumbs/>
+          <Breadcrumbs />
           {children}
         </Container>
       </LayoutWrapper>

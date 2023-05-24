@@ -160,7 +160,11 @@
   "navigation": {
     "login": "Zaloguj",
     "register": "Zarejestruj się",
-    "logout": "Wyloguj"
+    "logout": "Wyloguj",
+    "home": "Strona główna",
+    "manageUsers": "Zarządzaj użytkownikami",
+    "verifyUsers": "Weryfikuj użytkowników",
+    "editAccountDetails": "Edytuj konto"
   },
   "general": {
     "role": "Rola: ",
@@ -339,7 +343,7 @@
   "breadcrumbs": {
     "homePage": "Strona główna",
     "accounts": "Zarządzaj użytkownikami",
-		"verify-users": "Weryfikuj użytkowników",
-		"profile": "Profil"
+    "verify-users": "Weryfikuj użytkowników",
+    "profile": "Profil"
   }
 }

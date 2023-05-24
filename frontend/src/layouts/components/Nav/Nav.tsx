@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import TranslateIcon from "@mui/icons-material/Translate";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { NavEntry, SlideNav } from "./Nav.styled";
 import { Twirl } from "hamburger-react";
@@ -28,7 +28,7 @@ interface NavProps {
 
 type NavRouteType = {
   path: string;
-  name: string;
+  name?: string | null;
 };
 
 interface NavEntryProps {
@@ -37,7 +37,7 @@ interface NavEntryProps {
 }
 
 export type NavEntriesProps = {
-  routes: NavRouteType[];
+  routes: NavRouteType[] | undefined;
 };
 
 const NavEntryWithDelay = ({ to, name }: NavEntryProps) => {
@@ -58,8 +58,12 @@ const NavEntryWithDelay = ({ to, name }: NavEntryProps) => {
 
 const NavEntries = ({ routes }: NavEntriesProps) => (
   <>
-    {routes.map((route) => (
-      <NavEntryWithDelay key={route.path} to={route.path} name={route.name} />
+    {routes?.map((route) => (
+      <NavEntryWithDelay
+        key={route.path}
+        to={route.path}
+        name={route?.name || ""}
+      />
     ))}
   </>
 );
@@ -186,7 +190,9 @@ export const Nav = ({
                       </>
                     ) : (
                       <>
-                        <NavEntry to={PATHS.LOGIN}>{t("navigation.login")}</NavEntry>
+                        <NavEntry to={PATHS.LOGIN}>
+                          {t("navigation.login")}
+                        </NavEntry>
                         <NavEntry to={PATHS.REGISTER}>
                           {t("navigation.register")}
                         </NavEntry>
@@ -204,7 +210,12 @@ export const Nav = ({
                     </>
                   ) : (
                     <>
-                      <NavEntry to={PATHS.LOGIN}>{t("navigation.login")}</NavEntry>
+                      <NavEntry to={PATHS.HOME}>
+                        {t("navigation.home")}
+                      </NavEntry>
+                      <NavEntry to={PATHS.LOGIN}>
+                        {t("navigation.login")}
+                      </NavEntry>
                       <Link to={PATHS.REGISTER}>
                         <Button
                           variant="contained"

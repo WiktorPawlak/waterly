@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { useAccountState } from "../context/AccountContext";
 import { PATHS } from "../routing/paths";
+import { RolesEnum } from "../types";
 
 export interface AuthAccount {
   username: string;
   roles: string[];
+  currentRole: string;
 }
 
 enum StorageName {
@@ -35,6 +37,17 @@ export const useAccount = () => {
     );
   };
 
+  const setCurrentRole = (role: string) => {
+    if (account) {
+      const updatedAccount = {
+        ...account,
+        currentRole: role,
+      };
+      localStorage.setItem(StorageName.USER, JSON.stringify(updatedAccount));
+      setAccount(updatedAccount);
+    }
+  };
+
   const getCurrentAccount = () => {
     setIsLoading(true);
     const user = localStorage.getItem(StorageName.USER);
@@ -54,11 +67,20 @@ export const useAccount = () => {
     const decodedToken: any = jwt_decode(token);
     if (decodedToken) {
       const roles = decodedToken.roles;
+
+      const sortedRoles = roles.sort(
+        (a: string, b: string) =>
+          RolesEnum[a as keyof typeof RolesEnum] -
+          RolesEnum[b as keyof typeof RolesEnum]
+      );
       const username = decodedToken.jti;
+
+      const currentRole = sortedRoles[0];
 
       const userData = {
         username,
         roles,
+        currentRole,
       };
 
       localStorage.setItem(StorageName.TOKEN, token);
@@ -99,5 +121,6 @@ export const useAccount = () => {
     logout,
     registerUser,
     hasRole,
+    setCurrentRole,
   };
 };
