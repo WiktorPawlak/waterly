@@ -1,0 +1,15 @@
+@startuml
+actor "Administrator, Zarządca, Właściciel"
+"Administrator, Zarządca, Właściciel" -> Nawigator : Wciśnięcie przycisku "Wyloguj"
+activate Nawigator
+Nawigator -> "Aplikacja Web" : Wysłanie żądania wylogowania
+activate "Aplikacja Web"
+"Aplikacja Web" -> localStorage : logout
+
+activate localStorage
+localStorage -> localStorage : clearUserSessionData
+"Aplikacja Web" -> "Administrator, Zarządca, Właściciel" : Przekierowanie do strony logowania
+deactivate localStorage
+deactivate "Aplikacja Web"
+deactivate Nawigator
+@enduml

@@ -1,0 +1,47 @@
+@startuml
+actor Zarządca
+participant Nawigator
+participant AccountController
+participant AccountEndpoint
+participant AccountService
+entity Account
+participant AccountFacade
+
+Zarządca -> Nawigator : Wybranie listy kont
+activate Nawigator
+Nawigator -> AccountController : Wysłanie żądania pobrania szczegółów danego konta
+activate AccountController
+AccountController -> AccountEndpoint : retrieveOwnAccountDetails
+group TransactionalAttribute.REQUIRES_NEW
+group RW Read Commited
+activate AccountEndpoint
+AccountEndpoint -> AccountService : findByLogin
+activate AccountService
+group TransactionalAttribute.MANDATORY
+alt konto nie istnieje
+    AccountService -> AccountFacade : findByLogin
+    activate AccountFacade
+    AccountFacade --> AccountService : Informacja o niepowodzeniu
+else konto istnieje
+    AccountService -> AccountFacade : findByLogin
+    AccountFacade --> AccountService : Account
+    deactivate AccountFacade
+    activate Account
+end
+AccountService -> AccountFacade : findByLogin
+deactivate Account
+activate AccountFacade
+AccountFacade --> AccountService : Szczegóły konta
+end
+deactivate AccountFacade
+AccountService --> AccountEndpoint : Szczegóły konta
+deactivate AccountService
+end
+end
+AccountEndpoint --> AccountController : Szczegóły konta
+deactivate AccountEndpoint
+AccountController --> Nawigator : Szczegóły konta
+deactivate AccountController
+return Szczegóły konta
+deactivate Nawigator
+@enduml

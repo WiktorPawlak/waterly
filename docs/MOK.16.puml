@@ -1,0 +1,114 @@
+@startuml
+actor Zarządca
+participant Nawigator
+participant AccountController
+participant AccountEndpoint
+participant AccountService
+entity Account
+entity ListSearchPreferences
+participant AccountFacade
+participant ListSearchPreferencesFacade
+
+Zarządca -> Nawigator : Wybranie listy kont
+activate Nawigator
+Nawigator -> AccountController : Wysłanie żądania do pobrania preferencji wyszukiwania dla konta
+activate AccountController
+AccountController -> AccountEndpoint : getAccountSearchPreferences
+group TransactionalAttribute.REQUIRES_NEW
+group RW Read Commited
+activate AccountEndpoint
+AccountEndpoint -> AccountService : getAccountSearchPreferences
+activate AccountService
+group TransactionalAttribute.MANDATORY
+    alt konto nie istnieje
+        AccountService -> AccountFacade : findByLogin
+    activate AccountFacade
+        AccountFacade --> AccountService : Informacja o niepowodzeniu
+    else konto istnieje
+        AccountService -> AccountFacade : findByLogin
+        AccountFacade --> AccountService : Account
+        deactivate AccountFacade
+        activate Account
+        alt Preferencje dla konta nie istnieją
+            AccountService -> ListSearchPreferencesFacade : findByAccount
+        activate ListSearchPreferencesFacade
+            ListSearchPreferencesFacade --> AccountService : Informacja o niepowodzeniu
+        else Preferencje dla konta istnieją
+            AccountService -> ListSearchPreferencesFacade : findByAccount
+            activate ListSearchPreferences
+            ListSearchPreferencesFacade --> AccountService : ListSearchPreferences
+            deactivate ListSearchPreferences
+            deactivate ListSearchPreferencesFacade
+        deactivate Account
+end
+        end
+    end
+    AccountService --> AccountEndpoint : Informacja zwrotna
+deactivate AccountService
+end
+end
+AccountEndpoint --> AccountController : Informacja zwrotna
+deactivate AccountEndpoint
+AccountController --> Nawigator : Informacja zwrotna
+
+deactivate AccountController
+
+Nawigator -> AccountController : Wysłanie żądania pobrania listy
+activate AccountController
+AccountController -> AccountEndpoint : getAllAccounts
+group TransactionalAttribute.REQUIRES_NEW
+group RW Read Commited
+activate AccountEndpoint
+AccountEndpoint -> AccountService : getAllAccounts
+activate AccountService
+group TransactionalAttribute.MANDATORY
+    alt konto nie istnieje
+            AccountService -> AccountFacade : findByLogin
+    activate AccountFacade
+            AccountFacade --> AccountService : Informacja o niepowodzeniu
+        else konto istnieje
+            AccountService -> AccountFacade : findByLogin
+            AccountFacade --> AccountService : Account
+            deactivate AccountFacade
+            activate Account
+            AccountService -> ListSearchPreferencesFacade : findByAccount
+            deactivate Account
+            activate ListSearchPreferencesFacade
+            alt Preferencje dla konta nie istnieją
+                ListSearchPreferencesFacade --> AccountService : Informacja o braku preferencji
+                AccountService -> ListSearchPreferencesFacade : create
+                activate ListSearchPreferences
+                ListSearchPreferencesFacade --> AccountService
+                deactivate ListSearchPreferences
+            else Preferencje dla konta istnieją
+                ListSearchPreferencesFacade --> AccountService : ListSearchPreferences
+                activate ListSearchPreferences
+                AccountService -> ListSearchPreferences : setPageSize
+                AccountService -> ListSearchPreferences : setOrder
+                AccountService -> ListSearchPreferences : setOrderBy
+                AccountService -> ListSearchPreferencesFacade : update
+                deactivate ListSearchPreferences
+                ListSearchPreferencesFacade --> AccountService
+                deactivate ListSearchPreferencesFacade
+             end
+     end
+     AccountService -> AccountFacade : findAllAccounts
+     activate AccountFacade
+     AccountFacade --> AccountService : Lista kont
+     end
+     deactivate AccountFacade
+     AccountService --> AccountEndpoint : Lista kont
+     deactivate AccountService
+end
+end
+     AccountEndpoint --> AccountController : Lista kont
+     deactivate AccountEndpoint
+     AccountController --> Nawigator : Lista Kont
+     deactivate AccountController
+return Lista Kont
+
+deactivate AccountEndpoint
+deactivate AccountController
+deactivate Nawigator
+
+@enduml
