@@ -1,0 +1,49 @@
+@startuml
+actor Administrator
+Administrator -> "Formularz zmiany hasła konta" : Wczytanie danych
+activate "Formularz zmiany hasła konta"
+"Formularz zmiany hasła konta" -> AccountController : Przycisk "Zatwierdź" kliknięty
+activate AccountController
+alt niezgodność danych formularza
+    AccountController --> "Formularz zmiany hasła konta" : Informacja o niepoprawnych danych wejściowych
+    "Formularz zmiany hasła konta" --> Administrator : Informacja o niepoprawnych danych wejściowych
+else poprawne dane formularza
+    AccountController -> AccountEndpoint : changeAccountPassword()
+    activate AccountEndpoint
+    group TransactionAttribute.REQUIRES_NEW
+            AccountEndpoint -> AccountService : changeAccountPassword()
+            activate AccountService
+            entity Account
+            group TransactionAttribute.MANDATORY
+                group RW read committed
+                    AccountService -> AccountFacade : findById()
+                    activate AccountFacade
+                    alt znalezione zostało konto
+                        AccountFacade --> AccountService : AccountEntity
+                        AccountService -> PasswordHashProvider : generate(password)
+                        activate PasswordHashProvider
+                        PasswordHashProvider --> AccountService : hashedPassword
+                        deactivate PasswordHashProvider
+                        AccountService -> Account : setPassword(hashedPassword)
+                        activate Account
+                        AccountService -> AccountFacade : update(AccountEntity)
+                        AccountFacade --> AccountService
+                        deactivate Account
+                    else nie znaleziono konta
+                        AccountFacade --> AccountService : Error
+                        deactivate AccountFacade
+                    end
+                end
+            end
+        AccountService --> AccountEndpoint : Informacja o aktualizacji hasła konta
+    end
+    deactivate AccountService
+    AccountEndpoint --> AccountController : Informacja o aktualizacji hasła konta
+    deactivate AccountEndpoint
+    AccountController --> "Formularz zmiany hasła konta" : Informacja o aktualizacji hasła konta
+    deactivate AccountController
+    "Formularz zmiany hasła konta" --> Administrator : Informacja o aktualizacji hasła konta
+    deactivate "Formularz zmiany hasła konta"
+end
+
+@enduml

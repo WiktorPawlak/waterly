@@ -1,0 +1,73 @@
+@startuml
+actor AdministratorActor
+AdministratorActor -> "Formularz dodania konta" : Wczytanie danych
+activate "Formularz dodania konta"
+"Formularz dodania konta" -> AccountController : Wysłanie żądania
+activate AccountController
+alt niezgodność danych formularza
+    AccountController --> "Formularz dodania konta" : Informacja o niepoprawnych danych wejściowych
+    "Formularz dodania konta" --> AdministratorActor : Informacja o niepoprawnych danych wejściowych
+else poprawne dane formularza
+    AccountController -> AccountEndpoint : createAccount()
+    group TransactionAttribute.REQUIRES_NEW
+        activate AccountEndpoint
+        AccountEndpoint -> AccountService : createAccount()
+        activate AccountService
+        entity Account
+        AccountService -> Account : new Account()
+        group TransactionAttribute.MANDATORY
+            activate Account
+            entity Owner
+            AccountService -> Owner : Roles.of(Owner)
+            activate Owner
+            Owner --> AccountService : Owner
+            entity FacilityManager
+            AccountService -> FacilityManager : Roles.of(FacilityManager)
+            activate FacilityManager
+            FacilityManager --> AccountService : FacilityManager
+            entity Administrator
+            AccountService -> Administrator : Roles.of(Administrator)
+            activate Administrator
+            Administrator --> AccountService : Administrator
+            AccountService -> Account : setRoles(Owner, FacilityManager, Administrator)
+            entity AccountDetails
+            AccountService -> AccountDetails : new AccountDetails()
+            activate AccountDetails
+            AccountDetails --> AccountService : AccountDetailsEntity
+            AccountService -> Account : setAccountDetails(AccountDetailsEntity)
+            entity AuthInfo
+            AccountService -> AuthInfo : new AuthInfo()
+            activate AuthInfo
+            AuthInfo --> AccountService : AuthInfoEntity
+            AccountService -> Account : setAuthInfo(AuthInfoEntity)
+            group RW read committed
+                AccountService -> AccountFacade : createAccount()
+                note over Account: Wykonując metodę createAccount() na encji Account\ntworzymy jednocześnie encje Owner, FacilityManager, Administrator, AccountDetails, AuthInfo na bazie danych,\ndzięki kaskadzie PERSIST
+                deactivate Account
+                deactivate Owner
+                deactivate FacilityManager
+                deactivate Administrator
+                deactivate AuthInfo
+                deactivate AccountDetails
+                alt użytkownik z podanym loginem nie istnieje
+                    activate AccountFacade
+                    AccountFacade --> AccountService : Informacja o utworzeniu konta
+                else użytkownik z podanym loginem istnieje
+                    AccountFacade --> AccountService : Error
+                    deactivate AccountFacade
+                end
+            end
+        end
+        AccountService --> AccountEndpoint : Informacja zwrotna
+        deactivate AccountService
+    end
+    AccountEndpoint --> AccountController : Informacja zwrotna
+    deactivate AccountEndpoint
+    deactivate AccountService
+    AccountController --> "Formularz dodania konta" : Informacja zwrotna
+    deactivate AccountController
+    deactivate AccountEndpoint
+    "Formularz dodania konta" --> AdministratorActor : Informacja zwrotna
+    deactivate "Formularz dodania konta"
+end
+@enduml

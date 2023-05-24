@@ -1,0 +1,74 @@
+@startuml
+actor AdministratorActor
+AdministratorActor -> "Formularz zmiany danych konta" : Wczytanie danych
+activate "Formularz zmiany danych konta"
+"Formularz zmiany danych konta" -> AccountController : Przycisk "Zatwierdź" kliknięty
+activate AccountController
+alt niezgodność danych formularza
+AccountController --> "Formularz zmiany danych konta" : Informacja o niepoprawnych danych wejściowych
+"Formularz zmiany danych konta" --> AdministratorActor : Informacja o niepoprawnych danych wejściowych
+else poprawne dane formularza
+    AccountController -> AccountEndpoint : updateAccountDetails()
+    activate AccountEndpoint
+    group TransactionAttribute.REQUIRES_NEW
+        AccountEndpoint -> AccountService : updateAccountDetails()
+        group TransactionAttribute.MANDATORY
+            group RW read committed
+                activate AccountService
+                entity Account
+                entity AccountDetails
+                AccountService -> AccountFacade : findById()
+                activate AccountFacade
+                alt znalezione zostało konto
+                    AccountFacade --> AccountService : AccountEntity
+                    activate Account
+                    AccountService -> AccountService : addAccountDetailsToUpdate()
+                    activate AccountService
+                    alt nie zostało znalezione konto o takim samym adresie email
+                        AccountService -> AccountFacade : findByEmail()
+                        AccountFacade --> AccountService : AccountEntity
+                        alt wprowadzona zmiana NIE zawiera modyfikacji adresu email
+                            AccountService -> AccountService : updateAccountDetails()
+                            activate AccountService
+                            AccountService -> AccountDetails : setFirstName()
+                            activate AccountDetails
+                            AccountService -> AccountDetails : setLastName()
+                            AccountService -> AccountDetails : setPhoneNumber()
+                            AccountDetails --> AccountService
+                            AccountService --> AccountService
+                            deactivate AccountService
+                            note over AccountDetails: Wykonując metodę update() na encji Account\naktualizujemy jednocześnie encje AccountDetails na bazie danych,\ndzięki kaskadzie MERGE
+                        else wprowadzona zmiana zawiera modyfikację adresu email
+                            AccountService -> Account : setWaitingAccountDetails()
+                            Account --> AccountService
+                            AccountService -> NotificationsProvider : notifyWaitingAccountDetailsUpdate()
+                            activate NotificationsProvider
+                            NotificationsProvider --> AccountService
+                            deactivate NotificationsProvider
+                        end
+                    else znalezione zostało konto o takim samym adresie email
+                        AccountFacade --> AccountService : Error
+                    end
+                    AccountService -> AccountFacade : update()
+                    AccountFacade --> AccountService
+                    deactivate Account
+                    deactivate AccountDetails
+                    AccountService --> AccountService
+                    deactivate AccountService
+                else nie znaleziono konta
+                    AccountFacade --> AccountService : Error
+                    deactivate AccountFacade
+                end
+            end
+        end
+    end
+    AccountService --> AccountEndpoint : Informacja o aktualizacji danych konta
+    deactivate AccountService
+    AccountEndpoint --> AccountController : Informacja o aktualizacji danych konta
+    deactivate AccountEndpoint
+    AccountController --> "Formularz zmiany danych konta" : Informacja o aktualizacji danych konta
+    deactivate AccountController
+    "Formularz zmiany danych konta" --> AdministratorActor : Informacja o aktualizacji danych konta
+    deactivate "Formularz zmiany danych konta"
+end
+@enduml
