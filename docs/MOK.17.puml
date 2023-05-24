@@ -1,0 +1,60 @@
+@startuml
+actor Zarządca
+Zarządca -> "Lista kont oczekujących" : Wybór konta do zatwierdzenia
+activate "Lista kont oczekujących"
+
+"Lista kont oczekujących" -> "Przycisk odrzuć" : Wciśnięcie przycisku
+activate "Przycisk odrzuć"
+"Przycisk odrzuć" -> AccountController : Wysłanie żądania potwierdzenia konta
+deactivate "Przycisk odrzuć"
+activate AccountController
+AccountController -> AccountEndpoint : acceptOwnerAccount
+group TransactionalAttribute.REQUIRES_NEW
+group RW read commited
+        activate AccountEndpoint
+        AccountEndpoint -> AccountService : acceptOwnerAccount
+        entity Account
+        entity Owner
+        activate AccountService
+            alt Konto nie istnieje
+                AccountService -> AccountFacade : findById
+                 activate AccountFacade
+                AccountFacade --> AccountService : error
+                deactivate AccountFacade
+                AccountService --> AccountEndpoint: Informacja o niepowodzeniu
+            else Konto nie oczekuje na zatwierdzenie
+                AccountService -> AccountFacade : findById
+                activate AccountFacade
+                AccountFacade --> AccountService : Account
+                deactivate AccountFacade
+                AccountService --> AccountEndpoint: Informacja o niepowodzeniu
+            else Konto istnieje i oczekuje na zatwierdzenie
+                AccountService -> AccountFacade : findById
+                activate AccountFacade
+                AccountFacade --> AccountService : Account
+                activate Account
+                activate Owner
+                AccountService -> Account : setAccountState(CONFIRMED)
+                AccountService -> Owner : setActive(true)
+                AccountService -> AccountFacade : update
+                deactivate Account
+                deactivate Owner
+                AccountFacade --> AccountService
+                 note over Account: Wykonując metodę update na encji Account\naktualizujemy jednocześnie encję Owner\ndzięki kaskadzie MERGE
+                deactivate AccountFacade
+            end
+        AccountService --> AccountEndpoint : Informacja zwrotna
+        deactivate AccountEndpoint
+    end
+end
+AccountService -> NotificationsProvider : notifyAccountAccepted
+activate NotificationsProvider
+NotificationsProvider --> AccountService
+deactivate AccountService
+deactivate NotificationsProvider
+AccountEndpoint --> AccountController : Informacja zwrotna
+AccountController --> "Lista kont oczekujących" :  Informacja zwrotna
+deactivate AccountController
+return Informacja zwrotna
+deactivate Zarządca
+@enduml
