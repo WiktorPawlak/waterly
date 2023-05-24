@@ -5,11 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import jakarta.ws.rs.NameBinding;
+import jakarta.interceptor.InterceptorBinding;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@NameBinding
+@InterceptorBinding
 public @interface OnlyGuest {
 }
-

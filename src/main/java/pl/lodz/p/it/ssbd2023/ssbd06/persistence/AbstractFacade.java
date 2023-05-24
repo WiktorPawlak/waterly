@@ -3,11 +3,13 @@ package pl.lodz.p.it.ssbd2023.ssbd06.persistence;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.annotation.security.DenyAll;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ResourceNotFoundException;
 
+@DenyAll
 public abstract class AbstractFacade<T> {
 
     private final Class<T> clazz;

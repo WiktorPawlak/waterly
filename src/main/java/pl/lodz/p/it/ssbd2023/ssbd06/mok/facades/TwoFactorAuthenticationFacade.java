@@ -47,26 +47,31 @@ public class TwoFactorAuthenticationFacade extends AbstractFacade<TwoFactorAuthe
     }
 
     @Override
+    @OnlyGuest
     public TwoFactorAuthentication create(final TwoFactorAuthentication entity) {
         return super.create(entity);
     }
 
     @Override
+    @OnlyGuest
     public TwoFactorAuthentication update(final TwoFactorAuthentication entity) {
         return super.update(entity);
     }
 
     @Override
+    @OnlyGuest
     public void delete(final TwoFactorAuthentication entity) {
         super.delete(entity);
     }
 
     @Override
+    @OnlyGuest
     public TwoFactorAuthentication findById(final Long id) {
         return super.findById(id);
     }
 
     @Override
+    @OnlyGuest
     public List<TwoFactorAuthentication> findAll() {
         return super.findAll();
     }
