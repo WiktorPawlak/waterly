@@ -32,7 +32,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 
 @Log
 @Monitored
@@ -90,7 +89,7 @@ public class AccountFacade extends AbstractFacade<Account> {
         }
     }
 
-    @OnlyGuest
+    @PermitAll
     public Optional<Account> findByEmail(final String email) {
         try {
             TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findAccountByEmail", Account.class);
@@ -200,10 +199,10 @@ public class AccountFacade extends AbstractFacade<Account> {
 
     @RolesAllowed({FACILITY_MANAGER})
     public List<Account> findNotConfirmedAccounts(final String pattern,
-                                      final int page,
-                                      final int pageSize,
-                                      final boolean ascOrder,
-                                      final String orderBy) {
+                                                  final int page,
+                                                  final int pageSize,
+                                                  final boolean ascOrder,
+                                                  final String orderBy) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Account> query = cb.createQuery(Account.class);
         Root<Account> account = query.from(Account.class);

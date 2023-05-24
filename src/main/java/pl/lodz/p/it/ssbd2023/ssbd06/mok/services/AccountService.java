@@ -275,7 +275,7 @@ public class AccountService {
         verificationTokenService.clearTokens(account.getId(), REGISTRATION);
     }
 
-    @OnlyGuest
+    @PermitAll
     public Optional<Account> findByEmail(final String email) {
         return accountFacade.findByEmail(email);
     }
@@ -289,7 +289,7 @@ public class AccountService {
         tokenSender.sendResetToken(token);
     }
 
-    @PermitAll
+    @OnlyGuest
     public void send2FAToken(final Account account) {
         String twoFAToken = generateOTPPassword(account);
         if (!account.isActive()) {
@@ -375,10 +375,10 @@ public class AccountService {
 
     @RolesAllowed(FACILITY_MANAGER)
     public List<Account> getNotConfirmedAccounts(final String pattern,
-                                         final Integer page,
-                                         final Integer pageSize,
-                                         final String order,
-                                         final String orderBy) {
+                                                 final Integer page,
+                                                 final Integer pageSize,
+                                                 final String order,
+                                                 final String orderBy) {
         boolean ascOrder = "asc".equalsIgnoreCase(order);
 
         Account account = findByLogin(authenticatedAccount.getLogin());
@@ -394,7 +394,7 @@ public class AccountService {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public Long getNotConfirmedAccountsCount(final String pattern){
+    public Long getNotConfirmedAccountsCount(final String pattern) {
         return accountFacade.countNotConfirmedAccounts(pattern);
     }
 
@@ -542,12 +542,14 @@ public class AccountService {
         return !account.getLogin().equals(authenticatedAccount.getLogin());
     }
 
+    @OnlyGuest
     public String generateOTPPassword(final Account account) {
         Tuple2<TwoFactorAuthentication, String> otp = otpProvider.generateOTPPassword(account);
         twoFactorAuthenticationFacade.create(otp._1);
         return otp._2;
     }
 
+    @OnlyGuest
     public boolean verifyOTP(final Account account, final String code) {
         TwoFactorAuthentication twoFA = twoFactorAuthenticationFacade.findByAccount(account);
         return otpProvider.verifyOTP(code, twoFA);

@@ -193,7 +193,7 @@
     "accountNotWaitingForConfirmation": "The account is already confirmed",
     "entityIntegrityViolated": "Unauthorized modification",
     "optimisticLock": "Failed to update data. It appears that they have been modified by another user.",
-    "transactionRollback": "Operation timed out. Try again later or contact our service."
+    "transactionRollback": "Operation has been canceled. Try again later or contact our service."
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",

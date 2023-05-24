@@ -196,7 +196,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         return new AccountDto(account);
     }
 
-    @PermitAll
+    @OnlyGuest
     public void requestForTwoFACode(final String login) {
         Account account = accountService.findByLogin(login);
         accountService.send2FAToken(account);
@@ -283,10 +283,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         return pattern != null && !pattern.isBlank() ? pattern.strip() : null;
     }
 
-    public String generateOTPPassword(final Account account) {
-        return accountService.generateOTPPassword(account);
-    }
-
+    @OnlyGuest
     public boolean verifyOTP(final Account account, final String code) {
         return accountService.verifyOTP(account, code);
     }

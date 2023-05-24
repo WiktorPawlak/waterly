@@ -139,16 +139,6 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().build();
     }
 
-    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
-    @PUT
-    @Path("/self/password")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response changeOwnPassword(@NotNull @Valid final AccountPasswordDto dto)
-            throws ApplicationBaseException {
-        retry(() -> accountEndpoint.changeOwnAccountPassword(dto), accountEndpoint);
-        return Response.ok().build();
-    }
-
     @OnlyGuest
     @POST
     @Path("/register")
@@ -195,12 +185,13 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().entity(dto).build();
     }
 
-    @OnlyGuest
-    @POST
-    @Path("/password/request-reset")
-    public Response requestPasswordReset(@Valid @Email @QueryParam("email") final String email) {
-        retry(() -> accountEndpoint.sendResetPasswordToken(email), accountEndpoint);
-        log.info(() -> "Requested password reset by email: " + email);
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
+    @PUT
+    @Path("/self/password")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response changeOwnPassword(@NotNull @Valid final AccountPasswordDto dto)
+            throws ApplicationBaseException {
+        retry(() -> accountEndpoint.changeOwnAccountPassword(dto), accountEndpoint);
         return Response.ok().build();
     }
 
@@ -211,6 +202,15 @@ public class AccountController extends RepeatableTransactionController {
     public Response requestPasswordChange(@Valid @Email @QueryParam("email") final String email, final PasswordChangeByAdminDto dto) {
         retry(() -> accountEndpoint.sendChangePasswordToken(email, dto), accountEndpoint);
         log.info(() -> "Requested password change for user with email: " + email);
+        return Response.ok().build();
+    }
+
+    @OnlyGuest
+    @POST
+    @Path("/password/request-reset")
+    public Response requestPasswordReset(@Valid @Email @QueryParam("email") final String email) {
+        retry(() -> accountEndpoint.sendResetPasswordToken(email), accountEndpoint);
+        log.info(() -> "Requested password reset by email: " + email);
         return Response.ok().build();
     }
 
