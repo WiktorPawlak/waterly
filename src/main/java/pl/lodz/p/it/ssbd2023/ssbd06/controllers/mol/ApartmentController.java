@@ -17,6 +17,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentsDto;
@@ -34,22 +35,22 @@ public class ApartmentController extends RepeatableTransactionController {
     private ApartmentEndpoint apartmentEndpoint;
 
     @GET
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public Response getApartments() {
         List<ApartmentsDto> apartments = apartmentEndpoint.getOwnerAllAccounts();
         return Response.ok().entity(apartments).build();
     }
 
     @GET
-    @RolesAllowed({FACILITY_MANAGER})
-    @Path("/owner/{ownerId}")
-    public Response getApartmentsByOwnerId(@PathParam("ownerId") final long ownerId) {
+    @RolesAllowed(FACILITY_MANAGER)
+    @Path("/owner")
+    public Response getApartmentsByOwnerId(@QueryParam("ownerId") final long ownerId) {
         List<ApartmentsDto> apartments = apartmentEndpoint.getOwnerAllAccounts(ownerId);
         return Response.ok().entity(apartments).build();
     }
 
     @GET
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     @Path("/{id}")
     public Response getApartmentById(@PathParam("id") final long apartmentId) {
         Apartment apartment = apartmentEndpoint.getApartmentById(apartmentId);
@@ -57,21 +58,22 @@ public class ApartmentController extends RepeatableTransactionController {
     }
 
     @POST
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public Response createApartment(@NotNull @Valid final CreateApartmentDto dto) {
         apartmentEndpoint.createApartment(dto);
         return Response.status(CREATED).build();
     }
 
     @PUT
-    @RolesAllowed({FACILITY_MANAGER})
-    public Response updateApartment(@NotNull @Valid final EditApartmentDetailsDto dto) {
-        apartmentEndpoint.updateApartment(dto);
+    @Path("/{id}")
+    @RolesAllowed(FACILITY_MANAGER)
+    public Response updateApartment(@PathParam("id") final long id, @NotNull @Valid final EditApartmentDetailsDto dto) {
+        apartmentEndpoint.updateApartment(id, dto);
         return Response.status(NO_CONTENT).build();
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/{id}/owner")
     public void changeApartmentOwner(@PathParam("id") final long id, final ChangeApartmentOwnerDto dto) {
         throw new NotSupportedException();
     }

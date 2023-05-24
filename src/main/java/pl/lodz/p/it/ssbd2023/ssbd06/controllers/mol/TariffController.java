@@ -10,8 +10,9 @@ import jakarta.ws.rs.NotSupportedException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AddTariffDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateTariffDto;
 
@@ -25,12 +26,13 @@ public class TariffController extends RepeatableTransactionController {
     }
 
     @PUT
-    public void updateTariff(@NotNull @Valid final UpdateTariffDto dto) {
+    @Path("/{id}")
+    public void updateTariff(@PathParam("id") final long id, @NotNull @Valid final UpdateTariffDto dto) {
         throw new NotSupportedException();
     }
 
     @POST
-    public void addTariff(@NotNull @Valid final AddTariffDto dto) {
+    public void addTariff(@NotNull @Valid final CreateTariffDto dto) {
         throw new NotSupportedException();
     }
 

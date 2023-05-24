@@ -16,6 +16,7 @@ import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
                 @Index(name = "water_meter_apartment_idx", columnList = "apartment_id")
         }
 )
+@NamedQuery(name = "WaterMeter.findAllByType", query = "select w from WaterMeter w where w.type = :type")
 @Getter
 @NoArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})

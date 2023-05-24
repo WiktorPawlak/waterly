@@ -10,7 +10,10 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
@@ -32,13 +35,23 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public void disableWaterMeter(final long id) {
-        waterMeterService.disableWaterMeter(id);
+    public void changeWaterMeterActiveStatus(final long id, final WaterMeterActiveStatusDto dto) {
+        waterMeterService.changeActiveStatus(id, dto.isActive());
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public void updateWaterMeter(final long id, final UpdateWaterMeterDto dto) {
+        waterMeterService.updateWaterMeter(id, dto);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
     public void replaceWaterMeter(final long id, final ReplaceWaterMeterDto dto) {
-        waterMeterService.disableWaterMeter(id);
-        //waterMeterService.addWaterMeter(dto)?
+        waterMeterService.changeActiveStatus(id, false);
+        waterMeterService.addReplacementWaterMeter(id, dto);
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public void createMainWaterMeter(final CreateMainWaterMeterDto dto) {
+        waterMeterService.createMainWaterMeter(dto);
     }
 }
