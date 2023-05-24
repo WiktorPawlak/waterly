@@ -28,8 +28,9 @@ public class BillController extends RepeatableTransactionController {
 
     @GET
     @Path("/owner")
+    @RolesAllowed({OWNER})
     public List<BillsDto> getBillsByOwnerId(@QueryParam("ownerId") final long ownerId) {
-        throw new NotSupportedException();
+        return billEndpoint.getBillsByOwnerId(ownerId);
     }
 
     @GET

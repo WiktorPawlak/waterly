@@ -40,6 +40,14 @@ public class BillFacade extends AbstractFacade<Bill> {
         return em;
     }
 
+    @RolesAllowed({OWNER})
+    public List<Bill> findByOwnerId(final long ownerId) {
+        TypedQuery<Bill> billsByOwnerIdTypedQuery = em.createNamedQuery("Bill.findBillsByOwnerId", Bill.class);
+        billsByOwnerIdTypedQuery.setFlushMode(FlushModeType.COMMIT);
+        billsByOwnerIdTypedQuery.setParameter("ownerId", ownerId);
+        return billsByOwnerIdTypedQuery.getResultList();
+    }
+
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public List<Bill> findByApartmentId(final long apartmentId) {
         TypedQuery<Bill> billsByApartmentIdTypedQuery = em.createNamedQuery("Bill.findBillsByApartmentId", Bill.class);
