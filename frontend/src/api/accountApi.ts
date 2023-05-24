@@ -1,4 +1,4 @@
-import { ApiResponse, get, post, put } from "./api";
+import { ApiResponse, get, post, put, remove } from "./api";
 import { RoleOperation } from "../types";
 import { AccountDetailsSchemaType } from "../validation/validationSchemas";
 
@@ -227,5 +227,5 @@ export async function acceptAccount(
 export async function rejectAccount(
     accountId: number,
 ) {
-    return post(`${ACCOUNTS_PATH}/${accountId}/reject`, null);
+    return remove(`${ACCOUNTS_PATH}/${accountId}/reject`);
 }

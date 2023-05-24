@@ -21,6 +21,7 @@ const apiErrors = new Map<string, string>([
     ["ERROR.NOT_ACTIVE_ACCOUNT", "apiError.accountNotActive"],
     ["ERROR.NOT_CONFIRMED_ACCOUNT", "apiError.accountNotConfirmed"],
     ["ERROR.ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION", "apiError.accountNotWaitingForConfirmation"],
+    ["ERROR.ACCOUNT_LOCKED", "apiError.accountLocked"],
     ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
     ["VALIDATION.EMAIL", "validation.emailInvalid"],
     ["VALIDATION.EMAIL_SIZE", "validation.emailInvalidSize"],

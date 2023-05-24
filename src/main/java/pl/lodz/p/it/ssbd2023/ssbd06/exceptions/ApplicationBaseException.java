@@ -8,6 +8,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountDoesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountLockedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountNotWaitingForConfirmationException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
@@ -52,6 +53,7 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_PASSWORDS_DO_NOT_MATCH = "ERROR.NOT_MATCHING_PASSWORDS";
     public static final String ERROR_RESOURCE_NOT_FOUND = "ERROR.RESOURCE_NOT_FOUND";
     public static final String ERROR_ROLE_NOT_FOUND = "ERROR.ROLE_NOT_FOUND";
+    public static final String ERROR_ACCOUNT_LOCKED = "ERROR.ACCOUNT_LOCKED";
 
     public static final String ERROR_EMAIL_DO_NOT_MATCH = "ERROR.NO_MATCHING_EMAILS";
     public static final String ERROR_ACCOUNT_NOT_ACTIVE = "ERROR.NOT_ACTIVE_ACCOUNT";
@@ -195,5 +197,9 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static InvalidOTPException invalidOTPException() {
         return new InvalidOTPException();
+    }
+
+    public static AccountLockedException accountLockedException() {
+        return new AccountLockedException();
     }
 }

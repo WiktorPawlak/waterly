@@ -1,13 +1,15 @@
 import {useTranslation} from "react-i18next";
 import {useEffect} from "react";
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {postAcceptEmail} from "../api/accountApi";
 import {useSnackbar} from "notistack";
 import {MailUrlsLoading} from "../layouts/components/account/MailUrlsLoading";
+import { PATHS } from "../routing/paths";
 
 export const AcceptEmailPage = () => {
     const {t} = useTranslation();
     const {enqueueSnackbar} = useSnackbar();
+    const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
     const token = searchParams.get("token") as string;
@@ -24,6 +26,7 @@ export const AcceptEmailPage = () => {
                 variant: "error",
             });
         }
+        navigate(PATHS.HOME);
     };
 
     useEffect(() => {

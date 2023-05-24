@@ -227,6 +227,7 @@ export const VerifyUsersFMPage = () => {
           <Box sx={{ height: 600, width: "75%" }}>
             <DataGrid
               autoHeight
+              hideFooter
               loading={isLoading}
               rows={pageState?.data ?? []}
               columns={columns}

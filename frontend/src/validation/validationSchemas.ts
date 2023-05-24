@@ -167,6 +167,14 @@ export const changePasswordByAdminSchema = z
     path: ["confirmPassword"],
   });
 
+  export const twoFactorCodeSchema = z.object({
+    code: z
+      .string()
+      .min(8, "validation.twoFactorCode")
+      .max(8, "validation.twoFactorCode")
+      .regex(/[0-9]{8}/, "validation.twoFactorCode"),
+  });
+
 export type ChangePasswordByAdminSchema = z.infer<
   typeof changePasswordByAdminSchema
 >;
@@ -190,3 +198,5 @@ export type EditEmailSchemaType = z.infer<typeof editEmailSchema>;
 export type LoginSchemaType = z.infer<typeof loginSchema>;
 
 export type resetPasswordEmailSchema = z.infer<typeof resetPasswordEmailSchema>;
+
+export type TwoFactorCodeSchema = z.infer<typeof twoFactorCodeSchema>;
