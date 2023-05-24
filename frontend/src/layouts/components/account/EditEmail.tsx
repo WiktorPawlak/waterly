@@ -46,6 +46,10 @@ export const EditEmail = ({ accountEmail }: Props) => {
           variant: "error",
         });
       }
+    } else {
+      enqueueSnackbar(t("editAccountDetailsPage.alert.emailNotChanged"), {
+        variant: "warning",
+      });
     }
   };
 

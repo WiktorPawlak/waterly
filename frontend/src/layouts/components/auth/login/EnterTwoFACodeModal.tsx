@@ -1,43 +1,28 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from "@mui/material";
-import { Box } from "@mui/system";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { postSendResetPasswordEmail } from "../../../../api/accountApi";
-import { useToast } from "../../../../hooks/useToast";
-import { resetPasswordEmailSchema } from "../../../../validation/validationSchemas";
-import { Toast } from "../../Toast";
-import { LoginRequestBody, LoginResponse, postLogin } from "../../../../api/authApi";
-import jwt_decode from "jwt-decode";
-import { useNavigate } from "react-router-dom";
-
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField,} from "@mui/material";
+import {Box} from "@mui/system";
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
+import {LoginRequestBody, LoginResponse, postLogin,} from "../../../../api/authApi";
+import {useAccount} from "../../../../hooks/useAccount";
+import {enqueueSnackbar} from "notistack";
+import {resolveApiError} from "../../../../api/apiErrors";
 
 interface Props {
     isOpen: boolean;
     login: string;
     password: string;
     setIsOpen: (isOpen: boolean) => void;
-  }
+}
 
-export const EnterTwoFACodeModal = ({ isOpen, setIsOpen, login, password }: Props) => {
-    const {
-        register: registerEmail,
-        handleSubmit: handleEmailSubmit,
-        formState: { errors: emailErrors },
-    } = useForm<resetPasswordEmailSchema>({
-        resolver: zodResolver(resetPasswordEmailSchema),
-    });
-
-    const emailErrorMessage = emailErrors?.email?.message;
+export const EnterTwoFACodeModal = ({
+                                        isOpen,
+                                        setIsOpen,
+                                        login,
+                                        password,
+                                    }: Props) => {
     const [twoFactorCode, setTwoFactor] = useState("");
-    const toast = useToast();
-    const { t } = useTranslation();
-    const navigation = useNavigate();
-
-    const handleClickOpen = () => {
-        setIsOpen(true);
-    };
+    const {addUserToStorage} = useAccount();
+    const {t} = useTranslation();
 
     const handleClose = () => {
         setIsOpen(false);
@@ -47,26 +32,22 @@ export const EnterTwoFACodeModal = ({ isOpen, setIsOpen, login, password }: Prop
         const loginDto: LoginRequestBody = {
             login: login,
             password: password,
-            twoFACode: twoFactorCode
-        }
-        const response: LoginResponse<string> | null = await postLogin(loginDto);  
-        const token = response!.data as string;
-        const decodedToken: any = jwt_decode(token);
-        if (decodedToken) {
-          const roles = decodedToken.roles;
-          const username = decodedToken.jti;
+            twoFACode: twoFactorCode,
+        };
+        const response: LoginResponse<string> | null = await postLogin(loginDto);
 
-          const user = {
-            username,
-            roles,
-          };
-
-          localStorage.setItem("jwtToken", token);
-          localStorage.setItem("user", JSON.stringify(user));
-          navigation("/profile");
-          return true;
+        if (response.status === 200) {
+            const token = response!.data as string;
+            addUserToStorage(token);
+            enqueueSnackbar(t(t("loginPage.succesfulLogin")), {
+                variant: "success",
+            });
+        } else {
+            enqueueSnackbar(t(resolveApiError(response.error)), {
+                variant: "error",
+            });
         }
-    }
+    };
 
     return (
         <Box
@@ -79,9 +60,7 @@ export const EnterTwoFACodeModal = ({ isOpen, setIsOpen, login, password }: Prop
             <Dialog open={isOpen} onClose={handleClose}>
                 <DialogTitle>{t("twoFactor.header")}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        {t("twoFactor.description")}
-                    </DialogContentText>
+                    <DialogContentText>{t("twoFactor.description")}</DialogContentText>
                     <TextField
                         onChange={(e) => setTwoFactor(e.target.value)}
                         autoFocus
@@ -92,9 +71,7 @@ export const EnterTwoFACodeModal = ({ isOpen, setIsOpen, login, password }: Prop
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>
-                        {t("twoFactor.cancel")}
-                    </Button>
+                    <Button onClick={handleClose}>{t("twoFactor.cancel")}</Button>
                     <Button
                         variant="contained"
                         disabled={twoFactorCode.length === 0}
@@ -104,12 +81,6 @@ export const EnterTwoFACodeModal = ({ isOpen, setIsOpen, login, password }: Prop
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Toast
-                isToastOpen={toast.isToastOpen}
-                setIsToastOpen={toast.setIsToastOpen}
-                message={toast.message}
-                severity={toast.severity}
-            />
         </Box>
     );
 };

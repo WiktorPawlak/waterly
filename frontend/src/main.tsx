@@ -5,13 +5,20 @@ import { SnackbarProvider } from "notistack";
 import App from "./App";
 import "./index.css";
 import "./i18n";
+import { SnackbarCloseButton } from "./layouts/components/SnackbarCloseButton";
 
 const Root = () => {
   const themeMode = localStorage.getItem("themeMode");
 
   return (
     <ThemeProvider theme={themeMode === "light" ? theme : darkTheme}>
-      <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+      <SnackbarProvider
+        action={(snackbarKey) => (
+          <SnackbarCloseButton snackbarKey={snackbarKey} />
+        )}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        autoHideDuration={5000}
+      >
         <App />
       </SnackbarProvider>
     </ThemeProvider>

@@ -7,10 +7,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { useToast } from "../../../hooks/useToast";
 import { useTranslation } from "react-i18next";
 import { createAccountByAdmin } from "../../../api/accountApi";
-import { Toast } from "../Toast";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   accountDetailsSchema,
@@ -18,9 +16,9 @@ import {
 } from "../../../validation/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React from "react";
 import { languages } from "../../../types";
 import { resolveApiError } from "../../../api/apiErrors";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
   isOpen: boolean;
@@ -29,13 +27,12 @@ interface Props {
 
 export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
   const { t } = useTranslation();
-  const toast = useToast();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm<AccountDetailsSchemaType>({
     resolver: zodResolver(accountDetailsSchema),
     mode: "onChange",
@@ -87,14 +84,15 @@ export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
     const response = await createAccountByAdmin(registerUserRequest);
 
     if (response.status === 201) {
-      toast.showSuccessToast(
-        t("createAccountDialog.accountCreatedSuccessfully")
-      );
+      enqueueSnackbar(t("createAccountDialog.accountCreatedSuccessfully"), {
+        variant: "success",
+      });
       setIsOpen(false);
       handleReset();
     } else {
-      toast.showErrorToast(t(resolveApiError(response.error)));
-      setIsOpen(false);
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
     }
   };
 
@@ -298,12 +296,6 @@ export const CreateAccountByAdminDialog = ({ isOpen, setIsOpen }: Props) => {
             </Button>
           </DialogActions>
         </Dialog>
-        <Toast
-          isToastOpen={toast.isToastOpen}
-          setIsToastOpen={toast.setIsToastOpen}
-          message={toast.message}
-          severity={toast.severity}
-        />
       </Box>
     </Box>
   );

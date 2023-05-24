@@ -13,10 +13,9 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { postSendResetPasswordEmail } from "../../../api/accountApi";
-import { useToast } from "../../../hooks/useToast";
 import { useTranslation } from "react-i18next";
-import { Toast } from "../Toast";
 import { resolveApiError } from "../../../api/apiErrors";
+import { enqueueSnackbar } from "notistack";
 
 export const SendResetPasswordEmailSection = () => {
   const {
@@ -30,7 +29,6 @@ export const SendResetPasswordEmailSection = () => {
   const emailErrorMessage = emailErrors?.email?.message;
   const [open, setOpen] = React.useState(false);
   const [email, setEmail] = useState("");
-  const toast = useToast();
   const { t } = useTranslation();
 
   const handleClickOpen = () => {
@@ -45,9 +43,13 @@ export const SendResetPasswordEmailSection = () => {
     const response = await postSendResetPasswordEmail(email);
     if (response.status === 200) {
       handleClose();
-      toast.showSuccessToast(t("resetEmailSuccess.alert.emailSent"));
+      enqueueSnackbar(t("resetEmailSuccess.alert.emailSent"), {
+        variant: "success",
+      });
     } else {
-      toast.showErrorToast(t(resolveApiError(response.error)));
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
     }
   }
 
@@ -106,12 +108,6 @@ export const SendResetPasswordEmailSection = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Toast
-        isToastOpen={toast.isToastOpen}
-        setIsToastOpen={toast.setIsToastOpen}
-        message={toast.message}
-        severity={toast.severity}
-      />
     </Box>
   );
 };
