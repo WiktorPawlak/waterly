@@ -12,6 +12,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.ApartmentService;
@@ -57,4 +58,13 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
         return apartmentService.getApartmentById(apartmentId);
     }
 
+    @RolesAllowed({FACILITY_MANAGER})
+    public void changeApartmentOwner(final long id, final ChangeApartmentOwnerDto dto) {
+        apartmentService.deleteApartmentOwner(id);
+        apartmentService.addApartmentOwner(id, dto);
+
+    }
+
 }
+
+

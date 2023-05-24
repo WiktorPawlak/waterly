@@ -54,12 +54,21 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
+    @Override
     public WaterMeter create(final WaterMeter entity) {
         return super.create(entity);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
+    @Override
     public WaterMeter update(final WaterMeter entity) {
         return super.update(entity);
     }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    @Override
+    public List<WaterMeter> findAll() {
+        return super.findAll();
+    }
+
 }
