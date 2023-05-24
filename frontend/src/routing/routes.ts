@@ -27,12 +27,14 @@ export const Pathnames = {
     home: PATHS.HOME,
     editAccountDetails: PATHS.EDIT_PROFILE,
     notFound: PATHS.NOT_FOUND,
+    acceptMail: PATHS.ACCEPT_EMAIL,
   },
   facilityManager: {
     home: PATHS.HOME,
     editAccountDetails: PATHS.EDIT_PROFILE,
     notFound: PATHS.NOT_FOUND,
     verifyUsers: PATHS.VERIFY_USERS,
+    acceptMail: PATHS.ACCEPT_EMAIL,
   },
   admin: {
     home: PATHS.HOME,
@@ -40,6 +42,7 @@ export const Pathnames = {
     editAccountDetails: PATHS.EDIT_PROFILE,
     notFound: PATHS.NOT_FOUND,
     editUserDetails: PATHS.ACCOUNT_DETAILS,
+    acceptMail: PATHS.ACCEPT_EMAIL,
   },
 };
 
@@ -73,6 +76,10 @@ export const adminRoutes: RouteType[] = [
     path: Pathnames.admin.editUserDetails,
     Component: AccountDetailsPage,
   },
+  {
+    path: Pathnames.public.acceptMail,
+    Component: AcceptEmailPage,
+  },
 ];
 
 export const ownerRoutes: RouteType[] = [
@@ -89,6 +96,10 @@ export const ownerRoutes: RouteType[] = [
   {
     path: Pathnames.owner.notFound,
     Component: NotFound,
+  },
+  {
+    path: Pathnames.public.acceptMail,
+    Component: AcceptEmailPage,
   },
 ];
 
@@ -111,6 +122,10 @@ export const facilityManagerRoutes: RouteType[] = [
     path: Pathnames.facilityManager.verifyUsers,
     Component: VerifyUsersFMPage,
     name: "navigation.verifyUsers",
+  },
+  {
+    path: Pathnames.public.acceptMail,
+    Component: AcceptEmailPage,
   },
 ];
 

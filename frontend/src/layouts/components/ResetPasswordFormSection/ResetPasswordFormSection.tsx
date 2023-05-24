@@ -16,15 +16,13 @@ import {
 } from "../../../validation/validationSchemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "../../../hooks/useToast";
-import { Toast } from "../Toast";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { enqueueSnackbar } from "notistack";
 
 export const ResetPasswordFormSection = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const token = searchParams.get("token") as string;
   const navigation = useNavigate();
-  const toast = useToast();
   const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordRepeat, setNewPasswordRepeat] = useState("");
@@ -64,12 +62,16 @@ export const ResetPasswordFormSection = () => {
 
     const response = await postResetPassword(passwordResetDto);
     if (response.status === 200) {
-      toast.showSuccessToast(t("resetPassword.alert.passwordReseted"));
+      enqueueSnackbar(t("resetPassword.alert.passwordReseted"), {
+        variant: "success",
+      });
       setTimeout(() => {
         navigation("/");
       }, 3000);
     } else {
-      toast.showErrorToast(t("resetPassword.alert.passwordNotReseted"));
+      enqueueSnackbar(t("resetPassword.alert.passwordNotReseted"), {
+        variant: "error",
+      });
     }
   }
 
@@ -182,12 +184,6 @@ export const ResetPasswordFormSection = () => {
       >
         {t("resetPassword.form.submitPasswordReset")}
       </Button>
-      <Toast
-        isToastOpen={toast.isToastOpen}
-        setIsToastOpen={toast.setIsToastOpen}
-        message={toast.message}
-        severity={toast.severity}
-      />
     </Box>
   );
 };

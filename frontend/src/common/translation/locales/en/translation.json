@@ -82,7 +82,8 @@
     "alert": {
       "detailsSuccesEdited": "Details edited succesfully",
       "emailSuccesEdited": "Email edited succesfully",
-      "emailSuccesResended": "Email resended succesfully"
+      "emailSuccesResended": "Email resended succesfully",
+      "emailNotChanged": "Email is the same as before"
     },
     "ownPasswordChange": {
       "changePasswordButton": "Edit password"
@@ -143,7 +144,9 @@
     "pageSize": "Page size",
     "toastActivateSuccess": "The account has been activated",
     "toastDeactivateSuccess": "The account has been deactivated",
-    "toastFailure": "Toast failure"
+    "toastFailure": "Toast failure",
+    "cannotRemoveRole": "No roles to remove",
+    "cannotAddRole": "No roles to add"
   },
   "verifyUsersFMPage": {
     "header": "Verify users",

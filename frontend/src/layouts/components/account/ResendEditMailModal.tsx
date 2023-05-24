@@ -1,9 +1,8 @@
 import { Box, Button, Divider, Modal, Typography } from "@mui/material";
 import { resendEmailEditMail } from "../../../api/accountApi";
 import { resolveApiError } from "../../../api/apiErrors";
-import { Toast } from "../Toast";
-import { useToast } from "../../../hooks/useToast";
 import { useTranslation } from "react-i18next";
+import { enqueueSnackbar } from "notistack";
 
 const style = {
   position: "absolute" as "absolute",
@@ -24,17 +23,18 @@ interface Props {
 
 export const ResendEditMailModal = ({ isOpen, setIsOpen }: Props) => {
   const { t } = useTranslation();
-  const toast = useToast();
 
   const handleResendEmail = async () => {
     const response = await resendEmailEditMail();
 
     if (response.status === 200) {
-      toast.showSuccessToast(
-        t("editAccountDetailsPage.alert.detailsSuccesEdited")
-      );
+      enqueueSnackbar(t("editAccountDetailsPage.alert.detailsSuccesEdited"), {
+        variant: "success",
+      });
     } else {
-      toast.showErrorToast(t(resolveApiError(response.error)));
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
     }
   };
 
@@ -65,12 +65,6 @@ export const ResendEditMailModal = ({ isOpen, setIsOpen }: Props) => {
           </Button>
         </Box>
       </Modal>
-      <Toast
-        isToastOpen={toast.isToastOpen}
-        setIsToastOpen={toast.setIsToastOpen}
-        message={toast.message}
-        severity={toast.severity}
-      />
     </>
   );
 };

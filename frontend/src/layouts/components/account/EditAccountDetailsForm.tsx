@@ -21,8 +21,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { languages } from "../../../types";
 import i18n from "../../../i18n";
-import { useToast } from "../../../hooks/useToast";
-import { Toast } from "../Toast";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
   account: AccountDto;
@@ -36,7 +35,6 @@ export const EditAccountDetailsForm = ({
   etag,
 }: Props) => {
   const { t } = useTranslation();
-  const toast = useToast();
 
   const [languageTag, setLanguageTag] = useState(
     localStorage.getItem("preferredLanguage") || "pl"
@@ -86,12 +84,14 @@ export const EditAccountDetailsForm = ({
         localStorage.setItem("preferredLanguage", languageTag);
         i18n.changeLanguage(languageTag);
         localStorage.setItem("themeMode", themeMode);
-        toast.showSuccessToast(t("editAccountDetailsPage.alert.detailsSuccesEdited"), {
+        location.reload();
+        enqueueSnackbar(t("editAccountDetailsPage.alert.detailsSuccesEdited"), {
           variant: "success",
         });
-        location.reload();
       } else {
-        toast.showErrorToast(t(resolveApiError(response.error)));
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
       }
       fetchAccountDetails();
     }
@@ -334,12 +334,6 @@ export const EditAccountDetailsForm = ({
           </Box>
         </Box>
       </Box>
-      <Toast
-            isToastOpen={toast.isToastOpen}
-            setIsToastOpen={toast.setIsToastOpen}
-            message={toast.message}
-            severity={toast.severity}
-          />
       <Divider variant="middle" sx={{ my: 2 }} />
     </Box>
   );

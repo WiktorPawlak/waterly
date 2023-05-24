@@ -88,7 +88,8 @@
     "alert": {
       "detailsSuccesEdited": "Detale zmienione pomyślnie",
       "emailSuccesEdited": "Email zmieniony pomyślnie",
-      "emailSuccesResended": "Email wysłany ponownie pomyślnie"
+      "emailSuccesResended": "Email wysłany ponownie pomyślnie",
+      "emailNotChanged": "Email jest taki sam jak wcześniej"
     },
     "ownPasswordChange": {
       "changePasswordButton": "Edytuj hasło"
@@ -149,7 +150,9 @@
     "pageSize": "Ilość wierszy",
     "toastActivateSuccess": "Konto zostało odblokowane",
     "toastDeactivateSuccess": "Konto zostało zablokowane",
-    "toastFailure": "nieznany błąd"
+    "toastFailure": "nieznany błąd",
+    "cannotRemoveRole": "Nie ma roli do odebrania",
+    "cannotAddRole": "Nie ma roli do dodania"
   },
   "verifyUsersFMPage": {
     "header": "Weryfikuj użytkowników",

@@ -32,6 +32,8 @@ import {
 } from "@mui/material";
 import { Lock } from "../../../layouts/components/account";
 import { CreateAccountByAdminDialog } from "../../../layouts/components/account/CreateAccountByAdminDialog";
+import { enqueueSnackbar } from "notistack";
+import { resolveApiError } from "../../../api/apiErrors";
 
 export const ManageUsersAdminPage = () => {
   const navigate = useNavigate();
@@ -66,7 +68,9 @@ export const ManageUsersAdminPage = () => {
           orderBy: response.data?.orderBy || prevState.orderBy,
         }));
       } else {
-        console.error(response.error);
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
       }
     });
     fetchData();
@@ -79,23 +83,27 @@ export const ManageUsersAdminPage = () => {
   }, [listRequest, pattern, createAccountByAdminDialogOpen]);
 
   const fetchData = () => {
-          setIsLoading(true);
-      getAccountsList(listRequest, pattern).then((response) => {
-        if (response.status === 200) {
-          setPageState(response.data!);
-        } else {
-          console.error(response.error);
-        }
-        setIsLoading(false);
-      });
-    };
+    setIsLoading(true);
+    getAccountsList(listRequest, pattern).then((response) => {
+      if (response.status === 200) {
+        setPageState(response.data!);
+      } else {
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
+      }
+      setIsLoading(false);
+    });
+  };
 
   useEffect(() => {
     getAccountNames(pattern).then((response) => {
       if (response.status === 200) {
         setNamesuggestions(response.data!);
       } else {
-        console.error(response.error);
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
       }
     });
   }, [pattern]);

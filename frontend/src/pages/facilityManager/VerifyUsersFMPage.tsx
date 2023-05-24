@@ -1,5 +1,3 @@
-
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   DataGrid,
@@ -21,17 +19,24 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PaginatedList, ListAccountDto, GetPagedAccountListDto, getSelfSearchPreferences, getAccountsList, getAccountNames, getNotConfirmedAccoutsList, acceptAccount, rejectAccount } from "../../api/accountApi";
+import {
+  getNotConfirmedAccoutsList,
+  GetPagedAccountListDto,
+  getSelfSearchPreferences,
+  ListAccountDto,
+  PaginatedList,
+} from "../../api/accountApi";
 import { MainLayout } from "../../layouts/MainLayout";
 import { AcceptOrRejectAccount } from "../../layouts/components/account/AcceptOrRejectAccount";
-
+import { enqueueSnackbar } from "notistack";
+import { resolveApiError } from "../../api/apiErrors";
 
 export const VerifyUsersFMPage = () => {
   const { t } = useTranslation();
-  const [fetchSearchPreferencesCompleted, setFetchSearchPreferencesCompleted] = useState(false);
+  const [fetchSearchPreferencesCompleted, setFetchSearchPreferencesCompleted] =
+    useState(false);
   const [pattern, setPattern] = useState("");
 
-  const [nameSuggestions, setNamesuggestions] = useState<String[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [shouldFetchData, setShouldFetchData] = useState(false);
   const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
@@ -58,7 +63,9 @@ export const VerifyUsersFMPage = () => {
           orderBy: response.data?.orderBy || prevState.orderBy,
         }));
       } else {
-        console.error(response.error);
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
       }
       setFetchSearchPreferencesCompleted(true);
     });
@@ -77,21 +84,13 @@ export const VerifyUsersFMPage = () => {
       if (response.status === 200) {
         setPageState(response.data!);
       } else {
-        console.error(response.error);
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
       }
       setIsLoading(false);
     });
   };
-
-  useEffect(() => {
-    getAccountNames(pattern).then((response) => {
-      if (response.status === 200) {
-        setNamesuggestions(response.data!);
-      } else {
-        console.error(response.error);
-      }
-    });
-  }, [pattern]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -162,7 +161,12 @@ export const VerifyUsersFMPage = () => {
       sortable: false,
       width: 80,
       renderCell: (params) => (
-        <AcceptOrRejectAccount accountId={params.row.id} shouldFetchData={shouldFetchData} setShouldFetchData={setShouldFetchData} accept={true} />
+        <AcceptOrRejectAccount
+          accountId={params.row.id}
+          shouldFetchData={shouldFetchData}
+          setShouldFetchData={setShouldFetchData}
+          accept={true}
+        />
       ),
     },
     {
@@ -172,9 +176,14 @@ export const VerifyUsersFMPage = () => {
       sortable: false,
       width: 80,
       renderCell: (params) => (
-        <AcceptOrRejectAccount accountId={params.row.id} shouldFetchData={shouldFetchData} setShouldFetchData={setShouldFetchData} accept={false} />
+        <AcceptOrRejectAccount
+          accountId={params.row.id}
+          shouldFetchData={shouldFetchData}
+          setShouldFetchData={setShouldFetchData}
+          accept={false}
+        />
       ),
-    }
+    },
   ];
 
   return (
@@ -202,7 +211,7 @@ export const VerifyUsersFMPage = () => {
           <Autocomplete
             disablePortal
             freeSolo
-            options={nameSuggestions}
+            options={[]}
             sx={{ width: "35vw" }}
             onInputChange={(event, newInputValue) => {
               setPattern(newInputValue);
