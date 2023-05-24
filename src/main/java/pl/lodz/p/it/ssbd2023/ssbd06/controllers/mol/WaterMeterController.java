@@ -17,14 +17,14 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AddMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMetersDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
@@ -43,45 +43,49 @@ public class WaterMeterController extends RepeatableTransactionController {
     }
 
     @GET
-    @Path("/apartment")
-    public List<WaterMetersDto> getWaterMatersByApartmentId(@QueryParam("apartmentId") final long apartmentId) {
+    @Path("/apartment/{apartmentId}")
+    public List<WaterMetersDto> getWaterMatersByApartmentId(@PathParam("apartmentId") final long apartmentId) {
         throw new NotSupportedException();
     }
 
     @POST
-    @Path("/water-meter-check")
+    @Path("/main-water-meter")
+    @RolesAllowed(FACILITY_MANAGER)
+    public void createMainWaterMeter(@NotNull @Valid final CreateMainWaterMeterDto dto) {
+        waterMeterEndpoint.createMainWaterMeter(dto);
+    }
+
+    @POST
+    @Path("/{id}//water-meter-check")
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public Response performWaterMeterCheck(@NotNull @Valid final WaterMeterCheckDto dto) {
+    public Response performWaterMeterCheck(@PathParam("id") final long id, @NotNull @Valid final WaterMeterCheckDto dto) {
         waterMeterEndpoint.performWaterMeterCheck(dto);
         return Response.status(NO_CONTENT).build();
     }
 
     @POST
-    public void assignWaterMeterToLocal(@NotNull @Valid final AssignWaterMeterDto dto) {
+    public void assignWaterMeterToApartment(@NotNull @Valid final AssignWaterMeterDto dto) {
         throw new NotSupportedException();
-    }
-
-    @PUT
-    public void updateWaterMeter(@NotNull @Valid final UpdateWaterMeterDto dto) {
-        throw new NotSupportedException();
-    }
-
-    @PUT
-    @Path("{id}")
-    @RolesAllowed(FACILITY_MANAGER)
-    public void disableWaterMeter(@PathParam("id") final long id) {
-        waterMeterEndpoint.disableWaterMeter(id);
     }
 
     @POST
-    @Path("{id}")
+    @Path("/{id}")
+    @RolesAllowed(FACILITY_MANAGER)
     public void replaceWaterMeter(@PathParam("id") final long id, @NotNull @Valid final ReplaceWaterMeterDto dto) {
         waterMeterEndpoint.replaceWaterMeter(id, dto);
     }
 
-    @POST
-    @Path("/main-water-meter")
-    public void addMainWaterMeter(@NotNull @Valid final AddMainWaterMeterDto dto) {
-        throw new NotSupportedException();
+    @PUT
+    @Path("/{id}")
+    @RolesAllowed(FACILITY_MANAGER)
+    public void updateWaterMeter(@PathParam("id") final long id, @NotNull @Valid final UpdateWaterMeterDto dto) {
+        waterMeterEndpoint.updateWaterMeter(id, dto);
+    }
+
+    @PUT
+    @Path("/{id}/active")
+    @RolesAllowed(FACILITY_MANAGER)
+    public void changeWaterMeterActiveStatus(@PathParam("id") final long id, @NotNull @Valid final WaterMeterActiveStatusDto dto) {
+        waterMeterEndpoint.changeWaterMeterActiveStatus(id, dto);
     }
 }

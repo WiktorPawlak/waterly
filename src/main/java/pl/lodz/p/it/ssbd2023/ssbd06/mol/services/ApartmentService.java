@@ -10,6 +10,7 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.ApartmentFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
@@ -29,8 +30,10 @@ public class ApartmentService {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public void updateApartment(final Apartment apartment) {
-        apartmentFacade.update(apartment);
+    public void updateApartment(final long id, final EditApartmentDetailsDto dto) {
+        apartmentFacade.findById(id);
+        // merge changes
+        apartmentFacade.update(new Apartment());
     }
 
     @RolesAllowed({FACILITY_MANAGER})

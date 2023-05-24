@@ -36,8 +36,8 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public void updateApartment(final EditApartmentDetailsDto dto) {
-        apartmentService.updateApartment(new Apartment());
+    public void updateApartment(final long id, final EditApartmentDetailsDto dto) {
+        apartmentService.updateApartment(id, dto);
     }
 
     @RolesAllowed({FACILITY_MANAGER})
