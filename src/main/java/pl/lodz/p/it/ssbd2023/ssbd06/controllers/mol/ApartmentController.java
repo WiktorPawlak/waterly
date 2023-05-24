@@ -12,7 +12,6 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotSupportedException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -75,7 +74,7 @@ public class ApartmentController extends RepeatableTransactionController {
     @PUT
     @Path("/{id}/owner")
     public void changeApartmentOwner(@PathParam("id") final long id, final ChangeApartmentOwnerDto dto) {
-        throw new NotSupportedException();
+        apartmentEndpoint.changeApartmentOwner(id, dto);
     }
 
 }

@@ -1,6 +1,11 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+
+import java.util.List;
+
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -30,5 +35,11 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
     @PermitAll
     protected EntityManager getEntityManager() {
         return em;
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    @Override
+    public List<Invoice> findAll() {
+        return super.findAll();
     }
 }

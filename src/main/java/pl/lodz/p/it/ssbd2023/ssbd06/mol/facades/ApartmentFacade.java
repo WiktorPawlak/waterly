@@ -70,4 +70,5 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
         billsByApartmentIdTypedQuery.setParameter("ownerId", ownerId);
         return billsByApartmentIdTypedQuery.getResultList();
     }
+
 }
