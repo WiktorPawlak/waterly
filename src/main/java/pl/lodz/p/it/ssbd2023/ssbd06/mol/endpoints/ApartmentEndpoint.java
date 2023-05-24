@@ -12,10 +12,12 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.ApartmentService;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
@@ -30,9 +32,13 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
     @Inject
     ApartmentService apartmentService;
 
+    @Inject
+    private WaterMeterService waterMeterService;
+
     @RolesAllowed({FACILITY_MANAGER})
     public void createApartment(final CreateApartmentDto dto) {
-        //dodanie wodomierzy
+        //dto -> Apartment
+        waterMeterService.assignWaterMeter(new Apartment(), new AssignWaterMeterDto());
         apartmentService.createApartment(new Apartment());
     }
 
