@@ -64,4 +64,9 @@ public class ApartmentService {
         return apartmentFacade.findById(apartmentId);
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
+    public Apartment findApartmentByWaterMeterId(final long waterMeterId) {
+        return apartmentFacade.findByWaterMeterId(waterMeterId);
+    }
+
 }

@@ -3,6 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.annotation.security.PermitAll;
@@ -71,4 +72,7 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
         return super.findAll();
     }
 
+    public List<WaterMeter> findAllByApartmentId(final long apartmentId) {
+        return Collections.emptyList();
+    }
 }

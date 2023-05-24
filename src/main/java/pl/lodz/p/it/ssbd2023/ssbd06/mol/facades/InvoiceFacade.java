@@ -42,4 +42,10 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
     public List<Invoice> findAll() {
         return super.findAll();
     }
+
+    @Override
+    @RolesAllowed(FACILITY_MANAGER)
+    public Invoice create(final Invoice entity) {
+        return super.create(entity);
+    }
 }

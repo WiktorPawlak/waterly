@@ -13,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.ws.rs.NotSupportedException;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
@@ -71,4 +72,7 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
         return billsByApartmentIdTypedQuery.getResultList();
     }
 
+    public Apartment findByWaterMeterId(final long waterMeterId) {
+        throw new NotSupportedException();
+    }
 }

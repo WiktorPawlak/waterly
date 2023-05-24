@@ -20,10 +20,12 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.ApartmentEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 
 @Path("/apartments")
@@ -32,6 +34,9 @@ public class ApartmentController extends RepeatableTransactionController {
 
     @Inject
     private ApartmentEndpoint apartmentEndpoint;
+
+    @Inject
+    private WaterMeterEndpoint waterMeterEndpoint;
 
     @GET
     @RolesAllowed(FACILITY_MANAGER)
@@ -66,16 +71,22 @@ public class ApartmentController extends RepeatableTransactionController {
     @PUT
     @Path("/{id}")
     @RolesAllowed(FACILITY_MANAGER)
-    public Response updateApartment(@PathParam("id") final long id, @NotNull @Valid final EditApartmentDetailsDto dto) {
-        apartmentEndpoint.updateApartment(id, dto);
+    public Response updateApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final EditApartmentDetailsDto dto) {
+        apartmentEndpoint.updateApartment(apartmentId, dto);
         return Response.status(NO_CONTENT).build();
     }
 
     @PUT
     @Path("/{id}/owner")
     @RolesAllowed({FACILITY_MANAGER})
-    public void changeApartmentOwner(@PathParam("id") final long id, final ChangeApartmentOwnerDto dto) {
-        apartmentEndpoint.changeApartmentOwner(id, dto);
+    public void changeApartmentOwner(@PathParam("id") final long apartmentId, final ChangeApartmentOwnerDto dto) {
+        apartmentEndpoint.changeApartmentOwner(apartmentId, dto);
+    }
+
+    @PUT
+    @Path("/{id}/water-meter")
+    public void assignWaterMeterToApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final AssignWaterMeterDto dto) {
+        waterMeterEndpoint.addWaterMeter(apartmentId, dto);
     }
 
 }

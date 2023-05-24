@@ -20,7 +20,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
@@ -44,8 +43,8 @@ public class WaterMeterController extends RepeatableTransactionController {
 
     @GET
     @Path("/apartment/{apartmentId}")
-    public List<WaterMetersDto> getWaterMatersByApartmentId(@PathParam("apartmentId") final long apartmentId) {
-        throw new NotSupportedException();
+    public Response getWaterMatersByApartmentId(@PathParam("apartmentId") final long apartmentId) {
+        return Response.ok().entity(waterMeterEndpoint.getWaterMetersByApartmentId(apartmentId)).build();
     }
 
     @POST
@@ -58,34 +57,29 @@ public class WaterMeterController extends RepeatableTransactionController {
     @POST
     @Path("/{id}//water-meter-check")
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public Response performWaterMeterCheck(@PathParam("id") final long id, @NotNull @Valid final WaterMeterCheckDto dto) {
+    public Response performWaterMeterCheck(@PathParam("id") final long waterMeterId, @NotNull @Valid final WaterMeterCheckDto dto) {
         waterMeterEndpoint.performWaterMeterCheck(dto);
         return Response.status(NO_CONTENT).build();
     }
 
     @POST
-    public void assignWaterMeterToApartment(@NotNull @Valid final AssignWaterMeterDto dto) {
-        throw new NotSupportedException();
-    }
-
-    @POST
-    @Path("/{id}")
+    @Path("/{id}/")
     @RolesAllowed(FACILITY_MANAGER)
-    public void replaceWaterMeter(@PathParam("id") final long id, @NotNull @Valid final ReplaceWaterMeterDto dto) {
-        waterMeterEndpoint.replaceWaterMeter(id, dto);
+    public void replaceWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final ReplaceWaterMeterDto dto) {
+        waterMeterEndpoint.replaceWaterMeter(waterMeterId, dto);
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed(FACILITY_MANAGER)
-    public void updateWaterMeter(@PathParam("id") final long id, @NotNull @Valid final UpdateWaterMeterDto dto) {
-        waterMeterEndpoint.updateWaterMeter(id, dto);
+    public void updateWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final UpdateWaterMeterDto dto) {
+        waterMeterEndpoint.updateWaterMeter(waterMeterId, dto);
     }
 
     @PUT
     @Path("/{id}/active")
     @RolesAllowed(FACILITY_MANAGER)
-    public void changeWaterMeterActiveStatus(@PathParam("id") final long id, @NotNull @Valid final WaterMeterActiveStatusDto dto) {
-        waterMeterEndpoint.changeWaterMeterActiveStatus(id, dto);
+    public void changeWaterMeterActiveStatus(@PathParam("id") final long waterMeterId, @NotNull @Valid final WaterMeterActiveStatusDto dto) {
+        waterMeterEndpoint.changeWaterMeterActiveStatus(waterMeterId, dto);
     }
 }
