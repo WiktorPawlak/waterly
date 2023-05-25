@@ -1,0 +1,87 @@
+@startuml
+    actor Gość
+    Gość -> FormularzLogowania : Wczytanie danych
+    activate FormularzLogowania
+        FormularzLogowania -> Formularz2FA : Wczytanie i zatwierdzenie danych
+        activate Formularz2FA
+            Formularz2FA -> AuthController : Wczytanie danych
+            activate AuthController
+                AuthController -> AccountEndpoint : requestForTwoFACode()
+                    group TransactionAttribute.REQUEST_NEW
+                        activate AccountEndpoint
+                            AccountEndpoint -> AccountService : findByLogin()
+                            activate AccountService
+                                group TransactionAttribute.MANDATORY
+                                    AccountService -> AccountFacade : findByLogin()
+                                    activate AccountFacade
+                                        AccountFacade --> AccountService : Account
+                                    deactivate AccountFacade
+                                end
+                                AccountService --> AccountEndpoint : Account
+                            deactivate AccountService
+                            AccountEndpoint -> AccountService : send2FAToken
+                            activate AccountService
+                                AccountService -> AccountService : generateOTPPassword()
+                                AccountService -> TokenSender : send2FAToken()
+                                activate TokenSender
+                                    TokenSender -> EmailTokenSenderImpl : send2FAToken()
+                                    activate EmailTokenSenderImpl
+                                        EmailTokenSenderImpl -> EmailTokenSenderImpl : sendEmail()
+                                    EmailTokenSenderImpl --> TokenSender : Komunikat o wysłaniu maila
+                                    deactivate EmailTokenSenderImpl
+                                    TokenSender --> AccountService : Komunikat o wysłaniu maila
+                                deactivate TokenSender
+                                AccountService --> AccountEndpoint : Komunikat o wysłaniu maila
+                            deactivate AccountService
+                            end
+                            AccountEndpoint --> AuthController : Komunikat o wysłaniu maila
+                        deactivate AccountEndpoint
+                        AuthController --> Formularz2FA : Komunikat o wysłaniu maila
+            deactivate AuthController
+            Formularz2FA  --> FormularzLogowania : Komunikat o wysłaniu maila
+        deactivate Formularz2FA
+        FormularzLogowania --> Gość : Komunikat o wysłaniu maila
+    deactivate FormularzLogowania
+    Gość -> FormularzLogowania : Wczytanie danych
+    activate FormularzLogowania
+        FormularzLogowania -> Formularz2FA : Wczytanie danych
+        activate Formularz2FA
+            Formularz2FA -> AuthController : Wczytanie danych
+            activate AuthController
+                AuthController -> AccountEndpoint : verifyOTP()
+                group TransactionAttribute.REQUEST_NEW
+                    activate AccountEndpoint
+                        AccountEndpoint -> AccountService : verifyOTP()
+
+                            activate AccountService
+                                AccountService -> TwoFactorAuthenticationFacade : findByAccount()
+                                activate TwoFactorAuthenticationFacade
+                                    TwoFactorAuthenticationFacade --> AccountService : Account
+                                deactivate TwoFactorAuthenticationFacade
+                                AccountService -> OTPProvider : verifyOTP()
+                                activate OTPProvider
+                                        group TransactionAttribute.SUPPORTS
+                                    OTPProvider -> PasswordHash : verify()
+                                    activate PasswordHash
+                                            PasswordHash --> OTPProvider : Komunikat zwrotny
+                                    deactivate PasswordHash
+                                        end
+                                    alt Nieoprawny kod 2FA
+                                    OTPProvider --> AccountService : Komunikat o niepoprawnym logowaniu
+                                    else Poprawny kod 2FA
+                                    OTPProvider --> AccountService : Komunikat o poprawnym logowaniu
+                                    end
+                                deactivate OTPProvider
+                                AccountService --> AccountEndpoint : Komunikat zwrotny
+                            deactivate AccountService
+
+                end
+                AccountEndpoint --> AuthController : Komunikat zwrotny
+                    deactivate AccountEndpoint
+        AuthController --> Formularz2FA : Komunikat zwrotny
+            deactivate AuthController
+        Formularz2FA --> FormularzLogowania : Komunikat zwrotny
+        deactivate Formularz2FA
+        FormularzLogowania --> Gość : Komunikat zwrotny
+    deactivate FormularzLogowania
+@enduml
