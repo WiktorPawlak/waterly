@@ -22,7 +22,7 @@ import io.restassured.builder.RequestSpecBuilder;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PayaraContainerInitializer {
 
-    private static final String APP_NAME = "ssbd06-0.2.2";
+    private static final String APP_NAME = "ssbd06-0.3.0";
 
     private static final String DB_NAME = "postgres";
     private static final String DB_USERNAME = "postgres";
