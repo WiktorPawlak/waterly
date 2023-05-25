@@ -1,0 +1,119 @@
+@startuml
+actor Gość
+    Gość -> Formularz : Wczytanie danych
+    activate Formularz
+    participant FormularzZmianyHasła
+        Formularz -> AccountController : Zapisanie danych
+        activate AccountController
+            AccountController -> AccountEndpoint : sendResetPasswordToken()
+                activate AccountEndpoint
+                group TransactionAttribute.REQUIRES_NEW
+                entity Account
+                    group RW read commited
+                        AccountEndpoint -> AccountService : findByEmail()
+                        participant PasswordHash
+                        activate AccountService
+                        group TransactionAttribute.MANDATORY
+                            AccountService -> AccountFacade : findByEmail()
+                            activate AccountFacade
+                                alt Użytkownik z podanym emailem nie istnieje lub nie jest aktywny
+                                    AccountFacade --> AccountEndpoint : Informacja o braku danego użytkownika
+                                else Użytkownik z podanym emailem istnieje
+                                    AccountFacade --> AccountService : Account
+                            deactivate AccountFacade
+                            AccountService --> AccountEndpoint : Account
+                        end
+                        end
+                        deactivate AccountService
+                        AccountEndpoint -> AccountService : sendEmailToken()
+                        activate AccountService
+                            group TransactionAttribute.MANDATORY
+                            AccountService -> VerificationTokenService : createResetToken()
+                            activate VerificationTokenService
+                                VerificationTokenService -> VerificationTokenFacade : create()
+                                activate VerificationTokenFacade
+                                entity VerificationToken
+                                    VerificationTokenFacade --> VerificationTokenService : VerificationTokenFacade
+                                deactivate VerificationTokenFacade
+                                VerificationTokenService --> AccountService : Token
+                            deactivate VerificationTokenService
+                            AccountService -> TokenSender : SendVerificationToken()
+                            activate TokenSender
+                                TokenSender -> EmailSenderProvider : sendEmail()
+                                activate EmailSenderProvider
+                                    EmailSenderProvider -> EmailSenderProvider : prepareEmail()
+                                    EmailSenderProvider --> TokenSender : Komunikat o wysłaniu maila
+                                deactivate EmailSenderProvider
+                                TokenSender --> AccountService : Komunikat o wysłaniu maila
+                                end
+                            deactivate TokenSender
+                            AccountService --> AccountEndpoint : Komunikat o wysłaniu maila
+                        deactivate AccountService
+                    end
+                end
+                AccountEndpoint --> AccountController : Komunikat
+                deactivate AccountEndpoint
+                AccountController --> Formularz : Komunikat zwrotny
+                deactivate AccountController
+                Formularz --> Gość : komunikat zwrotny
+    deactivate Formularz
+
+    Gość -> FormularzZmianyHasła : Aktywacja linku zmiany hasła
+        activate FormularzZmianyHasła
+            FormularzZmianyHasła -> AccountController : Zapisanie danych
+                activate AccountController
+                    AccountController -> AccountEndpoint : resetPassword()
+                    activate AccountEndpoint
+                        group TransactionAttribute.REQUIRES_NEW
+                            group RW read comitted
+                                AccountEndpoint -> AccountService : resetPassword()
+                                activate AccountService
+                                    group TransactionAttribute.MANDATORY
+                                        AccountService -> VerificationTokenService : confirmResetPassword()
+                                        activate VerificationTokenService
+                                            VerificationTokenService -> VerificationTokenFacade : findValidByToken()
+                                                alt Token wygasł lub nie istnieje
+                                                    activate VerificationTokenFacade
+                                                        VerificationTokenFacade --> AccountEndpoint : Komunikat o niepoprawnym znalezieniu tokena
+                                                    deactivate VerificationTokenFacade
+                                                else Token nie wygasł i istnieje
+                                                    VerificationTokenService -> VerificationTokenFacade : delete()
+                                                    activate VerificationTokenFacade
+                                                        VerificationTokenFacade --> VerificationTokenService : Token
+                                                    deactivate VerificationTokenFacade
+                                                    VerificationTokenService -> VerificationToken : getAccount()
+                                                    activate VerificationToken
+                                                        VerificationToken --> VerificationTokenService : Account
+                                                    deactivate VerificationToken
+                                                    activate Account
+                                                    VerificationTokenService --> AccountService : Account
+                                        deactivate VerificationTokenService
+                                                    alt Konto jest aktywne
+                                                    AccountService -> PasswordHash : generate()
+                                                        activate PasswordHash
+                                                            PasswordHash --> AccountService : Hashed password
+                                                        deactivate PasswordHash
+                                                        AccountService -> AccountService : changePassword()
+                                                        AccountService -> Account : setPassword()
+                                                        AccountService -> AccountFacade : update()
+                                                        deactivate Account
+                                                        activate AccountFacade
+                                                            AccountFacade --> AccountService : Komunikat o zmianie hasła
+                                                        deactivate AccountFacade
+                                                        AccountService --> AccountEndpoint : Komunikat o zmianie hasła
+                                                    else Konto nie jest aktywne
+                                                        AccountService --> AccountEndpoint : Komunikat o niepowodzeniu operacji resetu hasła
+                                deactivate AccountService
+                                                    end
+                                                end
+                                    end
+                            end
+                        end
+                        AccountEndpoint --> AccountController : Komunikat zwrotny
+                    deactivate AccountEndpoint
+                    AccountController --> FormularzZmianyHasła : Komunikat zwrotny
+                deactivate AccountController
+                FormularzZmianyHasła --> Gość : Komunikat zwrotny
+                deactivate FormularzZmianyHasła
+deactivate Gość
+@enduml

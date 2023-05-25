@@ -1,0 +1,77 @@
+@startuml
+Actor "Właściciel/Zarządca/Administrator"
+"Właściciel/Zarządca/Administrator" -> "Formularz zmiany danych konta" : Wczytanie danych
+activate "Formularz zmiany danych konta"
+"Formularz zmiany danych konta" -> AccountController: Przycisk "Zatwierdź" kliknięty
+activate AccountController
+alt Niezgodność danych formularza
+AccountController --> "Formularz zmiany danych konta" : Informacja o niepoprawnych danych wejściowych
+"Formularz zmiany danych konta" --> "Właściciel/Zarządca/Administrator": Informacja o niepoprawnych danych wejściowych
+
+else Poprawne dane formularza
+
+AccountController -> AccountEndpoint : updateOwnAccountDetails
+group TransactionAttribute.REQUIRES_NEW
+activate AccountEndpoint
+
+group RW read committed
+AccountEndpoint -> AccountService : updateOwnAccountDetails
+group TransactionAttribute.MANDATORY
+activate AccountService
+
+entity Account
+entity AuthInfo
+
+AccountService -> AccountFacade : findByLogin
+activate AccountFacade
+
+alt Konto istnieje
+AccountFacade --> AccountService
+activate Account
+deactivate AccountFacade
+AccountService -> AccountFacade : findByEmail
+activate AccountFacade
+alt Email nie jest zajęty
+AccountFacade --> AccountService
+deactivate AccountFacade
+
+AccountService -> AccountService : updateAccountDetails
+activate AccountService
+AccountService -> Account : setFirstName()
+Account -> AuthInfo : setFirstName()
+activate AuthInfo
+AccountService -> Account : setLastName()
+Account -> AuthInfo : setLastName()
+AccountService -> Account : setPhoneNumber()
+Account -> AuthInfo : setPhoneNumber()
+
+AccountService -> AccountFacade : update
+activate AccountFacade
+AccountFacade --> AccountService
+deactivate AccountFacade
+deactivate Account
+deactivate AuthInfo
+
+AccountService -> NotificationsProvider : notifyWaitingAccountDetailsUpdate
+activate NotificationsProvider
+NotificationsProvider --> AccountService
+deactivate NotificationsProvider
+deactivate AccountService
+else Email jest zajęty
+AccountFacade --> AccountService: Error
+end
+else Konto nie istnieje
+AccountFacade --> AccountService: Error
+end
+end
+AccountService --> AccountEndpoint
+end
+end
+deactivate AccountService
+AccountEndpoint --> AccountController
+deactivate AccountEndpoint
+
+return
+return
+end
+@enduml

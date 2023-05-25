@@ -1,0 +1,58 @@
+@startuml
+actor Gość
+Gość -> "Strona przekierowująca" : Aktywacja linku zatwierdzającego konto
+activate "Strona przekierowująca"
+"Strona przekierowująca" -> AccountController : Wywołanie żądania potwierdzenia konta
+activate AccountController
+AccountController -> AccountEndpoint : confirmRegistration()
+    activate AccountEndpoint
+group TransactionAttribute.REQUIRES_NEW
+group RW read committed
+    AccountEndpoint -> AccountService : confirmRegistration()
+group TransactionAttribute.MANDATORY
+    activate AccountService
+    entity Account
+    entity AuthInfo
+    entity VerificationToken
+    AccountService -> VerificationTokenService : findToken()
+    activate VerificationTokenService
+    VerificationTokenService -> VerificationTokenFacade : findByToken()
+    alt przekazany token istnieje
+        activate VerificationTokenFacade
+        VerificationTokenFacade --> VerificationTokenService : VerificationToken
+        VerificationTokenService --> AccountService : VerificationToken
+        activate VerificationToken
+        AccountService -> AccountVerificationTimer : cancelAccountDeletion()
+        activate AccountVerificationTimer
+        AccountVerificationTimer --> AccountService
+        deactivate AccountVerificationTimer
+        AccountService -> Account : setActive(true)
+        activate Account
+        AccountService -> AuthInfo : setIncorrectAuthCount(0)
+        activate AuthInfo
+        AccountService -> AuthInfo : setAccountState(TO_CONFIRM)
+        AccountService -> AccountFacade : update()
+        activate AccountFacade
+        AccountFacade --> AccountService
+        deactivate VerificationToken
+        deactivate Account
+        deactivate AuthInfo
+        deactivate AccountFacade
+    else przekazany token nie istnieje
+        VerificationTokenFacade --> AccountService : Error
+        deactivate VerificationTokenFacade
+    end
+end
+end
+end
+
+AccountService --> AccountEndpoint : Informacja o statusie weryfikacji konta
+deactivate AccountService
+AccountEndpoint --> AccountController : Informacja o statusie weryfikacji konta
+deactivate AccountEndpoint
+AccountController --> "Strona przekierowująca" : Informacja o statusie weryfikacji konta
+deactivate AccountController
+"Strona przekierowująca" --> Gość : Informacja o statusie weryfikacji konta
+deactivate "Strona przekierowująca"
+
+@enduml
