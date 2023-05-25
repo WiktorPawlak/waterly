@@ -16,11 +16,13 @@ export interface MainLayoutProps {
   hideMenuEntries?: boolean;
   children: ReactNode;
   isOverflowHidden?: boolean;
+  isHomePage?: boolean;
 }
 
 export const MainLayout = ({
   children,
   hideMenuEntries,
+  isHomePage = false,
   isOverflowHidden = true,
 }: MainLayoutProps) => {
   const roleRoutesMap: { [key: string]: RouteType[] } = {
@@ -53,7 +55,7 @@ export const MainLayout = ({
         <Container
           sx={{
             flex: "1 0 auto",
-            marginTop: { xs: 12, sm: 20, md: 16 },
+            marginTop: { xs: 12, sm: 20, md: isHomePage ? 2 : 16 },
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "background.default",
@@ -61,7 +63,7 @@ export const MainLayout = ({
               xs: "visible",
               md: isOverflowHidden ? "hidden" : "visible",
             },
-            px: { xs: 2, md: 15 },
+            px: { xs: 2, md: isHomePage ? 0 : 15 },
           }}
         >
           <Breadcrumbs />
