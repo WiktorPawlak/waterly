@@ -89,7 +89,8 @@
       "detailsSuccesEdited": "Detale zmienione pomyślnie",
       "emailSuccesEdited": "Email zmieniony pomyślnie",
       "emailSuccesResended": "Email wysłany ponownie pomyślnie",
-      "emailNotChanged": "Email jest taki sam jak wcześniej"
+      "emailNotChanged": "Email jest taki sam jak wcześniej",
+      "emailToUserSended": "Wiadomość z akceptacją zmiany adresu e-mail została wysłana do użytkownika"
     },
     "ownPasswordChange": {
       "changePasswordButton": "Edytuj hasło"
@@ -356,5 +357,10 @@
     "button": "Zacznij",
     "title": "Twoje rachunki w wodzie pod kontrolą!",
     "description": "Zarządzaj, optymalizuj. Dołącz do nas!"
+  },
+  "notFoundPage": {
+    "header": "O nie! Wygląda na to, że strona rozpłynęła się w powietrzu.",
+    "description": "Nasi śledczy już nad tym pracują.",
+    "footer": "POWRÓT DO STRONY GŁÓWNEJ"
   }
 }

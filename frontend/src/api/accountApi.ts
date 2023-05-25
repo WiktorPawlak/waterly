@@ -1,6 +1,6 @@
-import { ApiResponse, get, post, put, remove } from "./api";
-import { RoleOperation } from "../types";
-import { AccountDetailsSchemaType } from "../validation/validationSchemas";
+import {ApiResponse, get, post, put, remove} from "./api";
+import {RoleOperation} from "../types";
+import {AccountDetailsSchemaType} from "../validation/validationSchemas";
 
 const ACCOUNTS_PATH = "/accounts";
 
@@ -94,16 +94,6 @@ export interface PasswordChangeByAdminDto {
     newPassword: string;
 }
 
-interface User {
-    login: string;
-    password: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    languageTag: string;
-}
-
 export async function postChangePasswordByAdmin(
     email: string,
     body: PasswordChangeByAdminDto
@@ -124,11 +114,14 @@ export async function editAccountDetails(
     });
 }
 
-export async function editEmail(
-    body: EditEmailDto,
-    etag: string
-) {
+export async function editEmail(body: EditEmailDto, etag: string) {
     return put(`${ACCOUNTS_PATH}/self/email`, body, {
+        "If-Match": etag,
+    });
+}
+
+export async function editEmailByAdmin(body: EditEmailDto, etag: string) {
+    return put(`${ACCOUNTS_PATH}/${body.id}/email`, body, {
         "If-Match": etag,
     });
 }
@@ -186,20 +179,22 @@ export async function getAccountsList(
     getPagedListDto: GetPagedAccountListDto,
     pattern: string
 ): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
-    return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, { pattern: pattern });
+    return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, {pattern: pattern});
 }
 
 export async function getNotConfirmedAccoutsList(
     getPagedListDto: GetPagedAccountListDto,
     pattern: string
 ): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
-    return post(`${ACCOUNTS_PATH}/to-verify`, getPagedListDto, { pattern: pattern });
+    return post(`${ACCOUNTS_PATH}/to-verify`, getPagedListDto, {
+        pattern: pattern,
+    });
 }
 
 export async function getAccountNames(
     pattern: string
 ): Promise<ApiResponse<String[]>> {
-    return get(`${ACCOUNTS_PATH}/list/name-suggestions`, { pattern: pattern });
+    return get(`${ACCOUNTS_PATH}/list/name-suggestions`, {pattern: pattern});
 }
 
 export async function grantAccountPermissions(
@@ -219,20 +214,14 @@ export async function putAccountDetails(
     });
 }
 
-export async function createAccountByAdmin(
-    body: AccountDetailsSchemaType
-) {
+export async function createAccountByAdmin(body: AccountDetailsSchemaType) {
     return post(`${ACCOUNTS_PATH}/`, body);
 }
 
-export async function acceptAccount(
-    accountId: number,
-) {
+export async function acceptAccount(accountId: number) {
     return post(`${ACCOUNTS_PATH}/${accountId}/accept`, null);
 }
 
-export async function rejectAccount(
-    accountId: number,
-) {
+export async function rejectAccount(accountId: number) {
     return remove(`${ACCOUNTS_PATH}/${accountId}/reject`);
 }

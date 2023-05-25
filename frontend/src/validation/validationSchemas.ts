@@ -22,6 +22,17 @@ export const resetPasswordEmailSchema = z.object({
     ),
 });
 
+export const editEmailByAdminSchema = z.object({
+  email: z
+    .string()
+    .min(5, "editAccountDetailsPage.validation.email.min")
+    .max(320, "editAccountDetailsPage.validation.email.max")
+    .regex(
+      /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/,
+      "editAccountDetailsPage.validation.email.syntax"
+    ),
+});
+
 export const editAccountSchema = z.object({
   firstName: z
     .string()
@@ -41,9 +52,6 @@ export const editAccountSchema = z.object({
     .min(8, "editAccountDetailsPage.validation.phoneNumber.min")
     .max(9, "editAccountDetailsPage.validation.phoneNumber.max")
     .regex(/^\d*$/, "editAccountDetailsPage.validation.phoneNumber.syntax"),
-  languageTag: z
-    .string()
-    .regex(/^[a-z]{2}\-[A-Z]{2}$/, "validation.languageTagInvalidPattern"),
 });
 
 export const accountDetailsSchema = z
@@ -167,13 +175,13 @@ export const changePasswordByAdminSchema = z
     path: ["confirmPassword"],
   });
 
-  export const twoFactorCodeSchema = z.object({
-    code: z
-      .string()
-      .min(8, "validation.twoFactorCode")
-      .max(8, "validation.twoFactorCode")
-      .regex(/[0-9]{8}/, "validation.twoFactorCode"),
-  });
+export const twoFactorCodeSchema = z.object({
+  code: z
+    .string()
+    .min(8, "validation.twoFactorCode")
+    .max(8, "validation.twoFactorCode")
+    .regex(/[0-9]{8}/, "validation.twoFactorCode"),
+});
 
 export type ChangePasswordByAdminSchema = z.infer<
   typeof changePasswordByAdminSchema
@@ -200,3 +208,5 @@ export type LoginSchemaType = z.infer<typeof loginSchema>;
 export type resetPasswordEmailSchema = z.infer<typeof resetPasswordEmailSchema>;
 
 export type TwoFactorCodeSchema = z.infer<typeof twoFactorCodeSchema>;
+
+export type EditEmailByAdminSchemaType = z.infer<typeof editEmailByAdminSchema>;
