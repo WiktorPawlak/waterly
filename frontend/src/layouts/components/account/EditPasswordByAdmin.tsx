@@ -138,7 +138,6 @@ export const EditPasswordByAdmin = ({ isOpen, setIsOpen, email }: Props) => {
             }
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            autoFocus
             margin="dense"
             label={t("changePassword.passwords.confirmNewPasswordLabel")}
             type={showConfirmPassword ? "text" : "password"}

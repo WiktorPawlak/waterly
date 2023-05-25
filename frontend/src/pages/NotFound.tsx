@@ -1,7 +1,10 @@
 import HelpIcon from "@mui/icons-material/Help";
-import { useTranslation } from "react-i18next";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import verifyPose from "../assets/verifyPose.svg";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { PATHS } from "../routing/paths";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const NotFound = () => {
   const { t } = useTranslation();
@@ -52,7 +55,7 @@ const NotFound = () => {
             fontWeight: "700",
           }}
         >
-          404 Not Found
+          {t("notFoundPage.header")}
         </Typography>
         <Typography
           sx={{
@@ -62,8 +65,31 @@ const NotFound = () => {
             fontSize: { xs: "16px", md: "20px" },
           }}
         >
-          The page you are looking for does not exist.
+          {t("notFoundPage.description")}
         </Typography>
+        <Button
+          component={Link}
+          to={PATHS.HOME}
+          sx={{
+            mt: 4,
+            display: "flex",
+            color: "text.secondary",
+          }}
+        >
+          <>
+            <ArrowBackIcon />
+            <Typography
+              sx={{
+                color: "text.secondary",
+                fontSize: "14px",
+                fontWeight: "500",
+                ml: 1,
+              }}
+            >
+              {t("notFoundPage.footer")}
+            </Typography>
+          </>
+        </Button>
         <Box
           sx={{
             width: { xs: "500px", md: "600px" },

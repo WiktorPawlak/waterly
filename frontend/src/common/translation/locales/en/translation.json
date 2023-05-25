@@ -83,7 +83,8 @@
       "detailsSuccesEdited": "Details edited succesfully",
       "emailSuccesEdited": "Email edited succesfully",
       "emailSuccesResended": "Email resended succesfully",
-      "emailNotChanged": "Email is the same as before"
+      "emailNotChanged": "Email is the same as before",
+      "emailToUserSended": "Mail with email change acceptation sended to user"
     },
     "ownPasswordChange": {
       "changePasswordButton": "Edit password"
@@ -355,5 +356,10 @@
     "button": "Get Started",
     "title": "Your water bills under control!",
     "description": "Manage, optimize. Join us!"
+  },
+  "notFoundPage": {
+    "header": "Oh no! The page seems to have vanished into thin air.",
+    "description": "Our tech wizards are on the case.",
+    "footer": "BACK TO MAIN PAGE"
   }
 }

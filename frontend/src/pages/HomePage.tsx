@@ -4,10 +4,13 @@ import homeImg from "../assets/homeImg.png";
 import { MainLayout } from "../layouts/MainLayout";
 import { Link } from "react-router-dom";
 import { PATHS } from "../routing/paths";
+import { useAccount } from "../hooks/useAccount";
 
 const HomePage = () => {
   const { t } = useTranslation();
+  const { account } = useAccount();
 
+  console.log(account);
   return (
     <MainLayout isHomePage={true}>
       <Box
@@ -50,21 +53,23 @@ const HomePage = () => {
           >
             {t("homePage.description")}
           </Typography>
-          <Button
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              maxWidth: "150px",
-              mt: { xs: 1, md: 3 },
-              py: 1,
-            }}
-            component={Link}
-            to={PATHS.LOGIN}
-          >
-            <Typography sx={{ fontSize: "16px", color: "white" }}>
-              {t("homePage.button")}
-            </Typography>
-          </Button>
+          {account === null && (
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                maxWidth: "150px",
+                mt: { xs: 1, md: 3 },
+                py: 1,
+              }}
+              component={Link}
+              to={PATHS.LOGIN}
+            >
+              <Typography sx={{ fontSize: "16px", color: "white" }}>
+                {t("homePage.button")}
+              </Typography>
+            </Button>
+          )}
         </Box>
         <Box
           sx={{
