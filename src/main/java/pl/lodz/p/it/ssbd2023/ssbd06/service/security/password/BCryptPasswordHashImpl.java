@@ -10,9 +10,9 @@ import jakarta.security.enterprise.identitystore.PasswordHash;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @PermitAll
 @BCryptHash
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class BCryptPasswordHashImpl implements PasswordHash {
 
     @Inject

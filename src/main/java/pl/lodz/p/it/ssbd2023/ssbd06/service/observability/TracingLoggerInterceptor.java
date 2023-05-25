@@ -1,7 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.observability;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 import jakarta.annotation.Priority;
 import jakarta.annotation.Resource;
@@ -9,23 +8,20 @@ import jakarta.ejb.SessionContext;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
+import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 
+@Log
 @Monitored
 @Interceptor
 @Priority(Interceptor.Priority.APPLICATION + 20)
 public class TracingLoggerInterceptor {
 
-    private final Logger log = Logger.getLogger(TracingLoggerInterceptor.class.getName());
     private final StringBuilder sb = new StringBuilder();
 
     @Resource
     private SessionContext sessionContext;
 
-    /**
-     * Data Tożsamość NazwaMetody invocated Parametry (id, wersja)
-     * Data Tożsamość NazwaMetody returns Parametry (id, wersja)/Wyjątek
-     */
     @AroundInvoke
     public Object intercept(final InvocationContext context) throws Exception {
         try {

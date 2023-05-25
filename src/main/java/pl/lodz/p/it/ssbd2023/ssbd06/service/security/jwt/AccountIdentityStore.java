@@ -3,23 +3,27 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt;
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.CONFIRMED;
 
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.PasswordHash;
+import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 
+@Log
+@Monitored
 @Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class AccountIdentityStore {
-
-    private final Logger log = Logger.getLogger(getClass().getName());
 
     @Inject
     @BCryptHash
@@ -35,10 +39,11 @@ public class AccountIdentityStore {
         }
         var account = optionalAccount.get();
 
-        if (!isPasswordValid(credential.getPassword(), account.getPassword()) || !canAuthenticate(account)) {
+        if (!isPasswordValid(credential.getPassword(), account.getPassword())) {
             log.info("Invalid authentication: Wrong password or account is not active/not confirmed");
             return INVALID_RESULT;
         }
+        canAuthenticate(account);
 
         return new CredentialValidationResult(
                 account.getLogin(),
@@ -50,10 +55,8 @@ public class AccountIdentityStore {
         return hashProvider.verify(credentialPassword.toCharArray(), accountPassword);
     }
 
-    private boolean canAuthenticate(final Account account) {
-        if (account.isActive() && account.getAccountState() == CONFIRMED) {
-            return true;
-        } else {
+    private void canAuthenticate(final Account account) {
+        if (!account.isActive() || account.getAccountState() != CONFIRMED) {
             throw ApplicationBaseException.accountLockedException();
         }
     }

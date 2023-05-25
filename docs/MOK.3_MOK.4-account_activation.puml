@@ -1,0 +1,67 @@
+@startuml
+actor Gość
+participant "Szczegóły użytkownika"
+participant AccountController
+participant AccountEndpoint
+participant AccountService
+note over AccountService, AccountFacade: TransactionalAttribute.MANDATORY
+participant AccountFacade
+participant NotificationsProvider
+note over NotificationsProvider: TransactionalAttribute\n.NOT_SUPPORTED
+
+Gość -> "Szczegóły użytkownika" : Wybrano konto użytkownika
+activate "Szczegóły użytkownika"
+"Szczegóły użytkownika" -> AccountController: kliknięto "Zablokuj/Odblokuj"
+activate AccountController
+
+AccountController -> AccountEndpoint : changeAccountActiveStatus
+activate AccountEndpoint
+
+group TransactionalAttribute.REQUIRES_NEW
+group RW read committed
+
+AccountEndpoint -> AccountService : changeAccountActiveStatus
+activate AccountService
+
+entity Account
+entity AuthInfo
+
+AccountService -> AccountFacade : findById
+activate AccountFacade
+
+
+alt Konto nie istnieje
+AccountFacade --> AccountService: Error
+else Konto istnieje
+AccountFacade --> AccountService : Account
+deactivate AccountFacade
+AccountService -> Account: setActive(false)
+activate Account
+AccountService -> Account: setIncorrectAuthCount(0)
+Account -> AuthInfo: setIncorrectAuthCount(0)
+activate AuthInfo
+AuthInfo --> Account
+Account --> AccountService
+AccountService -> AccountFacade : update
+note right AccountService: Wykonując metodę update na encji Account\naktualizujemy jednocześnie encję AuthInfo\ndzięki kaskadzie MERGE
+activate AccountFacade
+AccountFacade --> AccountService
+deactivate AccountFacade
+AccountService -> NotificationsProvider : notifyAccountActiveStatusChanged
+activate NotificationsProvider
+NotificationsProvider --> AccountEndpoint
+deactivate NotificationsProvider
+deactivate Account
+deactivate AuthInfo
+deactivate AccountService
+end
+'alt end
+end
+'database transaction end
+end
+'application transaction end
+AccountEndpoint --> AccountController
+deactivate AccountEndpoint
+return
+return
+@enduml
