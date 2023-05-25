@@ -15,7 +15,9 @@ export interface EditAccountDetailsDto {
 }
 
 export interface EditEmailDto {
+    id: number;
     email: string;
+    version: number;
 }
 
 export interface AccountDto {
@@ -122,8 +124,13 @@ export async function editAccountDetails(
     });
 }
 
-export async function editEmail(body: EditEmailDto) {
-    return put(`${ACCOUNTS_PATH}/self/email`, body);
+export async function editEmail(
+    body: EditEmailDto,
+    etag: string
+) {
+    return put(`${ACCOUNTS_PATH}/self/email`, body, {
+        "If-Match": etag,
+    });
 }
 
 export async function resendEmailEditMail() {
