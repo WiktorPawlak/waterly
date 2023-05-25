@@ -36,13 +36,9 @@ export const EditAccountDetailsForm = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  const [languageTag, setLanguageTag] = useState(
-    localStorage.getItem("preferredLanguage") || "pl"
-  );
+  const [languageTag, setLanguageTag] = useState(account.languageTag);
   const [twoFactor, setTwoFactor] = useState(account.twoFAEnabled);
-  const [themeMode, setThemeMode] = useState(
-    localStorage.getItem("themeMode") || "light"
-  );
+  const [themeMode, setThemeMode] = useState(localStorage.getItem("themeMode") || "light");
 
   const {
     register,
@@ -84,10 +80,10 @@ export const EditAccountDetailsForm = ({
         localStorage.setItem("preferredLanguage", languageTag);
         i18n.changeLanguage(languageTag);
         localStorage.setItem("themeMode", themeMode);
-        location.reload();
         enqueueSnackbar(t("editAccountDetailsPage.alert.detailsSuccesEdited"), {
           variant: "success",
         });
+        setTimeout(() => location.reload(), 1500);
       } else {
         enqueueSnackbar(t(resolveApiError(response.error)), {
           variant: "error",
@@ -118,7 +114,7 @@ export const EditAccountDetailsForm = ({
       }}
     >
       <EditPassword />
-      <EditEmail accountEmail={account.email} />
+      <EditEmail account={account} accountEmail={account.email} etag={etag} />
       <Divider variant="middle" sx={{ my: 2 }} />
       <form onSubmit={handleSubmit(handleEditButton)}>
         <Button

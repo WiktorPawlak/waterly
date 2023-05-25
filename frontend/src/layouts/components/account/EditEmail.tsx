@@ -1,7 +1,7 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { EditEmailDto, editEmail } from "../../../api/accountApi";
+import { AccountDto, EditEmailDto, editEmail } from "../../../api/accountApi";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -13,10 +13,16 @@ import { ResendEditMailDialog } from "./ResendEditMailDialog";
 import { useSnackbar } from "notistack";
 
 interface Props {
+  account: AccountDto;
   accountEmail: string;
+  etag: string;
 }
 
-export const EditEmail = ({ accountEmail }: Props) => {
+export const EditEmail = ({ 
+  account,
+  accountEmail,  
+  etag,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
@@ -35,9 +41,13 @@ export const EditEmail = ({ accountEmail }: Props) => {
 
   const emailErrorMessage = errors?.email?.message;
 
-  const handleEditEmailButton = async (dto: EditEmailDto) => {
+  const handleEditEmailButton = async (dto: any) => {
     if (accountEmail != dto.email.toLowerCase()) {
-      const response = await editEmail(dto);
+      const response = await editEmail({
+        ...dto,
+        version: account.version,
+        id: account.id
+      }, etag);
 
       if (response.status === 204) {
         setIsOpen(true);

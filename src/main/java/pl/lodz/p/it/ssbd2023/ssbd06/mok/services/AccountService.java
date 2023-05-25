@@ -172,6 +172,12 @@ public class AccountService {
     }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
+    public void editOwnEmail(final String login, final String email) {
+        Account account = findByLogin(login);
+        addAccountEmailToUpdate(account, email);
+    }
+
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void changePassword(final Account account, final String hashedPassword) {
         account.setPassword(hashedPassword);
         accountFacade.update(account);
@@ -180,12 +186,6 @@ public class AccountService {
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
     public void editOwnAccountDetails(final Account account, final AccountDetails accountDetails, final String languageTag, final boolean twoFAEnabled) {
         updateAccountDetails(accountDetails, account, languageTag, twoFAEnabled);
-    }
-
-    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
-    public void editOwnEmail(final String login, final String email) {
-        Account account = findByLogin(login);
-        addAccountEmailToUpdate(account, email);
     }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})

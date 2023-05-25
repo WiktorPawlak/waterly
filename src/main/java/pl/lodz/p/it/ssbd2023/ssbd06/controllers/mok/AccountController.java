@@ -84,15 +84,6 @@ public class AccountController extends RepeatableTransactionController {
         return Response.status(NO_CONTENT).build();
     }
 
-    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
-    @PUT
-    @Path("/self/email")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response editOwnEmail(@NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
-        retry(() -> accountEndpoint.editOwnEmail(dto), accountEndpoint);
-        return Response.status(NO_CONTENT).build();
-    }
-
     @RolesAllowed(ADMINISTRATOR)
     @PUT
     @Path("/{id}")
@@ -108,8 +99,19 @@ public class AccountController extends RepeatableTransactionController {
     @PUT
     @Path("/{id}/email")
     @Consumes(MediaType.APPLICATION_JSON)
+    @EtagValidationFilter
     public Response editEmail(@PathParam("id") final long id, @NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
         retry(() -> accountEndpoint.editEmail(id, dto), accountEndpoint);
+        return Response.status(NO_CONTENT).build();
+    }
+
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
+    @PUT
+    @Path("/self/email")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @EtagValidationFilter
+    public Response editOwnEmail(@NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
+        retry(() -> accountEndpoint.editOwnEmail(dto), accountEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 

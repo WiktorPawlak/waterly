@@ -778,11 +778,14 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 "mati.com",
         })
         void whenEditOwnEmailAndDataIsIncorrectShouldReturnBadRequest(String email) {
-            EditEmailDto dto = new EditEmailDto(email);
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+
+            EditEmailDto dto = new EditEmailDto(ownerAccount._1.getId(), email, ownerAccount._1.getVersion());
 
             given()
                     .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                     .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                     .when()
                     .put(ACCOUNT_PATH + "/self")
                     .then()
@@ -860,11 +863,13 @@ class AccountControllerTest extends IntegrationTestsConfig {
         void shouldForbidNonAdminUsersToUpdateOtherAccountsEmail(String token) {
             String email = "mati@mati.com";
 
-            EditEmailDto dto = new EditEmailDto(email);
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+            EditEmailDto dto = new EditEmailDto(ownerAccount._1.getId(), email, ownerAccount._1.getVersion());
 
             given()
                     .header(AUTHORIZATION, token)
                     .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                     .when()
                     .put(ACCOUNT_PATH + "/2/email")
                     .then()
@@ -880,11 +885,13 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 "mati.com",
         })
         void whenEditOtherAccountEmailAndDataIsIncorrectShouldReturnBadRequest(String email) {
-            EditEmailDto dto = new EditEmailDto(email);
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+            EditEmailDto dto = new EditEmailDto(ownerAccount._1.getId(), email, ownerAccount._1.getVersion());
 
             given()
                     .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                     .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                     .when()
                     .put(ACCOUNT_PATH + "/1")
                     .then()
@@ -961,7 +968,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
             String phoneNumber = "000000000";
             String languageTag = "pl-PL";
 
-
             Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
 
             EditAccountDetailsDto dto =
@@ -993,11 +999,13 @@ class AccountControllerTest extends IntegrationTestsConfig {
         void shouldEditEmailWhenEditAccepted(String path) {
             String email = "mati@mati.com";
 
-            EditEmailDto dto = new EditEmailDto(email);
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+            EditEmailDto dto = new EditEmailDto(ownerAccount._1.getId(), email, ownerAccount._1.getVersion());
 
             given()
                     .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                     .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                     .when()
                     .put(ACCOUNT_PATH + path)
                     .then()
@@ -1025,11 +1033,13 @@ class AccountControllerTest extends IntegrationTestsConfig {
         void WhenEditEmailAndEditAlreadyAcceptedShouldReturnNotFound(String path) {
             String email = "mati@mati.com";
 
-            EditEmailDto dto = new EditEmailDto(email);
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+            EditEmailDto dto = new EditEmailDto(ownerAccount._1.getId(), email, ownerAccount._1.getVersion());
 
             given()
                     .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                     .body(dto)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                     .when()
                     .put(ACCOUNT_PATH + path)
                     .then()
@@ -1056,12 +1066,13 @@ class AccountControllerTest extends IntegrationTestsConfig {
         @ParameterizedTest
         @CsvSource({"/self/email", "/1/email"})
         void whenUpdateEmailAndEmailExistShouldReturnConflict(String path) {
-            EditEmailDto dtoWithExistedEmail =
-                    new EditEmailDto(getOwnerAccount().getEmail());
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+            EditEmailDto dtoWithExistedEmail = new EditEmailDto(ownerAccount._1.getId(), ownerAccount._1.getEmail(), ownerAccount._1.getVersion());
 
             given()
                     .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                     .body(dtoWithExistedEmail)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                     .when()
                     .put(ACCOUNT_PATH + path)
                     .then()
@@ -1071,12 +1082,13 @@ class AccountControllerTest extends IntegrationTestsConfig {
 
         @Test
         void whenUpdateEmailAndEmailExistInWaitingEmailShouldReturnConflict() {
-            EditEmailDto dtoEmail =
-                    new EditEmailDto(getOwnerAccount().getEmail());
+            Tuple2<AccountDto, String> ownerAccount = getOwnerAccountWithEtag();
+            EditEmailDto dtoEmail = new EditEmailDto(ownerAccount._1.getId(), ownerAccount._1.getEmail(), ownerAccount._1.getVersion());
 
             given()
                     .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                     .body(dtoEmail)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                     .when()
                     .put(ACCOUNT_PATH + "/" + OWNER_ID + "/email")
                     .then()
@@ -1085,6 +1097,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
             given()
                     .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
                     .body(dtoEmail)
+                    .header(IF_MATCH_HEADER_NAME, ownerAccount._2)
                     .when()
                     .put(ACCOUNT_PATH + "/self/email")
                     .then()

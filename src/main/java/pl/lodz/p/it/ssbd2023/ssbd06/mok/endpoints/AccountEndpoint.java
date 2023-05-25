@@ -82,7 +82,20 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed({ADMINISTRATOR})
     public void editEmail(final long id, final EditEmailDto dto) {
+        Account account = accountService.findById(id);
+        if (account.calculateVersion() != dto.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
         accountService.editEmail(id, dto.getEmail().toLowerCase());
+    }
+
+    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
+    public void editOwnEmail(final EditEmailDto dto) {
+        Account account = accountService.findById(dto.getId());
+        if (account.calculateVersion() != dto.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
+        accountService.editOwnEmail(authenticatedAccount.getLogin(), dto.getEmail().toLowerCase());
     }
 
     @OnlyGuest
@@ -119,11 +132,6 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
             throw ApplicationBaseException.optimisticLockException();
         }
         accountService.editOwnAccountDetails(account, dto.toDomain(), dto.getLanguageTag(), dto.isTwoFAEnabled());
-    }
-
-    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
-    public void editOwnEmail(final EditEmailDto dto) {
-        accountService.editOwnEmail(authenticatedAccount.getLogin(), dto.getEmail().toLowerCase());
     }
 
     @OnlyGuest
