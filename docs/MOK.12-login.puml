@@ -1,0 +1,174 @@
+@startuml
+actor Gość
+participant "Formularz Logowania"
+participant AuthController
+participant JwtProvider
+participant AccountIdentityStore
+participant BCryptHashProviderImpl
+note over BCryptHashProviderImpl: TransactionalAttribute\n.SUPPORTS
+participant AuthFacade
+note over AuthFacade: TransactionalAttribute\n.MANDATORY
+participant AccountEndpoint
+participant AccountService
+participant AccountFacade
+note over AccountService,AccountFacade: TransactionalAttribute.MANDATORY
+entity Account
+entity AuthInfo
+note over Account,AuthInfo: Przy zapisie encji Account\nzapisywana jest również encja AuthInfo\ndzięki kaskadzie MERGE
+participant NotificationsProvider
+participant AccountActivationTimer
+note over NotificationsProvider, AccountActivationTimer: TransactionalAttribute.NOT_SUPPORTED
+Gość -> "Formularz Logowania" : Poświadzczenia wprowadzone
+activate "Formularz Logowania"
+"Formularz Logowania" -> "Formularz Logowania": kliknięto "Zaloguj"
+
+alt Hasło dłuższe niż 8 znaków
+"Formularz Logowania" -> AuthController
+activate AuthController
+
+else Hasło krótsze niż 8 znaków
+AuthController --> "Formularz Logowania"
+
+end
+
+AuthController -> AccountIdentityStore : validate
+activate AccountIdentityStore
+AccountIdentityStore -> AuthFacade : findByLogin
+activate AuthFacade
+
+group TransactionalAttribute.REQUIRES_NEW
+group RO read comitted
+alt Konto nie istnieje
+AuthFacade --> AccountIdentityStore
+else Konto instnieje
+AuthFacade --> AccountIdentityStore
+deactivate AuthFacade
+alt poświadczenia nieprawidłowe
+AccountIdentityStore -> BCryptHashProviderImpl : isPasswordValid
+activate BCryptHashProviderImpl
+BCryptHashProviderImpl --> AccountIdentityStore: INVALID_RESULT
+else poświadczenia prawidłowe
+BCryptHashProviderImpl --> AccountIdentityStore: VALID
+end
+deactivate BCryptHashProviderImpl
+activate AccountIdentityStore
+AccountIdentityStore -> AccountIdentityStore : canAuthenticate
+activate AccountIdentityStore
+alt konto zablokowane
+AccountIdentityStore --> AccountIdentityStore: accountLockedError
+else konto przeszło walidację pomyślnie
+AccountIdentityStore --> AccountIdentityStore : CredentialsValidationResult
+deactivate AccountIdentityStore
+
+
+end
+'alt end konto przesło walidację pomyślnie
+end
+'alt end konto istnieje
+end
+'database transaction RO end
+end
+'transaction REQUIRES_NEW end
+
+AccountIdentityStore --> AuthController
+deactivate AccountIdentityStore
+deactivate BCryptHashProviderImpl
+AuthController -> AccountEndpoint : saveFailedAuthAttempt
+group TransactionalAttribute.REQUIRES_NEW
+group RW read committed
+activate AccountEndpoint
+AccountEndpoint -> AccountService : updateFailedAuthInfo
+activate AccountService
+
+AccountService -> AccountService : updateFailedAuthInfo
+activate AccountService
+
+AccountService -> Account : updateFailedAuthInfo
+activate Account
+Account -> AuthInfo: updateFailedAuthInfo
+activate AuthInfo
+AuthInfo --> Account
+Account --> AccountService
+
+alt Konto zostało zablokowane po 3 nieudanych uwierzytelnieniach
+AccountService -> NotificationsProvider : notifyAccountActiveStatusChanged
+activate NotificationsProvider
+NotificationsProvider --> AccountService
+deactivate NotificationsProvider
+AccountService -> AccountActivationTimer : scheduleAccountActivation
+activate AccountActivationTimer
+AccountActivationTimer -> AccountActivationTimer
+activate AccountActivationTimer
+AccountActivationTimer --> AccountService
+AccountService -> AccountFacade : update
+activate AccountFacade
+AccountFacade --> AccountService
+deactivate AccountFacade
+deactivate AccountService
+deactivate AccountActivationTimer
+deactivate Account
+deactivate AuthInfo
+
+else Konto ma mniej niż 3 próby nieudanych uwierzytelnień
+AccountService --> AccountEndpoint
+end
+end
+end
+deactivate AccountService
+AccountEndpoint --> AuthController
+deactivate AccountEndpoint
+
+AuthController -> AccountEndpoint : saveSuccessfulAuthAttempt
+group TransactionalAttribute.REQUIRES_NEW
+group RW read committed
+activate AccountEndpoint
+AccountEndpoint -> AccountService : updateSuccessfulAuthAttempt
+activate AccountService
+
+AccountService -> AccountService : updateSuccessfulAuthAttempt
+activate AccountService
+
+AccountService -> Account : updateSuccessfulAuthAttempt
+activate Account
+Account -> AuthInfo: updateSuccessfulAuthAttempt
+activate AuthInfo
+AuthInfo --> Account
+Account --> AccountService
+AccountService -> AccountFacade : update
+activate AccountFacade
+AccountFacade --> AccountService
+deactivate AccountFacade
+deactivate Account
+deactivate AuthInfo
+deactivate AccountService
+
+alt Konto posiada role administratora
+AccountService -> NotificationsProvider : notifySuccessfulAuthInfo
+activate NotificationsProvider
+NotificationsProvider --> AccountService
+deactivate NotificationsProvider
+AccountService --> AccountEndpoint
+
+else Konto nie posiada roli administratora
+AccountService --> AccountEndpoint
+deactivate AccountService
+end
+'alt end
+end
+'database transaction end
+end
+'transaction requires_new end
+AccountEndpoint --> AuthController
+deactivate AccountEndpoint
+AuthController -> JwtProvider : createToken
+activate JwtProvider
+JwtProvider -> JwtProvider : signingAlgorithm
+activate JwtProvider
+deactivate JwtProvider
+JwtProvider --> AuthController
+deactivate JwtProvider
+AuthController --> "Formularz Logowania"
+deactivate AuthController
+"Formularz Logowania" --> Gość
+
+@enduml

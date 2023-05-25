@@ -9,6 +9,8 @@ import jakarta.ejb.Timeout;
 import jakarta.ejb.Timer;
 import jakarta.ejb.TimerConfig;
 import jakarta.ejb.TimerService;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
@@ -16,6 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
 @ServiceExceptionHandler
 @Stateless
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class AccountActivationTimer {
 
     private final Logger log = Logger.getLogger(getClass().getName());

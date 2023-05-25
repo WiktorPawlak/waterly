@@ -4,6 +4,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 import java.util.Optional;
 
 import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -12,6 +14,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 
 @Stateless
+@TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AuthFacade {
 
     @PersistenceContext(unitName = "authPU")
