@@ -63,9 +63,7 @@ export const VerifyUsersFMPage = () => {
           orderBy: response.data?.orderBy || prevState.orderBy,
         }));
       } else {
-        enqueueSnackbar(t(resolveApiError(response.error)), {
-          variant: "error",
-        });
+        console.error(response.error);
       }
       setFetchSearchPreferencesCompleted(true);
     });

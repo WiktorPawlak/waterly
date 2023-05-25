@@ -350,5 +350,10 @@
     "accounts": "Manage users",
     "verify-users": "Verify users",
     "profile": "Profile"
+  },
+  "homePage": {
+    "button": "Get Started",
+    "title": "Your water bills under control!",
+    "description": "Manage, optimize. Join us!"
   }
 }

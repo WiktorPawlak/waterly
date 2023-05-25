@@ -351,5 +351,10 @@
     "accounts": "Zarządzaj użytkownikami",
     "verify-users": "Weryfikuj użytkowników",
     "profile": "Profil"
+  },
+  "homePage": {
+    "button": "Zacznij",
+    "title": "Twoje rachunki w wodzie pod kontrolą!",
+    "description": "Zarządzaj, optymalizuj. Dołącz do nas!"
   }
 }
