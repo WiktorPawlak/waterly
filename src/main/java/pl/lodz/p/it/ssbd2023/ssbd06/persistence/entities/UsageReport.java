@@ -24,16 +24,16 @@ public class UsageReport extends AbstractEntity {
     @Column(name = "cold_water_cost")
     private BigDecimal coldWaterCost;
     @NotNull
-    @Column(name = "cold_water__usage")
+    @Column(name = "cold_water__usage", precision = 8, scale = 3)
     private BigDecimal coldWaterUsage;
     @NotNull
     @Column(name = "hot_water_cost")
     private BigDecimal hotWaterCost;
     @NotNull
-    @Column(name = "hot_water_usage")
+    @Column(name = "hot_water_usage", precision = 8, scale = 3)
     private BigDecimal hotWaterUsage;
     @Column(name = "unbilled_water_cost")
     private BigDecimal unbilledWaterCost;
-    @Column(name = "unbilled_water_amount")
+    @Column(name = "unbilled_water_amount", precision = 8, scale = 3)
     private BigDecimal unbilledWaterAmount;
 }

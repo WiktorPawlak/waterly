@@ -1,5 +1,52 @@
 TRUNCATE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication CASCADE;
 TRUNCATE TABLE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication RESTART IDENTITY;
+
+GRANT ALL ON SCHEMA public TO ssbd06admin;
+
+GRANT SELECT ON TABLE account TO ssbd06auth;
+GRANT SELECT ON TABLE role TO ssbd06auth;
+GRANT SELECT ON TABLE auth_info TO ssbd06auth;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE account TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE account_details TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE administrator TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE owner TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE facility_manager TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE role TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE verification_token TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE auth_info TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE list_search_preferences TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE two_factor_authentication TO ssbd06mok;
+
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_details_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE auth_info_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE role_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE verification_token_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE list_search_preferences_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE two_factor_authentication_id_seq TO ssbd06mok;
+
+GRANT SELECT ON TABLE account TO ssbd06mol;
+GRANT SELECT ON TABLE role TO ssbd06mol;
+GRANT SELECT ON TABLE auth_info to ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE apartment TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bill TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE invoice TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE tariff TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE usage_report TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_meter TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_meter_check TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_usage_stats TO ssbd06mol;
+
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE apartment_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE bill_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE invoice_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE tariff_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE usage_report_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_meter_check_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_meter_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_usage_stats_id_seq TO ssbd06mol;
+
 INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on)
 VALUES (nextval('account_details_id_seq'), 0, 'kontomat@gmail.com', 'Mateusz', 'Strzelecki', '123456789', now(), now());
 INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled, otp_secret)
@@ -64,3 +111,25 @@ INSERT INTO public.owner (id) VALUES (10);
 INSERT INTO public.facility_manager (id) VALUES (11);
 INSERT INTO public.administrator (id) VALUES (12);
 INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id) VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 4);
+
+INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on)
+VALUES (nextval('account_details_id_seq'), 0, 'mol-owner@gmail.com', 'Jerzy', 'Białowieży', '698667546', now(), now());
+INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled, otp_secret)
+VALUES (nextval('account_id_seq'), 0, true, 'jerzy', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 5, now(), now(), false, '7a1dbcfc-f5bf-11ed-b67e-0242ac120002');
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('OWNER', nextval('role_id_seq'), true, 0, 5, now(), now());
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), false, 0, 5, now(), now());
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('ADMINISTRATOR', nextval('role_id_seq'), false, 0, 5, now(), now());
+INSERT INTO public.owner (id)
+VALUES (13);
+INSERT INTO public.administrator (id)
+VALUES (14);
+INSERT INTO public.facility_manager (id)
+VALUES (15);
+INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
+VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 5);
+
+INSERT INTO public.apartment (id, version, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, now(), now(), 40.00, 13);
+INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());

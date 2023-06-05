@@ -31,7 +31,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 @EntityListeners({MolAuditingEntityListener.class})
 public class Apartment extends AbstractEntity {
     @NotNull
-    @Column
+    @Column(precision = 6, scale = 2)
     private BigDecimal area;
 
     @ToString.Exclude
