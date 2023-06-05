@@ -24,7 +24,7 @@ public class Invoice extends AbstractEntity {
     @Column(name = "invoice_number", nullable = false, unique = true)
     private String invoiceNumber;
     @NotNull
-    @Column(name = "water_usage", nullable = false)
+    @Column(name = "water_usage", nullable = false, precision = 8, scale = 3)
     private BigDecimal waterUsage;
     @NotNull
     @Column(name = "total_cost", nullable = false)

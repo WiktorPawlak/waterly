@@ -11,12 +11,14 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotSupportedException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
@@ -55,7 +57,7 @@ public class WaterMeterController extends RepeatableTransactionController {
     }
 
     @POST
-    @Path("/{id}//water-meter-check")
+    @Path("/{id}/water-meter-check")
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Response performWaterMeterCheck(@PathParam("id") final long waterMeterId, @NotNull @Valid final WaterMeterCheckDto dto) {
         waterMeterEndpoint.performWaterMeterCheck(dto);
@@ -63,7 +65,7 @@ public class WaterMeterController extends RepeatableTransactionController {
     }
 
     @POST
-    @Path("/{id}/")
+    @Path("/{id}")
     @RolesAllowed(FACILITY_MANAGER)
     public void replaceWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final ReplaceWaterMeterDto dto) {
         waterMeterEndpoint.replaceWaterMeter(waterMeterId, dto);
@@ -76,10 +78,12 @@ public class WaterMeterController extends RepeatableTransactionController {
         waterMeterEndpoint.updateWaterMeter(waterMeterId, dto);
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
     @PUT
     @Path("/{id}/active")
-    @RolesAllowed(FACILITY_MANAGER)
-    public void changeWaterMeterActiveStatus(@PathParam("id") final long waterMeterId, @NotNull @Valid final WaterMeterActiveStatusDto dto) {
-        waterMeterEndpoint.changeWaterMeterActiveStatus(waterMeterId, dto);
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response changeWaterMeterActiveStatus(@PathParam("id") final long waterMeterId, @NotNull @Valid final WaterMeterActiveStatusDto dto) {
+        retry(() -> waterMeterEndpoint.changeWaterMeterActiveStatus(waterMeterId, dto), waterMeterEndpoint);
+        return Response.ok().build();
     }
 }

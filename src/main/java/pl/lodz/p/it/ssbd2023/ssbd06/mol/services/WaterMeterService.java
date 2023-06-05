@@ -11,7 +11,6 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.NotSupportedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
@@ -41,8 +40,9 @@ public class WaterMeterService {
 
     @RolesAllowed(FACILITY_MANAGER)
     public void changeActiveStatus(final long id, final boolean active) {
-        //get WaterMeter; set activeStatus; flush
-        throw new NotSupportedException();
+        var waterMeter = waterMeterFacade.findById(id);
+        waterMeter.setActive(active);
+        waterMeterFacade.update(waterMeter);
     }
 
     @RolesAllowed(FACILITY_MANAGER)

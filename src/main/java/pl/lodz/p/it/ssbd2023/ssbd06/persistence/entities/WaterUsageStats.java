@@ -37,9 +37,9 @@ public class WaterUsageStats extends AbstractEntity {
     @Column(name = "year_month")
     private YearMonth yearMonth;
     @NotNull
-    @Column(name = "hot_water_usage")
+    @Column(name = "hot_water_usage", precision = 8, scale = 3)
     private BigDecimal hotWaterUsage;
     @NotNull
-    @Column(name = "cold_water_usage")
+    @Column(name = "cold_water_usage", precision = 8, scale = 3)
     private BigDecimal coldWaterUsage;
 }

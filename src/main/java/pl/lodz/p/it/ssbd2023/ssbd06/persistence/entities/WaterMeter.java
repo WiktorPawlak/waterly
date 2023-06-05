@@ -22,6 +22,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 
@@ -39,14 +40,15 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 @EntityListeners({MolAuditingEntityListener.class})
 public class WaterMeter extends AbstractEntity {
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "starting_value", nullable = false, precision = 8, scale = 3)
     private BigDecimal startingValue;
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "expiry_date", nullable = false)
     private Date expiryDate;
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "expected_usage", nullable = false, precision = 8, scale = 3)
     private BigDecimal expectedUsage;
+    @Setter
     @Column(nullable = false)
     private boolean active;
     @ToString.Exclude
@@ -56,9 +58,8 @@ public class WaterMeter extends AbstractEntity {
     @Column(updatable = false)
     @Enumerated(EnumType.STRING)
     private WaterMeterType type;
-
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "apartment_id", foreignKey = @ForeignKey(name = "water_meter_apartment_fk"))
     private Apartment apartment;
 }

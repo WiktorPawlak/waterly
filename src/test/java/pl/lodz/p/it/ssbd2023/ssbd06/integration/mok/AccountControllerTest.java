@@ -1837,7 +1837,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
             //then
             assertEquals(2, accounts.size());
             assertEquals("admin", accounts.get(0).getLogin());
-            assertEquals("new", accounts.get(1).getLogin());
+            assertEquals("jerzy", accounts.get(1).getLogin());
 
             //given
             getPagedAccountListRequest = new GetPagedAccountListDto(null, null, "asc", null);
@@ -1853,7 +1853,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .extract().body().jsonPath().getList("data", ListAccountDto.class);
 
             //then
-            assertEquals(4, accounts.size());
+            assertEquals(5, accounts.size());
         }
 
         @ParameterizedTest(name = "pattern = {0}, expected account ids = {1}")
@@ -1884,8 +1884,8 @@ class AccountControllerTest extends IntegrationTestsConfig {
                 Arguments.of(" new", List.of(2L)),
                 Arguments.of("mateusz Strz", List.of(1L)),
                 Arguments.of("StrZelecki matEu", List.of(1L)),
-                Arguments.of(null, List.of(1L, 2L, 4L, 3L)),
-                Arguments.of(" ", List.of(1L, 2L, 4L, 3L))
+                Arguments.of(null, List.of(1L, 5L, 2L, 4L, 3L)),
+                Arguments.of(" ", List.of(1L, 5L, 2L, 4L, 3L))
         );
     }
 

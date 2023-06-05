@@ -18,17 +18,21 @@ import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 public class IntegrationTestsConfig extends PayaraContainerInitializer {
 
     protected static final String AUTH_PATH = "/auth";
     protected static final String ACCOUNT_PATH = "/accounts";
+    protected static final String WATERMETER_PATH = "/water-meters";
     protected static final Credentials ADMIN_CREDENTIALS = new Credentials("admin", "admin12345");
     protected static final Credentials OWNER_CREDENTIALS = new Credentials("new", "jantes123");
     protected static final Credentials FACILITY_MANAGER_CREDENTIALS = new Credentials("tomdut", "jantes123");
     protected static final AccountActiveStatusDto DEACTIVATE_ACCOUNT = AccountActiveStatusDto.of(false);
     protected static final AccountActiveStatusDto ACTIVATE_ACCOUNT = AccountActiveStatusDto.of(true);
+    protected static final WaterMeterActiveStatusDto DEACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(false);
+    protected static final WaterMeterActiveStatusDto ACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(true);
     protected static final long ADMIN_ID = 1;
     protected static final long OWNER_ID = 2;
     protected static final long NONE_EXISTENT_ACCOUNT_ID = -9;
@@ -36,6 +40,8 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final long NOT_CONFIRMED_OWNER_ID = 4;
     protected static final long FACILITY_MANAGER_ID = 3;
     protected static final String IF_MATCH_HEADER_NAME = "If-Match";
+
+    protected static final long WATER_METER_ID = 1;
 
     protected static String ADMINISTRATOR_TOKEN;
     protected static String OWNER_TOKEN;

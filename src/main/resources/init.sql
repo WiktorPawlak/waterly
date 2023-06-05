@@ -31,6 +31,7 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE two_factor_authentication_id_seq TO ssbd
 --ssbd06mol
 GRANT SELECT ON TABLE account TO ssbd06mol;
 GRANT SELECT ON TABLE role TO ssbd06mol;
+GRANT SELECT ON TABLE auth_info to ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE apartment TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bill TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE invoice TO ssbd06mol;
@@ -79,3 +80,7 @@ INSERT INTO public.facility_manager (id) VALUES (7);
 INSERT INTO public.owner (id) VALUES (8);
 INSERT INTO public.administrator (id) VALUES (9);
 INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id) VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 3);
+
+
+INSERT INTO public.apartment (id, version, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, now(), now(), 40.00, 4);
+INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());
