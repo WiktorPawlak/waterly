@@ -11,6 +11,7 @@ import { AcceptEmailPage } from "../pages/AcceptEmailPage";
 import { ManageUsersAdminPage } from "../pages/admin";
 import NotFound from "../pages/NotFound";
 import { PATHS } from "./paths";
+import { ManageTariffsPage } from "../pages/ManageTariffsPage";
 
 export const Pathnames = {
   public: {
@@ -22,12 +23,14 @@ export const Pathnames = {
     acceptMail: PATHS.ACCEPT_EMAIL,
     resetPassword: PATHS.RESET_PASSWORD,
     verifyAcc: PATHS.VERIFY_ACCOUNT,
+    manageTariffs: PATHS.MANAGE_TARIFFS
   },
   owner: {
     home: PATHS.HOME,
     editAccountDetails: PATHS.EDIT_PROFILE,
     notFound: PATHS.NOT_FOUND,
     acceptMail: PATHS.ACCEPT_EMAIL,
+    manageTariffs: PATHS.MANAGE_TARIFFS
   },
   facilityManager: {
     home: PATHS.HOME,
@@ -35,6 +38,7 @@ export const Pathnames = {
     notFound: PATHS.NOT_FOUND,
     verifyUsers: PATHS.VERIFY_USERS,
     acceptMail: PATHS.ACCEPT_EMAIL,
+    manageTariffs: PATHS.MANAGE_TARIFFS
   },
   admin: {
     home: PATHS.HOME,
@@ -43,6 +47,7 @@ export const Pathnames = {
     notFound: PATHS.NOT_FOUND,
     editUserDetails: PATHS.ACCOUNT_DETAILS,
     acceptMail: PATHS.ACCEPT_EMAIL,
+    manageTariffs: PATHS.MANAGE_TARIFFS
   },
 };
 
@@ -57,6 +62,11 @@ export const adminRoutes: RouteType[] = [
     path: Pathnames.public.home,
     Component: HomePage,
     name: "navigation.home",
+  },
+  {
+    path: Pathnames.public.manageTariffs,
+    Component: ManageTariffsPage,
+    name: "navigation.tariffs",
   },
   {
     path: Pathnames.admin.manageUsers,
@@ -89,6 +99,11 @@ export const ownerRoutes: RouteType[] = [
     name: "navigation.home",
   },
   {
+    path: Pathnames.public.manageTariffs,
+    Component: ManageTariffsPage,
+    name: "navigation.tariffs",
+  },
+  {
     path: Pathnames.owner.editAccountDetails,
     Component: EditAccountDetailsPage,
     name: "navigation.editAccountDetails",
@@ -108,6 +123,11 @@ export const facilityManagerRoutes: RouteType[] = [
     path: Pathnames.public.home,
     Component: HomePage,
     name: "navigation.home",
+  },
+  {
+    path: Pathnames.public.manageTariffs,
+    Component: ManageTariffsPage,
+    name: "navigation.tariffs",
   },
   {
     path: Pathnames.facilityManager.editAccountDetails,
@@ -133,6 +153,10 @@ export const publicRoutes: RouteType[] = [
   {
     path: Pathnames.public.home,
     Component: HomePage,
+  },
+  {
+    path: Pathnames.public.manageTariffs,
+    Component: ManageTariffsPage,
   },
   {
     path: Pathnames.public.login,

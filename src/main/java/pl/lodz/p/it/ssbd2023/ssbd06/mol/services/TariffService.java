@@ -38,4 +38,18 @@ public class TariffService {
     public void updateTariff(final Tariff tariff) {
         tariffFacade.update(tariff);
     }
+
+    @PermitAll
+    public List<Tariff> getTariffs(final int page, final int pageSize, final String order, final String orderBy) {
+        boolean ascOrder = "asc".equalsIgnoreCase(order);
+        return tariffFacade.findTariffs(page,
+                pageSize,
+                ascOrder,
+                orderBy);
+    }
+
+    @PermitAll
+    public Long getTariffsCount() {
+        return tariffFacade.count();
+    }
 }

@@ -13,4 +13,6 @@ export const PATHS = {
   VERIFY_USERS: "/verify-users",
 
   NOT_FOUND: "/not-found",
+
+  MANAGE_TARIFFS: "/tariffs",
 } as const;

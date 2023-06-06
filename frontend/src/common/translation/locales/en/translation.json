@@ -149,6 +149,22 @@
     "cannotRemoveRole": "No roles to remove",
     "cannotAddRole": "No roles to add"
   },
+  "manageTariffsPage": {
+    "header": "View tariffs",
+    "description": "See previous and actual tariffs",
+    "button": "Add new tariff",
+    "searchLabel": "Search tariffs",
+    "pageSize": "Page Size",
+    "dataGrid": {
+      "header": {
+        "coldWaterPrice": "Cold Water [PLN/m<sup>3</sup>]",
+        "hotWaterPrice": "Hot Water [PLN/m<sup>3</sup>]",
+        "trashPrice": "Trash [PLN/m<sup>3</sup>]",
+        "startDate": "Start Date",
+        "endDate": "End Date"
+      }
+    }
+  },
   "verifyUsersFMPage": {
     "header": "Verify users",
     "description": "Here you can accept or remove users.",
@@ -161,7 +177,8 @@
     "home": "Home",
     "manageUsers": "Manage users",
     "verifyUsers": "Verify users",
-    "editAccountDetails": "Edit account details"
+    "editAccountDetails": "Edit account details",
+    "tariffs": "Tariff"
   },
   "general": {
     "role": "Role: ",
@@ -350,7 +367,8 @@
     "homePage": "Home",
     "accounts": "Manage users",
     "verify-users": "Verify users",
-    "profile": "Profile"
+    "profile": "Profile",
+    "tariffs": "View tariffs"
   },
   "homePage": {
     "button": "Get Started",
