@@ -1,9 +1,9 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService.FIRST_PAGE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -13,11 +13,14 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedTariffsListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.TariffService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
 
@@ -31,12 +34,9 @@ public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
     @Inject
     TariffService tariffService;
 
-    @PermitAll
-    public List<TariffsDto> getAllTariffs() {
-        return tariffService.getAllTariffs().stream()
-                .map(TariffsDto::new)
-                .collect(Collectors.toList());
-    }
+    @Inject
+    @Property("default.list.page.size")
+    private int defaultListPageSize;
 
     @RolesAllowed({FACILITY_MANAGER})
     public void addTariff(final CreateTariffDto createTariffDto) {
@@ -49,4 +49,21 @@ public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
         tariffService.updateTariff(new Tariff());
     }
 
+    @PermitAll
+    public PaginatedList<TariffsDto> getTariffsList(final GetPagedTariffsListDto dto) {
+        int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;
+        int pageSizeResolved = dto.getPageSize() != null ? dto.getPageSize() : defaultListPageSize;
+        String orderByResolved = dto.getOrderBy() != null ? dto.getOrderBy() : "startDate";
+        List<TariffsDto> tariffs = tariffService.getTariffs(pageResolved,
+                        pageSizeResolved,
+                        dto.getOrder(),
+                        orderByResolved).stream()
+                .map(TariffsDto::new)
+                .toList();
+
+        return new PaginatedList<>(tariffs,
+                pageResolved,
+                tariffs.size(),
+                (long) Math.ceil(tariffService.getTariffsCount().doubleValue() / pageSizeResolved));
+    }
 }

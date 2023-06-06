@@ -26,6 +26,7 @@ public class ValidationRegex {
     public static final String ORDER = "^asc|desc$";
 
     public static final String ACCOUNT_ORDER_BY = "^(login|accountState|email|firstName|lastName|phoneNumber)$";
+    public static final String TARIFF_ORDER_BY = "^(coldWaterPrice|hotWaterPrice|trashPrice|startDate|endDate)$";
 
     public static final String TWO_FA_CODE = "[0-9]{8}";
 }

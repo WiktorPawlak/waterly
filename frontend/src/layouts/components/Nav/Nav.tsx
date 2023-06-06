@@ -190,6 +190,9 @@ export const Nav = ({
                         <NavEntry to={PATHS.REGISTER}>
                           {t("navigation.register")}
                         </NavEntry>
+                        <NavEntry to={PATHS.MANAGE_TARIFFS}>
+                          {t("navigation.tariffs")}
+                        </NavEntry>
                       </>
                     )}
                   </Toolbar>
@@ -207,6 +210,9 @@ export const Nav = ({
                       <NavEntry to={PATHS.HOME}>
                         {t("navigation.home")}
                       </NavEntry>
+                      <NavEntry to={PATHS.MANAGE_TARIFFS}>
+                          {t("navigation.tariffs")}
+                        </NavEntry>
                       <NavEntry to={PATHS.LOGIN}>
                         {t("navigation.login")}
                       </NavEntry>

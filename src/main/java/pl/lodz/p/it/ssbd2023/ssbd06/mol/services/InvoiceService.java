@@ -28,8 +28,13 @@ public class InvoiceService {
     @RolesAllowed({FACILITY_MANAGER})
     public void createInvoice(final CreateInvoiceDto invoice) {
         //dto -> Invoice
-        invoiceFacade.create(new Invoice());
+        createInvoice();
         generateBillsService.generateBills(new Invoice());
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    private void createInvoice() {
+        invoiceFacade.create(new Invoice());
     }
 
     @RolesAllowed({FACILITY_MANAGER})

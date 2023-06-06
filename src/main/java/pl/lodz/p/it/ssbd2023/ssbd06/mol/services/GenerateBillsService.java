@@ -18,7 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @Monitored
 @ServiceExceptionHandler
 @Stateless
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class GenerateBillsService {
 
     @Inject
@@ -43,4 +43,6 @@ public class GenerateBillsService {
         //todo implement
         throw new UnsupportedOperationException();
     }
+
+    
 }

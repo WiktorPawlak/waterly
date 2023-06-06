@@ -155,6 +155,22 @@
     "cannotRemoveRole": "Nie ma roli do odebrania",
     "cannotAddRole": "Nie ma roli do dodania"
   },
+  "manageTariffsPage": {
+    "header": "Przeglądaj taryfy",
+    "description": "Przeglądaj poprzednio jak i aktualnie obowiązujące taryfy",
+    "button": "Dodaj nową taryfę",
+    "searchLabel": "Wyszukaj taryfę",
+    "pageSize": "Ilość wierszy",
+    "dataGrid": {
+      "header": {
+        "coldWaterPrice": "Woda Zimna [zł/m<sup>3</sup>]",
+        "hotWaterPrice": "Woda Ciepła [zł/m<sup>3</sup>]",
+        "trashPrice": "Odpady [zł/m<sup>3</sup>]",
+        "startDate": "Data rozpoczęcia",
+        "endDate": "Data zakończenia"
+      }
+    }
+  },
   "verifyUsersFMPage": {
     "header": "Weryfikuj użytkowników",
     "description": "Tutaj możesz akceptować lub odrzucać użytkowników.",
@@ -168,7 +184,8 @@
     "home": "Strona główna",
     "manageUsers": "Zarządzaj użytkownikami",
     "verifyUsers": "Weryfikuj użytkowników",
-    "editAccountDetails": "Edytuj konto"
+    "editAccountDetails": "Edytuj konto",
+    "tariffs": "Taryfa"
   },
   "general": {
     "role": "Rola: ",
@@ -351,7 +368,8 @@
     "homePage": "Strona główna",
     "accounts": "Zarządzaj użytkownikami",
     "verify-users": "Weryfikuj użytkowników",
-    "profile": "Profil"
+    "profile": "Profil",
+    "tariffs": "Przeglądaj taryfy"
   },
   "homePage": {
     "button": "Zacznij",
