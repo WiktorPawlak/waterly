@@ -12,12 +12,12 @@ import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedTariffsListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.TariffService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
@@ -45,8 +45,12 @@ public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public void updateTariff(final long id, final UpdateTariffDto updateTariffDto) {
-        tariffService.updateTariff(new Tariff());
+    public void updateTariff(final long id, final TariffsDto dto) {
+        Tariff tariff = tariffService.findById(id);
+        if (dto.getVersion() != tariff.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
+        tariffService.updateTariff(tariff, dto);
     }
 
     @PermitAll
@@ -65,5 +69,9 @@ public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
                 pageResolved,
                 tariffs.size(),
                 (long) Math.ceil(tariffService.getTariffsCount().doubleValue() / pageSizeResolved));
+    }
+
+    public TariffsDto findById(final long id) {
+        return new TariffsDto(tariffService.findById(id));
     }
 }
