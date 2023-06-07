@@ -11,6 +11,9 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
@@ -41,6 +44,31 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
     @Override
     public List<Invoice> findAll() {
         return super.findAll();
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public List<Invoice> findInvoices(final int page, final int pageSize, final boolean ascOrder, final String orderBy) {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Invoice> query = cb.createQuery(Invoice.class);
+        Root<Invoice> invoice = query.from(Invoice.class);
+        if (ascOrder) {
+            query.orderBy(cb.asc(invoice.get(orderBy)));
+        } else {
+            query.orderBy(cb.desc(invoice.get(orderBy)));
+        }
+        return getEntityManager().createQuery(query)
+                .setFirstResult(pageSize * (page - 1))
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public Long count() {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Invoice> invoice = query.from(Invoice.class);
+        query.select(cb.count(invoice));
+        return em.createQuery(query).getSingleResult();
     }
 
     @Override

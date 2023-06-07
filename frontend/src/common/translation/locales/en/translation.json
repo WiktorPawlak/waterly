@@ -171,12 +171,26 @@
     "toastAcceptSuccess": "User accepted",
     "toastRejectSuccess": "User rejected"
   },
+  "InvoicesListFMPage": {
+    "header": "Invoices list",
+    "description": "Here you can see and manage invoices.",
+    "dataGrid": {
+      "headers": {
+        "id": "Id",
+        "date": "Date",
+        "totalCost": "Total cost",
+        "invoiceNumber": "Invoice number",
+        "waterUsage": "Water usage"
+      }
+    }
+  },
   "navigation": {
     "login": "Log in",
     "register": "Register",
     "home": "Home",
     "manageUsers": "Manage users",
     "verifyUsers": "Verify users",
+    "invoices": "Invoices",
     "editAccountDetails": "Edit account details",
     "tariffs": "Tariff"
   },
