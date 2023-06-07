@@ -25,8 +25,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeExceptio
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TwoFARequestedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.ExpiryDateAlreadyExpiredException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidTariffPeriodException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.MainWaterMeterAlreadyExistsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.TariffsColidingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.EntityIntegrityViolatedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.IfMatchHeaderMissingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.JWSException;
@@ -84,6 +86,9 @@ public class ApplicationBaseException extends WebApplicationException {
     protected static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
 
     protected static final String INFO_TWO_FA_CODE_REQUESTED = "INFO.TWO_FA_CODE_REQUESTES";
+
+    protected static final String ERROR_TARIFFS_COLIDING = "ERROR.TARIFFS_COLIDING";
+    protected static final String ERROR_INVALID_TARIFF_PERIOD = "ERROR.INVALID_TARIFF_PERIOD";
 
     public ApplicationBaseException(final Response.Status status, final String message) {
         super(Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON_TYPE).build());
@@ -219,6 +224,14 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static AccountLockedException accountLockedException() {
         return new AccountLockedException();
+    }
+
+    public static TariffsColidingException tariffsColidingException() {
+        return new TariffsColidingException();
+    }
+
+    public static InvalidTariffPeriodException invalidTariffPeriodException() {
+        return new InvalidTariffPeriodException();
     }
 
     public static InvalidDateException invalidDateException() {

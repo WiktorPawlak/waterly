@@ -246,7 +246,9 @@
     "entityIntegrityViolated": "Unauthorized modification",
     "optimisticLock": "Failed to update data. It appears that they have been modified by another user.",
     "transactionRollback": "Operation has been canceled. Try again later or contact our service.",
-    "accountLocked": "Account locked, try contacting Administrator"
+    "accountLocked": "Account locked, try contacting Administrator",
+    "invalidTariffPeriod": "Invalid tariff period",
+    "tariffsColiding": "There is existing colliding tariff"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -280,7 +282,8 @@
     "phoneNumberInvalid": "Phone number is invalid",
     "uuidInvalidPattern": "Not a UUID pattern",
     "uuidInvalid": "Invalid UUID",
-    "twoFactorCode": "Two factor authentication code must contain 8 numbers"
+    "twoFactorCode": "Two factor authentication code must contain 8 numbers",
+    "waterPrice": "Price needs to be specified with two decimal places"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -381,6 +384,15 @@
     "header": "Change user's password",
     "description": "Fill the form below to change user's password",
     "success": "The password has been changed and the user has been informed by e-mail about the possibility of changing the password"
+  },
+  "editTariffDialog": {
+    "coldWaterPrice": "Cold water [PLN/m<sup>3</sup>]",
+    "hotWaterPrice": "Hot Water [PLN/m<sup>3</sup>]",
+    "trashPrice": "Trash [PLN/m<sup>3</sup>]",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "editTariff": "Edit Tariff",
+    "tariffEditedSuccesfully": "Tariff edited succesfully"
   },
   "twoFactor": {
     "yes": "On",

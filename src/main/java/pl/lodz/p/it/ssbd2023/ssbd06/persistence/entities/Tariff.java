@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 
@@ -17,6 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 @Entity
 @Table(name = "tariff")
 @Getter
+@Setter
 @NoArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})
 public class Tariff extends AbstractEntity {

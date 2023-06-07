@@ -7,6 +7,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -14,6 +15,7 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -63,6 +65,12 @@ public class TariffFacade extends AbstractFacade<Tariff> {
         return super.update(entity);
     }
 
+    @Override
+    @RolesAllowed({FACILITY_MANAGER})
+    public Tariff findById(final Long id) {
+        return super.findById(id);
+    }
+
     @PermitAll
     public List<Tariff> findTariffs(final int page, final int pageSize, final boolean ascOrder, final String orderBy) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
@@ -80,22 +88,26 @@ public class TariffFacade extends AbstractFacade<Tariff> {
     }
 
     @PermitAll
-    public Tariff findTariffForDate(final LocalDate date) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Tariff> cq = cb.createQuery(Tariff.class);
-        Root<Tariff> root = cq.from(Tariff.class);
-        YearMonth yearMonth = YearMonth.from(date);
-        LocalDate startDate = yearMonth.atDay(1); // First day of the specified month
-        LocalDate endDate = yearMonth.atEndOfMonth(); // Last day of the specified month
+    public Optional<Tariff> findTariffForYearMonth(final LocalDate date) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Tariff> cq = cb.createQuery(Tariff.class);
+            Root<Tariff> root = cq.from(Tariff.class);
 
-        Date startDateAsDate = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date endDateAsDate = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            YearMonth yearMonth = YearMonth.from(date);
+            LocalDate startDate = yearMonth.atDay(1);
+            LocalDate endDate = yearMonth.atEndOfMonth();
 
-        Predicate predicate = cb.between(root.get("startDate"), startDateAsDate, endDateAsDate);
+            Date startDateAsDate = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date endDateAsDate = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        cq.where(predicate);
+            Predicate predicate = cb.between(root.get("startDate"), startDateAsDate, endDateAsDate);
+            cq.where(predicate);
 
-        return em.createQuery(cq).getSingleResult();
+            return Optional.of(em.createQuery(cq).getSingleResult());
+        } catch (final NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     @PermitAll

@@ -13,7 +13,7 @@ import { AcceptEmailPage } from "../pages/AcceptEmailPage";
 import { ManageUsersAdminPage } from "../pages/admin";
 import NotFound from "../pages/NotFound";
 import { PATHS } from "./paths";
-// import { ManageTariffsPage } from "../pages/ManageTariffsPage";
+import { ManageTariffsPage } from "../pages/facilityManager/ManageTariffsPage";
 
 export const Pathnames = {
   public: {
@@ -67,11 +67,11 @@ export const adminRoutes: RouteType[] = [
     Component: HomePage,
     name: "navigation.home",
   },
-  // {
-  //   path: Pathnames.public.manageTariffs,
-  //   Component: ManageTariffsPage,
-  //   name: "navigation.tariffs",
-  // },
+  {
+    path: Pathnames.public.manageTariffs,
+    Component: ManageTariffsPage,
+    name: "navigation.tariffs",
+  },
   {
     path: Pathnames.admin.manageUsers,
     Component: ManageUsersAdminPage,
@@ -102,11 +102,11 @@ export const ownerRoutes: RouteType[] = [
     Component: HomePage,
     name: "navigation.home",
   },
-  // {
-  //   path: Pathnames.public.manageTariffs,
-  //   Component: ManageTariffsPage,
-  //   name: "navigation.tariffs",
-  // },
+  {
+    path: Pathnames.public.manageTariffs,
+    Component: ManageTariffsPage,
+    name: "navigation.tariffs",
+  },
   {
     path: Pathnames.owner.editAccountDetails,
     Component: EditAccountDetailsPage,
@@ -128,11 +128,11 @@ export const facilityManagerRoutes: RouteType[] = [
     Component: HomePage,
     name: "navigation.home",
   },
-  // {
-  //   path: Pathnames.public.manageTariffs,
-  //   Component: ManageTariffsPage,
-  //   name: "navigation.tariffs",
-  // },
+  {
+    path: Pathnames.public.manageTariffs,
+    Component: ManageTariffsPage,
+    name: "navigation.tariffs",
+  },
   {
     path: Pathnames.facilityManager.editAccountDetails,
     Component: EditAccountDetailsPage,
@@ -168,10 +168,10 @@ export const publicRoutes: RouteType[] = [
     path: Pathnames.public.home,
     Component: HomePage,
   },
-  // {
-  //   path: Pathnames.public.manageTariffs,
-  //   Component: ManageTariffsPage,
-  // },
+  {
+    path: Pathnames.public.manageTariffs,
+    Component: ManageTariffsPage,
+  },
   {
     path: Pathnames.public.login,
     Component: LogInPage,
