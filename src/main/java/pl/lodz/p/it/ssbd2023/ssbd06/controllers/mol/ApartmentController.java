@@ -64,7 +64,7 @@ public class ApartmentController extends RepeatableTransactionController {
     @POST
     @RolesAllowed(FACILITY_MANAGER)
     public Response createApartment(@NotNull @Valid final CreateApartmentDto dto) {
-        apartmentEndpoint.createApartment(dto);
+        retry(() -> apartmentEndpoint.createApartment(dto), apartmentEndpoint);
         return Response.status(CREATED).build();
     }
 
@@ -78,7 +78,7 @@ public class ApartmentController extends RepeatableTransactionController {
 
     @PUT
     @Path("/{id}/owner")
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public void changeApartmentOwner(@PathParam("id") final long apartmentId, final ChangeApartmentOwnerDto dto) {
         apartmentEndpoint.changeApartmentOwner(apartmentId, dto);
     }

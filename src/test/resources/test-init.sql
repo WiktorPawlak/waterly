@@ -54,9 +54,9 @@ VALUES (nextval('account_id_seq'), 0, true, 'admin', '$2a$04$m9vbbL2RTbV/XNC44TE
 INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
 VALUES ('ADMINISTRATOR', nextval('role_id_seq'), true, 0, 1, now(), now());
 INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), true, 0, 1, now(), now());
+VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), false, 0, 1, now(), now());
 INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('OWNER', nextval('role_id_seq'), true, 0, 1, now(), now());
+VALUES ('OWNER', nextval('role_id_seq'), false, 0, 1, now(), now());
 INSERT INTO public.administrator (id)
 VALUES (1);
 INSERT INTO public.facility_manager (id)
@@ -131,5 +131,5 @@ VALUES (15);
 INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
 VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 5);
 
-INSERT INTO public.apartment (id, version, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, now(), now(), 40.00, 13);
+INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '12a', now(), now(), 40.00, 2);
 INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());

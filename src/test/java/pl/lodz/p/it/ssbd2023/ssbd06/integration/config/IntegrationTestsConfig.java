@@ -26,6 +26,8 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final String AUTH_PATH = "/auth";
     protected static final String ACCOUNT_PATH = "/accounts";
     protected static final String WATERMETER_PATH = "/water-meters";
+
+    protected static final String APARTMENT_PATH = "/apartments";
     protected static final Credentials ADMIN_CREDENTIALS = new Credentials("admin", "admin12345");
     protected static final Credentials OWNER_CREDENTIALS = new Credentials("new", "jantes123");
     protected static final Credentials FACILITY_MANAGER_CREDENTIALS = new Credentials("tomdut", "jantes123");

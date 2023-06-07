@@ -40,31 +40,31 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
         return em;
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     @Override
     public Apartment create(final Apartment entity) {
         return super.create(entity);
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     @Override
     public Apartment update(final Apartment entity) {
         return super.update(entity);
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     @Override
     public Apartment findById(final Long id) {
         return super.findById(id);
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     @Override
     public List<Apartment> findAll() {
         return super.findAll();
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public List<Apartment> findOwnerAllApartments(final long ownerId) {
         TypedQuery<Apartment> billsByApartmentIdTypedQuery = em.createNamedQuery("Apartment.findByOwner_Id", Apartment.class);
         billsByApartmentIdTypedQuery.setFlushMode(FlushModeType.COMMIT);
