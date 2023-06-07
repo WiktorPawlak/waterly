@@ -15,6 +15,9 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -27,9 +30,17 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 })
 @NamedQuery(name = "Apartment.findByOwner_Id", query = "select a from Apartment a where a.owner.id = :id")
 @Getter
+@Builder
 @NoArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})
+@AllArgsConstructor
 public class Apartment extends AbstractEntity {
+
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(unique = true)
+    private String number;
+
     @NotNull
     @Column(precision = 6, scale = 2)
     private BigDecimal area;
@@ -38,10 +49,9 @@ public class Apartment extends AbstractEntity {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
-    private Owner owner;
+    private Account owner;
 
     @ToString.Exclude
-    @NotNull
     @OneToMany(mappedBy = "apartment", fetch = FetchType.LAZY)
     private List<WaterUsageStats> waterUsageStats = new ArrayList<>();
 

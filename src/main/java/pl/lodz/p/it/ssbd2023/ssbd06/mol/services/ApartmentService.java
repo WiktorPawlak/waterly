@@ -25,41 +25,41 @@ public class ApartmentService {
     @Inject
     ApartmentFacade apartmentFacade;
 
-    @RolesAllowed({FACILITY_MANAGER})
-    public void createApartment(final Apartment apartment) {
-        apartmentFacade.create(apartment);
+    @RolesAllowed(FACILITY_MANAGER)
+    public Apartment createApartment(final Apartment apartment) {
+        return apartmentFacade.create(apartment);
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public void updateApartment(final long id, final EditApartmentDetailsDto dto) {
         apartmentFacade.findById(id);
         // merge changes
         apartmentFacade.update(new Apartment());
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public void deleteApartmentOwner(final long id) {
         apartmentFacade.findById(id);
         apartmentFacade.update(new Apartment());
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public void addApartmentOwner(final long id, final ChangeApartmentOwnerDto dto) {
         apartmentFacade.findById(id);
         apartmentFacade.update(new Apartment());
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public List<Apartment> getAllAccounts() {
         return apartmentFacade.findAll();
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public List<Apartment> getOwnerAllAccounts(final long ownerId) {
         return apartmentFacade.findOwnerAllApartments(ownerId);
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed(FACILITY_MANAGER)
     public Apartment getApartmentById(final long apartmentId) {
         return apartmentFacade.findById(apartmentId);
     }

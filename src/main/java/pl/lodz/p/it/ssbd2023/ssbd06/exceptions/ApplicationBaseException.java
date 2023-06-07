@@ -22,6 +22,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TwoFARequestedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.EntityIntegrityViolatedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.IfMatchHeaderMissingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.JWSException;
@@ -47,6 +48,7 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_TOKEN_EXCEEDED_HALF_TIME = "ERROR.TOKEN_EXCEEDED_HALF_TIME";
     public static final String ERROR_TOKEN_NOT_FOUND = "ERROR.TOKEN_NOT_FOUND";
     public static final String ERROR_ACCOUNT_NOT_FOUND = "ERROR.ACCOUNT_NOT_FOUND";
+    public static final String ERROR_OWNER_ACCOUNT_NOT_FOUND = "ERROR.OWNER_ACCOUNT_NOT_FOUND";
     public static final String ERROR_ACCOUNT_SEARCH_PREFERENCES_NOT_FOUND = "ERROR.ACCOUNT_SEARCH_PREFERENCES_NOT_FOUND";
     public static final String ERROR_NOT_AUTHORIZED = "ERROR.NOT_AUTHORIZED";
     public static final String ERROR_AUTHENTICATION = "ERROR.AUTHENTICATION";
@@ -133,6 +135,10 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static AccountDoesNotExistException accountDoesNotExistException() {
         return new AccountDoesNotExistException();
+    }
+
+    public static OwnerAccountDoesNotExistException ownerAccountDoesNotExistException() {
+        return new OwnerAccountDoesNotExistException();
     }
 
     public static NotAuthorizedApplicationException notAuthorizedException() {

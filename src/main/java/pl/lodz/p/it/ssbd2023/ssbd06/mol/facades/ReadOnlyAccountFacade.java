@@ -1,8 +1,11 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+
 import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -48,4 +51,9 @@ public class ReadOnlyAccountFacade extends AbstractFacade<Account> {
         }
     }
 
+    @Override
+    @RolesAllowed(FACILITY_MANAGER)
+    public Account findById(final Long id) {
+        return super.findById(id);
+    }
 }
