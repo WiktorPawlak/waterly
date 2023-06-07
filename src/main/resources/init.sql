@@ -27,7 +27,9 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE list_search_preferences_id_seq TO ssbd06
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE two_factor_authentication_id_seq TO ssbd06mok;
 
 
-
+-- mol
+INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, total_cost, date) values (nextval('invoice_id_seq'), 0, now(), null, now(), null, 'FV 0212039/01/23', 29.09, 202.57, now());
+INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, total_cost, date) values (nextval('invoice_id_seq'), 1, now(), null, now(), null, 'FV 0212040/02/23', 30.09, 222.57, now());
 --ssbd06mol
 GRANT SELECT ON TABLE account TO ssbd06mol;
 GRANT SELECT ON TABLE role TO ssbd06mol;

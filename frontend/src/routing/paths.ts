@@ -11,6 +11,7 @@ export const PATHS = {
   MANAGE_USERS: "/accounts",
   ACCEPT_EMAIL: "/accept-email",
   VERIFY_USERS: "/verify-users",
+  INVOICES: "/invoices",
 
   NOT_FOUND: "/not-found",
 

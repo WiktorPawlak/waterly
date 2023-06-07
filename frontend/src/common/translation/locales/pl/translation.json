@@ -177,6 +177,19 @@
     "toastAcceptSuccess": "Zaakceptowano użytkownika",
     "toastRejectSuccess": "Odrzucono użytkownika"
   },
+  "InvoicesListFMPage": {
+    "header": "Lista faktur",
+    "description": "Tutaj możesz przeglądać i zarządzać fakturami.",
+    "dataGrid": {
+      "headers": {
+        "id": "Id",
+        "date": "Data",
+        "totalCost": "Kwota",
+        "invoiceNumber": "Nr faktury",
+        "waterUsage": "Zużycie wody"
+      }
+    }
+  },
   "navigation": {
     "login": "Zaloguj",
     "register": "Zarejestruj się",
@@ -184,6 +197,7 @@
     "home": "Strona główna",
     "manageUsers": "Zarządzaj użytkownikami",
     "verifyUsers": "Weryfikuj użytkowników",
+    "invoices": "Faktury",
     "editAccountDetails": "Edytuj konto",
     "tariffs": "Taryfa"
   },
