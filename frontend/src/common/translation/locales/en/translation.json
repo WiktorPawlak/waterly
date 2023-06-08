@@ -184,6 +184,21 @@
       }
     }
   },
+  "WaterMetersListFMPage": {
+    "header": "Water Meters list",
+    "description": "Here you can see and manage water meters.",
+    "dataGrid": {
+      "headers": {
+        "id": "Id",
+        "active": "Active",
+        "apartmentId": "Apartment Id",
+        "expectedUsage": "Expected Usage",
+        "expiryDate": "Expiry Date",
+        "startingValue": "Starting Value",
+        "type": "Type"
+      }
+    }
+  },
   "navigation": {
     "login": "Log in",
     "register": "Register",
@@ -191,6 +206,7 @@
     "manageUsers": "Manage users",
     "verifyUsers": "Verify users",
     "invoices": "Invoices",
+    "waterMeters": "Water meters",
     "editAccountDetails": "Edit account details",
     "tariffs": "Tariff"
   },

@@ -190,6 +190,21 @@
       }
     }
   },
+  "WaterMetersListFMPage": {
+    "header": "Lista wodomierzy",
+    "description": "Tutaj możesz przeglądać i zarządzać wodomierzami.",
+    "dataGrid": {
+      "headers": {
+        "id": "Id",
+        "active": "Aktywny",
+        "apartmentId": "Id lokalu",
+        "expectedUsage": "Przewidywane zużycie",
+        "expiryDate": "Data ważności",
+        "startingValue": "Wartość startowa",
+        "type": "Typ"
+      }
+    }
+  },
   "navigation": {
     "login": "Zaloguj",
     "register": "Zarejestruj się",
@@ -198,6 +213,7 @@
     "manageUsers": "Zarządzaj użytkownikami",
     "verifyUsers": "Weryfikuj użytkowników",
     "invoices": "Faktury",
+    "waterMeters": "Wodomierze",
     "editAccountDetails": "Edytuj konto",
     "tariffs": "Taryfa"
   },

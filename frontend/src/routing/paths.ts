@@ -12,6 +12,7 @@ export const PATHS = {
   ACCEPT_EMAIL: "/accept-email",
   VERIFY_USERS: "/verify-users",
   INVOICES: "/invoices",
+  WATER_METERS: "/water-meters",
 
   NOT_FOUND: "/not-found",
 

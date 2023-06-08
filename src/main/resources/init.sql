@@ -87,4 +87,6 @@ INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incor
 
 INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date) values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, now(), now());
 INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '12a', now(), now(), 40.00, 2);
+INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '11a', now(), now(), 50.00, 1);
 INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());
+INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 200.000, 700.000, 'HOT_WATER', 2, now(), now());

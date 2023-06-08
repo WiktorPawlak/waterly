@@ -78,4 +78,18 @@ public class WaterMeterService {
     public List<WaterMeter> getWaterMetersByApartmentId(final long apartmentId) {
         return waterMeterFacade.findAllByApartmentId(apartmentId);
     }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public List<WaterMeter> getWaterMeters(final int page, final int pageSize, final String order, final String orderBy) {
+        boolean ascOrder = "asc".equalsIgnoreCase(order);
+        return waterMeterFacade.findWaterMeters(page,
+                pageSize,
+                ascOrder,
+                orderBy);
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public Long getWaterMetersCount() {
+        return waterMeterFacade.count();
+    }
 }

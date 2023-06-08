@@ -5,6 +5,7 @@ import WaitForVerifyPage from "../pages/WaitForVerifyPage";
 import { EditAccountDetailsPage } from "../pages/EditAccountDetailsPage";
 import { VerifyUsersFMPage } from "../pages/facilityManager";
 import { InvoicesListFMPage } from "../pages/facilityManager";
+import { WaterMetersListFMPage } from "../pages/facilityManager";
 import VerifyAccountPage from "../pages/VerifyAccountPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import AccountDetailsPage from "../pages/admin/AccountDetailsPage/AccountDetailsPage";
@@ -39,6 +40,7 @@ export const Pathnames = {
     notFound: PATHS.NOT_FOUND,
     verifyUsers: PATHS.VERIFY_USERS,
     invoices: PATHS.INVOICES,
+    waterMeters: PATHS.WATER_METERS,
     acceptMail: PATHS.ACCEPT_EMAIL,
     manageTariffs: PATHS.MANAGE_TARIFFS,
   },
@@ -149,6 +151,11 @@ export const facilityManagerRoutes: RouteType[] = [
     path: Pathnames.facilityManager.invoices,
     Component: InvoicesListFMPage,
     name: "navigation.invoices",
+  },
+  {
+    path: Pathnames.facilityManager.waterMeters,
+    Component: WaterMetersListFMPage,
+    name: "navigation.waterMeters",
   },
   {
     path: Pathnames.public.acceptMail,

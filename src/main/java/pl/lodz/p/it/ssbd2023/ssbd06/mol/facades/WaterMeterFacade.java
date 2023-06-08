@@ -14,6 +14,9 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
@@ -67,9 +70,28 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    @Override
-    public List<WaterMeter> findAll() {
-        return super.findAll();
+    public List<WaterMeter> findWaterMeters(final int page, final int pageSize, final boolean ascOrder, final String orderBy) {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<WaterMeter> query = cb.createQuery(WaterMeter.class);
+        Root<WaterMeter> waterMeter = query.from(WaterMeter.class);
+        if (ascOrder) {
+            query.orderBy(cb.asc(waterMeter.get(orderBy)));
+        } else {
+            query.orderBy(cb.desc(waterMeter.get(orderBy)));
+        }
+        return getEntityManager().createQuery(query)
+                .setFirstResult(pageSize * (page - 1))
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public Long count() {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<WaterMeter> waterMeter = query.from(WaterMeter.class);
+        query.select(cb.count(waterMeter));
+        return em.createQuery(query).getSingleResult();
     }
 
     public List<WaterMeter> findAllByApartmentId(final long apartmentId) {
