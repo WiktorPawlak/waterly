@@ -44,6 +44,7 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
         return em;
     }
 
+    @Override
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public WaterMeter findById(final Long id) {
         return super.findById(id);

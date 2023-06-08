@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.util.Date;
 import java.util.Scanner;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -20,11 +19,11 @@ import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProviderImpl;
@@ -58,13 +57,19 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final AccountActiveStatusDto ACTIVATE_ACCOUNT = AccountActiveStatusDto.of(true);
     protected static final WaterMeterActiveStatusDto DEACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(false);
     protected static final WaterMeterActiveStatusDto ACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(true);
-    protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(
-            DateConverter.convert(timeProvider().addTimeToDate(1500, new Date()))
-    );
+    protected static final BigDecimal STARTING_VALUE = BigDecimal.valueOf(100);
+    protected static final String TEST_DATE = "2024-06-10";
+    protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(STARTING_VALUE, TEST_DATE);
+    protected static final AssignWaterMeterDto CORRECT_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(STARTING_VALUE,
+            TEST_DATE, "HOT_WATER");
+    protected static final AssignWaterMeterDto WRONG_DATE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(STARTING_VALUE,
+            "2020-06-10", "HOT_WATER");
+    protected static final AssignWaterMeterDto WRONG_TYPE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(STARTING_VALUE,
+            TEST_DATE, "WRONG_TYPE");
     protected static final UpdateWaterMeterDto UPDATE_WATER_METER_DTO = UpdateWaterMeterDto.of(
             WATER_METER_ID,
             BigDecimal.valueOf(10),
-            DateConverter.convert(timeProvider().addTimeToDate(1500, new Date())),
+            TEST_DATE,
             BigDecimal.valueOf(12),
             SECOND_APARTMENT_ID,
             0

@@ -7,7 +7,6 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,7 +20,9 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ResourceNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
@@ -42,6 +43,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
+@Log
 @TransactionRollbackInterceptor
 @Monitored
 @LocalBean
@@ -118,10 +120,19 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
         waterMeterService.addReplacementWaterMeter(waterMeterId, dto);
     }
 
+    @SneakyThrows(ParseException.class)
     @RolesAllowed(FACILITY_MANAGER)
     public void addWaterMeter(final long apartmentId, final AssignWaterMeterDto dto) {
-        Apartment apartment = apartmentService.getApartmentById(apartmentId);
-        waterMeterService.assignWaterMeter(apartment, dto);
+        if (DateConverter.convert(dto.getExpiryDate()).before(timeProvider.currentDate())) {
+            throw ApplicationBaseException.expiryDateAlreadyExpiredException();
+        }
+        Optional<Apartment> apartment = Optional.ofNullable(apartmentService.getApartmentById(apartmentId));
+        if (apartment.isPresent()) {
+            waterMeterService.assignWaterMeter(apartment.get(), dto);
+        } else {
+            log.severe(() -> "Apartment with id " + apartmentId + " do not exist");
+            throw new ResourceNotFoundException();
+        }
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -137,9 +148,7 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public List<WaterMeterDto> getWaterMetersByApartmentId(final long apartmentId) {
         List<WaterMeter> waterMeters = waterMeterService.getWaterMetersByApartmentId(apartmentId);
-        List<WaterMeterDto> waterMetersDtos = new ArrayList<>();
-        waterMeters.forEach(waterMeter -> waterMetersDtos.add(new WaterMeterDto(waterMeter)));
-        return waterMetersDtos;
+        return waterMeters.stream().map(WaterMeterDto::new).toList();
     }
 
     @RolesAllowed({FACILITY_MANAGER})
@@ -162,13 +171,14 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @SneakyThrows(ParseException.class)
     private WaterMeter prepareMainWaterMeter(final CreateMainWaterMeterDto dto) {
-        return WaterMeter.builder()
+        WaterMeter waterMeter = WaterMeter.builder()
                 .active(true)
                 .type(MAIN)
                 .expectedUsage(BigDecimal.ZERO)
-                .startingValue(BigDecimal.ZERO)
+                .startingValue(dto.getStartingValue())
                 .expiryDate(DateConverter.convert(dto.getExpiryDate()))
                 .build();
+        return waterMeter;
     }
 
     @SneakyThrows(ParseException.class)

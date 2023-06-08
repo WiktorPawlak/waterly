@@ -99,10 +99,11 @@ public class ApartmentController extends RepeatableTransactionController {
         apartmentEndpoint.changeApartmentOwner(apartmentId, dto);
     }
 
-    @PUT
+    @POST
     @Path("/{id}/water-meter")
-    public void assignWaterMeterToApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final AssignWaterMeterDto dto) {
-        waterMeterEndpoint.addWaterMeter(apartmentId, dto);
+    public Response assignWaterMeterToApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final AssignWaterMeterDto dto) {
+        retry(() -> waterMeterEndpoint.addWaterMeter(apartmentId, dto), waterMeterEndpoint);
+        return Response.status(CREATED).build();
     }
 
 }

@@ -25,8 +25,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 
 @ToString(callSuper = true)
 @Entity
@@ -50,8 +53,7 @@ public class WaterMeter extends AbstractEntity {
     @NotNull
     @Column(name = "expiry_date", nullable = false)
     private Date expiryDate;
-    @NotNull
-    @Column(name = "expected_usage", nullable = false, precision = 8, scale = 3)
+    @Column(name = "expected_usage", precision = 8, scale = 3)
     private BigDecimal expectedUsage;
     @Setter
     @Column(nullable = false)
@@ -67,4 +69,13 @@ public class WaterMeter extends AbstractEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "apartment_id", foreignKey = @ForeignKey(name = "water_meter_apartment_fk"))
     private Apartment apartment;
+
+    @SneakyThrows
+    public WaterMeter(@NotNull final AssignWaterMeterDto assignWaterMeterDto, final Apartment apartment) {
+        this.startingValue = assignWaterMeterDto.getStartingValue();
+        this.expiryDate = DateConverter.convert(assignWaterMeterDto.getExpiryDate());
+        this.active = true;
+        this.type = WaterMeterType.valueOf(assignWaterMeterDto.getType());
+        this.apartment = apartment;
+    }
 }
