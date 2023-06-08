@@ -14,12 +14,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 
@@ -27,6 +29,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 @Entity
 @Table(name = "apartment", indexes = {
         @Index(name = "apartment_owner_idx", columnList = "owner_id")
+}, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"number"}, name = "uk_apartment_name")
 })
 @NamedQuery(name = "Apartment.findByOwner_Id", query = "select a from Apartment a where a.owner.id = :id")
 @Getter
@@ -37,11 +41,12 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 public class Apartment extends AbstractEntity {
 
     @NotNull
+    @Setter
     @Size(min = 1, max = 20)
-    @Column(unique = true)
     private String number;
 
     @NotNull
+    @Setter
     @Column(precision = 6, scale = 2)
     private BigDecimal area;
 

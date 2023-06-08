@@ -72,7 +72,7 @@ public class ApartmentController extends RepeatableTransactionController {
     @Path("/{id}")
     @RolesAllowed(FACILITY_MANAGER)
     public Response updateApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final EditApartmentDetailsDto dto) {
-        apartmentEndpoint.updateApartment(apartmentId, dto);
+        retry(() -> apartmentEndpoint.updateApartment(apartmentId, dto), apartmentEndpoint);
         return Response.status(NO_CONTENT).build();
     }
 

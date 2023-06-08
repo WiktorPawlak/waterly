@@ -32,9 +32,10 @@ public class ApartmentService {
 
     @RolesAllowed(FACILITY_MANAGER)
     public void updateApartment(final long id, final EditApartmentDetailsDto dto) {
-        apartmentFacade.findById(id);
-        // merge changes
-        apartmentFacade.update(new Apartment());
+        Apartment apartment = apartmentFacade.findById(id);
+        apartment.setArea(dto.getArea());
+        apartment.setNumber(dto.getNumber());
+        apartmentFacade.update(apartment);
     }
 
     @RolesAllowed(FACILITY_MANAGER)

@@ -4,8 +4,10 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
+import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
@@ -19,6 +21,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 
 class ApartmentControllerTest extends IntegrationTestsConfig {
 
@@ -41,9 +44,10 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(CREATED.getStatusCode());
 
+            //TODO get account
         }
 
-        @ParameterizedTest(name = "area: {0}, ownerId: {1}")
+        @ParameterizedTest(name = "area: {0}, ownerId: {1}, number: {2}")
         @CsvSource({
                 "0.9,1,60a",
                 "1000,1,60a",
@@ -89,11 +93,11 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         }
 
         @Test
-        void shouldReturnNotFoundWhenApartmentWithNameExist() {
+        void shouldReturnConflictWhenApartmentWithNameExist() {
             CreateApartmentDto dto = CreateApartmentDto.builder()
                     .area(BigDecimal.ONE)
                     .number("60a")
-                    .ownerId(0L)
+                    .ownerId(getOwnerAccount().getId())
                     .build();
 
             given()
@@ -108,7 +112,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .when()
                     .post(APARTMENT_PATH)
                     .then()
-                    .statusCode(NOT_FOUND.getStatusCode())
+                    .statusCode(CONFLICT.getStatusCode())
                     .body(notNullValue());
         }
 
@@ -149,6 +153,109 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 //                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
 //        }
 
+    }
+
+    @Nested
+    class ApartmentUpdate {
+
+        @Test
+        void shouldUpdateApartment() {
+            createApartment();
+
+            EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
+                    .area(BigDecimal.valueOf(24.44))
+                    .number("80b")
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(editApartmentDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID)
+                    .then()
+                    .statusCode(NO_CONTENT.getStatusCode());
+
+            //TODO get account
+
+        }
+
+        @ParameterizedTest(name = "area: {0}, number: {1}")
+        @CsvSource({
+                "0.9,60a",
+                "1000,60a",
+                "1,",
+                ",60a",
+                "2,12   a",
+        })
+        void shouldReturnBadRequestWhenBodyHaveWrongForm(BigDecimal area, String number) {
+            EditApartmentDetailsDto dto = EditApartmentDetailsDto.builder()
+                    .area(area)
+                    .number(number)
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(dto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID)
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("[0].field", notNullValue())
+                    .body("[0].message", notNullValue());
+
+        }
+
+        @Test
+        void shouldReturnConflictWhenApartmentWithNameExist() {
+            createApartment();
+
+            EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
+                    .area(BigDecimal.valueOf(24.44))
+                    .number("60a")
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(editApartmentDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID)
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body(notNullValue());
+        }
+
+//        @ParameterizedTest
+//        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.ApartmentControllerTest#provideTokensForParameterizedTests")
+//        void shouldReturnForbiddenWhenAccountNotHaveFacilityMangerPermission(String token) {
+//            EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
+//                    .area(BigDecimal.valueOf(24.44))
+//                    .number("60b")
+//                    .build();
+//
+//            given()
+//                    .header(AUTHORIZATION, token)
+//                    .body(editApartmentDto)
+//                    .when()
+//                    .put(APARTMENT_PATH + "/" + APARTMENT_ID)
+//                    .then()
+//                    .statusCode(FORBIDDEN.getStatusCode())
+//                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+//        }
+
+    }
+
+    private void createApartment() {
+        CreateApartmentDto dto = CreateApartmentDto.builder()
+                .area(BigDecimal.ONE)
+                .number("60a")
+                .ownerId(getOwnerAccount().getId())
+                .build();
+
+        given()
+                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                .body(dto)
+                .when()
+                .post(APARTMENT_PATH);
     }
 
     private static Stream<Arguments> provideTokensForParameterizedTests() {

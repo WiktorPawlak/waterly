@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -15,7 +16,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MokAuditingEntityListener;
 
 @ToString(callSuper = true)
 @Entity
-@Table(name = "account_details")
+@Table(name = "account_details", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"email"}, name = "uk_account_email"),
+        @UniqueConstraint(columnNames = {"phone_number"}, name = "uk_account_phone_number")
+})
 @Getter
 @Setter
 @Builder
@@ -25,7 +29,6 @@ public class AccountDetails extends AbstractEntity {
 
     @NotNull
     @Size(min = 5, max = 320)
-    @Column(unique = true)
     private String email;
     @NotNull
     @Size(min = 2, max = 50)
@@ -37,7 +40,7 @@ public class AccountDetails extends AbstractEntity {
     private String lastName;
     @NotNull
     @Size(min = 8, max = 9)
-    @Column(name = "phone_number", unique = true)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     public AccountDetails(final String email, final String firstName, final String lastName, final String phoneNumber) {
