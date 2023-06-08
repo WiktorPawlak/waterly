@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHand
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.ApartmentFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
@@ -60,13 +62,21 @@ public class ApartmentService {
                                                           final String orderBy) {
         return Tuple.of(
                 apartmentFacade.findApartments(pattern, page, pageSize, ascOrder, orderBy),
-                apartmentFacade.count(pattern)
+                apartmentFacade.countAll(pattern)
         );
     }
 
-    @RolesAllowed(FACILITY_MANAGER)
-    public List<Apartment> getOwnerAllAccounts(final long ownerId) {
-        return apartmentFacade.findOwnerAllApartments(ownerId);
+    @RolesAllowed(OWNER)
+    public Tuple2<List<Apartment>, Long> getOwnerAllApartaments(final Account account,
+                                                                final String pattern,
+                                                                final int page,
+                                                                final int pageSize,
+                                                                final boolean ascOrder,
+                                                                final String orderBy) {
+        return Tuple.of(
+                apartmentFacade.findOwnerAllApartments(account.getId(), pattern, page, pageSize, ascOrder, orderBy),
+                apartmentFacade.countAllOwnerApartments(account.getId(), pattern)
+        );
     }
 
     @RolesAllowed(FACILITY_MANAGER)

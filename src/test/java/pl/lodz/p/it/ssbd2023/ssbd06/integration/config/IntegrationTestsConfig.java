@@ -39,6 +39,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final long OWNER_ID = 2;
     protected static final long NONE_EXISTENT_ACCOUNT_ID = -9;
 
+    protected static final long MOL_OWNER_ID = 5;
     protected static final long NOT_CONFIRMED_OWNER_ID = 4;
     protected static final long FACILITY_MANAGER_ID = 3;
 

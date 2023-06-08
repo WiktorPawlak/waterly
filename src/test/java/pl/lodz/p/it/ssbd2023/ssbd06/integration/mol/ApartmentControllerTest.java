@@ -272,6 +272,36 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
             assertEquals(2, apartments.size());
         }
 
+        @Test
+        void shouldGetSelfOwnerApartments() {
+            CreateApartmentDto dto = CreateApartmentDto.builder()
+                    .area(BigDecimal.ONE)
+                    .number("60a")
+                    .ownerId(MOL_OWNER_ID)
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(dto)
+                    .when()
+                    .post(APARTMENT_PATH);
+
+            List<ApartmentDto> apartments = given()
+                    .header(AUTHORIZATION, OWNER_TOKEN)
+                    .param("page", 1)
+                    .param("pageSize", 5)
+                    .param("order", "asc")
+                    .when()
+                    .get(APARTMENT_PATH + "/self")
+                    .then()
+                    .statusCode(OK.getStatusCode())
+                    .body("itemsInPage", equalTo(1))
+                    .body("totalPages", equalTo(1))
+                    .extract().body().jsonPath().getList("data", ApartmentDto.class);
+
+            assertEquals(1, apartments.size());
+        }
+
     }
 
     private void createApartment() {

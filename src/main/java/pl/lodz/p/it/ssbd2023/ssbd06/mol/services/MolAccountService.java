@@ -33,6 +33,18 @@ public class MolAccountService {
         return findOwnerById(id);
     }
 
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
+    public Account getAccountByLogin(final String login) {
+        Optional<Account> optionalAccount = readOnlyAccountFacade.findByLogin(login);
+
+        if (optionalAccount.isEmpty()) {
+            log.info(() -> "Owner account with login: " + login + " does not exist");
+            throw ApplicationBaseException.ownerAccountDoesNotExistException();
+        }
+
+        return optionalAccount.get();
+    }
+
     private Account findOwnerById(final long id) {
         Optional<Account> optionalAccount = findById(id);
 
