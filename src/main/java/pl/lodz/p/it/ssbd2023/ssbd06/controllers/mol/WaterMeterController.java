@@ -4,7 +4,6 @@ import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
-import java.util.List;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -13,7 +12,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotSupportedException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -22,7 +20,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedWaterMetersListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
@@ -38,9 +38,12 @@ public class WaterMeterController extends RepeatableTransactionController {
     @Inject
     private WaterMeterEndpoint waterMeterEndpoint;
 
-    @GET
-    public List<WaterMetersDto> getWaterMeters() {
-        throw new NotSupportedException();
+    @POST
+    @Path("/list")
+    @RolesAllowed({FACILITY_MANAGER})
+    public Response getWaterMeters(@NotNull @Valid final GetPagedWaterMetersListDto dto) {
+        PaginatedList<WaterMetersDto> waterMeters = retry(() -> waterMeterEndpoint.getWaterMetersList(dto), waterMeterEndpoint);
+        return Response.ok().entity(waterMeters).build();
     }
 
     @GET
