@@ -411,6 +411,10 @@
     "invoiceNumber" : "Numer Faktury",
     "invoiceEditedSuccesfully": "Pomyślnie edytowano fakturę"
   },
+  "addTariffDialog": {
+    "tariffAddedSuccesfully": "Pomyślnie dodano taryfę",
+    "addTariff": "Dodaj taryfę"
+  },
   "twoFactor": {
     "yes": "włączone",
     "no": "wyłączone",

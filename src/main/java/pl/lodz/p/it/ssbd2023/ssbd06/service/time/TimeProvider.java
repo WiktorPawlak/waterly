@@ -11,4 +11,5 @@ public interface TimeProvider {
     Date currentDate();
 
     long getDifferenceFromCurrentDateInMillis(Date givenDate);
+
 }

@@ -410,6 +410,10 @@
     "invoiceNumber": "Invoice Number",
     "invoiceEditedSuccesfully": "Invoice edited succesfully"
   },
+  "addTariffDialog": {
+    "tariffAddedSuccesfully": "Tariff added succesfully",
+    "addTariff": "Add tariff"
+  },
   "twoFactor": {
     "yes": "On",
     "no": "Off",

@@ -10,7 +10,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { resolveApiError } from "../../../api/apiErrors";
 import CloseIcon from "@mui/icons-material/Close";
 import { StyledTextField } from "../../../pages/admin/AccountDetailsPage/AccountDetailsPage.styled";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { enqueueSnackbar } from "notistack";
 import { useForm } from "react-hook-form";
 import { plPL } from '@mui/x-date-pickers/locales';
@@ -18,43 +18,47 @@ import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    EditTariffSchema,
-    editTariffSchema,
+    AddTariffSchema,
+    addTariffSchema,
 } from "../../../validation/validationSchemas";
-import { TariffDto, updateTariff } from "../../../api/tariffsApi";
+import { addTariff } from "../../../api/tariffsApi";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
-
 interface Props {
-    tariff: TariffDto | undefined;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
-    etag: string;
 }
 
-export const EditTariffDialog = ({
-    tariff,
+export const AddTariffDialog = ({
     isOpen,
     setIsOpen,
-    etag
 }: Props) => {
     const { t } = useTranslation();
-    const [startDate, setStartDate] = useState<Dayjs | null>(dayjs(tariff?.startDate));
-    const [endDate, setEndDate] = useState<Dayjs | null>(dayjs(tariff?.endDate));
+    const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
+    const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
+
+    const handleReset = () => {
+        reset();
+    };
+
+    const handleClose = () => {
+        setIsOpen(false);
+        handleReset();
+    };
+
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
-        setValue
-    } = useForm<EditTariffSchema>({
-        resolver: zodResolver(editTariffSchema),
+    } = useForm<AddTariffSchema>({
+        resolver: zodResolver(addTariffSchema),
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
-            coldWaterPrice: tariff?.coldWaterPrice.toString(),
-            hotWaterPrice: tariff?.hotWaterPrice.toString(),
-            trashPrice: tariff?.trashPrice.toString()
+            coldWaterPrice: "",
+            hotWaterPrice: "",
+            trashPrice: ""
         },
     });
 
@@ -67,37 +71,16 @@ export const EditTariffDialog = ({
     const hotWaterPriceErrorMessage = hotWaterPriceError?.message;
     const trashPriceErrorMessage = trashPriceError?.message;
 
-    const handleClose = () => {
-        setIsOpen(false);
-        reset();
-    };
-
-    useEffect(() => {
-        if (tariff) {
-            setValue("hotWaterPrice", tariff!.hotWaterPrice.toString());
-            setValue("coldWaterPrice", tariff!.coldWaterPrice.toString());
-            setValue("trashPrice", tariff!.trashPrice.toString());
-            setStartDate(dayjs(tariff!.startDate));
-            setEndDate(dayjs(tariff!.endDate));
-        }
-    }, [tariff])
-
-
-    const handleConfirmAction = async (editTariff: any) => {
-        const response = await updateTariff(
-            tariff!.id,
+    const handleFormSubmit = async (formData: any) => {
+        const response = await addTariff(
             {
-                ...editTariff,
+                ...formData,
                 startDate: startDate?.format('YYYY-MM-DD'),
-                endDate: endDate?.format('YYYY-MM-DD'),
-                version: tariff?.version,
-                id: tariff?.id
-            },
-            etag
+                endDate: endDate?.format('YYYY-MM-DD')
+            }
         );
-
-        if (response.status === 200) {
-            enqueueSnackbar(t("editTariffDialog.tariffEditedSuccesfully"), {
+        if (response.status === 201) {
+            enqueueSnackbar(t("addTariffDialog.tariffAddedSuccesfully"), {
                 variant: "success",
             });
             handleClose();
@@ -111,7 +94,7 @@ export const EditTariffDialog = ({
     return (
         <Box>
             <Dialog open={isOpen} onClose={handleClose}>
-                <form onSubmit={handleSubmit(handleConfirmAction)}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                     <Box
                         sx={{
                             display: "flex",
@@ -120,7 +103,7 @@ export const EditTariffDialog = ({
                         }}
                     >
                         <DialogTitle id="role-modal-title">
-                            {t("editTariffDialog.editTariff")}
+                            {t("addTariffDialog.addTariff")}
                         </DialogTitle>
                         <Button sx={{ width: "30px" }} onClick={handleClose}>
                             <CloseIcon />
