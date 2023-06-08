@@ -13,8 +13,8 @@ import jakarta.validation.constraints.Pattern;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Constraint(validatedBy = {})
 @Retention(RUNTIME)
-@Pattern(regexp = ValidationRegex.APARTMENT_ORDER_BY, message = "VALIDATION.APARTMENT_INVALID_ORDERBY")
-public @interface AccountOrderBy {
+@Pattern(regexp = ValidationRegex.ACCOUNT_ORDER_BY, message = "VALIDATION.APARTMENT_INVALID_ORDERBY")
+public @interface ApartmentOrderBy {
 
     String message() default "VALIDATION.APARTMENT_INVALID_ORDERBY";
 
