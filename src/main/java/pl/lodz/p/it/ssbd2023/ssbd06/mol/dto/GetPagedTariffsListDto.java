@@ -12,6 +12,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.TariffsOrderBy;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetPagedTariffsListDto {
+
     @Page
     private Integer page;
     @PageSize

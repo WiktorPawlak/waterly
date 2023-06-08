@@ -4,9 +4,15 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateConverter {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
@@ -22,6 +28,12 @@ public class DateConverter {
         return dateFormat.format(value);
     }
 
+    public static Date convertLocalDateToDate(final LocalDate date) {
+        LocalDateTime localDateTime = date.atStartOfDay();
+        ZoneId zoneId = ZoneId.systemDefault();
+        return Date.from(localDateTime.atZone(zoneId).toInstant());
+    }
+
     public static LocalDate convertDateToLocalDate(final String value) throws ParseException {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setLenient(false);
@@ -29,5 +41,9 @@ public class DateConverter {
         return dateToConvert.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
+    }
+
+    public static YearMonth convert(final LocalDate date) {
+        return YearMonth.of(date.getYear(), date.getMonth());
     }
 }

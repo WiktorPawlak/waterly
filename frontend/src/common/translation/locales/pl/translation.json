@@ -198,7 +198,7 @@
         "id": "Id",
         "active": "Aktywny",
         "apartmentId": "Id lokalu",
-        "expectedUsage": "Przewidywane zużycie",
+        "expectedDailyUsage": "Przewidywane zużycie dzienne",
         "expiryDate": "Data ważności",
         "startingValue": "Wartość startowa",
         "type": "Typ"

@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,6 +38,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
+@Order(6)
 class ApartmentControllerTest extends IntegrationTestsConfig {
 
     @Nested
@@ -434,13 +436,13 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
             // then
             String type = databaseConnector.executeQuery(
-                    "SELECT type FROM water_meter WHERE id = 3"
+                    "SELECT type FROM water_meter WHERE id = 4"
             ).getString("type");
             String startingValue = databaseConnector.executeQuery(
-                    "SELECT starting_value FROM water_meter WHERE id = 3"
+                    "SELECT starting_value FROM water_meter WHERE id = 4"
             ).getString("starting_value");
             String expiryDate = databaseConnector.executeQuery(
-                    "SELECT expiry_date FROM water_meter WHERE id = 3"
+                    "SELECT expiry_date FROM water_meter WHERE id = 4"
             ).getString("expiry_date");
 
             assertEquals(WaterMeterType.HOT_WATER.name(), type);

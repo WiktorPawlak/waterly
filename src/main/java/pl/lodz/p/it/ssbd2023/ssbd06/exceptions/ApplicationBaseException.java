@@ -25,11 +25,15 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeExceptio
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TwoFARequestedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.ExpiryDateAlreadyExpiredException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.IllegalMainWaterMeterCheckException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidTariffPeriodException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvoicesCollidingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.MainWaterMeterAlreadyExistsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.TariffsColidingException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterCheckWasAlreadyPerformedException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterDoesNotBelongToOwnerException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.EntityIntegrityViolatedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.IfMatchHeaderMissingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.JWSException;
@@ -65,9 +69,6 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_ROLE_NOT_FOUND = "ERROR.ROLE_NOT_FOUND";
     public static final String ERROR_ACCOUNT_LOCKED = "ERROR.ACCOUNT_LOCKED";
 
-    public static final String ERROR_MAIN_WATER_METER_ALREADY_EXISTS = "ERROR.MAIN_WATER_METER_ALREADY_EXISTS";
-    public static final String ERROR_EXPIRY_DATE_ALREADY_EXPIRED = "ERROR.EXPIRY_DATE_ALREADY_EXPIRED";
-
     public static final String ERROR_EMAIL_DO_NOT_MATCH = "ERROR.NO_MATCHING_EMAILS";
     public static final String ERROR_ACCOUNT_NOT_ACTIVE = "ERROR.NOT_ACTIVE_ACCOUNT";
     public static final String ERROR_ACCOUNT_NOT_CONFIRMED = "ERROR.NOT_CONFIRMED_ACCOUNT";
@@ -81,11 +82,15 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_INVALID_OTP = "ERROR.INVALID_OTP";
 
     public static final String ERROR_INVALID_DATE = "ERROR_INVALID_DATE";
-
     public static final String ERROR_NO_SUCH_BILL = "ERROR_NO_SUCH_BILL";
+    public static final String ERROR_MAIN_WATER_METER_ALREADY_EXISTS = "ERROR.MAIN_WATER_METER_ALREADY_EXISTS";
+    public static final String ERROR_EXPIRY_DATE_ALREADY_EXPIRED = "ERROR.EXPIRY_DATE_ALREADY_EXPIRED";
+    public static final String ERROR_WATER_METER_EXPIRED = "ERROR.WATER_METER_EXPIRED";
+    public static final String ERROR_WATER_METER_DOES_NOT_BELONG_TO_OWNER = "ERROR.WATER_METER_DOES_NOT_BELONG_TO_OWNER";
+    public static final String ERROR_ILLEGAL_MAIN_WATER_METER_CHECK = "ERROR.ILLEGAL_MAIN_WATER_METER_CHECK";
+    public static final String ERROR_CHECK_WAS_ALREADY_PERFORMED = "ERROR.CHECK_WAS_ALREADY_PERFORMED";
 
     public static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
-
     public static final String INFO_TWO_FA_CODE_REQUESTED = "INFO.TWO_FA_CODE_REQUESTES";
 
     public static final String ERROR_TARIFFS_COLIDING = "ERROR.TARIFFS_COLIDING";
@@ -230,6 +235,18 @@ public class ApplicationBaseException extends WebApplicationException {
         return new AccountLockedException();
     }
 
+    public static WaterMeterExpiredException waterMeterExpiredException() {
+        return new WaterMeterExpiredException();
+    }
+
+    public static WaterMeterCheckWasAlreadyPerformedException waterMeterCheckWasAlreadyPerformedException() {
+        return new WaterMeterCheckWasAlreadyPerformedException();
+    }
+
+    public static IllegalMainWaterMeterCheckException illegalMainWaterMeterCheckException() {
+        return new IllegalMainWaterMeterCheckException();
+    }
+
     public static TariffsColidingException tariffsColidingException() {
         return new TariffsColidingException();
     }
@@ -256,5 +273,9 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static InvoicesCollidingException invoicesCollidingException() {
         return new InvoicesCollidingException();
+    }
+
+    public static WaterMeterDoesNotBelongToOwnerException waterMeterDoesNotBelongToOwnerException() {
+        return new WaterMeterDoesNotBelongToOwnerException();
     }
 }

@@ -53,9 +53,8 @@ public class WaterMeter extends AbstractEntity {
     @NotNull
     @Column(name = "expiry_date", nullable = false)
     private Date expiryDate;
-    @Column(name = "expected_usage", precision = 8, scale = 3)
-    private BigDecimal expectedUsage;
-    @Setter
+    @Column(name = "expected_daily_usage", precision = 8, scale = 3)
+    private BigDecimal expectedDailyUsage;
     @Column(nullable = false)
     private boolean active;
     @ToString.Exclude
@@ -77,5 +76,9 @@ public class WaterMeter extends AbstractEntity {
         this.active = true;
         this.type = WaterMeterType.valueOf(assignWaterMeterDto.getType());
         this.apartment = apartment;
+    }
+
+    public long getApartmentOwnerId() {
+        return apartment.getOwnerId();
     }
 }

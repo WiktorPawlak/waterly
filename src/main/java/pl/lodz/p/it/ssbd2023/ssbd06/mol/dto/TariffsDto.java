@@ -3,6 +3,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import javax.annotation.Nonnegative;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Money;
 @AllArgsConstructor
 public class TariffsDto implements Signable {
 
+    @Nonnegative
     private long id;
     @Money
     private BigDecimal coldWaterPrice;
@@ -27,6 +30,7 @@ public class TariffsDto implements Signable {
     private LocalDate startDate;
     @NotNull
     private LocalDate endDate;
+    @Nonnegative
     private long version;
 
     public TariffsDto(final Tariff tariff) {
@@ -41,6 +45,6 @@ public class TariffsDto implements Signable {
 
     @Override
     public String createPayload() {
-        return String.valueOf(id + version + Tariff.class.getSimpleName());
+        return id + version + Tariff.class.getSimpleName();
     }
 }

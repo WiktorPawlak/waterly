@@ -18,10 +18,8 @@ public class AssignWaterMeterDto {
 
     @StartingValue
     private BigDecimal startingValue;
-
     @ExpiryDate
     private String expiryDate;
-
     @WaterMeterType
     private String type;
 }

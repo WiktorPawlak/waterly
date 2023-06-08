@@ -29,8 +29,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedWaterMetersListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterCheckEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
@@ -42,6 +43,8 @@ public class WaterMeterController extends RepeatableTransactionController {
 
     @Inject
     private WaterMeterEndpoint waterMeterEndpoint;
+    @Inject
+    private WaterMeterCheckEndpoint waterMeterCheckEndpoint;
 
     @Inject
     private PayloadSigner payloadSigner;
@@ -80,10 +83,10 @@ public class WaterMeterController extends RepeatableTransactionController {
     }
 
     @POST
-    @Path("/{id}/water-meter-check")
+    @Path("/water-meter-checks")
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public Response performWaterMeterCheck(@PathParam("id") final long waterMeterId, @NotNull @Valid final WaterMeterCheckDto dto) {
-        waterMeterEndpoint.performWaterMeterCheck(dto);
+    public Response performWaterMeterChecks(@NotNull @Valid final WaterMeterChecksDto dto) {
+        waterMeterCheckEndpoint.performWaterMeterChecks(dto);
         return Response.status(NO_CONTENT).build();
     }
 

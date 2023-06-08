@@ -16,7 +16,6 @@ import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterCheckFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
@@ -30,8 +29,6 @@ public class WaterMeterService {
 
     @Inject
     private WaterMeterFacade waterMeterFacade;
-    @Inject
-    private WaterMeterCheckFacade waterMeterCheckFacade;
 
     @RolesAllowed(FACILITY_MANAGER)
     public WaterMeter findById(final long id) {
@@ -45,8 +42,8 @@ public class WaterMeterService {
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public void addWaterMeterCheck() {
-        waterMeterCheckFacade.create(null);
+    public WaterMeter findWaterMeterById(final long id) {
+        return waterMeterFacade.findById(id);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -76,12 +73,11 @@ public class WaterMeterService {
         List<WaterMeter> waterMeters = apartment.getWaterMeters();
         waterMeters.add(waterMeter);
         apartment.setWaterMeters(waterMeters);
-
     }
 
     @SneakyThrows
     @RolesAllowed(FACILITY_MANAGER)
-    public void createMainWaterMeter(final WaterMeter waterMeter){
+    public void createMainWaterMeter(final WaterMeter waterMeter) {
         waterMeterFacade.create(waterMeter);
     }
 

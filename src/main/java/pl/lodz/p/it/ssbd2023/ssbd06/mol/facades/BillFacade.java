@@ -58,8 +58,7 @@ public class BillFacade extends AbstractFacade<Bill> {
             billsByOwnerIdTypedQuery.setParameter("month", date.getMonthValue());
             billsByOwnerIdTypedQuery.setParameter("year", date.getYear());
             return Optional.of(billsByOwnerIdTypedQuery.getSingleResult());
-        }
-        catch (final NoResultException e){
+        } catch (final NoResultException e) {
             return Optional.empty();
         }
     }
@@ -77,5 +76,18 @@ public class BillFacade extends AbstractFacade<Bill> {
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Bill findById(final Long id) {
         return super.findById(id);
+    }
+
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
+    public Optional<Long> findBillOwnerIdByApartmentIdAndDate(final long apartmentId, final LocalDate billDate) {
+        try {
+            TypedQuery<Long> typedQuery = em.createNamedQuery("Bill.findBillOwnerIdByApartmentIdAndDate", Long.class);
+            typedQuery.setFlushMode(FlushModeType.COMMIT);
+            typedQuery.setParameter("apartmentId", apartmentId);
+            typedQuery.setParameter("billDate", billDate);
+            return Optional.of(typedQuery.getSingleResult());
+        } catch (final NoResultException e) {
+            return Optional.empty();
+        }
     }
 }

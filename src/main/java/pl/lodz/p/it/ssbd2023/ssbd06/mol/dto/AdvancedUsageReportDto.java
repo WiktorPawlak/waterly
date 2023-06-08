@@ -2,25 +2,27 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.dto;
 
 import java.math.BigDecimal;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Money;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdvancedUsageReportDto {
-    @NotNull
+
+    @Money
     private BigDecimal garbageCost;
-    @NotNull
+    @Money
     private BigDecimal coldWaterCost;
-    @NotNull
+    @Money
     private BigDecimal hotWaterCost;
-    @NotNull
+    @WaterUsage
     private BigDecimal coldWaterUsage;
-    @NotNull
+    @WaterUsage
     private BigDecimal hotWaterUsage;
 
     public AdvancedUsageReportDto(final Bill bill) {

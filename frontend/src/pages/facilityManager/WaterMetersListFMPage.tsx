@@ -1,36 +1,15 @@
-import { useTranslation } from "react-i18next";
-import {
-  DataGrid,
-  GridColDef,
-  GridColumnHeaderParams,
-  GridSortModel,
-} from "@mui/x-data-grid";
-import React, { useCallback, useEffect, useState } from "react";
+import {useTranslation} from "react-i18next";
+import {DataGrid, GridColDef, GridColumnHeaderParams, GridSortModel,} from "@mui/x-data-grid";
+import React, {useCallback, useEffect, useState} from "react";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-import {
-  Autocomplete,
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Pagination,
-  Select,
-  SelectChangeEvent,
-  TextField,
-  Typography,
-  Button,
-} from "@mui/material";
-import { PaginatedList } from "../../api/accountApi";
-import { MainLayout } from "../../layouts/MainLayout";
-import { enqueueSnackbar } from "notistack";
-import { resolveApiError } from "../../api/apiErrors";
-import {
-  ListWaterMeterDto,
-  GetPagedWaterMetersListDto,
-  getWaterMetersList,
-} from "../../api/waterMeterApi";
+import {Autocomplete, Box, Button, FormControl, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, TextField, Typography,} from "@mui/material";
+import {PaginatedList} from "../../api/accountApi";
+import {MainLayout} from "../../layouts/MainLayout";
+import {enqueueSnackbar} from "notistack";
+import {resolveApiError} from "../../api/apiErrors";
+import {GetPagedWaterMetersListDto, getWaterMetersList, ListWaterMeterDto,} from "../../api/waterMeterApi";
 
 export const WaterMetersListFMPage = () => {
   const { t } = useTranslation();
@@ -119,10 +98,10 @@ export const WaterMetersListFMPage = () => {
       width: 150,
     },
     {
-      field: "expectedUsage",
+      field: "expectedDailyUsage",
       renderHeader: () => (
         <strong>
-          {t("WaterMetersListFMPage.dataGrid.headers.expectedUsage")}
+          {t("WaterMetersListFMPage.dataGrid.headers.expectedDailyUsage")}
         </strong>
       ),
       width: 150,

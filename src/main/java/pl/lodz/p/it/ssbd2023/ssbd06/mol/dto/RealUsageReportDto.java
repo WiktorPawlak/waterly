@@ -2,33 +2,36 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.dto;
 
 import java.math.BigDecimal;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Money;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RealUsageReportDto {
-    @NotNull
+
+    @Money
     private BigDecimal garbageCost;
     private BigDecimal garbageBalance;
 
-    @NotNull
+    @Money
     private BigDecimal coldWaterCost;
     private BigDecimal coldWaterBalance;
 
-    @NotNull
+    @Money
     private BigDecimal hotWaterCost;
     private BigDecimal hotWaterbalance;
 
-    private BigDecimal unbilledWaterCost;
-    @NotNull
+    @WaterUsage
     private BigDecimal coldWaterUsage;
-    @NotNull
+    @WaterUsage
     private BigDecimal hotWaterUsage;
+
+    private BigDecimal unbilledWaterCost;
     private BigDecimal unbilledWaterAmount;
 
     public RealUsageReportDto(final Bill bill) {
@@ -38,9 +41,9 @@ public class RealUsageReportDto {
         this.coldWaterBalance = bill.getAdvanceUsage().getColdWaterCost().subtract(bill.getRealUsage().getColdWaterCost());
         this.hotWaterCost = bill.getRealUsage().getHotWaterCost();
         this.hotWaterbalance = bill.getAdvanceUsage().getHotWaterCost().subtract(bill.getRealUsage().getHotWaterCost());
-        this.unbilledWaterCost = bill.getRealUsage().getUnbilledWaterCost();
         this.coldWaterUsage = bill.getRealUsage().getColdWaterUsage();
         this.hotWaterUsage = bill.getRealUsage().getHotWaterUsage();
+        this.unbilledWaterCost = bill.getRealUsage().getUnbilledWaterCost();
         this.unbilledWaterAmount = bill.getRealUsage().getUnbilledWaterAmount();
     }
 }

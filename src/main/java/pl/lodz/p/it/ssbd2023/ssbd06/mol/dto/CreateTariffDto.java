@@ -8,17 +8,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ExpiryDate;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Money;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 public class CreateTariffDto {
-    @NotNull
+
+    @Money
     private BigDecimal coldWaterPrice;
-    @NotNull
+    @Money
     private BigDecimal hotWaterPrice;
-    @NotNull
+    @Money
     private BigDecimal trashPrice;
     @NotNull
     @ExpiryDate

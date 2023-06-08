@@ -2,26 +2,34 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.dto;
 
 import java.math.BigDecimal;
 
+import javax.annotation.Nonnegative;
+
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Money;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class BillDto {
+
+    @Nonnegative
     private long billId;
-    @NotNull
+    @Money
     private BigDecimal balance;
-    @NotNull
+    @Nonnegative
     private long apartmentId;
-    @NotNull
+    @Nonnegative
     private long accountId;
     @NotNull
+    @Valid
     private AdvancedUsageReportDto forecast;
     @NotNull
+    @Valid
     private RealUsageReportDto realUsage;
 
     public BillDto(final Bill bill) {

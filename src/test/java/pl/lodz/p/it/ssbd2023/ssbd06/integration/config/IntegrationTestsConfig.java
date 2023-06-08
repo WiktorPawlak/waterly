@@ -50,8 +50,9 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final long SECOND_APARTMENT_ID = 2;
     protected static final String IF_MATCH_HEADER_NAME = "If-Match";
 
-    protected static final long WATER_METER_ID = 1;
-    protected static final long MAIN_WATER_METER_ID = 2;
+    protected static final long COLD_WATER_METER_ID = 1;
+    protected static final long HOT_WATER_METER_ID = 2;
+    protected static final long MAIN_WATER_METER_ID = 3;
 
     protected static final String NEW_OWNER_LOGIN = "jerzy";
     protected static final Credentials ADMIN_CREDENTIALS = new Credentials("admin", "admin12345");
@@ -61,8 +62,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final AccountActiveStatusDto ACTIVATE_ACCOUNT = AccountActiveStatusDto.of(true);
     protected static final WaterMeterActiveStatusDto DEACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(false);
     protected static final WaterMeterActiveStatusDto ACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(true);
-
-    protected static final BigDecimal STARTING_VALUE = BigDecimal.valueOf(100);
+    protected static final BigDecimal STARTING_VALUE = BigDecimal.valueOf(100.000);
     protected static final String TEST_DATE = "2024-06-10";
     protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(STARTING_VALUE, TEST_DATE);
     protected static final AssignWaterMeterDto CORRECT_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(STARTING_VALUE,
@@ -72,7 +72,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final AssignWaterMeterDto WRONG_TYPE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(STARTING_VALUE,
             TEST_DATE, "WRONG_TYPE");
     protected static final UpdateWaterMeterDto UPDATE_WATER_METER_DTO = UpdateWaterMeterDto.of(
-            WATER_METER_ID,
+            COLD_WATER_METER_ID,
             BigDecimal.valueOf(10),
             TEST_DATE,
             BigDecimal.valueOf(12),

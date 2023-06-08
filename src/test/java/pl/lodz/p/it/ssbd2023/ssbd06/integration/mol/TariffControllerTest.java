@@ -1,24 +1,28 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Named;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
-import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
-
+import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
+import static jakarta.ws.rs.core.Response.Status.CREATED;
+import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
 
-import static io.restassured.RestAssured.given;
-import static jakarta.ws.rs.core.Response.Status.*;
+import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 
+import lombok.SneakyThrows;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 
+@Order(7)
 public class TariffControllerTest extends IntegrationTestsConfig {
     @Nested
     class TariffCreation {
