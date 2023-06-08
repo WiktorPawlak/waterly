@@ -22,7 +22,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ResourceNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
@@ -31,7 +30,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedWaterMetersListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.ApartmentService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
@@ -53,10 +51,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @Inject
     private WaterMeterService waterMeterService;
-
     @Inject
     private ApartmentService apartmentService;
-
     @Inject
     private TimeProvider timeProvider;
 
@@ -67,11 +63,6 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     @RolesAllowed({FACILITY_MANAGER})
     public WaterMeterDto getWaterMeterById(final long id) {
         return new WaterMeterDto(waterMeterService.findById(id));
-    }
-
-    @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public void performWaterMeterCheck(final WaterMeterCheckDto dto) {
-        waterMeterService.addWaterMeterCheck();
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -103,8 +94,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     private void updateWaterMeterEntity(final WaterMeter waterMeter, final UpdateWaterMeterDto dto) {
         waterMeter.setStartingValue(dto.getStartingValue() == null ?
                 waterMeter.getStartingValue() : dto.getStartingValue());
-        waterMeter.setExpectedUsage(dto.getExpectedUsage() == null ?
-                waterMeter.getExpectedUsage() : dto.getExpectedUsage());
+        waterMeter.setExpectedDailyUsage(dto.getExpectedDailyUsage() == null ?
+                waterMeter.getExpectedDailyUsage() : dto.getExpectedDailyUsage());
 
         waterMeter.setExpiryDate(DateConverter.convert(dto.getExpiryDate()));
 
@@ -126,13 +117,7 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
         if (DateConverter.convert(dto.getExpiryDate()).before(timeProvider.currentDate())) {
             throw ApplicationBaseException.expiryDateAlreadyExpiredException();
         }
-        Optional<Apartment> apartment = Optional.ofNullable(apartmentService.getApartmentById(apartmentId));
-        if (apartment.isPresent()) {
-            waterMeterService.assignWaterMeter(apartment.get(), dto);
-        } else {
-            log.severe(() -> "Apartment with id " + apartmentId + " do not exist");
-            throw new ResourceNotFoundException();
-        }
+        waterMeterService.assignWaterMeter(apartmentService.getApartmentById(apartmentId), dto);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -171,14 +156,13 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @SneakyThrows(ParseException.class)
     private WaterMeter prepareMainWaterMeter(final CreateMainWaterMeterDto dto) {
-        WaterMeter waterMeter = WaterMeter.builder()
+        return WaterMeter.builder()
                 .active(true)
                 .type(MAIN)
-                .expectedUsage(BigDecimal.ZERO)
+                .expectedDailyUsage(BigDecimal.ZERO)
                 .startingValue(dto.getStartingValue())
                 .expiryDate(DateConverter.convert(dto.getExpiryDate()))
                 .build();
-        return waterMeter;
     }
 
     @SneakyThrows(ParseException.class)

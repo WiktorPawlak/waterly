@@ -37,7 +37,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
-@Order(6)
+@Order(9)
 public class WaterMeterControllerTest extends IntegrationTestsConfig {
 
     @Nested
@@ -57,7 +57,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .body(DEACTIVATE_WATER_METER)
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID + "/active")
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/active")
                     .then()
                     .statusCode(OK.getStatusCode());
 
@@ -86,7 +86,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(AUTHORIZATION, token)
                     .body(DEACTIVATE_WATER_METER)
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID + "/active")
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/active")
                     .then()
                     .statusCode(FORBIDDEN.getStatusCode())
                     .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
@@ -104,7 +104,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .body(DEACTIVATE_WATER_METER)
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID + "/active")
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/active")
                     .then()
                     .statusCode(OK.getStatusCode());
             boolean inactive = !databaseConnector.executeQuery(
@@ -117,7 +117,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .body(ACTIVATE_WATER_METER)
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID + "/active")
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/active")
                     .then()
                     .statusCode(OK.getStatusCode());
 
@@ -146,7 +146,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(AUTHORIZATION, token)
                     .body(ACTIVATE_WATER_METER)
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID + "/active")
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/active")
                     .then()
                     .statusCode(FORBIDDEN.getStatusCode())
                     .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
@@ -184,7 +184,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
             ).getString("starting_value");
 
             assertEquals(WaterMeterType.MAIN.name(), type);
-            assertEquals("100.000", startingValue);
+            assertEquals("0.000", startingValue);
         }
 
         @Test
@@ -245,7 +245,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
         @SneakyThrows
         void shouldUpdateWaterMeterWhenCorrectData() {
             // given
-            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(WATER_METER_ID);
+            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
 
             // when
             given()
@@ -253,16 +253,16 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UPDATE_WATER_METER_DTO)
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID)
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
                     .then()
                     .statusCode(NO_CONTENT.getStatusCode());
 
             // then
             ResultSet resultSet = databaseConnector.executeQuery(
-                    "SELECT * FROM water_meter WHERE id = " + WATER_METER_ID
+                    "SELECT * FROM water_meter WHERE id = " + COLD_WATER_METER_ID
             );
             assertEquals(resultSet.getString("starting_value"), "10.000");
-            assertEquals(resultSet.getString("expected_usage"), "12.000");
+            assertEquals(resultSet.getString("expected_daily_usage"), "12.000");
             assertEquals(resultSet.getString("apartment_id"), String.valueOf(SECOND_APARTMENT_ID));
         }
 
@@ -270,7 +270,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
         @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.WaterMeterControllerTest#provideUpdateWaterMeterDtosForParameterizedTests")
         void shouldUpdateWaterMeterWhenSomeDataNotPresent(UpdateWaterMeterDto dto) {
             // given
-            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(WATER_METER_ID);
+            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
 
             // then
             given()
@@ -278,7 +278,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(dto)
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID)
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
                     .then()
                     .statusCode(NO_CONTENT.getStatusCode());
         }
@@ -321,20 +321,20 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
         @Test
         void shouldNotUpdateWaterMeterWhenConflictingData() {
             // given
-            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(WATER_METER_ID);
+            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
 
             // then
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UpdateWaterMeterDto.builder()
-                            .id(WATER_METER_ID)
+                            .id(COLD_WATER_METER_ID)
                             .expiryDate(TEST_DATE)
                             .apartmentId(123L)
                             .version(waterMeterWithEtag._1.getVersion())
                             .build())
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID)
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
                     .then()
                     .statusCode(NOT_FOUND.getStatusCode());
         }
@@ -346,19 +346,19 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
         })
         void shouldNotUpdateWaterMeterWhenInvalidData(String expiryDate) {
             // given
-            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(WATER_METER_ID);
+            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
 
             // then
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UpdateWaterMeterDto.builder()
-                            .id(WATER_METER_ID)
+                            .id(COLD_WATER_METER_ID)
                             .expiryDate(expiryDate)
                             .version(waterMeterWithEtag._1.getVersion())
                             .build())
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID)
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
                     .then()
                     .statusCode(BAD_REQUEST.getStatusCode());
         }
@@ -367,7 +367,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
         @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.WaterMeterControllerTest#provideTokensForParameterizedTests")
         void shouldForbidNonFacilityManagerUsersToCreateMainWaterMeter(String token) {
             // given
-            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(WATER_METER_ID);
+            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
 
             // then
             given()
@@ -375,7 +375,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UPDATE_WATER_METER_DTO)
                     .when()
-                    .put(WATERMETER_PATH + "/" + WATER_METER_ID)
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
                     .then()
                     .statusCode(FORBIDDEN.getStatusCode())
                     .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
@@ -410,23 +410,23 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
         return Stream.of(
                 Arguments.of(Named.of("No apartmentId",
                         UpdateWaterMeterDto.builder()
-                                .id(WATER_METER_ID)
+                                .id(COLD_WATER_METER_ID)
                                 .startingValue(BigDecimal.ONE)
                                 .expiryDate(TEST_DATE)
-                                .expectedUsage(BigDecimal.ONE)
+                                .expectedDailyUsage(BigDecimal.ONE)
                                 .version(0)
                                 .build())),
                 Arguments.of(Named.of("No startingValue",
                         UpdateWaterMeterDto.builder()
-                                .id(WATER_METER_ID)
+                                .id(COLD_WATER_METER_ID)
                                 .expiryDate(TEST_DATE)
-                                .expectedUsage(BigDecimal.ONE)
+                                .expectedDailyUsage(BigDecimal.ONE)
                                 .apartmentId(1L)
                                 .version(0)
                                 .build())),
-                Arguments.of(Named.of("No expectedUsage",
+                Arguments.of(Named.of("No expectedDailyUsage",
                         UpdateWaterMeterDto.builder()
-                                .id(WATER_METER_ID)
+                                .id(COLD_WATER_METER_ID)
                                 .startingValue(BigDecimal.ONE)
                                 .expiryDate(TEST_DATE)
                                 .apartmentId(1L)

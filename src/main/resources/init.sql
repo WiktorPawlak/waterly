@@ -27,9 +27,6 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE list_search_preferences_id_seq TO ssbd06
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE two_factor_authentication_id_seq TO ssbd06mok;
 
 
--- mol
-INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, total_cost, date) values (nextval('invoice_id_seq'), 0, now(), null, now(), null, 'FV 0212039/01/23', 29.09, 202.57, '2023-05-1');
-INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, total_cost, date) values (nextval('invoice_id_seq'), 1, now(), null, now(), null, 'FV 0212040/02/23', 30.09, 222.57, '2023-06-1');
 --ssbd06mol
 GRANT SELECT ON TABLE account TO ssbd06mol;
 GRANT SELECT ON TABLE role TO ssbd06mol;
@@ -104,12 +101,15 @@ INSERT INTO public.facility_manager (id) VALUES (14);
 INSERT INTO public.administrator (id) VALUES (15);
 INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id) VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 5);
 -- mol
-
+INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, total_cost, date) values (nextval('invoice_id_seq'), 0, now(), null, now(), null, 'FV 0212039/01/23', 29.09, 202.57, '2023-05-1');
+INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, total_cost, date) values (nextval('invoice_id_seq'), 1, now(), null, now(), null, 'FV 0212040/02/23', 30.09, 222.57, '2023-06-1');
 INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date) values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-01-01', '2023-05-31');
 INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date) values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-02-01', '2023-03-31');
 INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '12a', now(), now(), 40.00, 2);
 INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '11a', now(), now(), 50.00, 1);
-INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());
+INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());
+INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 50.000, 'COLD_WATER', 1, now(), now());
 INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage, unbilled_water_amount, unbilled_water_cost) VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
 INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage, unbilled_water_amount, unbilled_water_cost) VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 11, 12, 13, 14, 15, 16, 17);
 INSERT INTO public.bill (id, version, created_on, updated_on, balance, date, advance_usage, apartment_id, owner_id, real_usage) VALUES (nextval('bill_id_seq'), 0, now(), now(), 9.02, now(), 1, 1, 2, 2);
+INSERT INTO public.water_usage_stats (id, created_on, updated_on, version, cold_water_usage, hot_water_usage, year_month, apartment_id) VALUES (nextval('water_usage_stats_id_seq'), now(), now(), 0, 40.000, 60.000, '2023-06-01', 1);

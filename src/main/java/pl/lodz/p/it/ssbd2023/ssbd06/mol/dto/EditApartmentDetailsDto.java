@@ -19,5 +19,4 @@ public class EditApartmentDetailsDto {
     String number;
     @ApartmentArea
     BigDecimal area;
-
 }

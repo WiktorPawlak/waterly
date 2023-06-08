@@ -192,7 +192,7 @@
         "id": "Id",
         "active": "Active",
         "apartmentId": "Apartment Id",
-        "expectedUsage": "Expected Usage",
+        "expectedDailyUsage": "Expected daily Usage",
         "expiryDate": "Expiry Date",
         "startingValue": "Starting Value",
         "type": "Type"

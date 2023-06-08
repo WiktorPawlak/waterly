@@ -1,30 +1,30 @@
-import { post, ApiResponse } from "./api";
+import {ApiResponse, post} from "./api";
 
 const WATERMETERS_PATH = "/water-meters";
 
 export interface GetPagedWaterMetersListDto {
-  order: string;
-  page: number;
+    order: string;
+    page: number;
 }
 
 export interface PaginatedList<T> {
-  data: T[];
-  pageNumber: number;
-  itemsInPage: number;
-  totalPages: number;
+    data: T[];
+    pageNumber: number;
+    itemsInPage: number;
+    totalPages: number;
 }
 
 export interface ListWaterMeterDto {
-  active: boolean;
-  expiryDate: Date;
-  expectedUsage: number;
-  startingValue: number;
-  type: string;
-  apartmentId: number;
+    active: boolean;
+    expiryDate: Date;
+    expectedDailyUsage: number;
+    startingValue: number;
+    type: string;
+    apartmentId: number;
 }
 
 export async function getWaterMetersList(
-  getPagedListDto: GetPagedWaterMetersListDto
+    getPagedListDto: GetPagedWaterMetersListDto
 ): Promise<ApiResponse<PaginatedList<ListWaterMeterDto>>> {
-  return post(`${WATERMETERS_PATH}/list`, getPagedListDto);
+    return post(`${WATERMETERS_PATH}/list`, getPagedListDto);
 }

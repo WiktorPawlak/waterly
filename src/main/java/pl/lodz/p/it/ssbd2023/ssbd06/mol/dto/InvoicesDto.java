@@ -3,6 +3,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import javax.annotation.Nonnegative;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +19,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 @AllArgsConstructor
 public class InvoicesDto implements Signable {
 
+    @Nonnegative
     private long id;
     @NotNull
     private String invoiceNumber;
@@ -26,6 +29,7 @@ public class InvoicesDto implements Signable {
     private BigDecimal totalCost;
     @NotNull
     private LocalDate date;
+    @Nonnegative
     private long version;
 
     public InvoicesDto(final Invoice invoice) {
@@ -39,6 +43,6 @@ public class InvoicesDto implements Signable {
 
     @Override
     public String createPayload() {
-        return String.valueOf(id + version + Invoice.class.getSimpleName());
+        return id + version + Invoice.class.getSimpleName();
     }
 }

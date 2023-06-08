@@ -37,7 +37,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 )
 @Getter
 @NamedQuery(name = "Bill.findBillsByApartmentId", query = "select b from Bill b where b.apartment.id = :apartmentId")
-@NamedQuery(name = "Bill.findBillsByOwnerId", query = "select b from Bill b where b.account.id = :accountId")
+@NamedQuery(name = "Bill.findBillsByOwnerId", query = "select b from Bill b where b.account.id = :ownerId")
+@NamedQuery(name = "Bill.findBillOwnerIdByApartmentIdAndDate",
+        query = "select b.account.id from Bill b where b.apartment.id = :apartmentId and b.date = :billDate")
 @NamedQuery(name = "Bill.findBillsByOwnerIdYearAndMonth",
         query = "select b from Bill b where b.account.id = :accountId AND YEAR(b.date) = :year AND MONTH(b.date) = :month")
 @NoArgsConstructor

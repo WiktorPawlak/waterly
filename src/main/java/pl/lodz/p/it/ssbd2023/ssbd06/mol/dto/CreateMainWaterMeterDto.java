@@ -17,8 +17,6 @@ public class CreateMainWaterMeterDto {
 
     @StartingValue
     private BigDecimal startingValue;
-
     @ExpiryDate
     private String expiryDate;
-
 }

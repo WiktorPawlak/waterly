@@ -2,12 +2,15 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.dto;
 
 import java.math.BigDecimal;
 
+import javax.annotation.Nonnegative;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.Signable;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ExpiryDate;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 
 @Data
 @Builder
@@ -15,17 +18,17 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ExpiryDate;
 @NoArgsConstructor
 public class UpdateWaterMeterDto implements Signable {
 
+    @Nonnegative
     private long id;
-
+    @WaterUsage
     private BigDecimal startingValue;
-
     @ExpiryDate
     private String expiryDate;
-
-    private BigDecimal expectedUsage;
-
+    @WaterUsage
+    private BigDecimal expectedDailyUsage;
+    @Nonnegative
     private Long apartmentId;
-
+    @Nonnegative
     private long version;
 
     @Override

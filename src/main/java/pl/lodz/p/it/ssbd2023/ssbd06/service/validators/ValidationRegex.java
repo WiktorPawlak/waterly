@@ -32,7 +32,7 @@ public class ValidationRegex {
     public static final String APARTMENT_ORDER_BY = "^(number|area)$";
     public static final String TARIFF_ORDER_BY = "^(coldWaterPrice|hotWaterPrice|trashPrice|startDate|endDate)$";
     public static final String INVOICES_ORDER_BY = "^(invoiceNumber|waterUsage|totalCost|date)$";
-    public static final String WATER_METERS_ORDER_BY = "^(expiryDate|expectedUsage|startingValue|type|apartment)$";
+    public static final String WATER_METERS_ORDER_BY = "^(expiryDate|expectedDailyUsage|startingValue|type|apartment)$";
     public static final String TWO_FA_CODE = "[0-9]{8}";
     public static final String WATER_METER_TYPE = "^(HOT_WATER|COLD_WATER)$";
 }
