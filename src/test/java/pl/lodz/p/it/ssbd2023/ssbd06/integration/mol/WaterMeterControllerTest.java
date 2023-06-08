@@ -1,9 +1,5 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
-import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
-import static jakarta.ws.rs.core.Response.Status.CONFLICT;
-import static jakarta.ws.rs.core.Response.Status.CREATED;
-import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -11,16 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
+import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
+import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.util.Date;
 import java.util.stream.Stream;
 
-import io.vavr.Tuple2;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
@@ -30,6 +28,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
@@ -37,7 +36,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 
 @Order(6)
 public class WaterMeterControllerTest extends IntegrationTestsConfig {
@@ -179,9 +177,14 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
 
             // then
             String type = databaseConnector.executeQuery(
-                    "SELECT type FROM water_meter WHERE id = " + MAIN_WATER_METER_ID
+                    "SELECT type FROM water_meter WHERE id = 3"
             ).getString("type");
+            String startingValue = databaseConnector.executeQuery(
+                    "SELECT starting_value FROM water_meter WHERE id = 3"
+            ).getString("starting_value");
+
             assertEquals(WaterMeterType.MAIN.name(), type);
+            assertEquals("100.000", startingValue);
         }
 
         @Test
@@ -201,7 +204,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
             // then
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .body(CreateMainWaterMeterDto.of("invalid-format"))
+                    .body(CreateMainWaterMeterDto.of(STARTING_VALUE, "invalid-format"))
                     .when()
                     .post(WATERMETER_PATH + "/main-water-meter")
                     .then()
@@ -213,7 +216,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
             // then
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .body(CreateMainWaterMeterDto.of("1970-01-01"))
+                    .body(CreateMainWaterMeterDto.of(STARTING_VALUE, "1970-01-01"))
                     .when()
                     .post(WATERMETER_PATH + "/main-water-meter")
                     .then()
@@ -297,7 +300,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .body(UpdateWaterMeterDto.builder()
                             .id(MAIN_WATER_METER_ID)
                             .startingValue(BigDecimal.ONE)
-                            .expiryDate(DateConverter.convert(timeProvider().addTimeToDate(1500, new Date())))
+                            .expiryDate(TEST_DATE)
                             .apartmentId(APARTMENT_ID)
                             .version(waterMeterWithEtag._1.getVersion())
                             .build())
@@ -326,7 +329,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UpdateWaterMeterDto.builder()
                             .id(WATER_METER_ID)
-                            .expiryDate(DateConverter.convert(timeProvider().addTimeToDate(1500, new Date())))
+                            .expiryDate(TEST_DATE)
                             .apartmentId(123L)
                             .version(waterMeterWithEtag._1.getVersion())
                             .build())
@@ -409,14 +412,14 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                         UpdateWaterMeterDto.builder()
                                 .id(WATER_METER_ID)
                                 .startingValue(BigDecimal.ONE)
-                                .expiryDate(DateConverter.convert(timeProvider().addTimeToDate(1500, new Date())))
+                                .expiryDate(TEST_DATE)
                                 .expectedUsage(BigDecimal.ONE)
                                 .version(0)
                                 .build())),
                 Arguments.of(Named.of("No startingValue",
                         UpdateWaterMeterDto.builder()
                                 .id(WATER_METER_ID)
-                                .expiryDate(DateConverter.convert(timeProvider().addTimeToDate(1500, new Date())))
+                                .expiryDate(TEST_DATE)
                                 .expectedUsage(BigDecimal.ONE)
                                 .apartmentId(1L)
                                 .version(0)
@@ -425,7 +428,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                         UpdateWaterMeterDto.builder()
                                 .id(WATER_METER_ID)
                                 .startingValue(BigDecimal.ONE)
-                                .expiryDate(DateConverter.convert(timeProvider().addTimeToDate(1500, new Date())))
+                                .expiryDate(TEST_DATE)
                                 .apartmentId(1L)
                                 .version(0)
                                 .build()))

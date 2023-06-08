@@ -23,10 +23,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 class ApartmentControllerTest extends IntegrationTestsConfig {
 
@@ -302,6 +304,66 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
             assertEquals(2, apartments.size());
         }
 
+    }
+
+    @Nested
+    class AssignWaterMeterToApartment {
+
+        @Test
+        @SneakyThrows
+        void shouldAssignWaterMeterToApartment() {
+            // when
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CORRECT_ASSIGN_WATER_METER_DTO)
+                    .when()
+                    .post(APARTMENT_PATH + "/" + APARTMENT_ID + "/water-meter")
+                    .then()
+                    .statusCode(CREATED.getStatusCode());
+
+            // then
+            String type = databaseConnector.executeQuery(
+                    "SELECT type FROM water_meter WHERE id = 3"
+            ).getString("type");
+            String startingValue = databaseConnector.executeQuery(
+                    "SELECT starting_value FROM water_meter WHERE id = 3"
+            ).getString("starting_value");
+            String expiryDate = databaseConnector.executeQuery(
+                    "SELECT expiry_date FROM water_meter WHERE id = 3"
+            ).getString("expiry_date");
+
+            assertEquals(WaterMeterType.HOT_WATER.name(), type);
+            assertEquals("100.000", startingValue);
+            assertEquals(TEST_DATE + " 00:00:00", expiryDate);
+        }
+
+        @Test
+        @SneakyThrows
+        void shouldFailWhenExpiryDateIsNotInFuture() {
+            // when
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(WRONG_DATE_ASSIGN_WATER_METER_DTO)
+                    .when()
+                    .post(APARTMENT_PATH + "/" + APARTMENT_ID + "/water-meter")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("message", equalTo("ERROR.EXPIRY_DATE_ALREADY_EXPIRED"));
+        }
+
+        @Test
+        @SneakyThrows
+        void shouldFailWhenTypeIsInvalid() {
+            // when
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(WRONG_TYPE_ASSIGN_WATER_METER_DTO)
+                    .when()
+                    .post(APARTMENT_PATH + "/" + APARTMENT_ID + "/water-meter")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("[0].message", equalTo("VALIDATION.WATER_METERS_INVALID_TYPE"));
+        }
     }
 
     private void createApartment() {

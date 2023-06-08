@@ -71,8 +71,12 @@ public class WaterMeterService {
 
     @RolesAllowed(FACILITY_MANAGER)
     public void assignWaterMeter(final Apartment apartment, final AssignWaterMeterDto dto) {
-        //apartment + dto -> WaterMeter
-        waterMeterFacade.create(new WaterMeter());
+        WaterMeter waterMeter = new WaterMeter(dto, apartment);
+        waterMeterFacade.create(waterMeter);
+        List<WaterMeter> waterMeters = apartment.getWaterMeters();
+        waterMeters.add(waterMeter);
+        apartment.setWaterMeters(waterMeters);
+
     }
 
     @SneakyThrows

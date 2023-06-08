@@ -18,8 +18,7 @@ public class ExpiryDateValidator implements ConstraintValidator<ExpiryDate, Stri
         try {
             DateConverter.convert(date);
             return true;
-        }
-        catch (final ParseException e) {
+        } catch (final ParseException e) {
             return false;
         }
     }

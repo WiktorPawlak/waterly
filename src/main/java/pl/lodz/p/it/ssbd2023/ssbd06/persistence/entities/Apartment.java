@@ -60,6 +60,7 @@ public class Apartment extends AbstractEntity {
     @OneToMany(mappedBy = "apartment", fetch = FetchType.LAZY)
     private List<WaterUsageStats> waterUsageStats = new ArrayList<>();
 
+    @Setter
     @ToString.Exclude
     @OneToMany(mappedBy = "apartment", fetch = FetchType.LAZY)
     private List<WaterMeter> waterMeters = new ArrayList<>();
