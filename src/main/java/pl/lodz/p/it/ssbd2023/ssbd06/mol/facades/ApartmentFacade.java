@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.List;
 
@@ -10,9 +11,7 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.From;
@@ -76,6 +75,39 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
                                           final int pageSize,
                                           final boolean ascOrder,
                                           final String orderBy) {
+        return findApartments(null, pattern, page, pageSize, ascOrder, orderBy);
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public Long countAll(final String pattern) {
+        return count(null, pattern);
+    }
+
+    @RolesAllowed(OWNER)
+    public List<Apartment> findOwnerAllApartments(final Long ownerId,
+                                                  final String pattern,
+                                                  final int page,
+                                                  final int pageSize,
+                                                  final boolean ascOrder,
+                                                  final String orderBy) {
+        return findApartments(ownerId, pattern, page, pageSize, ascOrder, orderBy);
+    }
+
+    @RolesAllowed(OWNER)
+    public Long countAllOwnerApartments(final Long ownerId, final String pattern) {
+        return count(ownerId, pattern);
+    }
+
+    public Apartment findByWaterMeterId(final long waterMeterId) {
+        throw new NotSupportedException();
+    }
+
+    private List<Apartment> findApartments(final Long ownerId,
+                                           final String pattern,
+                                           final int page,
+                                           final int pageSize,
+                                           final boolean ascOrder,
+                                           final String orderBy) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Apartment> query = cb.createQuery(Apartment.class);
         Root<Apartment> apartmentRoot = query.from(Apartment.class);
@@ -86,9 +118,17 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
             query.orderBy(cb.desc(resolveFieldClass(apartmentRoot, orderBy).get(orderBy)));
         }
 
+        Predicate predicate = cb.conjunction();
+
         if (pattern != null) {
-            query.where(cb.or(getFilterByPatternPredicates(pattern, cb, apartmentRoot)));
+            predicate = cb.and(predicate, cb.or(getFilterByPatternPredicates(pattern, cb, apartmentRoot)));
         }
+
+        if (ownerId != null) {
+            predicate = cb.and(predicate, cb.equal(apartmentRoot.get("owner"), ownerId));
+        }
+
+        query.where(predicate);
 
         return getEntityManager().createQuery(query)
                 .setFirstResult(pageSize * (page - 1))
@@ -96,39 +136,33 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
                 .getResultList();
     }
 
-    @RolesAllowed(FACILITY_MANAGER)
-    public Long count(final String pattern) {
+    private Long count(final Long ownerId, final String pattern) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
-        Root<Apartment> account = query.from(Apartment.class);
+        Root<Apartment> apartment = query.from(Apartment.class);
+
+        Predicate predicate = cb.conjunction();
 
         if (pattern != null) {
-            query.where(cb.or(getFilterByPatternPredicates(pattern, cb, account)));
+            predicate = cb.and(predicate, cb.or(getFilterByPatternPredicates(pattern, cb, apartment)));
         }
 
-        query.select(cb.count(account));
+        if (ownerId != null) {
+            predicate = cb.and(predicate, cb.equal(apartment.get("owner"), ownerId));
+        }
+
+        query.where(predicate);
+        query.select(cb.count(apartment));
 
         return em.createQuery(query).getSingleResult();
-    }
-
-    @RolesAllowed(FACILITY_MANAGER)
-    public List<Apartment> findOwnerAllApartments(final long ownerId) {
-        TypedQuery<Apartment> billsByApartmentIdTypedQuery = em.createNamedQuery("Apartment.findByOwner_Id", Apartment.class);
-        billsByApartmentIdTypedQuery.setFlushMode(FlushModeType.COMMIT);
-        billsByApartmentIdTypedQuery.setParameter("ownerId", ownerId);
-        return billsByApartmentIdTypedQuery.getResultList();
-    }
-
-    public Apartment findByWaterMeterId(final long waterMeterId) {
-        throw new NotSupportedException();
     }
 
     private Predicate[] getFilterByPatternPredicates(final String pattern, final CriteriaBuilder cb, final Root<Apartment> apartment) {
         String filterPattern = "%" + pattern.toUpperCase() + "%";
 
-        Predicate emailPredicate = cb.like(cb.upper(apartment.get("number")), filterPattern);
+        Predicate numberPredicate = cb.like(cb.upper(apartment.get("number")), filterPattern);
 
-        return new Predicate[]{emailPredicate};
+        return new Predicate[]{numberPredicate};
     }
 
     private From<?, ?> resolveFieldClass(final Root<Apartment> root, final String fieldName) {

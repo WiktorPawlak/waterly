@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.List;
 
@@ -15,7 +16,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackI
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.config.PaginationConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
@@ -26,6 +26,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 
 @TransactionRollbackInterceptor
 @Monitored
@@ -42,6 +43,9 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @Inject
     private PaginationConfig paginationConfig;
+
+    @Inject
+    private AuthenticatedAccount authenticatedAccount;
 
     @Inject
     private WaterMeterService waterMeterService;
@@ -85,10 +89,34 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
         );
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
-    public List<ApartmentsDto> getAllApartments(final long ownerId) {
-        List<Apartment> apartments = apartmentService.getOwnerAllAccounts(ownerId);
-        return List.of();
+    @RolesAllowed(OWNER)
+    public PaginatedList<ApartmentDto> getSelfApartments(final String pattern,
+                                                         final Integer page,
+                                                         final Integer pageSize,
+                                                         final String order,
+                                                         final String orderBy) {
+        Account account = molAccountService.getAccountByLogin(authenticatedAccount.getLogin());
+
+        int preparedPage = paginationConfig.preparePage(page);
+        int preparedPageSize = paginationConfig.preparePageSize(pageSize);
+        String preparedOrderBy = orderBy != null ? orderBy : "number";
+        String preparedPattern = paginationConfig.preparePattern(pattern);
+        boolean ascOrder = paginationConfig.prepareAscOrder(order);
+
+
+        Tuple2<List<Apartment>, Long> paginatedApartments =
+                apartmentService.getOwnerAllApartaments(account, preparedPattern, preparedPage, preparedPageSize, ascOrder, preparedOrderBy);
+
+        List<ApartmentDto> apartmentDtos = paginatedApartments._1
+                .stream().map(ApartmentDto::new)
+                .toList();
+
+        return new PaginatedList<>(
+                apartmentDtos,
+                preparedPage,
+                apartmentDtos.size(),
+                (long) Math.ceil(paginatedApartments._2.doubleValue() / preparedPageSize)
+        );
     }
 
     @RolesAllowed({FACILITY_MANAGER})

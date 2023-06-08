@@ -3,8 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.controllers.mol;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
-
-import java.util.List;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -21,7 +20,6 @@ import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
@@ -53,15 +51,21 @@ public class ApartmentController extends RepeatableTransactionController {
             @ApartmentOrderBy @QueryParam("orderBy") final String orderBy,
             @QueryParam("pattern") final String pattern
     ) {
-        PaginatedList<ApartmentDto> apartments = apartmentEndpoint.getAllApartments(pattern, page, pageSize, order, orderBy);
+        PaginatedList<ApartmentDto> apartments = retry(() -> apartmentEndpoint.getAllApartments(pattern, page, pageSize, order, orderBy), apartmentEndpoint);
         return Response.ok().entity(apartments).build();
     }
 
     @GET
-    @RolesAllowed(FACILITY_MANAGER)
-    @Path("/owner")
-    public Response getApartmentsByOwnerId(@QueryParam("ownerId") final long ownerId) {
-        List<ApartmentsDto> apartments = apartmentEndpoint.getAllApartments(ownerId);
+    @RolesAllowed(OWNER)
+    @Path("/self")
+    public Response getSelfApartments(
+            @Page @QueryParam("page") final Integer page,
+            @PageSize @QueryParam("pageSize") final Integer pageSize,
+            @Order @QueryParam("order") final String order,
+            @ApartmentOrderBy @QueryParam("orderBy") final String orderBy,
+            @QueryParam("pattern") final String pattern
+    ) {
+        PaginatedList<ApartmentDto> apartments = retry(() -> apartmentEndpoint.getSelfApartments(pattern, page, pageSize, order, orderBy), apartmentEndpoint);
         return Response.ok().entity(apartments).build();
     }
 
