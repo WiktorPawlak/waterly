@@ -35,6 +35,8 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final String WATERMETER_PATH = "/water-meters";
     protected static final String APARTMENT_PATH = "/apartments";
 
+    protected static final String TARIFF_PATH = "/tariffs";
+
     protected static final long ADMIN_ID = 1;
     protected static final long OWNER_ID = 2;
     protected static final long NONE_EXISTENT_ACCOUNT_ID = -9;

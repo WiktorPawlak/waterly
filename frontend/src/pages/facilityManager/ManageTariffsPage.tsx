@@ -1,17 +1,14 @@
-import { useNavigate } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
 import {
     DataGrid,
     GridCellParams,
     GridColDef,
     GridColumnHeaderParams,
-    GridEventListener,
     GridSortModel,
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
-    Autocomplete,
     Box,
     Button,
     FormControl,
@@ -20,7 +17,6 @@ import {
     Pagination,
     Select,
     SelectChangeEvent,
-    TextField,
     Typography,
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
@@ -30,11 +26,13 @@ import { resolveApiError } from "../../api/apiErrors";
 import { useAccount } from "../../hooks/useAccount";
 import { roles } from "../../types";
 import { EditTariffDialog } from "../../layouts/components/tariff/EditTariffModal";
+import { AddTariffDialog } from "../../layouts/components/tariff/AddTariffModal";
 
 export const ManageTariffsPage = () => {
     const { account } = useAccount();
     const { t } = useTranslation();
     const [editTariffDialogOpen, setEditTariffDialogOpen] = useState(false);
+    const [addTariffDialogOpen, setAddTariffDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedTariff, setSelectedTariff] = useState<TariffDto>();
     const [selectedTariffEtag, setSelectedTariffEtag] = useState("");
@@ -44,6 +42,8 @@ export const ManageTariffsPage = () => {
         itemsInPage: 0,
         totalPages: 0,
     });
+
+    const isColumnHidden = account?.currentRole === roles.facilityManager;
 
     const [listRequest, setListRequest] = useState<GetPagedTariffsListDto>({
         page: 1,
@@ -56,7 +56,7 @@ export const ManageTariffsPage = () => {
         if (listRequest) {
             fetchData();
         }
-    }, [listRequest, editTariffDialogOpen]);
+    }, [listRequest, editTariffDialogOpen, addTariffDialogOpen]);
 
     const fetchData = () => {
         setIsLoading(true);
@@ -153,7 +153,7 @@ export const ManageTariffsPage = () => {
             renderHeader: () => (
                 <strong>{t("manageTariffsPage.dataGrid.header.endDate")}</strong>
             ),
-            width: 170,
+            width: 150,
         },
         {
             headerName: "",
@@ -169,12 +169,55 @@ export const ManageTariffsPage = () => {
         },
     ];
 
+    const columnsNotManager: GridColDef[] = [
+        {
+            field: "coldWaterPrice",
+            renderHeader: () => (
+                <strong>
+                    <Trans i18nKey={"manageTariffsPage.dataGrid.header.coldWaterPrice"} components={{ sup: <sup /> }} />
+                </strong>
+            ),
+            width: 200,
+        },
+        {
+            field: "hotWaterPrice",
+            renderHeader: () => (
+                <strong>
+                    <Trans i18nKey={"manageTariffsPage.dataGrid.header.hotWaterPrice"} components={{ sup: <sup /> }} />
+                </strong>
+            ),
+            width: 200,
+        },
+        {
+            field: "trashPrice",
+            renderHeader: () => (
+                <strong>
+                    <Trans i18nKey={"manageTariffsPage.dataGrid.header.trashPrice"} components={{ sup: <sup /> }} />
+                </strong>
+            ),
+            width: 200,
+        },
+        {
+            field: "startDate",
+            renderHeader: () => (
+                <strong>{t("manageTariffsPage.dataGrid.header.startDate")}</strong>
+            ),
+            width: 200,
+        },
+        {
+            field: "endDate",
+            renderHeader: () => (
+                <strong>{t("manageTariffsPage.dataGrid.header.endDate")}</strong>
+            ),
+            width: 150,
+        }
+    ];
+
     return (
         <MainLayout>
             <Box
                 sx={{
                     height: "100vh",
-                    mx: { xs: 2, md: 4 },
                 }}
             >
                 <EditTariffDialog
@@ -183,10 +226,14 @@ export const ManageTariffsPage = () => {
                     tariff={selectedTariff}
                     etag={selectedTariffEtag}
                 />
-                <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>
+                <AddTariffDialog
+                    isOpen={addTariffDialogOpen}
+                    setIsOpen={setAddTariffDialogOpen}
+                />
+                <Typography variant="h4" sx={{ fontWeight: "700", mb: 2, ml: 4 }}>
                     {t("manageTariffsPage.header")}
                 </Typography>
-                <Typography sx={{ mb: { xs: 10, md: 10 }, color: "text.secondary" }}>
+                <Typography sx={{ mb: { xs: 10, md: 2 }, ml: 4, color: "text.secondary" }}>
                     {t("manageTariffsPage.description")}
                 </Typography>
                 <Box
@@ -200,8 +247,11 @@ export const ManageTariffsPage = () => {
                     {account?.currentRole === roles.facilityManager &&
                         <Button
                             variant="contained"
-                            sx={{ textTransform: "none", mb: { xs: 3, md: 6 } }}
-                            onClick={() => setIsLoading(true)}
+                            sx={{
+                                textTransform: "none", mb: { xs: 3, md: 2 },
+                                width: "30vh"
+                            }}
+                            onClick={() => setAddTariffDialogOpen(true)}
                         >
                             {t("manageTariffsPage.button")}
                         </Button>}
@@ -213,7 +263,7 @@ export const ManageTariffsPage = () => {
                             rowHeight={65}
                             loading={isLoading}
                             rows={pageState?.data ?? []}
-                            columns={columns}
+                            columns={account?.currentRole === roles.facilityManager ? columns : columnsNotManager}
                             onColumnHeaderClick={handleOnColumnHeaderClick}
                             sortingMode="server"
                             onSortModelChange={handleSortModelChange}

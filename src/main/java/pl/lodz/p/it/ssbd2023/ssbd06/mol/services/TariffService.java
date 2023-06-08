@@ -2,6 +2,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -12,12 +13,16 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.TariffFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @Monitored
 @ServiceExceptionHandler
@@ -28,6 +33,9 @@ public class TariffService {
     @Inject
     TariffFacade tariffFacade;
 
+    @Inject
+    TimeProvider timeProvider;
+
 
     @PermitAll
     public List<Tariff> getAllTariffs() {
@@ -35,7 +43,29 @@ public class TariffService {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public void addTariff(final Tariff tariff) {
+    @SneakyThrows(ParseException.class)
+    public void addTariff(final CreateTariffDto createTariffDto) {
+        YearMonth startYearMonth = YearMonth.from(DateConverter.convertDateToLocalDate(createTariffDto.getStartDate()));
+        YearMonth endYearMonth = YearMonth.from(DateConverter.convertDateToLocalDate(createTariffDto.getEndDate()));
+
+        Tariff tariff = Tariff.builder()
+                .coldWaterPrice(createTariffDto.getColdWaterPrice())
+                .hotWaterPrice(createTariffDto.getHotWaterPrice())
+                .trashPrice(createTariffDto.getTrashPrice())
+                .startDate(startYearMonth.atDay(1))
+                .endDate(endYearMonth.atEndOfMonth())
+                .build();
+
+        boolean tariffsCollidingFlag = !findTariffsContainingPeriod(tariff.getStartDate(), tariff.getEndDate())
+                .stream().toList().isEmpty();
+        if (tariffsCollidingFlag) {
+            throw ApplicationBaseException.tariffsColidingException();
+        }
+        if (tariff.getEndDate().isBefore(tariff.getStartDate()) ||
+                tariff.getStartDate().equals(tariff.getEndDate())) {
+            throw ApplicationBaseException.invalidTariffPeriodException();
+        }
+
         tariffFacade.create(tariff);
     }
 
@@ -55,20 +85,6 @@ public class TariffService {
         tariffFacade.update(tariff);
     }
 
-    private void checkAndSetTariffPeriod(final Tariff tariff, final TariffsDto updatedObject) {
-        boolean tariffsColidingFlag = findTariffsContainingPeriod(updatedObject.getStartDate(), updatedObject.getEndDate())
-                .stream()
-                .anyMatch(foundTariff -> foundTariff.getId() != tariff.getId());
-        if (tariffsColidingFlag) {
-            throw ApplicationBaseException.tariffsColidingException();
-        } else {
-            YearMonth startYearMonth = YearMonth.from(updatedObject.getStartDate());
-            YearMonth endYearMonth = YearMonth.from(updatedObject.getEndDate());
-            tariff.setStartDate(startYearMonth.atDay(1));
-            tariff.setEndDate(endYearMonth.atEndOfMonth());
-        }
-    }
-
     @PermitAll
     public List<Tariff> getTariffs(final int page, final int pageSize, final String order, final String orderBy) {
         boolean ascOrder = "asc".equalsIgnoreCase(order);
@@ -83,6 +99,7 @@ public class TariffService {
         return tariffFacade.count();
     }
 
+    @RolesAllowed({FACILITY_MANAGER})
     public Tariff findById(final long id) {
         return tariffFacade.findById(id);
     }
@@ -101,5 +118,19 @@ public class TariffService {
         LocalDate tariffPeriodEnd = tariffEndYearMonth.atEndOfMonth();
 
         return tariffPeriodStart.isBefore(endDate) && tariffPeriodEnd.isAfter(startDate);
+    }
+
+    private void checkAndSetTariffPeriod(final Tariff tariff, final TariffsDto updatedObject) {
+        boolean tariffsColidingFlag = findTariffsContainingPeriod(updatedObject.getStartDate(), updatedObject.getEndDate())
+                .stream()
+                .anyMatch(foundTariff -> foundTariff.getId() != tariff.getId());
+        if (tariffsColidingFlag) {
+            throw ApplicationBaseException.tariffsColidingException();
+        } else {
+            YearMonth startYearMonth = YearMonth.from(updatedObject.getStartDate());
+            YearMonth endYearMonth = YearMonth.from(updatedObject.getEndDate());
+            tariff.setStartDate(startYearMonth.atDay(1));
+            tariff.setEndDate(endYearMonth.atEndOfMonth());
+        }
     }
 }

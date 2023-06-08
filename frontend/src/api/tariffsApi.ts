@@ -27,6 +27,14 @@ export interface GetPagedTariffsListDto {
     orderBy: string;
 }
 
+export interface CreateTariffDto {
+    coldWaterPrice: number;
+    hotWaterPrice: number;
+    trashPrice: number;
+    startDate: Date;
+    endDate: Date;
+}
+
 export async function getTariffsList(
     getTariffsListDto: GetPagedTariffsListDto
 ): Promise<ApiResponse<PaginatedList<TariffDto>>> {
@@ -43,4 +51,8 @@ export async function updateTariff(id: number, updatedTariff: TariffDto, etag: s
     return put(`${TARIFFS_PATH}/${id}`, updatedTariff,{
         "If-Match": etag,
     });
+}
+
+export async function addTariff(createTariff: CreateTariffDto) {
+    return post(`${TARIFFS_PATH}`, createTariff);
 }

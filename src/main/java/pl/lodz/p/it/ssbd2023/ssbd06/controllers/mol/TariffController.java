@@ -44,6 +44,7 @@ public class TariffController extends RepeatableTransactionController {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({FACILITY_MANAGER})
     public Response findTariffById(@PathParam("id") final long id) {
         TariffsDto tariff = tariffEndpoint.findById(id);
         String entityTag = payloadSigner.sign(tariff);
@@ -53,13 +54,14 @@ public class TariffController extends RepeatableTransactionController {
     @POST
     @RolesAllowed({FACILITY_MANAGER})
     public Response addTariff(@NotNull @Valid final CreateTariffDto dto) {
-        tariffEndpoint.addTariff(dto);
+        retry(() -> tariffEndpoint.addTariff(dto), tariffEndpoint);
         return Response.status(CREATED).build();
     }
 
     @PUT
     @Path("/{id}")
     @EtagValidationFilter
+    @RolesAllowed({FACILITY_MANAGER})
     public Response updateTariff(@PathParam("id") final long id, @NotNull @Valid final TariffsDto dto) {
         retry(() -> tariffEndpoint.updateTariff(id, dto), tariffEndpoint);
         return Response.ok().build();

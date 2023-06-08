@@ -40,9 +40,9 @@ public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed({FACILITY_MANAGER})
     public void addTariff(final CreateTariffDto createTariffDto) {
-        // dodanie taryfy
-        tariffService.addTariff(new Tariff());
+        tariffService.addTariff(createTariffDto);
     }
+
 
     @RolesAllowed({FACILITY_MANAGER})
     public void updateTariff(final long id, final TariffsDto dto) {
@@ -71,6 +71,7 @@ public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
                 (long) Math.ceil(tariffService.getTariffsCount().doubleValue() / pageSizeResolved));
     }
 
+    @RolesAllowed({FACILITY_MANAGER})
     public TariffsDto findById(final long id) {
         return new TariffsDto(tariffService.findById(id));
     }
