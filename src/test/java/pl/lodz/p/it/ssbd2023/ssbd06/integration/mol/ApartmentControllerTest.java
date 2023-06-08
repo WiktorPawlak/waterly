@@ -1,6 +1,8 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
@@ -8,8 +10,10 @@ import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
+import static jakarta.ws.rs.core.Response.Status.OK;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Named;
@@ -20,6 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 
@@ -241,6 +246,31 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 //                    .statusCode(FORBIDDEN.getStatusCode())
 //                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
 //        }
+
+    }
+
+    @Nested
+    class ApartmentGetPaginatedLists {
+
+        @Test
+        void shouldGetPaginatedList() {
+            createApartment();
+
+            List<ApartmentDto> apartments = given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .param("page", 1)
+                    .param("pageSize", 5)
+                    .param("order", "asc")
+                    .when()
+                    .get(APARTMENT_PATH)
+                    .then()
+                    .statusCode(OK.getStatusCode())
+                    .body("itemsInPage", equalTo(2))
+                    .body("totalPages", equalTo(1))
+                    .extract().body().jsonPath().getList("data", ApartmentDto.class);
+
+            assertEquals(2, apartments.size());
+        }
 
     }
 

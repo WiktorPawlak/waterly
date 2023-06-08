@@ -4,6 +4,8 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 
 import java.util.List;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
@@ -51,8 +53,15 @@ public class ApartmentService {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public List<Apartment> getAllAccounts() {
-        return apartmentFacade.findAll();
+    public Tuple2<List<Apartment>, Long> getAllApartments(final String pattern,
+                                                          final int page,
+                                                          final int pageSize,
+                                                          final boolean ascOrder,
+                                                          final String orderBy) {
+        return Tuple.of(
+                apartmentFacade.findApartments(pattern, page, pageSize, ascOrder, orderBy),
+                apartmentFacade.count(pattern)
+        );
     }
 
     @RolesAllowed(FACILITY_MANAGER)

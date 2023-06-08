@@ -19,6 +19,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
@@ -27,6 +29,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.ApartmentEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ApartmentOrderBy;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Order;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Page;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PageSize;
 
 @Path("/apartments")
 @RequestScoped
@@ -40,8 +46,14 @@ public class ApartmentController extends RepeatableTransactionController {
 
     @GET
     @RolesAllowed(FACILITY_MANAGER)
-    public Response getApartments() {
-        List<ApartmentsDto> apartments = apartmentEndpoint.getOwnerAllAccounts();
+    public Response getApartments(
+            @Page @QueryParam("page") final Integer page,
+            @PageSize @QueryParam("pageSize") final Integer pageSize,
+            @Order @QueryParam("order") final String order,
+            @ApartmentOrderBy @QueryParam("orderBy") final String orderBy,
+            @QueryParam("pattern") final String pattern
+    ) {
+        PaginatedList<ApartmentDto> apartments = apartmentEndpoint.getAllApartments(pattern, page, pageSize, order, orderBy);
         return Response.ok().entity(apartments).build();
     }
 
@@ -49,7 +61,7 @@ public class ApartmentController extends RepeatableTransactionController {
     @RolesAllowed(FACILITY_MANAGER)
     @Path("/owner")
     public Response getApartmentsByOwnerId(@QueryParam("ownerId") final long ownerId) {
-        List<ApartmentsDto> apartments = apartmentEndpoint.getOwnerAllAccounts(ownerId);
+        List<ApartmentsDto> apartments = apartmentEndpoint.getAllApartments(ownerId);
         return Response.ok().entity(apartments).build();
     }
 
