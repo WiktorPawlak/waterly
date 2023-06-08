@@ -41,6 +41,8 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
 
     protected static final long NOT_CONFIRMED_OWNER_ID = 4;
     protected static final long FACILITY_MANAGER_ID = 3;
+
+    protected static final long APARTMENT_ID = 1;
     protected static final String IF_MATCH_HEADER_NAME = "If-Match";
 
     protected static final long WATER_METER_ID = 1;

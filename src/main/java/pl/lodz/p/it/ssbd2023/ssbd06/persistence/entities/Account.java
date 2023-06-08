@@ -21,6 +21,7 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -35,6 +36,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
 @Getter
 @Table(name = "account", indexes = {
         @Index(name = "account_details_idx", columnList = "account_details_id"),
+}, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"login"}, name = "uk_account_login"),
 })
 @NamedQuery(name = "Account.findByLogin", query = "select a from Account a where a.login = :login")
 @NamedQuery(name = "Account.findByEmailAndWaitingEmail",
@@ -49,7 +52,7 @@ public class Account extends AbstractEntity {
 
     @NotNull
     @Size(min = 3, max = 50)
-    @Column(unique = true, nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private String login;
     @ToString.Exclude
     @NotNull
