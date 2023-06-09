@@ -16,7 +16,6 @@ import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterCheckFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
@@ -34,6 +33,10 @@ public class WaterMeterService {
     @Inject
     private WaterMeterCheckFacade waterMeterCheckFacade;
 
+    @RolesAllowed(FACILITY_MANAGER)
+    public WaterMeter findById(final long id) {
+        return waterMeterFacade.findById(id);
+    }
 
     @RolesAllowed(FACILITY_MANAGER)
     public Optional<WaterMeter> findActiveMainWaterMeter() {
@@ -54,10 +57,8 @@ public class WaterMeterService {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public void updateWaterMeter(final long id, final UpdateWaterMeterDto dto) {
-        waterMeterFacade.findById(id);
-        // map new fields to old entity
-        waterMeterFacade.update(new WaterMeter());
+    public void updateWaterMeter(final WaterMeter waterMeter) {
+        waterMeterFacade.update(waterMeter);
     }
 
     @RolesAllowed(FACILITY_MANAGER)

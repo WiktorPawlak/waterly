@@ -265,11 +265,11 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .get(APARTMENT_PATH)
                     .then()
                     .statusCode(OK.getStatusCode())
-                    .body("itemsInPage", equalTo(2))
+                    .body("itemsInPage", equalTo(3))
                     .body("totalPages", equalTo(1))
                     .extract().body().jsonPath().getList("data", ApartmentDto.class);
 
-            assertEquals(2, apartments.size());
+            assertEquals(3, apartments.size());
         }
 
         @Test
@@ -295,11 +295,11 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .get(APARTMENT_PATH + "/self")
                     .then()
                     .statusCode(OK.getStatusCode())
-                    .body("itemsInPage", equalTo(1))
+                    .body("itemsInPage", equalTo(2))
                     .body("totalPages", equalTo(1))
                     .extract().body().jsonPath().getList("data", ApartmentDto.class);
 
-            assertEquals(1, apartments.size());
+            assertEquals(2, apartments.size());
         }
 
     }

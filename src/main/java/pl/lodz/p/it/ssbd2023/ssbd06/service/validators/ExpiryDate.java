@@ -12,8 +12,8 @@ import jakarta.validation.Payload;
 
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = DateFormatValidator.class)
-public @interface DateFormat {
+@Constraint(validatedBy = ExpiryDateValidator.class)
+public @interface ExpiryDate {
 
     String message() default "VALIDATION.EXPIRY_DATE_PATTERN";
 

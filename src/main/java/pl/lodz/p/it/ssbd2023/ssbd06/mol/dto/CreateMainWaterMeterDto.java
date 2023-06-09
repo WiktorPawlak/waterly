@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.DateFormat;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ExpiryDate;
 
 @Data
 @Builder
@@ -12,7 +12,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.DateFormat;
 @NoArgsConstructor
 public class CreateMainWaterMeterDto {
 
-    @DateFormat
+    @ExpiryDate
     private String expiryDate;
 
 }

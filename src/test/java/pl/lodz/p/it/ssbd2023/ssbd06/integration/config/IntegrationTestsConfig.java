@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +21,9 @@ import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
@@ -33,6 +36,21 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final String WATERMETER_PATH = "/water-meters";
     protected static final String APARTMENT_PATH = "/apartments";
 
+    protected static final long ADMIN_ID = 1;
+    protected static final long OWNER_ID = 2;
+    protected static final long NONE_EXISTENT_ACCOUNT_ID = -9;
+
+    protected static final long MOL_OWNER_ID = 5;
+    protected static final long NOT_CONFIRMED_OWNER_ID = 4;
+    protected static final long FACILITY_MANAGER_ID = 3;
+
+    protected static final long APARTMENT_ID = 1;
+    protected static final long SECOND_APARTMENT_ID = 2;
+    protected static final String IF_MATCH_HEADER_NAME = "If-Match";
+
+    protected static final long WATER_METER_ID = 1;
+    protected static final long MAIN_WATER_METER_ID = 2;
+
     protected static final Credentials ADMIN_CREDENTIALS = new Credentials("admin", "admin12345");
     protected static final Credentials OWNER_CREDENTIALS = new Credentials("new", "jantes123");
     protected static final Credentials FACILITY_MANAGER_CREDENTIALS = new Credentials("tomdut", "jantes123");
@@ -43,19 +61,14 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(
             DateConverter.convert(timeProvider().addTimeToDate(1500, new Date()))
     );
-
-    protected static final long ADMIN_ID = 1;
-    protected static final long OWNER_ID = 2;
-    protected static final long NONE_EXISTENT_ACCOUNT_ID = -9;
-
-    protected static final long MOL_OWNER_ID = 5;
-    protected static final long NOT_CONFIRMED_OWNER_ID = 4;
-    protected static final long FACILITY_MANAGER_ID = 3;
-
-    protected static final long APARTMENT_ID = 1;
-    protected static final String IF_MATCH_HEADER_NAME = "If-Match";
-
-    protected static final long WATER_METER_ID = 1;
+    protected static final UpdateWaterMeterDto UPDATE_WATER_METER_DTO = UpdateWaterMeterDto.of(
+            WATER_METER_ID,
+            BigDecimal.valueOf(10),
+            DateConverter.convert(timeProvider().addTimeToDate(1500, new Date())),
+            BigDecimal.valueOf(12),
+            SECOND_APARTMENT_ID,
+            0
+    );
 
     protected static String ADMINISTRATOR_TOKEN;
     protected static String OWNER_TOKEN;
@@ -119,7 +132,13 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
         return Tuple.of(dto, eTag);
     }
 
-    private static TimeProvider timeProvider() {
+    protected Tuple2<WaterMeterDto, String> getWaterMeterWithEtag(long id) {
+        String eTag = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(WATERMETER_PATH + "/" + id).getHeader("ETag");
+        WaterMeterDto dto = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(WATERMETER_PATH + "/" + id).as(WaterMeterDto.class);
+        return Tuple.of(dto, eTag);
+    }
+
+    protected static TimeProvider timeProvider() {
         return new TimeProviderImpl();
     }
 

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
@@ -30,7 +31,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMetersDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.ApartmentService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
@@ -61,6 +62,11 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     @Property("default.list.page.size")
     private int defaultListPageSize;
 
+    @RolesAllowed({FACILITY_MANAGER})
+    public WaterMeterDto getWaterMeterById(final long id) {
+        return new WaterMeterDto(waterMeterService.findById(id));
+    }
+
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public void performWaterMeterCheck(final WaterMeterCheckDto dto) {
         waterMeterService.addWaterMeterCheck();
@@ -73,7 +79,37 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed(FACILITY_MANAGER)
     public void updateWaterMeter(final long id, final UpdateWaterMeterDto dto) {
-        waterMeterService.updateWaterMeter(id, dto);
+        validateExpiryDate(dto.getExpiryDate());
+        WaterMeter waterMeter = waterMeterService.findById(id);
+        if (waterMeter.getVersion() != dto.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
+        if (Objects.equals(waterMeter.getType(), MAIN)) {
+            updateMainWaterMeterEntity(waterMeter, dto);
+        } else {
+            updateWaterMeterEntity(waterMeter, dto);
+        }
+        waterMeterService.updateWaterMeter(waterMeter);
+    }
+
+    @SneakyThrows(ParseException.class)
+    private void updateMainWaterMeterEntity(final WaterMeter waterMeter, final UpdateWaterMeterDto dto) {
+        waterMeter.setExpiryDate(DateConverter.convert(dto.getExpiryDate()));
+    }
+
+    @SneakyThrows(ParseException.class)
+    private void updateWaterMeterEntity(final WaterMeter waterMeter, final UpdateWaterMeterDto dto) {
+        waterMeter.setStartingValue(dto.getStartingValue() == null ?
+                waterMeter.getStartingValue() : dto.getStartingValue());
+        waterMeter.setExpectedUsage(dto.getExpectedUsage() == null ?
+                waterMeter.getExpectedUsage() : dto.getExpectedUsage());
+
+        waterMeter.setExpiryDate(DateConverter.convert(dto.getExpiryDate()));
+
+        if (dto.getApartmentId() != null) {
+            Apartment apartment = apartmentService.getApartmentById(dto.getApartmentId());
+            waterMeter.setApartment(apartment);
+        }
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -88,12 +124,9 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
         waterMeterService.assignWaterMeter(apartment, dto);
     }
 
-    @SneakyThrows(ParseException.class)
     @RolesAllowed(FACILITY_MANAGER)
     public void createMainWaterMeter(final CreateMainWaterMeterDto dto) {
-        if (DateConverter.convert(dto.getExpiryDate()).before(timeProvider.currentDate())) {
-            throw ApplicationBaseException.expiryDateAlreadyExpiredException();
-        }
+        validateExpiryDate(dto.getExpiryDate());
         Optional<WaterMeter> mainWaterMeter = waterMeterService.findActiveMainWaterMeter();
         if (mainWaterMeter.isPresent()) {
             throw ApplicationBaseException.mainWaterMeterAlreadyExistsException();
@@ -102,23 +135,23 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public List<WaterMetersDto> getWaterMetersByApartmentId(final long apartmentId) {
+    public List<WaterMeterDto> getWaterMetersByApartmentId(final long apartmentId) {
         List<WaterMeter> waterMeters = waterMeterService.getWaterMetersByApartmentId(apartmentId);
-        List<WaterMetersDto> waterMetersDtos = new ArrayList<>();
-        waterMeters.forEach(waterMeter -> waterMetersDtos.add(new WaterMetersDto(waterMeter)));
+        List<WaterMeterDto> waterMetersDtos = new ArrayList<>();
+        waterMeters.forEach(waterMeter -> waterMetersDtos.add(new WaterMeterDto(waterMeter)));
         return waterMetersDtos;
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public PaginatedList<WaterMetersDto> getWaterMetersList(final @NotNull @Valid GetPagedWaterMetersListDto dto) {
+    public PaginatedList<WaterMeterDto> getWaterMetersList(final @NotNull @Valid GetPagedWaterMetersListDto dto) {
         int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;
         int pageSizeResolved = dto.getPageSize() != null ? dto.getPageSize() : defaultListPageSize;
         String orderByResolved = dto.getOrderBy() != null ? dto.getOrderBy() : "expiryDate";
-        List<WaterMetersDto> waterMeters = waterMeterService.getWaterMeters(pageResolved,
+        List<WaterMeterDto> waterMeters = waterMeterService.getWaterMeters(pageResolved,
                         pageSizeResolved,
                         dto.getOrder(),
                         orderByResolved).stream()
-                .map(WaterMetersDto::new)
+                .map(WaterMeterDto::new)
                 .toList();
 
         return new PaginatedList<>(waterMeters,
@@ -127,7 +160,7 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
                 (long) Math.ceil(waterMeterService.getWaterMetersCount().doubleValue() / pageSizeResolved));
     }
 
-    @SneakyThrows
+    @SneakyThrows(ParseException.class)
     private WaterMeter prepareMainWaterMeter(final CreateMainWaterMeterDto dto) {
         return WaterMeter.builder()
                 .active(true)
@@ -137,4 +170,12 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
                 .expiryDate(DateConverter.convert(dto.getExpiryDate()))
                 .build();
     }
+
+    @SneakyThrows(ParseException.class)
+    private void validateExpiryDate(final String expiryDate) {
+        if (DateConverter.convert(expiryDate).before(timeProvider.currentDate())) {
+            throw ApplicationBaseException.expiryDateAlreadyExpiredException();
+        }
+    }
+
 }

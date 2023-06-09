@@ -38,6 +38,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 )
 @NamedQuery(name = "WaterMeter.findAllActiveByType", query = "select w from WaterMeter w where w.type = :type and w.active = true")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
