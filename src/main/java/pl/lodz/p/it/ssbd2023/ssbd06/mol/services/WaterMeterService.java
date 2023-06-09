@@ -5,15 +5,16 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterCheckFacade;
@@ -32,6 +33,13 @@ public class WaterMeterService {
     private WaterMeterFacade waterMeterFacade;
     @Inject
     private WaterMeterCheckFacade waterMeterCheckFacade;
+
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public Optional<WaterMeter> findActiveMainWaterMeter() {
+        return waterMeterFacade.findAllActiveByType(MAIN).stream()
+                .findFirst();
+    }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public void addWaterMeterCheck() {
@@ -66,12 +74,10 @@ public class WaterMeterService {
         waterMeterFacade.create(new WaterMeter());
     }
 
+    @SneakyThrows
     @RolesAllowed(FACILITY_MANAGER)
-    public void createMainWaterMeter(final CreateMainWaterMeterDto dto) {
-        // check if main waterMeter already set
-        waterMeterFacade.findAllByType(MAIN);
-        // map dto to entity
-        waterMeterFacade.create(new WaterMeter());
+    public void createMainWaterMeter(final WaterMeter waterMeter){
+        waterMeterFacade.create(waterMeter);
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})

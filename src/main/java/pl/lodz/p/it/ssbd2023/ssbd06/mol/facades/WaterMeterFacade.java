@@ -50,8 +50,8 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public List<WaterMeter> findAllByType(final WaterMeterType type) {
-        return em.createNamedQuery("WaterMeter.findAllByType", WaterMeter.class)
+    public List<WaterMeter> findAllActiveByType(final WaterMeterType type) {
+        return em.createNamedQuery("WaterMeter.findAllActiveByType", WaterMeter.class)
                 .setFlushMode(FlushModeType.COMMIT)
                 .setParameter("type", type)
                 .getResultList();

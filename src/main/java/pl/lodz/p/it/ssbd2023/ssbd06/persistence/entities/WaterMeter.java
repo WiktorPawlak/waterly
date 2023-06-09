@@ -20,6 +20,8 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,9 +36,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
                 @Index(name = "water_meter_apartment_idx", columnList = "apartment_id")
         }
 )
-@NamedQuery(name = "WaterMeter.findAllByType", query = "select w from WaterMeter w where w.type = :type")
+@NamedQuery(name = "WaterMeter.findAllActiveByType", query = "select w from WaterMeter w where w.type = :type and w.active = true")
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})
 public class WaterMeter extends AbstractEntity {
     @NotNull

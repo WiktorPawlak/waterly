@@ -24,6 +24,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TwoFARequestedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.ExpiryDateAlreadyExpiredException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.MainWaterMeterAlreadyExistsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.EntityIntegrityViolatedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.IfMatchHeaderMissingException;
@@ -60,6 +62,9 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_ROLE_NOT_FOUND = "ERROR.ROLE_NOT_FOUND";
     public static final String ERROR_ACCOUNT_LOCKED = "ERROR.ACCOUNT_LOCKED";
 
+    public static final String ERROR_MAIN_WATER_METER_ALREADY_EXISTS = "ERROR.MAIN_WATER_METER_ALREADY_EXISTS";
+    public static final String ERROR_EXPIRY_DATE_ALREADY_EXPIRED = "ERROR.EXPIRY_DATE_ALREADY_EXPIRED";
+
     public static final String ERROR_EMAIL_DO_NOT_MATCH = "ERROR.NO_MATCHING_EMAILS";
     public static final String ERROR_ACCOUNT_NOT_ACTIVE = "ERROR.NOT_ACTIVE_ACCOUNT";
     public static final String ERROR_ACCOUNT_NOT_CONFIRMED = "ERROR.NOT_CONFIRMED_ACCOUNT";
@@ -79,7 +84,6 @@ public class ApplicationBaseException extends WebApplicationException {
     protected static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
 
     protected static final String INFO_TWO_FA_CODE_REQUESTED = "INFO.TWO_FA_CODE_REQUESTES";
-
 
     public ApplicationBaseException(final Response.Status status, final String message) {
         super(Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON_TYPE).build());
@@ -223,5 +227,13 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static NoSuchBillException noSuchBillException() {
         return new NoSuchBillException();
+    }
+
+    public static MainWaterMeterAlreadyExistsException mainWaterMeterAlreadyExistsException() {
+        return new MainWaterMeterAlreadyExistsException();
+    }
+
+    public static ExpiryDateAlreadyExpiredException expiryDateAlreadyExpiredException() {
+        return new ExpiryDateAlreadyExpiredException();
     }
 }

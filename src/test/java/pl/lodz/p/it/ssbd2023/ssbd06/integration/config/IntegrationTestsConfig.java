@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.Scanner;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -18,16 +19,20 @@ import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProviderImpl;
 
 public class IntegrationTestsConfig extends PayaraContainerInitializer {
 
     protected static final String AUTH_PATH = "/auth";
     protected static final String ACCOUNT_PATH = "/accounts";
     protected static final String WATERMETER_PATH = "/water-meters";
-
     protected static final String APARTMENT_PATH = "/apartments";
+
     protected static final Credentials ADMIN_CREDENTIALS = new Credentials("admin", "admin12345");
     protected static final Credentials OWNER_CREDENTIALS = new Credentials("new", "jantes123");
     protected static final Credentials FACILITY_MANAGER_CREDENTIALS = new Credentials("tomdut", "jantes123");
@@ -35,6 +40,10 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final AccountActiveStatusDto ACTIVATE_ACCOUNT = AccountActiveStatusDto.of(true);
     protected static final WaterMeterActiveStatusDto DEACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(false);
     protected static final WaterMeterActiveStatusDto ACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(true);
+    protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(
+            DateConverter.convert(timeProvider().addTimeToDate(1500, new Date()))
+    );
+
     protected static final long ADMIN_ID = 1;
     protected static final long OWNER_ID = 2;
     protected static final long NONE_EXISTENT_ACCOUNT_ID = -9;
@@ -108,6 +117,10 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
         String eTag = given().header(AUTHORIZATION, ADMINISTRATOR_TOKEN).get(ACCOUNT_PATH + "/" + id).getHeader("ETag");
         AccountDto dto = given().header(AUTHORIZATION, ADMINISTRATOR_TOKEN).get(ACCOUNT_PATH + "/" + id).as(AccountDto.class);
         return Tuple.of(dto, eTag);
+    }
+
+    private static TimeProvider timeProvider() {
+        return new TimeProviderImpl();
     }
 
     @BeforeEach
