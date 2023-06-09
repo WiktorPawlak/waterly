@@ -18,6 +18,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
@@ -29,8 +30,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMetersDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 
 @Log
 @Path("/water-meters")
@@ -40,18 +43,31 @@ public class WaterMeterController extends RepeatableTransactionController {
     @Inject
     private WaterMeterEndpoint waterMeterEndpoint;
 
+    @Inject
+    private PayloadSigner payloadSigner;
+
+    @RolesAllowed(FACILITY_MANAGER)
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getWaterMeterById(@PathParam("id") final long id) {
+        WaterMeterDto waterMeterDto = retry(() -> waterMeterEndpoint.getWaterMeterById(id), waterMeterEndpoint);
+        String entityTag = payloadSigner.sign(waterMeterDto);
+        return Response.ok().entity(waterMeterDto).header("ETag", entityTag).build();
+    }
+
     @POST
     @Path("/list")
     @RolesAllowed({FACILITY_MANAGER})
     public Response getWaterMeters(@NotNull @Valid final GetPagedWaterMetersListDto dto) {
-        PaginatedList<WaterMetersDto> waterMeters = retry(() -> waterMeterEndpoint.getWaterMetersList(dto), waterMeterEndpoint);
+        PaginatedList<WaterMeterDto> waterMeters = retry(() -> waterMeterEndpoint.getWaterMetersList(dto), waterMeterEndpoint);
         return Response.ok().entity(waterMeters).build();
     }
 
     @GET
     @Path("/apartment/{apartmentId}")
     public Response getWaterMatersByApartmentId(@PathParam("apartmentId") final long apartmentId) {
-        List<WaterMetersDto> waterMeters = retry(() -> (waterMeterEndpoint.getWaterMetersByApartmentId(apartmentId)), waterMeterEndpoint);
+        List<WaterMeterDto> waterMeters = retry(() -> (waterMeterEndpoint.getWaterMetersByApartmentId(apartmentId)), waterMeterEndpoint);
         return Response.ok().entity(waterMeters).build();
     }
 
@@ -81,8 +97,10 @@ public class WaterMeterController extends RepeatableTransactionController {
     @PUT
     @Path("/{id}")
     @RolesAllowed(FACILITY_MANAGER)
-    public void updateWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final UpdateWaterMeterDto dto) {
-        waterMeterEndpoint.updateWaterMeter(waterMeterId, dto);
+    @EtagValidationFilter
+    public Response updateWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final UpdateWaterMeterDto dto) {
+        retry(() -> waterMeterEndpoint.updateWaterMeter(waterMeterId, dto), waterMeterEndpoint);
+        return Response.status(NO_CONTENT).build();
     }
 
     @RolesAllowed(FACILITY_MANAGER)

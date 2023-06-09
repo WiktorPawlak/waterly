@@ -132,4 +132,6 @@ INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incor
 VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 5);
 
 INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '12a', now(), now(), 40.00, 2);
+INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '12b', now(), now(), 40.00, 2);
 INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());
+INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 0.000, 0.000, 'MAIN', null, now(), now());

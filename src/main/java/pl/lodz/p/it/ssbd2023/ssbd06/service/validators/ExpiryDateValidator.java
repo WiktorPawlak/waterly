@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 
-public class DateFormatValidator implements ConstraintValidator<DateFormat, String> {
+public class ExpiryDateValidator implements ConstraintValidator<ExpiryDate, String> {
 
     private static final String DATE_PATTERN = "\\d{4}-\\d{2}-\\d{2}";
 
