@@ -1,6 +1,11 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
+import static jakarta.ws.rs.core.Response.Status.CREATED;
+import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
@@ -20,6 +25,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 @Order(6)
 public class WaterMeterControllerTest extends IntegrationTestsConfig {
@@ -135,6 +142,78 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .statusCode(FORBIDDEN.getStatusCode())
                     .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
         }
+    }
+
+    @Nested
+    class CreateMainWaterMeter {
+
+        @Test
+        @SneakyThrows
+        void shouldCreateMainWaterMeterWhenNoActiveOneAlready() {
+            // when
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CREATE_MAIN_WATER_METER_DTO)
+                    .when()
+                    .post(WATERMETER_PATH + "/main-water-meter")
+                    .then()
+                    .statusCode(CREATED.getStatusCode());
+
+            // then
+            String type = databaseConnector.executeQuery(
+                    "SELECT type FROM water_meter WHERE id = 2"
+            ).getString("type");
+            assertEquals(WaterMeterType.MAIN.name(), type);
+        }
+
+        @Test
+        @SneakyThrows
+        void shouldNotCreateMainWaterMeterWhenActiveOneAlready() {
+            // given
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CREATE_MAIN_WATER_METER_DTO)
+                    .when()
+                    .post(WATERMETER_PATH + "/main-water-meter")
+                    .then()
+                    .statusCode(CREATED.getStatusCode());
+
+            // then
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CREATE_MAIN_WATER_METER_DTO)
+                    .when()
+                    .post(WATERMETER_PATH + "/main-water-meter")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode());
+        }
+
+        @Test
+        @SneakyThrows
+        void shouldNotCreateMainWaterMeterWhenInvalidDateFormat() {
+            // then
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CreateMainWaterMeterDto.of("invalid-format"))
+                    .when()
+                    .post(WATERMETER_PATH + "/main-water-meter")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
+        }
+
+        @Test
+        @SneakyThrows
+        void shouldNotCreateMainWaterMeterWhenDateAlreadyExpired() {
+            // then
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CreateMainWaterMeterDto.of("1970-01-01"))
+                    .when()
+                    .post(WATERMETER_PATH + "/main-water-meter")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
+        }
+
     }
 
     private static Stream<Arguments> provideTokensForParameterizedTests() {

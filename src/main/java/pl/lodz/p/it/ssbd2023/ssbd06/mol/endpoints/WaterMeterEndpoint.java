@@ -1,10 +1,14 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService.FIRST_PAGE;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType.MAIN;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.LocalBean;
@@ -14,6 +18,8 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.SneakyThrows;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
@@ -29,8 +35,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @TransactionRollbackInterceptor
 @Monitored
@@ -44,6 +52,9 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @Inject
     private ApartmentService apartmentService;
+
+    @Inject
+    private TimeProvider timeProvider;
 
     @Inject
     @Property("default.list.page.size")
@@ -76,9 +87,17 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
         waterMeterService.assignWaterMeter(apartment, dto);
     }
 
+    @SneakyThrows(ParseException.class)
     @RolesAllowed(FACILITY_MANAGER)
     public void createMainWaterMeter(final CreateMainWaterMeterDto dto) {
-        waterMeterService.createMainWaterMeter(dto);
+        if (DateConverter.convert(dto.getExpiryDate()).before(timeProvider.currentDate())) {
+            throw ApplicationBaseException.expiryDateAlreadyExpiredException();
+        }
+        Optional<WaterMeter> mainWaterMeter = waterMeterService.findActiveMainWaterMeter();
+        if (mainWaterMeter.isPresent()) {
+            throw ApplicationBaseException.mainWaterMeterAlreadyExistsException();
+        }
+        waterMeterService.createMainWaterMeter(prepareMainWaterMeter(dto));
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
@@ -102,5 +121,16 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
                 pageResolved,
                 waterMeters.size(),
                 (long) Math.ceil(waterMeterService.getWaterMetersCount().doubleValue() / pageSizeResolved));
+    }
+
+    @SneakyThrows
+    private WaterMeter prepareMainWaterMeter(final CreateMainWaterMeterDto dto) {
+        return WaterMeter.builder()
+                .active(true)
+                .type(MAIN)
+                .expectedUsage(BigDecimal.ZERO)
+                .startingValue(BigDecimal.ZERO)
+                .expiryDate(DateConverter.convert(dto.getExpiryDate()))
+                .build();
     }
 }

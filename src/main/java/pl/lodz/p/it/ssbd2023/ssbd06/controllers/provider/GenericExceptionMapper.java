@@ -42,4 +42,5 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
             return ApplicationBaseException.generalErrorException(t).getResponse();
         }
     }
+
 }

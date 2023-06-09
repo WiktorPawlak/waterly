@@ -1,5 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.controllers.mol;
 
+import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
@@ -55,8 +56,9 @@ public class WaterMeterController extends RepeatableTransactionController {
     @POST
     @Path("/main-water-meter")
     @RolesAllowed(FACILITY_MANAGER)
-    public void createMainWaterMeter(@NotNull @Valid final CreateMainWaterMeterDto dto) {
-        waterMeterEndpoint.createMainWaterMeter(dto);
+    public Response createMainWaterMeter(@NotNull @Valid final CreateMainWaterMeterDto dto) {
+        retry(() -> waterMeterEndpoint.createMainWaterMeter(dto), waterMeterEndpoint);
+        return Response.status(CREATED).build();
     }
 
     @POST
