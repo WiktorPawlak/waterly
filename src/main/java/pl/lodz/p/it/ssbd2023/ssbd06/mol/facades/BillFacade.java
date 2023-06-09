@@ -3,7 +3,9 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -12,6 +14,7 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import lombok.extern.java.Log;
@@ -47,12 +50,20 @@ public class BillFacade extends AbstractFacade<Bill> {
 
 
     @RolesAllowed({OWNER})
-    public List<Bill> findByOwnerId(final long ownerId) {
-        TypedQuery<Bill> billsByOwnerIdTypedQuery = em.createNamedQuery("Bill.findBillsByOwnerId", Bill.class);
-        billsByOwnerIdTypedQuery.setFlushMode(FlushModeType.COMMIT);
-        billsByOwnerIdTypedQuery.setParameter("ownerId", ownerId);
-        return billsByOwnerIdTypedQuery.getResultList();
+    public Optional<Bill> findByOwnerId(final long ownerId, final LocalDate date) {
+        try {
+            TypedQuery<Bill> billsByOwnerIdTypedQuery = em.createNamedQuery("Bill.findBillsByOwnerIdYearAndMonth", Bill.class);
+            billsByOwnerIdTypedQuery.setFlushMode(FlushModeType.COMMIT);
+            billsByOwnerIdTypedQuery.setParameter("accountId", ownerId);
+            billsByOwnerIdTypedQuery.setParameter("month", date.getMonthValue());
+            billsByOwnerIdTypedQuery.setParameter("year", date.getYear());
+            return Optional.of(billsByOwnerIdTypedQuery.getSingleResult());
+        }
+        catch (final NoResultException e){
+            return Optional.empty();
+        }
     }
+
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public List<Bill> findByApartmentId(final long apartmentId) {

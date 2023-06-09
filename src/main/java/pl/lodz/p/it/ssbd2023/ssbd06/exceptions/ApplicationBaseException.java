@@ -14,8 +14,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountSearchPreferencesNotEx
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.AccountWithEmailAlreadyExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.CannotModifyPermissionsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.IdenticalPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.InvalidDateException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.InvalidOTPException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NoMatchingEmailException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NoSuchBillException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotActiveAccountException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.NotConfirmedAccountException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException;
@@ -70,9 +72,14 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_IF_MATCH_HEADER_MISSING = "ERROR.IF_MATCH_HEADER_MISSING";
     public static final String ERROR_INVALID_OTP = "ERROR.INVALID_OTP";
 
+    public static final String ERROR_INVALID_DATE = "ERROR_INVALID_DATE";
+
+    public static final String ERROR_NO_SUCH_BILL = "ERROR_NO_SUCH_BILL";
+
     protected static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
 
     protected static final String INFO_TWO_FA_CODE_REQUESTED = "INFO.TWO_FA_CODE_REQUESTES";
+
 
     public ApplicationBaseException(final Response.Status status, final String message) {
         super(Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON_TYPE).build());
@@ -208,5 +215,13 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static AccountLockedException accountLockedException() {
         return new AccountLockedException();
+    }
+
+    public static InvalidDateException invalidDateException() {
+        return new InvalidDateException();
+    }
+
+    public static NoSuchBillException noSuchBillException() {
+        return new NoSuchBillException();
     }
 }

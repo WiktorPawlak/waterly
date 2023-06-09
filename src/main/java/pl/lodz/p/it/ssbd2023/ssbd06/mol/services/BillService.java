@@ -3,7 +3,9 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
@@ -25,8 +27,8 @@ public class BillService {
     private BillFacade billFacade;
 
     @RolesAllowed({OWNER})
-    public List<Bill> getBillsByOwnerId(final long ownerId) {
-        return billFacade.findByOwnerId(ownerId);
+    public Optional<Bill> getBillsByOwnerId(final long ownerId, final LocalDate date) {
+        return billFacade.findByOwnerId(ownerId, date);
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})

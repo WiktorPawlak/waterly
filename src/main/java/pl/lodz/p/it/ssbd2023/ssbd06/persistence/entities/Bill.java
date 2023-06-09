@@ -37,7 +37,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 )
 @Getter
 @NamedQuery(name = "Bill.findBillsByApartmentId", query = "select b from Bill b where b.apartment.id = :apartmentId")
-@NamedQuery(name = "Bill.findBillsByOwnerId", query = "select b from Bill b where b.owner.id = :ownerId")
+@NamedQuery(name = "Bill.findBillsByOwnerId", query = "select b from Bill b where b.account.id = :accountId")
+@NamedQuery(name = "Bill.findBillsByOwnerIdYearAndMonth",
+        query = "select b from Bill b where b.account.id = :accountId AND YEAR(b.date) = :year AND MONTH(b.date) = :month")
 @NoArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})
 public class Bill extends AbstractEntity {
@@ -54,14 +56,14 @@ public class Bill extends AbstractEntity {
     @NotNull
     @ManyToOne(cascade = REFRESH, fetch = LAZY)
     @JoinColumn(name = "owner_id", updatable = false, nullable = false, foreignKey = @ForeignKey(name = "bill_owner_Fk"))
-    private Owner owner;
+    private Account account;
     @ToString.Exclude
     @NotNull
-    @OneToOne(cascade = {PERSIST, MERGE, REFRESH})
+    @OneToOne(cascade = {PERSIST, MERGE, REFRESH}, fetch = LAZY)
     @JoinColumn(name = "advance_usage", updatable = false, nullable = false, foreignKey = @ForeignKey(name = "bill_advance_usage"))
     private UsageReport advanceUsage;
     @ToString.Exclude
-    @OneToOne(cascade = {PERSIST, MERGE, REFRESH})
+    @OneToOne(cascade = {PERSIST, MERGE, REFRESH}, fetch = LAZY)
     @JoinColumn(name = "real_usage", updatable = false, foreignKey = @ForeignKey(name = "bill_real_usage_fk"))
     private UsageReport realUsage;
 }
