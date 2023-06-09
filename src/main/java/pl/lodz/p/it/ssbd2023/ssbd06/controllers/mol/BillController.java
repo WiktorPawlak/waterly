@@ -12,10 +12,10 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.BillEndpoint;
 
 @Path("/bills")
@@ -26,16 +26,17 @@ public class BillController extends RepeatableTransactionController {
     private BillEndpoint billEndpoint;
 
     @GET
-    @Path("/owner")
+    @Path("/owner/{id}")
     @RolesAllowed({OWNER})
-    public List<BillsDto> getBillsByOwnerId(@QueryParam("ownerId") final long ownerId) {
-        return billEndpoint.getBillsByOwnerId(ownerId);
+    public Response getBillsByOwnerId(@PathParam("id") final long ownerId, @QueryParam("date") final String date) {
+        BillDto billDto = retry(() -> billEndpoint.getBillsByOwnerId(ownerId, date), billEndpoint);
+        return Response.ok().entity(billDto).build();
     }
 
     @GET
-    @Path("/apartment")
+    @Path("/apartment/{id}")
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public List<ApartmentBillsDto> getBillsByApartmentId(@QueryParam("apartmentId") final long apartmentId) {
+    public List<ApartmentBillsDto> getBillsByApartmentId(@PathParam("id") final long apartmentId) {
         return billEndpoint.getBillsByApartmentId(apartmentId);
     }
 

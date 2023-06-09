@@ -33,6 +33,7 @@ INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, upda
 --ssbd06mol
 GRANT SELECT ON TABLE account TO ssbd06mol;
 GRANT SELECT ON TABLE role TO ssbd06mol;
+GRANT SELECT ON TABLE account_details TO ssbd06mol;
 GRANT SELECT ON TABLE auth_info to ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE apartment TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bill TO ssbd06mol;
@@ -89,4 +90,6 @@ INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updat
 INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '12a', now(), now(), 40.00, 2);
 INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '11a', now(), now(), 50.00, 1);
 INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());
-INSERT INTO public.water_meter (id, version, active, expiry_date, starting_value, expected_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, now() + INTERVAL '360 days', 200.000, 700.000, 'HOT_WATER', 2, now(), now());
+INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage, unbilled_water_amount, unbilled_water_cost) VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
+INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage, unbilled_water_amount, unbilled_water_cost) VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 11, 12, 13, 14, 15, 16, 17);
+INSERT INTO public.bill (id, version, created_on, updated_on, balance, date, advance_usage, apartment_id, owner_id, real_usage) VALUES (nextval('bill_id_seq'), 0, now(), now(), 9.02, now(), 1, 1, 2, 2);
