@@ -251,7 +251,7 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().entity(accountDto).header("ETag", entityTag).build();
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER})
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -279,7 +279,7 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().entity(accounts).build();
     }
 
-    @RolesAllowed({ADMINISTRATOR})
+    @RolesAllowed({ADMINISTRATOR, FACILITY_MANAGER})
     @POST
     @Path("/list")
     public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto, @QueryParam("pattern") final String pattern)

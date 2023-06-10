@@ -421,6 +421,9 @@
     "invoiceNumber": "Numer Faktury",
     "invoiceEditedSuccesfully": "Pomyślnie edytowano fakturę"
   },
+  "changeApartmentOwnerModal": {
+    "editOwner": "Edytuj właścicela"
+  },
   "addTariffDialog": {
     "tariffAddedSuccesfully": "Pomyślnie dodano taryfę",
     "addTariff": "Dodaj taryfę"
@@ -466,7 +469,9 @@
   "apartmentPage": {
     "createApartment": "Dodaj lokal",
     "selectOwner": "Wybierz właściciela",
+    "ownerId": "Id właściciela",
     "apartmentCreatedSuccessfully": "Lokal dodany pomyślnie",
+    "ownerChangedSuccessfully": "Właściciel zmieniony pomyślnie",
     "header": "Zarządaj lokalami",
     "description": "Tutaj możesz zarządzać lokalami",
     "addButton": "Dodaj lokal",

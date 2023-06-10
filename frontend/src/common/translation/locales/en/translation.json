@@ -428,6 +428,9 @@
     "invoiceNumber": "Invoice Number",
     "invoiceAddedSuccessfully": "Invoice added successfully"
   },
+  "changeApartmentOwnerModal": {
+    "editOwner": "Edit apartment owner"
+  },
   "addTariffDialog": {
     "tariffAddedSuccessfully": "Tariff added successfully",
     "addTariff": "Add tariff"
@@ -465,7 +468,9 @@
   "apartmentPage": {
     "createApartment": "Create apartment",
     "selectOwner": "Select owner",
+    "ownerId": "Owner id",
     "apartmentCreatedSuccessfully": "Apartment created successfully",
+    "ownerChangedSuccessfully": "Apartment owner changed successfully",
     "header": "Manage apartments",
     "description": "Here you can manage your apartments",
     "addButton": "Add apartment",

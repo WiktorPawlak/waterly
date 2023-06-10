@@ -1,5 +1,5 @@
 import { GetPagedListDto, List, PaginatedList } from "./accountApi";
-import { ApiResponse, get, post } from "./api";
+import { ApiResponse, get, post, put } from "./api";
 
 const APARTMENTS_PATH = "/apartments";
 
@@ -8,6 +8,11 @@ export interface ApartmentDto {
   number: string;
   area: number;
   ownerName: string;
+}
+
+export interface ChangeApartmentOwnerDto {
+  id: number;
+  newOwnerLogin: string;
 }
 
 export interface CreateApartmentDto {
@@ -27,6 +32,19 @@ export async function createAprtment(
   body: CreateApartmentDto
 ): Promise<ApiResponse<PaginatedList<ApartmentDto>>> {
   return post(`${APARTMENTS_PATH}`, body);
+}
+
+export async function getApartmentById(
+  id: number
+): Promise<ApiResponse<ApartmentDto>> {
+  return get(`${APARTMENTS_PATH}/${id}`);
+}
+
+export async function changeApartmentOwner(
+  id: number,
+  newOwnerId: number
+): Promise<ApiResponse<ChangeApartmentOwnerDto>> {
+  return put(`${APARTMENTS_PATH}/${id}/owner`, { newOwnerId });
 }
 
 export async function getApartmentDetails(

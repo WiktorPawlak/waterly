@@ -223,9 +223,7 @@ export const addTariffSchema = z.object({
 });
 
 export const addInvoiceSchema = z.object({
-  invoiceNumber: z
-    .string()
-    .regex(/^FV \d{4}\/\d{2}\/\d{2}$/, "validation.invoiceNumber"),
+  invoiceNumber: z.string().regex(/^FV \d{4}\/\d{2}\/\d{2}$/, "validation.invoiceNumber"),
   waterUsage: z.string().regex(/^\d+(\.\d{3})?$/, "validation.waterUsage"),
   totalCost: z.string().regex(/^\d+(\.\d{2})?$/, "validation.totalCost"),
 });
