@@ -26,11 +26,14 @@ import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../../api/apiErrors";
 import { ApartmentDto, getAllAprtmentsList } from "../../../api/apartmentApi";
 import { MainLayout } from "../../MainLayout";
+import { CreateApartmentDialog } from "./CreateApartmentDialog";
 
 export const ApartmentsList = () => {
   const { t } = useTranslation();
   const [pattern, setPattern] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [addApartmentDialogIsOpen, setAddApartmentDialogIsOpen] =
+    useState(false);
   const [pageState, setPageState] = useState<PaginatedList<ApartmentDto>>({
     data: [],
     pageNumber: 1,
@@ -49,7 +52,7 @@ export const ApartmentsList = () => {
     if (listRequest) {
       fetchData();
     }
-  }, [listRequest, pattern]);
+  }, [listRequest, pattern, addApartmentDialogIsOpen]);
 
   const fetchData = () => {
     setIsLoading(true);
@@ -120,7 +123,7 @@ export const ApartmentsList = () => {
       ),
       renderCell: (params) => (
         <span>
-          {params.value} m<sup>2</sup>
+          {params.value.toFixed(2)} m<sup>2</sup>
         </span>
       ),
       width: 200,
@@ -142,6 +145,10 @@ export const ApartmentsList = () => {
 
   return (
     <MainLayout>
+      <CreateApartmentDialog
+        isOpen={addApartmentDialogIsOpen}
+        setIsOpen={setAddApartmentDialogIsOpen}
+      />
       <Box
         sx={{
           height: "100vh",
@@ -166,7 +173,7 @@ export const ApartmentsList = () => {
           <Button
             variant="contained"
             sx={{ textTransform: "none" }}
-            // onClick={() => setCreateAccountByAdminDialogOpen(true)}
+            onClick={() => setAddApartmentDialogIsOpen(true)}
           >
             <AddIcon />
             {t("apartmentPage.addButton")}

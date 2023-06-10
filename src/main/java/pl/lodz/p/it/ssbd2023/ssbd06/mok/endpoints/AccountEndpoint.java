@@ -255,6 +255,13 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         return new AccountDto(account);
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    public List<ListAccountDto> getOwnersAccounts() {
+        return accountService.getOwnersAccounts()
+                .stream().map(ListAccountDto::new)
+                .toList();
+    }
+
     @RolesAllowed(FACILITY_MANAGER)
     public PaginatedList<ListAccountDto> getNotConfirmedAccounts(final String pattern, final GetPagedAccountListDto dto) {
         int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;

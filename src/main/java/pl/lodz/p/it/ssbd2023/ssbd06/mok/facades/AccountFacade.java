@@ -113,6 +113,13 @@ public class AccountFacade extends AbstractFacade<Account> {
         }
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    public List<Account> findAllOwnersAccounts() {
+        TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findOwners", Account.class);
+        accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
+        return accountTypedQuery.getResultList();
+    }
+
     @Override
     @PermitAll
     public List<Account> findAll() {
@@ -228,7 +235,7 @@ public class AccountFacade extends AbstractFacade<Account> {
     }
 
     private Predicate[] getFilterByPatternPredicates(final String pattern, final CriteriaBuilder cb, final Root<Account> account,
-                                                     final Join<Account, AccountDetails> join) {
+                                                     final Join<?, ?> join) {
         Expression<String> fullNameExpression = cb.concat(cb.concat(join.get("firstName"), " "), join.get("lastName"));
         Expression<String> fullNameExpressionReversed = cb.concat(cb.concat(join.get("lastName"), " "), join.get("firstName"));
 
@@ -242,7 +249,7 @@ public class AccountFacade extends AbstractFacade<Account> {
         return new Predicate[]{fullNamePredicate, fullNamePredicateReversed, emailPredicate, loginPredicate};
     }
 
-    private From<?, ?> resolveFieldClass(final Join<Account, AccountDetails> join, final String fieldName) {
+    private From<?, ?> resolveFieldClass(final Join<?, ?> join, final String fieldName) {
         return switch (fieldName) {
             case "login", "active", "accountState" -> join.getParent();
             case "email", "firstName", "lastName", "phoneNumber" -> join;

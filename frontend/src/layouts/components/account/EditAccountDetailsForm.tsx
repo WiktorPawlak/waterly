@@ -38,7 +38,9 @@ export const EditAccountDetailsForm = ({
 
   const [languageTag, setLanguageTag] = useState(account.languageTag);
   const [twoFactor, setTwoFactor] = useState(account.twoFAEnabled);
-  const [themeMode, setThemeMode] = useState(localStorage.getItem("themeMode") || "light");
+  const [themeMode, setThemeMode] = useState(
+    localStorage.getItem("themeMode") || "light"
+  );
 
   const {
     register,
@@ -319,7 +321,7 @@ export const EditAccountDetailsForm = ({
               color="standard"
               value={themeMode}
               exclusive
-              onChange={(e, value) => {
+              onChange={(_, value) => {
                 handleThemeModeChange(value);
               }}
               aria-label="Platform"

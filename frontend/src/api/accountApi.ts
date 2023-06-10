@@ -197,6 +197,12 @@ export async function getAccountNames(
   return get(`${ACCOUNTS_PATH}/list/name-suggestions`, { pattern: pattern });
 }
 
+export async function getOwnersAccounts(): Promise<
+  ApiResponse<ListAccountDto[]>
+> {
+  return get(`${ACCOUNTS_PATH}/owners`);
+}
+
 export async function grantAccountPermissions(
   accountId: number,
   body: EditRolesDto
