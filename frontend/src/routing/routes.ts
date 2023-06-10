@@ -14,6 +14,7 @@ import { ManageUsersAdminPage } from "../pages/admin";
 import NotFound from "../pages/NotFound";
 import { PATHS } from "./paths";
 import { ManageTariffsPage } from "../pages/facilityManager/ManageTariffsPage";
+import { ApartmentListPage } from "../pages/facilityManager/ApartmentsListPage";
 
 export const Pathnames = {
   public: {
@@ -43,6 +44,7 @@ export const Pathnames = {
     waterMeters: PATHS.WATER_METERS,
     acceptMail: PATHS.ACCEPT_EMAIL,
     manageTariffs: PATHS.MANAGE_TARIFFS,
+    manageApartments: PATHS.MANAGE_APARTMENTS,
   },
   admin: {
     home: PATHS.HOME,
@@ -127,6 +129,11 @@ export const facilityManagerRoutes: RouteType[] = [
     path: Pathnames.public.home,
     Component: HomePage,
     name: "navigation.home",
+  },
+  {
+    path: Pathnames.facilityManager.manageApartments,
+    Component: ApartmentListPage,
+    name: "navigation.apartments",
   },
   {
     path: Pathnames.public.manageTariffs,
