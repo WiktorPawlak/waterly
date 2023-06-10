@@ -3,7 +3,6 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
-import java.util.Collections;
 import java.util.List;
 
 import jakarta.annotation.security.PermitAll;
@@ -16,6 +15,7 @@ import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
@@ -95,6 +95,13 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
     }
 
     public List<WaterMeter> findAllByApartmentId(final long apartmentId) {
-        return Collections.emptyList();
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<WaterMeter> criteriaQuery = cb.createQuery(WaterMeter.class);
+        Root<WaterMeter> waterMeter = criteriaQuery.from(WaterMeter.class);
+        Predicate predicate = cb.equal(waterMeter.get("apartment").get("id"), apartmentId);
+        criteriaQuery.where(predicate);
+
+        return getEntityManager().createQuery(criteriaQuery)
+                .getResultList();
     }
 }

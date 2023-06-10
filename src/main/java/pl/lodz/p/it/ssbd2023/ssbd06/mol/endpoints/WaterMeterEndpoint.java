@@ -7,6 +7,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,8 +102,11 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public List<WaterMeter> getWaterMetersByApartmentId(final long apartmentId) {
-        return waterMeterService.getWaterMetersByApartmentId(apartmentId);
+    public List<WaterMetersDto> getWaterMetersByApartmentId(final long apartmentId) {
+        List<WaterMeter> waterMeters = waterMeterService.getWaterMetersByApartmentId(apartmentId);
+        List<WaterMetersDto> waterMetersDtos = new ArrayList<>();
+        waterMeters.forEach(waterMeter -> waterMetersDtos.add(new WaterMetersDto(waterMeter)));
+        return waterMetersDtos;
     }
 
     @RolesAllowed({FACILITY_MANAGER})
