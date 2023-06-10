@@ -393,6 +393,11 @@ public class AccountService {
                 orderBy);
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    public List<Account> getOwnersAccounts() {
+        return accountFacade.findAllOwnersAccounts();
+    }
+
     @RolesAllowed(FACILITY_MANAGER)
     public Long getNotConfirmedAccountsCount(final String pattern) {
         return accountFacade.countNotConfirmedAccounts(pattern);

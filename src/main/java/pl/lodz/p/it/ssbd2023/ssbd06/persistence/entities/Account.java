@@ -46,6 +46,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.HashedPassword;
         query = "select a from Account a where a.accountDetails.email = :email")
 @NamedQuery(name = "Account.findByPhoneNumber", query = "select a from Account a where a.accountDetails.phoneNumber = :phoneNumber")
 @NamedQuery(name = "Account.findByAccountState", query = "select a from Account a where a.accountState = :accountState")
+@NamedQuery(name = "Account.findOwners",
+        query = "select a from Account a inner join a.roles roles where roles.permissionLevel = 'OWNER' and roles.active = true ")
+
 @NoArgsConstructor
 @EntityListeners({MokAuditingEntityListener.class})
 public class Account extends AbstractEntity {

@@ -232,6 +232,7 @@
   "apiError": {
     "accountWithPhoneNumberExist": "Konto z podanym numerem telefonu już istnieje, podaj inny",
     "accountWithEmailExist": "Konto z podanym emailem już istnieje, podaj inny",
+    "apartmentWithNumberExist": "Lokal z podanym numerem istnieje, podaj inny",
     "accountWithLoginExist": "Konto z podanym loginem już istnieje, podaj inny",
     "unknownError": "Nieznany błąd",
     "accessDenied": "Nie masz dostępu do tego zasobu",
@@ -246,6 +247,7 @@
     "authenticationError": "Błąd uwierzytelnienia, sprawdź swoje dane",
     "passwordsNotMatch": "Stare hasło podane błędnie",
     "resourceNotFound": "Taki zasób nie istnieje",
+    "ownerAccountNotFound": "Nie znaleziono konta właścicela",
     "emailNotMatch": "Taki adres email nie istnieje w systemie",
     "accountNotActive": "Konto jest nieaktywne",
     "accountNotConfirmed": "Konto nie jest potwierdzone",
@@ -440,12 +442,27 @@
     "footer": "POWRÓT DO STRONY GŁÓWNEJ"
   },
   "apartmentPage": {
+    "createApartment": "Dodaj lokal",
+    "selectOwner": "Wybierz właściciela",
+    "apartmentCreatedSuccessfully": "Lokal dodany pomyślnie",
     "header": "Zarządaj lokalami",
     "description": "Tutaj możesz zarządzać lokalami",
     "addButton": "Dodaj lokal",
+    "validation": {
+      "number": {
+        "min": "Numer musi mieć przynajmniej 1 znak",
+        "max": "Numer nie może mieć więcej niż 20 znaków",
+        "syntax": "Numer moze zawierać tylko litery, liczby oraz znaki: -, ., _"
+      },
+      "area": {
+        "value": "Powierzchnia musi być większa od 1 oraz mniejsza od 999.99",
+        "decimal": "Powierzchna musi mieć najwyżej 2 miejsca po przecinku"
+      },
+      "selectedOwner": "Wybierz właściciela lokalu"
+    },
     "dataGrid": {
       "header": {
-        "number": "Number",
+        "number": "Numer",
         "area": "Powierzchnia"
       }
     }

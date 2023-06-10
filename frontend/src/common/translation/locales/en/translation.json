@@ -225,6 +225,7 @@
   "apiError": {
     "accountWithPhoneNumberExist": "Account with the given phone number already exists, select another one",
     "accountWithEmailExist": "Account with the given email already exists, select another one",
+    "apartmentWithNumberExist": "Apartment with the given number already exists, select another one",
     "unkownError": "Unkown error",
     "accountWithLoginExist": "An account with this login already exists, please choose a different one",
     "unknownError": "Unknown error",
@@ -240,6 +241,7 @@
     "authenticationError": "Authentication error, please check your credentials",
     "passwordsNotMatch": "Old password do not match",
     "resourceNotFound": "Resource not found",
+    "ownerAccountNotFound": "Owner account not found",
     "emailNotMatch": "Such email is not registered in our system",
     "accountNotActive": "The account is not active",
     "accountNotConfirmed": "The account is not confirmed",
@@ -439,9 +441,24 @@
     "footer": "BACK TO MAIN PAGE"
   },
   "apartmentPage": {
+    "createApartment": "Create apartment",
+    "selectOwner": "Select owner",
+    "apartmentCreatedSuccessfully": "Apartment created successfully",
     "header": "Manage apartments",
     "description": "Here you can manage your apartments",
     "addButton": "Add apartment",
+    "validation": {
+      "number": {
+        "min": "Number must be at least 1 characters long",
+        "max": "Number must be at most 20 characters long",
+        "syntax": "Number can contain only letters, numbers and characters: -, ., _"
+      },
+      "area": {
+        "value": "Area must be greather than 1 and less than 999.99",
+        "decimal": "Area must have at most 2 decimal places"
+      },
+      "selectedOwner": "Select apartment owner"
+    },
     "dataGrid": {
       "header": {
         "number": "Number",

@@ -54,6 +54,25 @@ export const editAccountSchema = z.object({
     .regex(/^\d*$/, "editAccountDetailsPage.validation.phoneNumber.syntax"),
 });
 
+export const createApartmentSchema = z
+  .object({
+    number: z
+      .string()
+      .min(1, "apartmentPage.validation.number.min")
+      .max(20, "apartmentPage.validation.number.max")
+      .regex(/^[\p{L}0-9._-]+$/u, "apartmentPage.validation.number.syntax"),
+    area: z
+      .string()
+      .regex(/^\d*(\.\d{0,2})?$/, "apartmentPage.validation.area.decimal"),
+  })
+  .refine(
+    (data) => parseFloat(data.area) >= 1 && parseFloat(data.area) < 1000,
+    {
+      message: "apartmentPage.validation.area.value",
+      path: ["area"],
+    }
+  );
+
 export const accountDetailsSchema = z
   .object({
     email: z
@@ -184,16 +203,10 @@ export const twoFactorCodeSchema = z.object({
 });
 
 export const editTariffSchema = z.object({
-  coldWaterPrice : z
-  .string()
-  .regex(/^\d+(\.\d{2})?$/, "validation.waterPrice"),
-  hotWaterPrice: z
-  .string()
-  .regex(/^\d+(\.\d{2})?$/, "validation.waterPrice"),
-  trashPrice: z
-  .string()
-  .regex(/^\d+(\.\d{2})?$/, "validation.waterPrice"),
-})
+  coldWaterPrice: z.string().regex(/^\d+(\.\d{2})?$/, "validation.waterPrice"),
+  hotWaterPrice: z.string().regex(/^\d+(\.\d{2})?$/, "validation.waterPrice"),
+  trashPrice: z.string().regex(/^\d+(\.\d{2})?$/, "validation.waterPrice"),
+});
 
 export const editInvoiceSchema = z.object({
   invoiceNumber : z
@@ -217,6 +230,8 @@ export type ChangeOwnPasswordSchemaType = z.infer<
 
 export type AccountDetailsSchemaType = z.infer<typeof accountDetailsSchema>;
 
+export type CreateApartmentSchemaType = z.infer<typeof createApartmentSchema>;
+
 export type EditAccountSchemaType = z.infer<typeof editAccountSchema>;
 
 export type EditAccountDetailsSchemaType = z.infer<
@@ -235,6 +250,6 @@ export type TwoFactorCodeSchema = z.infer<typeof twoFactorCodeSchema>;
 
 export type EditEmailByAdminSchemaType = z.infer<typeof editEmailByAdminSchema>;
 
-export type EditTariffSchema = z.infer<typeof editTariffSchema>
+export type EditTariffSchema = z.infer<typeof editTariffSchema>;
 
 export type EditInvoiceSchema = z.infer<typeof editInvoiceSchema>

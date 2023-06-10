@@ -270,6 +270,15 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().entity(accounts).build();
     }
 
+    @RolesAllowed(ADMINISTRATOR)
+    @GET
+    @Path("/owners")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOwnersAccounts() {
+        List<ListAccountDto> accounts = retry(() -> accountEndpoint.getOwnersAccounts(), accountEndpoint);
+        return Response.ok().entity(accounts).build();
+    }
+
     @RolesAllowed({ADMINISTRATOR})
     @POST
     @Path("/list")
