@@ -1,21 +1,29 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.observability;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 
 import jakarta.annotation.Priority;
 import jakarta.annotation.Resource;
 import jakarta.ejb.SessionContext;
+import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
 @Log
 @Monitored
 @Interceptor
 @Priority(Interceptor.Priority.APPLICATION + 20)
 public class TracingLoggerInterceptor {
+
+    @Inject
+    @Property("system.log.stackTraces")
+    private boolean shouldLogStackTraces;
 
     private final StringBuilder sb = new StringBuilder();
 
@@ -84,6 +92,14 @@ public class TracingLoggerInterceptor {
                 .append(e instanceof ApplicationBaseException abe ?
                         abe.getResponse().getEntity().toString()
                         : e.getCause());
+        if (shouldLogStackTraces) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String stackTrace = sw.toString();
+            sb.append(", stackTrace: ")
+                    .append(stackTrace);
+        }
     }
 
     private void logInfo() {

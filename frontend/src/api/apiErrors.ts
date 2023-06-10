@@ -24,6 +24,8 @@ const apiErrors = new Map<string, string>([
     ["ERROR.ACCOUNT_LOCKED", "apiError.accountLocked"],
     ["ERROR.TARIFFS_COLIDING", "apiError.tariffsColiding"],
     ["ERROR.INVALID_TARIFF_PERIOD", "apiError.invalidTariffPeriod"],
+    ["ERROR.INVOICE_NUMBER_EXISTS", "apiError.invoiceNumberExists"],
+    ["ERROR.INVOICES_COLLIDING", "apiError.invoicesColliding"],
     ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
     ["VALIDATION.EMAIL", "validation.emailInvalid"],
     ["VALIDATION.EMAIL_SIZE", "validation.emailInvalidSize"],

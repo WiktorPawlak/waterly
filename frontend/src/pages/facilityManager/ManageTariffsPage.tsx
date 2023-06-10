@@ -177,12 +177,12 @@ export const ManageTariffsPage = () => {
                     mx: { xs: 2, md: 4 },
                 }}
             >
-                            <EditTariffDialog
-                isOpen={editTariffDialogOpen}
-                setIsOpen={setEditTariffDialogOpen}
-                tariff={selectedTariff}
-                etag={selectedTariffEtag}
-            />
+                <EditTariffDialog
+                    isOpen={editTariffDialogOpen}
+                    setIsOpen={setEditTariffDialogOpen}
+                    tariff={selectedTariff}
+                    etag={selectedTariffEtag}
+                />
                 <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>
                     {t("manageTariffsPage.header")}
                 </Typography>

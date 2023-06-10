@@ -4,6 +4,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException.E
 import static pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException.ERROR_ACCOUNT_WITH_LOGIN_ALREADY_EXIST;
 import static pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException.ERROR_ACCOUNT_WITH_PHONE_NUMBER_ALREADY_EXIST;
 import static pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException.ERROR_APARTMENT_WITH_NUMBER_ALREADY_EXIST;
+import static pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException.ERROR_INVOICE_NUMBER_EXISTS;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,7 +31,8 @@ public class FacadeExceptionInterceptor {
             "uk_account_email", ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXIST,
             "uk_account_phone_number", ERROR_ACCOUNT_WITH_PHONE_NUMBER_ALREADY_EXIST,
             "uk_account_login", ERROR_ACCOUNT_WITH_LOGIN_ALREADY_EXIST,
-            "uk_apartment_name", ERROR_APARTMENT_WITH_NUMBER_ALREADY_EXIST);
+            "uk_apartment_name", ERROR_APARTMENT_WITH_NUMBER_ALREADY_EXIST,
+            "uk_invoice_number", ERROR_INVOICE_NUMBER_EXISTS);
 
     @AroundInvoke
     public Object intercept(final InvocationContext ctx) throws Exception {

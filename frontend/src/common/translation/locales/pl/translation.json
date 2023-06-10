@@ -184,9 +184,9 @@
       "headers": {
         "id": "Id",
         "date": "Data",
-        "totalCost": "Kwota",
+        "totalCost": "Kwota [zł]",
         "invoiceNumber": "Nr faktury",
-        "waterUsage": "Zużycie wody"
+        "waterUsage": "Zużycie wody [m<sup>3</sup>]"
       }
     }
   },
@@ -255,7 +255,9 @@
     "transactionRollback": "Operacja została odwołana. Spróbuj ponownie później lub skontaktuj się z naszym serwisem.",
     "accountLocked": "Konto zablokowane, skontaktuj się z administratorem",
     "invalidTariffPeriod": "Wprowadzono niepoprawny okres obowiązywania taryfy",
-    "tariffsColiding": "Istnieje taryfa z nakładającym się okresem obowiązywania"
+    "tariffsColiding": "Istnieje taryfa z nakładającym się okresem obowiązywania",
+    "invoicesColliding": "Wprowadzono już fakturę na podany miesiąc",
+    "invoiceNumberExists":"Istnieje już faktura z podanym numerem"
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",
@@ -289,7 +291,10 @@
     "uuidInvalidPattern": "Nieprawidłowy wzorzec UUID",
     "uuidInvalid": "Nieprawidłowe UUID",
     "twoFactorCode": "Kod dwuetapowej weryfikacji musi składać się z 8 cyfr",
-    "waterPrice": "Cena musi być podana z dokładnością do dwóch miejsc po przecinku"
+    "waterPrice": "Cena musi być podana z dokładnością do dwóch miejsc po przecinku",
+    "invoiceNumber":"Numer faktury musi zgadzać się ze schematem FV YYYY/MM/DD", 
+    "waterUsage": "Zużycie wody musi być podane z dokładnością do trzech miejsc po przecinku",
+    "totalCost": "Całkowity koszt musi być podany z dokładnością do dwóch miejsc po przecinku"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -396,6 +401,14 @@
     "editTariff": "Edytuj taryfę",
     "tariffEditedSuccesfully": "Pomyślnie edytowano taryfę"
   },
+  "editInvoiceModal": {
+    "date": "Data",
+    "totalCost": "Koszt [zł]",
+    "waterUsage": "Zużycie wody [m<sup>3</sup>]",
+    "editInvoice": "Edytuj fakturę",
+    "invoiceNumber" : "Numer Faktury",
+    "invoiceEditedSuccesfully": "Pomyślnie edytowano fakturę"
+  },
   "twoFactor": {
     "yes": "włączone",
     "no": "wyłączone",
@@ -413,7 +426,8 @@
     "verify-users": "Weryfikuj użytkowników",
     "apartments": "Lokale",
     "profile": "Profil",
-    "tariffs": "Przeglądaj taryfy"
+    "tariffs": "Przeglądaj taryfy",
+    "invoices": "Przeglądaj faktury"
   },
   "homePage": {
     "button": "Zacznij",

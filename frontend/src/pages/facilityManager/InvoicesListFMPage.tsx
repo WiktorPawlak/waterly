@@ -1,6 +1,7 @@
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   DataGrid,
+  GridCellParams,
   GridColDef,
   GridColumnHeaderParams,
   GridSortModel,
@@ -28,15 +29,23 @@ import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../api/apiErrors";
 import {
   GetPagedInvoicesListDto,
-  ListInvoiceDto,
+  InvoiceDto,
+  getInvoiceById,
   getInvoicesList,
 } from "../../api/invoiceApi";
+import { useAccount } from "../../hooks/useAccount";
+import { roles } from "../../types";
+import { EditInvoiceModal } from "../../layouts/components/Invoice/EditInvoiceModal";
 
 export const InvoicesListFMPage = () => {
   const { t } = useTranslation();
 
+  const { account } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [pageState, setPageState] = useState<PaginatedList<ListInvoiceDto>>({
+  const [editInvoiceModalOpen, setEditInvoiceModalOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<InvoiceDto>();
+  const [selectedInvoiceEtag, setSelectedInvoiceEtag] = useState("");
+  const [pageState, setPageState] = useState<PaginatedList<InvoiceDto>>({
     data: [],
     pageNumber: 1,
     itemsInPage: 0,
@@ -46,13 +55,15 @@ export const InvoicesListFMPage = () => {
   const [listRequest, setListRequest] = useState<GetPagedInvoicesListDto>({
     page: 1,
     order: "asc",
+    pageSize: 10,
+    orderBy: "invoiceNumber"
   });
 
   useEffect(() => {
     if (listRequest) {
       fetchData();
     }
-  }, [listRequest]);
+  }, [listRequest, editInvoiceModalOpen]);
 
   const fetchData = () => {
     setIsLoading(true);
@@ -68,13 +79,29 @@ export const InvoicesListFMPage = () => {
     });
   };
 
+  
+  const handleCellClick = async (params: GridCellParams) => {
+    if (account?.currentRole === roles.facilityManager) {
+        const response = await getInvoiceById(params.row.id);
+        if (response.data) {
+            setSelectedInvoice(response.data!);
+            setSelectedInvoiceEtag(response.headers!["etag"] as string);
+        } else {
+            enqueueSnackbar(t(resolveApiError(response.error)), {
+                variant: "error",
+            });
+        }
+        setEditInvoiceModalOpen(true);
+    }
+};
+
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     page: number
   ) => {
     setListRequest((prevListRequest) => ({
       ...prevListRequest,
-      page: page,
+      page: page
     }));
   };
 
@@ -82,6 +109,7 @@ export const InvoicesListFMPage = () => {
     setListRequest((prevListRequest) => ({
       ...prevListRequest,
       page: 1,
+      pageSize: parseInt(event.target.value),
     }));
   };
 
@@ -121,7 +149,9 @@ export const InvoicesListFMPage = () => {
     {
       field: "waterUsage",
       renderHeader: () => (
-        <strong>{t("InvoicesListFMPage.dataGrid.headers.waterUsage")}</strong>
+        <strong>
+          <Trans i18nKey={"InvoicesListFMPage.dataGrid.headers.waterUsage"} components={{ sup: <sup /> }} />
+        </strong>
       ),
       width: 150,
     },
@@ -159,6 +189,12 @@ export const InvoicesListFMPage = () => {
           mx: { xs: 2, md: 4 },
         }}
       >
+        <EditInvoiceModal
+          isOpen={editInvoiceModalOpen}
+          setIsOpen={setEditInvoiceModalOpen}
+          invoice={selectedInvoice}
+          etag={selectedInvoiceEtag}
+        />
         <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>
           {t("InvoicesListFMPage.header")}
         </Typography>
@@ -198,6 +234,7 @@ export const InvoicesListFMPage = () => {
               onSortModelChange={handleSortModelChange}
               disableColumnMenu={true}
               hideFooterPagination={true}
+              onCellClick={handleCellClick}
               sortingOrder={["asc", "desc"]}
             />
             <Box

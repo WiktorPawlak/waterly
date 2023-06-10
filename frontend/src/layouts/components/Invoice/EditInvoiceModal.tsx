@@ -17,55 +17,51 @@ import { plPL } from '@mui/x-date-pickers/locales';
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    EditTariffSchema,
-    editTariffSchema,
-} from "../../../validation/validationSchemas";
-import { TariffDto, getTariffById, updateTariff } from "../../../api/tariffsApi";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { InvoiceDto, updateInvoice } from "../../../api/invoiceApi";
+import { EditInvoiceSchema, editInvoiceSchema } from "../../../validation/validationSchemas";
 
 
 interface Props {
-    tariff: TariffDto | undefined;
+    invoice: InvoiceDto | undefined;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     etag: string;
 }
 
-export const EditTariffDialog = ({
-    tariff,
+export const EditInvoiceModal = ({
+    invoice,
     isOpen,
     setIsOpen,
     etag
 }: Props) => {
     const { t } = useTranslation();
-    const [startDate, setStartDate] = useState<Dayjs | null>(dayjs(tariff?.startDate));
-    const [endDate, setEndDate] = useState<Dayjs | null>(dayjs(tariff?.endDate));
+    const [date, setDate] = useState<Dayjs | null>(dayjs(invoice?.date));
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
         setValue
-    } = useForm<EditTariffSchema>({
-        resolver: zodResolver(editTariffSchema),
+    } = useForm<EditInvoiceSchema>({
+        resolver: zodResolver(editInvoiceSchema),
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
-            coldWaterPrice: tariff?.coldWaterPrice.toString(),
-            hotWaterPrice: tariff?.hotWaterPrice.toString(),
-            trashPrice: tariff?.trashPrice.toString()
+            totalCost: invoice?.totalCost.toString(),
+            waterUsage: invoice?.waterUsage.toString(),
+            invoiceNumber: invoice?.invoiceNumber
         },
     });
 
     const {
-        coldWaterPrice: coldWaterPriceError,
-        hotWaterPrice: hotWaterPriceError,
-        trashPrice: trashPriceError
+        totalCost: totalCostError,
+        waterUsage: waterUsageError,
+        invoiceNumber: invoiceNumberError
     } = errors;
-    const coldWaterPriceErrorMessage = coldWaterPriceError?.message;
-    const hotWaterPriceErrorMessage = hotWaterPriceError?.message;
-    const trashPriceErrorMessage = trashPriceError?.message;
+    const totalCostErrorMessage = totalCostError?.message;
+    const waterUsageErrorMessage = waterUsageError?.message;
+    const invoiceNumberErrorMessage = invoiceNumberError?.message;
 
     const handleClose = () => {
         setIsOpen(false);
@@ -73,31 +69,29 @@ export const EditTariffDialog = ({
     };
 
     useEffect(() => {
-        if (tariff) {
-            setValue("hotWaterPrice", tariff!.hotWaterPrice.toString());
-            setValue("coldWaterPrice", tariff!.coldWaterPrice.toString());
-            setValue("trashPrice", tariff!.trashPrice.toString());
-            setStartDate(dayjs(tariff!.startDate));
-            setEndDate(dayjs(tariff!.endDate));
+        if (invoice) {
+            setValue("waterUsage", invoice!.waterUsage.toString());
+            setValue("totalCost", invoice!.totalCost.toString());
+            setValue("invoiceNumber", invoice!.invoiceNumber);
+            setDate(dayjs(invoice!.date));
         }
-    }, [tariff])
+    }, [invoice])
 
 
-    const handleConfirmAction = async (editTariff: any) => {
-        const response = await updateTariff(
-            tariff!.id,
+    const handleConfirmAction = async (editInvoice: any) => {
+        const response = await updateInvoice(
+            invoice!.id,
             {
-                ...editTariff,
-                startDate: startDate?.format('YYYY-MM-DD'),
-                endDate: endDate?.format('YYYY-MM-DD'),
-                version: tariff?.version,
-                id: tariff?.id
+                ...editInvoice,
+                date: date?.format('YYYY-MM-DD'),
+                version: invoice?.version,
+                id: invoice?.id
             },
             etag
         );
 
         if (response.status === 200) {
-            enqueueSnackbar(t("editTariffDialog.tariffEditedSuccesfully"), {
+            enqueueSnackbar(t("editInvoiceModal.invoiceEditedSuccesfully"), {
                 variant: "success",
             });
             handleClose();
@@ -120,7 +114,7 @@ export const EditTariffDialog = ({
                         }}
                     >
                         <DialogTitle id="role-modal-title">
-                            {t("editTariffDialog.editTariff")}
+                            {t("editInvoiceModal.editInvoice")}
                         </DialogTitle>
                         <Button sx={{ width: "30px" }} onClick={handleClose}>
                             <CloseIcon />
@@ -132,46 +126,37 @@ export const EditTariffDialog = ({
                         >
                             <StyledTextField
                                 autoFocus
-                                label={<Trans i18nKey={"editTariffDialog.coldWaterPrice"} components={{ sup: <sup /> }} />}
+                                label={<Trans i18nKey={"editInvoiceModal.invoiceNumber"} components={{ sup: <sup /> }} />}
                                 variant="standard"
                                 sx={{ width: "100% !important" }}
-                                {...register("coldWaterPrice")}
-                                error={!!coldWaterPriceErrorMessage}
-                                helperText={coldWaterPriceErrorMessage && t(coldWaterPriceErrorMessage)}
+                                {...register("invoiceNumber")}
+                                error={!!invoiceNumberErrorMessage}
+                                helperText={invoiceNumberErrorMessage && t(invoiceNumberErrorMessage)}
                             />
                             <StyledTextField
                                 variant="standard"
                                 sx={{ width: "100% !important" }}
-                                label={<Trans i18nKey={"editTariffDialog.hotWaterPrice"} components={{ sup: <sup /> }} />}
-                                {...register("hotWaterPrice")}
-                                error={!!hotWaterPriceErrorMessage}
-                                helperText={hotWaterPriceErrorMessage && t(hotWaterPriceErrorMessage)}
+                                label={<Trans i18nKey={"editInvoiceModal.waterUsage"} components={{ sup: <sup /> }} />}
+                                {...register("waterUsage")}
+                                error={!!waterUsageErrorMessage}
+                                helperText={waterUsageErrorMessage && t(waterUsageErrorMessage)}
                             />
                             <StyledTextField
-                                label={<Trans i18nKey={"editTariffDialog.trashPrice"} components={{ sup: <sup /> }} />}
+                                label={<Trans i18nKey={"editInvoiceModal.totalCost"} components={{ sup: <sup /> }} />}
                                 sx={{ width: "100% !important" }}
                                 variant="standard"
-                                {...register("trashPrice")}
-                                error={!!trashPriceErrorMessage}
-                                helperText={trashPriceErrorMessage && t(trashPriceErrorMessage)}
+                                {...register("totalCost")}
+                                error={!!totalCostErrorMessage}
+                                helperText={totalCostErrorMessage && t(totalCostErrorMessage)}
                             />
                             <LocalizationProvider adapterLocale="pl" dateAdapter={AdapterDayjs} localeText={plPL.components.MuiLocalizationProvider.defaultProps.localeText}>
                                 <DatePicker
-                                    label={t("editTariffDialog.startDate")}
-                                    format="YYYY-MM"
-                                    maxDate={endDate}
-                                    value={startDate}
-                                    onChange={(newValue) => setStartDate(newValue)}
+                                    label={t("editInvoiceModal.date")}
+                                    format="YYYY-MM-DD"
+                                    value={date}
+                                    onChange={(newValue) => setDate(newValue)}
                                     views={['month', 'year']}
                                     sx={{ mb: 2 }}
-                                />
-                                <DatePicker
-                                    label={t("editTariffDialog.endDate")}
-                                    format="YYYY-MM"
-                                    minDate={startDate}
-                                    value={endDate}
-                                    onChange={(newValue) => setEndDate(newValue)}
-                                    views={['month', 'year']}
                                 />
                             </LocalizationProvider>
 
