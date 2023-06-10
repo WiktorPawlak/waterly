@@ -4,6 +4,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.List;
+import java.util.Optional;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
@@ -56,11 +57,16 @@ public class ApartmentService {
     @RolesAllowed(FACILITY_MANAGER)
     public void addApartmentOwner(final long apartmentId, final ChangeApartmentOwnerDto dto) {
         Apartment apartment = apartmentFacade.findById(apartmentId);
-        Account newOwner = accountFacade.findByLogin(dto.getNewOwnerLogin())
-                .orElseThrow(OwnerAccountDoesNotExistException::ownerAccountDoesNotExistException);
 
-        apartment.setOwner(newOwner);
-        apartmentFacade.update(apartment);
+        Optional<Account> optionalNewOwner = Optional.ofNullable(accountFacade.findById(dto.getNewOwnerId()));
+
+        if (optionalNewOwner.isPresent()) {
+            Account newOwner = optionalNewOwner.get();
+            apartment.setOwner(newOwner);
+            apartmentFacade.update(apartment);
+        } else {
+            throw new OwnerAccountDoesNotExistException();
+        }
     }
 
 

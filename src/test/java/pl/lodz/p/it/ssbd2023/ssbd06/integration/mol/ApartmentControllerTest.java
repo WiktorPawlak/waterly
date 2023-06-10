@@ -27,10 +27,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import lombok.SneakyThrows;
-import io.restassured.http.ContentType;
-import io.restassured.parsing.Parser;
-import io.restassured.response.Response;
-import jakarta.ws.rs.core.MediaType;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
@@ -177,7 +173,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         @Test
         void shouldChangeApartmentOwner() {
             ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
-            changeOwnerDto.setNewOwnerLogin(NEW_OWNER_LOGIN);
+            changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -191,7 +187,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         @Test
         void shouldReturnNotFoundWhenThereIsNoSuchApartmentOwner() {
             ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
-            changeOwnerDto.setNewOwnerLogin("notExistingAcc");
+            changeOwnerDto.setNewOwnerId(99L);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -205,7 +201,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         @Test
         void shouldReturnNotFoundWhenThereIsNoSuchApartment() {
             ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
-            changeOwnerDto.setNewOwnerLogin(NEW_OWNER_LOGIN);
+            changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -219,7 +215,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         @Test
         void shouldReturnUnauthorizedWhenNoAuthToken() {
             ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
-            changeOwnerDto.setNewOwnerLogin(NEW_OWNER_LOGIN);
+            changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
                     .body(changeOwnerDto)
@@ -232,7 +228,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         @Test
         void shouldReturnForbiddenWhenInsufficientRoles() {
             ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
-            changeOwnerDto.setNewOwnerLogin(NEW_OWNER_LOGIN);
+            changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
                     .header(AUTHORIZATION, OWNER_TOKEN)

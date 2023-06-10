@@ -26,9 +26,15 @@ import {
 import { GetPagedListDto, PaginatedList } from "../../../api/accountApi";
 import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../../api/apiErrors";
-import { ApartmentDto, getAllAprtmentsList } from "../../../api/apartmentApi";
+import {
+  ApartmentDto,
+  getAllAprtmentsList,
+  getApartmentById,
+} from "../../../api/apartmentApi";
 import { MainLayout } from "../../MainLayout";
 import { CreateApartmentDialog } from "./CreateApartmentDialog";
+import { EditApartmentUserModal } from "./EditApartmentUserModal";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 
 export const ApartmentsList = () => {
   const navigate = useNavigate();
@@ -51,11 +57,20 @@ export const ApartmentsList = () => {
     orderBy: "number",
   });
 
+  const [selectedApartment, setSelectedApartment] = useState<ApartmentDto>();
+  const [editApartmentOwnerModalOpen, setEditApartmentOwnerModalOpen] =
+    useState(false);
+
   useEffect(() => {
     if (listRequest) {
       fetchData();
     }
-  }, [listRequest, pattern, addApartmentDialogIsOpen]);
+  }, [
+    listRequest,
+    pattern,
+    addApartmentDialogIsOpen,
+    editApartmentOwnerModalOpen,
+  ]);
 
   const fetchData = () => {
     setIsLoading(true);
@@ -89,18 +104,12 @@ export const ApartmentsList = () => {
     }));
   };
 
-  const handleCellClick = (params: GridCellParams) => {
-    if (params.field != "actions") {
-      const apartmentId = params.row.id;
-      navigate(`/apartments/${apartmentId}`);
-    }
-  };
-
   const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
     if (
       column.field != "id" &&
       column.field != "roles" &&
-      column.field != "actions"
+      column.field != "changeUser" &&
+      column.field != "edit"
     )
       setListRequest((old) => ({ ...old, orderBy: column.field }));
   };
@@ -108,6 +117,21 @@ export const ApartmentsList = () => {
   const handleSortModelChange = useCallback((sortModel: GridSortModel) => {
     setListRequest((old) => ({ ...old, order: sortModel[0]?.sort as string }));
   }, []);
+
+  const handleCellClick = async (params: GridCellParams) => {
+    const response = await getApartmentById(params.row.id);
+    if (response.data) {
+      setSelectedApartment(response.data!);
+    } else {
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
+    }
+    if (params.field != "changeUser" && params.field != "edit") {
+      const apartmentId = params.row.id;
+      navigate(`/apartments/${apartmentId}`);
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -124,7 +148,7 @@ export const ApartmentsList = () => {
       renderHeader: () => (
         <strong>{t("apartmentPage.dataGrid.header.number")}</strong>
       ),
-      width: 200,
+      width: 130,
     },
     {
       field: "area",
@@ -136,12 +160,36 @@ export const ApartmentsList = () => {
           {params.value.toFixed(2)} m<sup>2</sup>
         </span>
       ),
-      width: 200,
+      width: 130,
+    },
+    {
+      field: "ownerId",
+      renderHeader: () => <strong>{t("apartmentPage.ownerId")}</strong>,
+      width: 130,
     },
     {
       headerName: "",
       field: "edit",
       sortable: false,
+      hideable: true,
+      width: 80,
+      align: "right",
+      renderCell: (params) => (
+        <>
+          <Button onClick={() => setEditApartmentOwnerModalOpen(true)}>
+            <ManageAccountsIcon />
+          </Button>
+          <EditApartmentUserModal
+            isOpen={editApartmentOwnerModalOpen}
+            setIsOpen={setEditApartmentOwnerModalOpen}
+            apartmentId={selectedApartment?.id!}
+          />
+        </>
+      ),
+    },
+    {
+      headerName: "",
+      field: "changeUser",
       hideable: true,
       width: 80,
       align: "right",
@@ -204,7 +252,7 @@ export const ApartmentsList = () => {
               />
             )}
           />
-          <Box sx={{ height: 600, width: "75%" }}>
+          <Box sx={{ height: 600, width: "100%" }}>
             <DataGrid
               autoHeight
               hideFooter
