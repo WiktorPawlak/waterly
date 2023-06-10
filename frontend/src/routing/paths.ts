@@ -17,4 +17,6 @@ export const PATHS = {
   NOT_FOUND: "/not-found",
 
   MANAGE_TARIFFS: "/tariffs",
+
+  MANAGE_APARTMENTS: "/apartments",
 } as const;

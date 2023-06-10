@@ -208,7 +208,8 @@
     "invoices": "Invoices",
     "waterMeters": "Water meters",
     "editAccountDetails": "Edit account details",
-    "tariffs": "Tariff"
+    "tariffs": "Tariff",
+    "apartments": "Apartments"
   },
   "general": {
     "role": "Role: ",
@@ -409,6 +410,7 @@
     "homePage": "Home",
     "accounts": "Manage users",
     "verify-users": "Verify users",
+    "apartments": "Apartments",
     "profile": "Profile",
     "tariffs": "View tariffs"
   },
@@ -421,5 +423,16 @@
     "header": "Oh no! The page seems to have vanished into thin air.",
     "description": "Our tech wizards are on the case.",
     "footer": "BACK TO MAIN PAGE"
+  },
+  "apartmentPage": {
+    "header": "Manage apartments",
+    "description": "Here you can manage your apartments",
+    "addButton": "Add apartment",
+    "dataGrid": {
+      "header": {
+        "number": "Number",
+        "area": "Area"
+      }
+    }
   }
 }

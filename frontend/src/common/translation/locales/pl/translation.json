@@ -215,7 +215,8 @@
     "invoices": "Faktury",
     "waterMeters": "Wodomierze",
     "editAccountDetails": "Edytuj konto",
-    "tariffs": "Taryfa"
+    "tariffs": "Taryfa",
+    "apartments": "Lokale"
   },
   "general": {
     "role": "Rola: ",
@@ -410,6 +411,7 @@
     "homePage": "Strona główna",
     "accounts": "Zarządzaj użytkownikami",
     "verify-users": "Weryfikuj użytkowników",
+    "apartments": "Lokale",
     "profile": "Profil",
     "tariffs": "Przeglądaj taryfy"
   },
@@ -422,5 +424,16 @@
     "header": "O nie! Wygląda na to, że strona rozpłynęła się w powietrzu.",
     "description": "Nasi śledczy już nad tym pracują.",
     "footer": "POWRÓT DO STRONY GŁÓWNEJ"
+  },
+  "apartmentPage": {
+    "header": "Zarządaj lokalami",
+    "description": "Tutaj możesz zarządzać lokalami",
+    "addButton": "Dodaj lokal",
+    "dataGrid": {
+      "header": {
+        "number": "Number",
+        "area": "Powierzchnia"
+      }
+    }
   }
 }
