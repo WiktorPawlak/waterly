@@ -8,9 +8,11 @@ import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
+import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,8 +26,13 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import lombok.SneakyThrows;
+import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
+import io.restassured.response.Response;
+import jakarta.ws.rs.core.MediaType;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
@@ -159,6 +166,80 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 //                    .statusCode(FORBIDDEN.getStatusCode())
 //                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
 //        }
+
+    }
+
+    @Nested
+    class ApartmentOwnerChange {
+
+        @Test
+        void shouldChangeApartmentOwner() {
+            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            changeOwnerDto.setNewOwnerLogin(NEW_OWNER_LOGIN);
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(changeOwnerDto)
+                      .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
+                    .then()
+                    .statusCode(OK.getStatusCode());
+        }
+
+        @Test
+        void shouldReturnNotFoundWhenThereIsNoSuchApartmentOwner() {
+            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            changeOwnerDto.setNewOwnerLogin("notExistingAcc");
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(changeOwnerDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode());
+        }
+
+        @Test
+        void shouldReturnNotFoundWhenThereIsNoSuchApartment() {
+            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            changeOwnerDto.setNewOwnerLogin(NEW_OWNER_LOGIN);
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(changeOwnerDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/99" + CHANGE_OWNER_PATH)
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode());
+        }
+
+        @Test
+        void shouldReturnUnauthorizedWhenNoAuthToken() {
+            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            changeOwnerDto.setNewOwnerLogin(NEW_OWNER_LOGIN);
+
+            given()
+                    .body(changeOwnerDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
+                    .then()
+                    .statusCode(UNAUTHORIZED.getStatusCode());
+        }
+
+        @Test
+        void shouldReturnForbiddenWhenInsufficientRoles() {
+            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            changeOwnerDto.setNewOwnerLogin(NEW_OWNER_LOGIN);
+
+            given()
+                    .header(AUTHORIZATION, OWNER_TOKEN)
+                    .body(changeOwnerDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode());
+        }
 
     }
 

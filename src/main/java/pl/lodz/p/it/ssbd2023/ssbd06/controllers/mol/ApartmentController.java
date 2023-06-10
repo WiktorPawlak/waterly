@@ -10,12 +10,14 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
@@ -95,8 +97,10 @@ public class ApartmentController extends RepeatableTransactionController {
     @PUT
     @Path("/{id}/owner")
     @RolesAllowed(FACILITY_MANAGER)
-    public void changeApartmentOwner(@PathParam("id") final long apartmentId, final ChangeApartmentOwnerDto dto) {
-        apartmentEndpoint.changeApartmentOwner(apartmentId, dto);
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response changeApartmentOwner(@PathParam("id") final long apartmentId, @NotNull @Valid final ChangeApartmentOwnerDto dto) {
+        retry(() -> apartmentEndpoint.changeApartmentOwner(apartmentId, dto), apartmentEndpoint);
+        return Response.ok().build();
     }
 
     @POST
