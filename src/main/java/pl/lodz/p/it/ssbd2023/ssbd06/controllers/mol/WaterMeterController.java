@@ -5,6 +5,7 @@ import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.util.List;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -50,7 +51,8 @@ public class WaterMeterController extends RepeatableTransactionController {
     @GET
     @Path("/apartment/{apartmentId}")
     public Response getWaterMatersByApartmentId(@PathParam("apartmentId") final long apartmentId) {
-        return Response.ok().entity(waterMeterEndpoint.getWaterMetersByApartmentId(apartmentId)).build();
+        List<WaterMetersDto> waterMeters = retry(() -> (waterMeterEndpoint.getWaterMetersByApartmentId(apartmentId)), waterMeterEndpoint);
+        return Response.ok().entity(waterMeters).build();
     }
 
     @POST

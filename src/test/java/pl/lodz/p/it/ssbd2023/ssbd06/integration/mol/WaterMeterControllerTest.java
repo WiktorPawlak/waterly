@@ -1,14 +1,13 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
-import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
-import static jakarta.ws.rs.core.Response.Status.CONFLICT;
-import static jakarta.ws.rs.core.Response.Status.CREATED;
-import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
+import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.OK;
@@ -26,6 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 @Order(6)
@@ -214,6 +214,21 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .statusCode(BAD_REQUEST.getStatusCode());
         }
 
+    }
+
+    @Nested
+    class ApartmentGetWaterMeterList {
+
+        @Test
+        void shouldGetWaterMetersForApartmentId() {
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .get(WATERMETER_PATH + "/apartment/" + APARTMENT_ID)
+                    .then()
+                    .statusCode(OK.getStatusCode())
+                    .extract().body().jsonPath().getList("data", WaterMeter.class);
+        }
     }
 
     private static Stream<Arguments> provideTokensForParameterizedTests() {
