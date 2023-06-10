@@ -34,6 +34,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final String ACCOUNT_PATH = "/accounts";
     protected static final String WATERMETER_PATH = "/water-meters";
     protected static final String APARTMENT_PATH = "/apartments";
+    protected static final String CHANGE_OWNER_PATH = "/owner";
 
     protected static final String TARIFF_PATH = "/tariffs";
 
@@ -52,6 +53,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final long WATER_METER_ID = 1;
     protected static final long MAIN_WATER_METER_ID = 2;
 
+    protected static final String NEW_OWNER_LOGIN = "jerzy";
     protected static final Credentials ADMIN_CREDENTIALS = new Credentials("admin", "admin12345");
     protected static final Credentials OWNER_CREDENTIALS = new Credentials("new", "jantes123");
     protected static final Credentials FACILITY_MANAGER_CREDENTIALS = new Credentials("tomdut", "jantes123");
@@ -59,6 +61,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final AccountActiveStatusDto ACTIVATE_ACCOUNT = AccountActiveStatusDto.of(true);
     protected static final WaterMeterActiveStatusDto DEACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(false);
     protected static final WaterMeterActiveStatusDto ACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(true);
+
     protected static final BigDecimal STARTING_VALUE = BigDecimal.valueOf(100);
     protected static final String TEST_DATE = "2024-06-10";
     protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(STARTING_VALUE, TEST_DATE);

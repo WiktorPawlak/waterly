@@ -51,6 +51,7 @@ public class Apartment extends AbstractEntity {
     private BigDecimal area;
 
     @ToString.Exclude
+    @Setter
     @NotNull
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)

@@ -83,7 +83,26 @@ INSERT INTO public.facility_manager (id) VALUES (7);
 INSERT INTO public.owner (id) VALUES (8);
 INSERT INTO public.administrator (id) VALUES (9);
 INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id) VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 3);
-
+-- add MANAGER OWNER password jantes123
+INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on) VALUES (nextval('account_details_id_seq'), 0, 'w.tutkaj@gmail.com', 'Weronika', 'Tutkaj', '123462341', now(), now());
+INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled, otp_secret) VALUES (nextval('account_id_seq'), 0, true, 'managerowner', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 4, now(), now(), false, '59f5bee8-f5bf-11ed-b67e-0242ac120002');
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('OWNER', nextval('role_id_seq'), true, 0, 4, now(), now());
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), false, 0, 4, now(), now());
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('ADMINISTRATOR', nextval('role_id_seq'), false, 0, 4, now(), now());
+INSERT INTO public.owner (id) VALUES (10);
+INSERT INTO public.facility_manager (id) VALUES (11);
+INSERT INTO public.administrator (id) VALUES (12);
+INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id) VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 4);
+-- add test OWNER password jantes123
+INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on) VALUES (nextval('account_details_id_seq'), 0, 'nikat2001@gmail.com', 'Weronika', 'Testowa', '123462387', now(), now());
+INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled, otp_secret) VALUES (nextval('account_id_seq'), 0, true, 'nikattoja', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 5, now(), now(), false, '59f5bee8-f5bf-11ed-b67e-0242ac120002');
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('OWNER', nextval('role_id_seq'), true, 0, 5, now(), now());
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), false, 0, 5, now(), now());
+INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on) VALUES ('ADMINISTRATOR', nextval('role_id_seq'), false, 0, 5, now(), now());
+INSERT INTO public.owner (id) VALUES (13);
+INSERT INTO public.facility_manager (id) VALUES (14);
+INSERT INTO public.administrator (id) VALUES (15);
+INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id) VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 5);
 -- mol
 
 INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date) values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-01-01', '2023-05-31');

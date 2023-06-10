@@ -15,7 +15,9 @@ import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.ApartmentFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.ReadOnlyAccountFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
@@ -28,6 +30,10 @@ public class ApartmentService {
 
     @Inject
     ApartmentFacade apartmentFacade;
+
+    @Inject
+    ReadOnlyAccountFacade accountFacade;
+
 
     @RolesAllowed(FACILITY_MANAGER)
     public Apartment createApartment(final Apartment apartment) {
@@ -43,16 +49,20 @@ public class ApartmentService {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public void deleteApartmentOwner(final long id) {
-        apartmentFacade.findById(id);
-        apartmentFacade.update(new Apartment());
+    public void changeApartmentOwner(final long id, final ChangeApartmentOwnerDto dto) {
+        addApartmentOwner(id, dto);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public void addApartmentOwner(final long id, final ChangeApartmentOwnerDto dto) {
-        apartmentFacade.findById(id);
-        apartmentFacade.update(new Apartment());
+    public void addApartmentOwner(final long apartmentId, final ChangeApartmentOwnerDto dto) {
+        Apartment apartment = apartmentFacade.findById(apartmentId);
+        Account newOwner = accountFacade.findByLogin(dto.getNewOwnerLogin())
+                .orElseThrow(OwnerAccountDoesNotExistException::ownerAccountDoesNotExistException);
+
+        apartment.setOwner(newOwner);
+        apartmentFacade.update(apartment);
     }
+
 
     @RolesAllowed(FACILITY_MANAGER)
     public Tuple2<List<Apartment>, Long> getAllApartments(final String pattern,
