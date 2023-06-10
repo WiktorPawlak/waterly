@@ -3,14 +3,17 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.InvoiceFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
@@ -40,9 +43,17 @@ public class InvoiceService {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public void updateInvoice(final Invoice invoice) {
+    public void updateInvoice(final Invoice invoice, final InvoicesDto dto) {
+        invoice.setInvoiceNumber(dto.getInvoiceNumber());
+        invoice.setTotalCost(dto.getTotalCost());
+        invoice.setWaterUsage(dto.getWaterUsage());
+        Optional<Invoice> collidingInvoice = invoiceFacade.findInvoiceForYearMonth(dto.getDate());
+        collidingInvoice.ifPresentOrElse(foundInvoice -> {
+            if (foundInvoice.getId() != invoice.getId()) {
+                throw ApplicationBaseException.invoicesCollidingException();
+            }
+        }, () -> invoice.setDate(dto.getDate()));
         invoiceFacade.update(invoice);
-        //recalculate bills
     }
 
     @RolesAllowed({FACILITY_MANAGER})
@@ -57,6 +68,11 @@ public class InvoiceService {
     @RolesAllowed({FACILITY_MANAGER})
     public Long getInvoicesCount() {
         return invoiceFacade.count();
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public Invoice findInvoiceById(final long id) {
+        return invoiceFacade.findById(id);
     }
 
 }

@@ -14,6 +14,7 @@ export default function Breadcrumbs() {
     profile: "breadcrumbs.profile",
     tariffs: "breadcrumbs.tariffs",
     apartments: "breadcrumbs.apartments",
+  	'invoices' : 'breadcrumbs.invoices'
   };
 
   const excludedPaths = [PATHS.LOGIN, PATHS.REGISTER] as string[];

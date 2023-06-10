@@ -178,9 +178,9 @@
       "headers": {
         "id": "Id",
         "date": "Date",
-        "totalCost": "Total cost",
+        "totalCost": "Total cost [PLN]",
         "invoiceNumber": "Invoice number",
-        "waterUsage": "Water usage"
+        "waterUsage": "Water usage [m<sup>3</sup>]"
       }
     }
   },
@@ -249,7 +249,9 @@
     "transactionRollback": "Operation has been canceled. Try again later or contact our service.",
     "accountLocked": "Account locked, try contacting Administrator",
     "invalidTariffPeriod": "Invalid tariff period",
-    "tariffsColiding": "There is existing colliding tariff"
+    "tariffsColiding": "There is existing colliding tariff",
+    "invoicesColliding": "There is existing invoice for provided date",
+    "invoiceNumberExists":"There is existing invoice with provided invoice nubmer"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -284,7 +286,10 @@
     "uuidInvalidPattern": "Not a UUID pattern",
     "uuidInvalid": "Invalid UUID",
     "twoFactorCode": "Two factor authentication code must contain 8 numbers",
-    "waterPrice": "Price needs to be specified with two decimal places"
+    "waterPrice": "Price needs to be specified with two decimal places",
+    "invoiceNumber":"Invoice numer have to follow pattern FV YYYY/MM/DD", 
+    "waterUsage": "Water usage needs to be specified with three decimal places",
+    "totalCost": "Total cost needs to be specified with two decimal places"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -395,6 +400,14 @@
     "editTariff": "Edit Tariff",
     "tariffEditedSuccesfully": "Tariff edited succesfully"
   },
+  "editInvoiceModal": {
+    "date": "Date",
+    "totalCost": "Total cost [PLN]",
+    "waterUsage": "Water Usage [m<sup>3</sup>]",
+    "editInvoice": "Edit invoice",
+    "invoiceNumber": "Invoice Number",
+    "invoiceEditedSuccesfully": "Invoice edited succesfully"
+  },
   "twoFactor": {
     "yes": "On",
     "no": "Off",
@@ -412,7 +425,8 @@
     "verify-users": "Verify users",
     "apartments": "Apartments",
     "profile": "Profile",
-    "tariffs": "View tariffs"
+    "tariffs": "View tariffs",
+    "invoices": "View Invoices"
   },
   "homePage": {
     "button": "Get Started",

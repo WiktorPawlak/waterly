@@ -26,6 +26,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TwoFARequestedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.ExpiryDateAlreadyExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidTariffPeriodException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvoicesCollidingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.MainWaterMeterAlreadyExistsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.TariffsColidingException;
@@ -83,12 +84,15 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static final String ERROR_NO_SUCH_BILL = "ERROR_NO_SUCH_BILL";
 
-    protected static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
+    public static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
 
-    protected static final String INFO_TWO_FA_CODE_REQUESTED = "INFO.TWO_FA_CODE_REQUESTES";
+    public static final String INFO_TWO_FA_CODE_REQUESTED = "INFO.TWO_FA_CODE_REQUESTES";
 
-    protected static final String ERROR_TARIFFS_COLIDING = "ERROR.TARIFFS_COLIDING";
-    protected static final String ERROR_INVALID_TARIFF_PERIOD = "ERROR.INVALID_TARIFF_PERIOD";
+    public static final String ERROR_TARIFFS_COLIDING = "ERROR.TARIFFS_COLIDING";
+    public static final String ERROR_INVALID_TARIFF_PERIOD = "ERROR.INVALID_TARIFF_PERIOD";
+
+    public static final String ERROR_INVOICE_NUMBER_EXISTS = "ERROR.INVOICE_NUMBER_EXISTS";
+    public static final String ERROR_INVOICES_COLLIDING = "ERROR.INVOICES_COLLIDING";
 
     public ApplicationBaseException(final Response.Status status, final String message) {
         super(Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON_TYPE).build());
@@ -248,5 +252,9 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static ExpiryDateAlreadyExpiredException expiryDateAlreadyExpiredException() {
         return new ExpiryDateAlreadyExpiredException();
+    }
+
+    public static InvoicesCollidingException invoicesCollidingException() {
+        return new InvoicesCollidingException();
     }
 }

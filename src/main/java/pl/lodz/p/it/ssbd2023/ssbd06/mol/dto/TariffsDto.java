@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.Signable;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Money;
 
 @Data
 @NoArgsConstructor
@@ -16,11 +17,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.Signable;
 public class TariffsDto implements Signable {
 
     private long id;
-    @NotNull
+    @Money
     private BigDecimal coldWaterPrice;
-    @NotNull
+    @Money
     private BigDecimal hotWaterPrice;
-    @NotNull
+    @Money
     private BigDecimal trashPrice;
     @NotNull
     private LocalDate startDate;

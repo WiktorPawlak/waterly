@@ -195,6 +195,18 @@ export const editTariffSchema = z.object({
   .regex(/^\d+(\.\d{2})?$/, "validation.waterPrice"),
 })
 
+export const editInvoiceSchema = z.object({
+  invoiceNumber : z
+  .string()
+  .regex(/^FV \d{4}\/\d{2}\/\d{2}$/, "validation.invoiceNumber"),
+  totalCost : z
+  .string()
+  .regex(/^\d+(\.\d{2})?$/, "validation.totalCost"),
+  waterUsage: z
+  .string()
+  .regex(/^\d+(\.\d{3})?$/, "validation.waterUsage"),
+})
+
 export type ChangePasswordByAdminSchema = z.infer<
   typeof changePasswordByAdminSchema
 >;
@@ -224,3 +236,5 @@ export type TwoFactorCodeSchema = z.infer<typeof twoFactorCodeSchema>;
 export type EditEmailByAdminSchemaType = z.infer<typeof editEmailByAdminSchema>;
 
 export type EditTariffSchema = z.infer<typeof editTariffSchema>
+
+export type EditInvoiceSchema = z.infer<typeof editInvoiceSchema>

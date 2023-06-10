@@ -13,12 +13,12 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedInvoicesListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.InvoiceService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
@@ -45,8 +45,12 @@ public class InvoiceEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public void updateInvoice(final long id, final UpdateInvoiceDto dto) {
-        invoiceService.updateInvoice(new Invoice());
+    public void updateInvoice(final long id, final InvoicesDto dto) {
+        Invoice invoice = invoiceService.findInvoiceById(id);
+        if (dto.getVersion() != invoice.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
+        invoiceService.updateInvoice(invoice, dto);
     }
 
     @RolesAllowed({FACILITY_MANAGER})
@@ -65,5 +69,10 @@ public class InvoiceEndpoint extends TransactionBoundariesTracingEndpoint {
                 pageResolved,
                 invoices.size(),
                 (long) Math.ceil(invoiceService.getInvoicesCount().doubleValue() / pageSizeResolved));
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public InvoicesDto getInvoiceById(final long id) {
+        return new InvoicesDto(invoiceService.findInvoiceById(id));
     }
 }
