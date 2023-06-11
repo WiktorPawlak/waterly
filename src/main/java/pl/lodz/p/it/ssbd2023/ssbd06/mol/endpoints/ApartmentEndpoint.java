@@ -120,8 +120,8 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public Apartment getApartmentById(final long apartmentId) {
-        return apartmentService.getApartmentById(apartmentId);
+    public ApartmentDto getApartmentById(final long apartmentId) {
+        return new ApartmentDto(apartmentService.getApartmentById(apartmentId));
     }
 
     @RolesAllowed({FACILITY_MANAGER})
