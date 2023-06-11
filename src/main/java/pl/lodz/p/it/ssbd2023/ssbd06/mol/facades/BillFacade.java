@@ -49,12 +49,12 @@ public class BillFacade extends AbstractFacade<Bill> {
     }
 
 
-    @RolesAllowed({OWNER})
-    public Optional<Bill> findByOwnerId(final long ownerId, final LocalDate date) {
+    @RolesAllowed({OWNER, FACILITY_MANAGER})
+    public Optional<Bill> findByDateAndApartmentId(final LocalDate date, final long apartmentId) {
         try {
-            TypedQuery<Bill> billsByOwnerIdTypedQuery = em.createNamedQuery("Bill.findBillsByOwnerIdYearAndMonth", Bill.class);
+            TypedQuery<Bill> billsByOwnerIdTypedQuery = em.createNamedQuery("Bill.findBillsByYearAndMonthAndApartmentId", Bill.class);
             billsByOwnerIdTypedQuery.setFlushMode(FlushModeType.COMMIT);
-            billsByOwnerIdTypedQuery.setParameter("accountId", ownerId);
+            billsByOwnerIdTypedQuery.setParameter("apartmentId", apartmentId);
             billsByOwnerIdTypedQuery.setParameter("month", date.getMonthValue());
             billsByOwnerIdTypedQuery.setParameter("year", date.getYear());
             return Optional.of(billsByOwnerIdTypedQuery.getSingleResult());

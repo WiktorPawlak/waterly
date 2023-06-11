@@ -10,6 +10,7 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.SecurityContext;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ResourceNotFoundException;
@@ -27,6 +28,8 @@ public class MolAccountService {
 
     @Inject
     private ReadOnlyAccountFacade readOnlyAccountFacade;
+    @Inject
+    private SecurityContext securityContext;
 
     @RolesAllowed(FACILITY_MANAGER)
     public Account getOwnerAccountById(final long id) {
@@ -43,6 +46,11 @@ public class MolAccountService {
         }
 
         return optionalAccount.get();
+    }
+
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
+    public long getPrincipalId() {
+        return readOnlyAccountFacade.findByLogin(securityContext.getCallerPrincipal().getName()).orElseThrow().getId();
     }
 
     private Account findOwnerById(final long id) {
@@ -63,5 +71,4 @@ public class MolAccountService {
             return Optional.empty();
         }
     }
-
 }

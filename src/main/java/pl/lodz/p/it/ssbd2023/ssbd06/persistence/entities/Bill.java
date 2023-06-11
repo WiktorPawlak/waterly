@@ -40,8 +40,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 @NamedQuery(name = "Bill.findBillsByOwnerId", query = "select b from Bill b where b.account.id = :ownerId")
 @NamedQuery(name = "Bill.findBillOwnerIdByApartmentIdAndDate",
         query = "select b.account.id from Bill b where b.apartment.id = :apartmentId and b.date = :billDate")
-@NamedQuery(name = "Bill.findBillsByOwnerIdYearAndMonth",
-        query = "select b from Bill b where b.account.id = :accountId AND YEAR(b.date) = :year AND MONTH(b.date) = :month")
+@NamedQuery(name = "Bill.findBillsByYearAndMonthAndApartmentId",
+        query = "select b from Bill b where b.apartment.id = :apartmentId AND YEAR(b.date) = :year AND MONTH(b.date) = :month")
 @NoArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})
 public class Bill extends AbstractEntity {

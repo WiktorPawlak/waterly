@@ -37,6 +37,7 @@ const apiErrors = new Map<string, string>([
   ["ERROR.INVOICES_COLLIDING", "apiError.invoicesColliding"],
   ["ERROR.OWNER_ACCOUNT_NOT_FOUND", "apiError.ownerAccountNotFound"],
   ["ERROR.APARTMENT_WITH_NUMBER_EXIST", "apiError.apartmentWithNumberExist"],
+  ["ERROR_NO_SUCH_BILL", "apiError.noSuchBill"],
   ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
   ["VALIDATION.EMAIL", "validation.emailInvalid"],
   ["VALIDATION.EMAIL_SIZE", "validation.emailInvalidSize"],

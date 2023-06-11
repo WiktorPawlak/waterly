@@ -263,7 +263,8 @@
     "invalidTariffPeriod": "Invalid tariff period",
     "tariffsColiding": "There is existing colliding tariff",
     "invoicesColliding": "There is existing invoice for provided date",
-    "invoiceNumberExists": "There is existing invoice with provided invoice nubmer"
+    "invoiceNumberExists": "There is existing invoice with provided invoice nubmer",
+    "noSuchBill": "There is no bill available for chosen month"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -410,7 +411,7 @@
     "startDate": "Start date",
     "endDate": "End date",
     "editTariff": "Edit Tariff",
-    "tariffEditedSuccessfully": "Tariff edited successfully"
+    "tariffEditedSuccesfully": "Tariff edited successfully"
   },
   "editInvoiceModal": {
     "date": "Date",
@@ -492,6 +493,18 @@
         "area": "Area"
       }
     }
+  },
+  "bill": {
+    "advancedUsage": "Advanced usage",
+    "realUsage": "Real usage",
+    "advancedCost": "Advanced cost",
+    "realCost": "Real cost",
+    "rowBalance": "Balance",
+    "coldWater": "Cold water",
+    "hotWater": "Hot water",
+    "trash": "Trash",
+    "unbilledWater": "Unbilled Water",
+    "summary": "Summary:"
   },
   "apartmentDetailsPage": {
     "header": "Apartment details",

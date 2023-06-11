@@ -18,7 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.ReadOnlyAccountFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.MolAccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterUsageStatsService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.watermetercheck.WaterMeterCheckService;
@@ -50,7 +50,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
     @Inject
     private AuthenticatedAccount callerContext;
     @Inject
-    private ReadOnlyAccountFacade accountFacade;
+    private MolAccountService molAccountService;
     @Inject
     private TimeProvider timeProvider;
     @Inject
@@ -102,7 +102,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
     }
 
     private void checkWaterMeterBelongsToOwner(final WaterMeter waterMeter) {
-        if (waterMeter.getApartmentOwnerId() != accountFacade.findByLogin(callerContext.getLogin()).orElseThrow().getId()) {
+        if (waterMeter.getApartmentOwnerId() != molAccountService.getPrincipalId()) {
             throw ApplicationBaseException.waterMeterDoesNotBelongToOwnerException();
         }
     }
