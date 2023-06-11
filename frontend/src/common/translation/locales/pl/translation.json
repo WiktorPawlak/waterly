@@ -204,6 +204,15 @@
         "startingValue": "Wartość startowa",
         "type": "Typ"
       }
+    },
+    "toastActivateSuccess": "Wodomierz został aktywowany",
+    "toastDeactivateSuccess": "Wodomierz został dezaktywowany",
+    "popup": {
+      "msg": "Czy na pewno chcesz:",
+      "deactivate": "dezaktywować wodomierz?",
+      "activate": "aktywować wodomierz?",
+      "no": "Nie",
+      "yes": "Tak"
     }
   },
   "navigation": {
