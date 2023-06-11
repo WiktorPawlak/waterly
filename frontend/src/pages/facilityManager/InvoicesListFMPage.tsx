@@ -13,6 +13,7 @@ import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlin
 import {
   Autocomplete,
   Box,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -21,21 +22,21 @@ import {
   SelectChangeEvent,
   TextField,
   Typography,
-  Button,
 } from "@mui/material";
 import { PaginatedList } from "../../api/accountApi";
 import { MainLayout } from "../../layouts/MainLayout";
 import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../api/apiErrors";
 import {
-  GetPagedInvoicesListDto,
-  InvoiceDto,
   getInvoiceById,
   getInvoicesList,
+  GetPagedInvoicesListDto,
+  InvoiceDto,
 } from "../../api/invoiceApi";
 import { useAccount } from "../../hooks/useAccount";
 import { roles } from "../../types";
 import { EditInvoiceModal } from "../../layouts/components/Invoice/EditInvoiceModal";
+import { AddInvoiceDialog } from "../../layouts/components/Invoice/AddInvoiceModal";
 
 export const InvoicesListFMPage = () => {
   const { t } = useTranslation();
@@ -45,6 +46,7 @@ export const InvoicesListFMPage = () => {
   const [editInvoiceModalOpen, setEditInvoiceModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceDto>();
   const [selectedInvoiceEtag, setSelectedInvoiceEtag] = useState("");
+  const [addInvoiceDialogOpen, setAddInvoiceDialogOpen] = useState(false);
   const [pageState, setPageState] = useState<PaginatedList<InvoiceDto>>({
     data: [],
     pageNumber: 1,
@@ -56,14 +58,14 @@ export const InvoicesListFMPage = () => {
     page: 1,
     order: "asc",
     pageSize: 10,
-    orderBy: "invoiceNumber"
+    orderBy: "invoiceNumber",
   });
 
   useEffect(() => {
     if (listRequest) {
       fetchData();
     }
-  }, [listRequest, editInvoiceModalOpen]);
+  }, [listRequest, editInvoiceModalOpen, addInvoiceDialogOpen]);
 
   const fetchData = () => {
     setIsLoading(true);
@@ -79,21 +81,20 @@ export const InvoicesListFMPage = () => {
     });
   };
 
-  
   const handleCellClick = async (params: GridCellParams) => {
     if (account?.currentRole === roles.facilityManager) {
-        const response = await getInvoiceById(params.row.id);
-        if (response.data) {
-            setSelectedInvoice(response.data!);
-            setSelectedInvoiceEtag(response.headers!["etag"] as string);
-        } else {
-            enqueueSnackbar(t(resolveApiError(response.error)), {
-                variant: "error",
-            });
-        }
-        setEditInvoiceModalOpen(true);
+      const response = await getInvoiceById(params.row.id);
+      if (response.data) {
+        setSelectedInvoice(response.data!);
+        setSelectedInvoiceEtag(response.headers!["etag"] as string);
+      } else {
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
+      }
+      setEditInvoiceModalOpen(true);
     }
-};
+  };
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -101,7 +102,7 @@ export const InvoicesListFMPage = () => {
   ) => {
     setListRequest((prevListRequest) => ({
       ...prevListRequest,
-      page: page
+      page: page,
     }));
   };
 
@@ -150,7 +151,10 @@ export const InvoicesListFMPage = () => {
       field: "waterUsage",
       renderHeader: () => (
         <strong>
-          <Trans i18nKey={"InvoicesListFMPage.dataGrid.headers.waterUsage"} components={{ sup: <sup /> }} />
+          <Trans
+            i18nKey={"InvoicesListFMPage.dataGrid.headers.waterUsage"}
+            components={{ sup: <sup /> }}
+          />
         </strong>
       ),
       width: 150,
@@ -195,6 +199,10 @@ export const InvoicesListFMPage = () => {
           invoice={selectedInvoice}
           etag={selectedInvoiceEtag}
         />
+        <AddInvoiceDialog
+          isOpen={addInvoiceDialogOpen}
+          setIsOpen={setAddInvoiceDialogOpen}
+        />
         <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>
           {t("InvoicesListFMPage.header")}
         </Typography>
@@ -209,6 +217,19 @@ export const InvoicesListFMPage = () => {
             width: "100%",
           }}
         >
+          {account?.currentRole === roles.facilityManager && (
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                mb: { xs: 3, md: 2 },
+                width: "30vh",
+              }}
+              onClick={() => setAddInvoiceDialogOpen(true)}
+            >
+              {t("InvoicesListFMPage.button")}
+            </Button>
+          )}
           <Autocomplete
             disablePortal
             freeSolo

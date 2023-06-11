@@ -174,6 +174,7 @@
   "InvoicesListFMPage": {
     "header": "Invoices list",
     "description": "Here you can see and manage invoices.",
+    "button": "Add invoice",
     "dataGrid": {
       "headers": {
         "id": "Id",
@@ -253,7 +254,7 @@
     "invalidTariffPeriod": "Invalid tariff period",
     "tariffsColiding": "There is existing colliding tariff",
     "invoicesColliding": "There is existing invoice for provided date",
-    "invoiceNumberExists":"There is existing invoice with provided invoice nubmer"
+    "invoiceNumberExists": "There is existing invoice with provided invoice nubmer"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -289,7 +290,7 @@
     "uuidInvalid": "Invalid UUID",
     "twoFactorCode": "Two factor authentication code must contain 8 numbers",
     "waterPrice": "Price needs to be specified with two decimal places",
-    "invoiceNumber":"Invoice numer have to follow pattern FV YYYY/MM/DD", 
+    "invoiceNumber": "Invoice numer have to follow pattern FV YYYY/MM/DD",
     "waterUsage": "Water usage needs to be specified with three decimal places",
     "totalCost": "Total cost needs to be specified with two decimal places"
   },
@@ -400,7 +401,7 @@
     "startDate": "Start date",
     "endDate": "End date",
     "editTariff": "Edit Tariff",
-    "tariffEditedSuccesfully": "Tariff edited succesfully"
+    "tariffEditedSuccessfully": "Tariff edited successfully"
   },
   "editInvoiceModal": {
     "date": "Date",
@@ -408,10 +409,18 @@
     "waterUsage": "Water Usage [m<sup>3</sup>]",
     "editInvoice": "Edit invoice",
     "invoiceNumber": "Invoice Number",
-    "invoiceEditedSuccesfully": "Invoice edited succesfully"
+    "invoiceEditedSuccessfully": "Invoice edited successfully"
+  },
+  "addInvoiceModal": {
+    "date": "Date",
+    "totalCost": "Total cost [PLN]",
+    "waterUsage": "Water Usage [m<sup>3</sup>]",
+    "addInvoice": "Add invoice",
+    "invoiceNumber": "Invoice Number",
+    "invoiceAddedSuccessfully": "Invoice added successfully"
   },
   "addTariffDialog": {
-    "tariffAddedSuccesfully": "Tariff added succesfully",
+    "tariffAddedSuccessfully": "Tariff added successfully",
     "addTariff": "Add tariff"
   },
   "twoFactor": {

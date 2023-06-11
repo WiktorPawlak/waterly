@@ -33,7 +33,7 @@ public class ValidationRegex {
     public static final String TARIFF_ORDER_BY = "^(coldWaterPrice|hotWaterPrice|trashPrice|startDate|endDate)$";
     public static final String INVOICES_ORDER_BY = "^(invoiceNumber|waterUsage|totalCost|date)$";
     public static final String WATER_METERS_ORDER_BY = "^(expiryDate|expectedDailyUsage|startingValue|type|apartment)$";
-    public static final String INVOICE_NUMBER = "^FV \\d{7}/\\d{2}/\\d{2}$";
+    public static final String INVOICE_NUMBER = "^FV \\d{4}/\\d{2}/\\d{2}$";
     public static final String TWO_FA_CODE = "[0-9]{8}";
     public static final String WATER_METER_TYPE = "^(HOT_WATER|COLD_WATER)$";
 }

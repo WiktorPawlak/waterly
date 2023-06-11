@@ -84,7 +84,7 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
         void shouldFailCreateInvoiceWhenDateIsInvalid() {
             CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
                     .invoiceNumber(TEST_INVOICE_NUMBER)
-                    .date("2020-05-20")
+                    .date("123456789-05-20")
                     .totalCost(BigDecimal.valueOf(100))
                     .waterUsage(BigDecimal.valueOf(200))
                     .build();
