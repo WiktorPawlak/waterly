@@ -46,7 +46,7 @@ public class WaterUsageStatsFacade extends AbstractFacade<WaterUsageStats> {
         return super.update(entity);
     }
 
-    @RolesAllowed({FACILITY_MANAGER, OWNER})
+    @PermitAll
     public Optional<WaterUsageStats> findByApartmentIdAndYearMonth(final long apartmentId, final YearMonth yearMonth) {
         try {
             return Optional.of(em.createNamedQuery("WaterUsageStats.findByApartmentIdAndYearMonth", WaterUsageStats.class)

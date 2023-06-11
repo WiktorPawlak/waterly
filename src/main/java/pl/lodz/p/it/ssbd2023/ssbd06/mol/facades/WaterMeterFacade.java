@@ -21,6 +21,7 @@ import jakarta.persistence.criteria.Root;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
@@ -107,6 +108,13 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
         criteriaQuery.where(finalPredicate);
 
         return getEntityManager().createQuery(criteriaQuery)
+                .getResultList();
+    }
+
+    public List<Apartment> findApartmentsByWaterMeterIds(final List<Long> waterMeterIds) {
+        return em.createNamedQuery("WaterMeter.findApartmentsByWaterMeters", Apartment.class)
+                .setFlushMode(FlushModeType.COMMIT)
+                .setParameter("meterIds", waterMeterIds)
                 .getResultList();
     }
 }

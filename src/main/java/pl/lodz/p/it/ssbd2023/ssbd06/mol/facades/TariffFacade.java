@@ -3,9 +3,6 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,20 +88,16 @@ public class TariffFacade extends AbstractFacade<Tariff> {
     public Optional<Tariff> findTariffForYearMonth(final LocalDate date) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Tariff> cq = cb.createQuery(Tariff.class);
-            Root<Tariff> root = cq.from(Tariff.class);
+            CriteriaQuery<Tariff> query = cb.createQuery(Tariff.class);
+            Root<Tariff> tariffRoot = query.from(Tariff.class);
 
-            YearMonth yearMonth = YearMonth.from(date);
-            LocalDate startDate = yearMonth.atDay(1);
-            LocalDate endDate = yearMonth.atEndOfMonth();
+            Predicate startDatePredicate = cb.lessThanOrEqualTo(tariffRoot.get("startDate"), date);
+            Predicate endDatePredicate = cb.greaterThanOrEqualTo(tariffRoot.get("endDate"), date);
+            Predicate datePredicate = cb.and(startDatePredicate, endDatePredicate);
 
-            Date startDateAsDate = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            Date endDateAsDate = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            query.select(tariffRoot).where(datePredicate);
 
-            Predicate predicate = cb.between(root.get("startDate"), startDateAsDate, endDateAsDate);
-            cq.where(predicate);
-
-            return Optional.of(em.createQuery(cq).getSingleResult());
+            return Optional.of(em.createQuery(query).getSingleResult());
         } catch (final NoResultException e) {
             return Optional.empty();
         }

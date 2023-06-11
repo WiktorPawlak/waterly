@@ -112,7 +112,7 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
 
             Predicate predicate = cb.between(root.get("date"), startDateAsDate, endDateAsDate);
             cq.where(predicate);
- 
+
             return Optional.of(em.createQuery(cq).getSingleResult());
         } catch (final NoResultException e) {
             return Optional.empty();

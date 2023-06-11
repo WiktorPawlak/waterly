@@ -14,7 +14,8 @@ interface AdvancedUsageReportDto {
     coldWaterCost: number,
     hotWaterCost: number,
     coldWaterUsage: number,
-    hotWaterUsage: number
+    hotWaterUsage: number,
+    totalCost: number
 }
 
 interface RealUsageReportDto {
@@ -28,6 +29,7 @@ interface RealUsageReportDto {
     hotWaterUsage: number,
     unbilledWaterCost: number,
     unbilledWaterAmount: number,
+    totalCost: number
 }
 
 export async function getBillsByOwnerId(date: string, apartmentId: number

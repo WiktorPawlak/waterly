@@ -14,7 +14,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.BillService;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.ReadOnlyBillService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.watermetercheck.WaterMeterCheckService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterCheck;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
@@ -29,7 +29,7 @@ public class WaterUsageStatsPolicyFactoryImpl implements WaterUsageStatsPolicyFa
     @Inject
     private WaterMeterCheckService waterMeterCheckService;
     @Inject
-    private BillService billService;
+    private ReadOnlyBillService readOnlyBillService;
 
     @Inject
     @Named("firstWaterMeterCheck")
@@ -66,7 +66,7 @@ public class WaterUsageStatsPolicyFactoryImpl implements WaterUsageStatsPolicyFa
     }
 
     private boolean apartmentOwnerChanged(final WaterMeterCheck newCheck, final WaterMeterCheck previousWaterMeterCheck) {
-        var previousCheckApartmentOwnerId = billService.findBillOwnerIdByApartmentAndDate(
+        var previousCheckApartmentOwnerId = readOnlyBillService.findBillOwnerIdByApartmentAndDate(
                 previousWaterMeterCheck.getWaterMeter().getApartment(),
                 previousWaterMeterCheck.getCheckDate());
         return previousCheckApartmentOwnerId.isPresent() && newCheck.getWaterMeter().getApartmentOwnerId() != previousCheckApartmentOwnerId.get();

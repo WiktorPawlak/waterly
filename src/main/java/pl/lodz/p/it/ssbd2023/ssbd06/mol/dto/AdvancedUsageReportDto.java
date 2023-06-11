@@ -24,6 +24,8 @@ public class AdvancedUsageReportDto {
     private BigDecimal coldWaterUsage;
     @WaterUsage
     private BigDecimal hotWaterUsage;
+    @Money
+    private BigDecimal totalCost;
 
     public AdvancedUsageReportDto(final Bill bill) {
         this.garbageCost = bill.getAdvanceUsage().getGarbageCost();
@@ -31,5 +33,6 @@ public class AdvancedUsageReportDto {
         this.hotWaterCost = bill.getAdvanceUsage().getHotWaterCost();
         this.coldWaterUsage = bill.getAdvanceUsage().getColdWaterUsage();
         this.hotWaterUsage = bill.getAdvanceUsage().getHotWaterUsage();
+        this.totalCost = bill.getAdvanceUsage().getColdWaterCost().add(bill.getAdvanceUsage().getHotWaterCost()).add(bill.getAdvanceUsage().getGarbageCost());
     }
 }

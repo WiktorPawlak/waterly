@@ -15,12 +15,15 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.WaterMeterCheckAddedEvent;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.WaterMeterCheckUpdatedEvent;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.MolAccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterUsageStatsService;
@@ -58,6 +61,10 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
     private TimeProvider timeProvider;
     @Inject
     private WaterUsageStatsPolicyFactory waterUsageStatsPolicyFactory;
+    @Inject
+    private Event<WaterMeterCheckAddedEvent> waterMeterCheckAddedEventEvent;
+    @Inject
+    private Event<WaterMeterCheckUpdatedEvent> waterMeterCheckUpdatedEventEvent;
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public void performWaterMeterChecks(final WaterMeterChecksDto dto) {
@@ -78,6 +85,9 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
         var usageStats = getWaterUsageStatsForNewChecks(check);
 
         upsertWaterUsageStats(expectedMonthHotWaterUsage, expectedMonthColdWaterUsage, check, usageStats);
+        if (usageStats.isEmpty()) {
+            waterMeterCheckAddedEventEvent.fire(new WaterMeterCheckAddedEvent(check.getCheckDate(), dto));
+        }
     }
 
     @SneakyThrows(ParseException.class)

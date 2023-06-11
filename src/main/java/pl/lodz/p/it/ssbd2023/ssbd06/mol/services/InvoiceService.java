@@ -15,6 +15,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHand
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.InvoiceFacade;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.GenerateBillsService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 

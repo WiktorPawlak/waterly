@@ -1,4 +1,4 @@
-package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
+package pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
@@ -22,7 +22,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @ServiceExceptionHandler
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
-public class BillService {
+public class ReadOnlyBillService {
 
     @Inject
     private BillFacade billFacade;

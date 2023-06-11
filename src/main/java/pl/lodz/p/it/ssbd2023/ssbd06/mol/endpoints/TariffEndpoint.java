@@ -11,6 +11,7 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
@@ -18,6 +19,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedTariffsListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.TariffUpdatedEvent;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.TariffService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
@@ -32,7 +34,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesT
 public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @Inject
-    TariffService tariffService;
+    private TariffService tariffService;
+
+    @Inject
+    private Event<TariffUpdatedEvent> tariffUpdatedEventEvent;
 
     @Inject
     @Property("default.list.page.size")
@@ -51,6 +56,7 @@ public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
             throw ApplicationBaseException.optimisticLockException();
         }
         tariffService.updateTariff(tariff, dto);
+        tariffUpdatedEventEvent.fire(new TariffUpdatedEvent());
     }
 
     @PermitAll
