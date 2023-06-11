@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import {
   getNotConfirmedAccoutsList,
-  GetPagedAccountListDto,
+  GetPagedListDto,
   getSelfSearchPreferences,
   ListAccountDto,
   PaginatedList,
@@ -46,7 +46,7 @@ export const VerifyUsersFMPage = () => {
     totalPages: 0,
   });
 
-  const [listRequest, setListRequest] = useState<GetPagedAccountListDto>({
+  const [listRequest, setListRequest] = useState<GetPagedListDto>({
     page: 1,
     pageSize: 10,
     order: "asc",

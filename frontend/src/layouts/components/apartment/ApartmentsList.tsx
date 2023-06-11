@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
   DataGrid,
+  GridCellParams,
   GridColDef,
   GridColumnHeaderParams,
   GridSortModel,
@@ -21,7 +23,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { GetPagedAccountListDto, PaginatedList } from "../../../api/accountApi";
+import { GetPagedListDto, PaginatedList } from "../../../api/accountApi";
 import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../../api/apiErrors";
 import { ApartmentDto, getAllAprtmentsList } from "../../../api/apartmentApi";
@@ -29,6 +31,7 @@ import { MainLayout } from "../../MainLayout";
 import { CreateApartmentDialog } from "./CreateApartmentDialog";
 
 export const ApartmentsList = () => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [pattern, setPattern] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +44,7 @@ export const ApartmentsList = () => {
     totalPages: 0,
   });
 
-  const [listRequest, setListRequest] = useState<GetPagedAccountListDto>({
+  const [listRequest, setListRequest] = useState<GetPagedListDto>({
     page: 1,
     pageSize: 10,
     order: "asc",
@@ -84,6 +87,13 @@ export const ApartmentsList = () => {
       page: 1,
       pageSize: parseInt(event.target.value),
     }));
+  };
+
+  const handleCellClick = (params: GridCellParams) => {
+    if (params.field != "actions") {
+      const apartmentId = params.row.id;
+      navigate(`/apartments/${apartmentId}`);
+    }
   };
 
   const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
@@ -206,6 +216,7 @@ export const ApartmentsList = () => {
               onSortModelChange={handleSortModelChange}
               disableColumnMenu={true}
               hideFooterPagination={true}
+              onCellClick={handleCellClick}
               sortingOrder={["asc", "desc"]}
             />
             <Box

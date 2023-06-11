@@ -478,5 +478,20 @@
         "area": "Area"
       }
     }
+  },
+  "apartmentDetailsPage": {
+    "header": "Apartment details",
+    "description": "Here you can manage apartment details",
+    "localeTitle": "Apartment ",
+    "ownerTitle": "Owner",
+    "areaTitle": "Area"
+  },
+  "apartmentsDashboardPage": {
+    "header": "Apartments dashboard",
+    "description": "Here you can manage your apartments"
+  },
+  "apartmentCard": {
+    "localeTitle": "Apartment ",
+    "checkButton": "Check"
   }
 }

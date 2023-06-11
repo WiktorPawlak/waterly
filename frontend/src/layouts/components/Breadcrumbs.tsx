@@ -31,9 +31,11 @@ export default function Breadcrumbs() {
         {t(breadcrumbsKeyMap[crumb] ?? crumb)}
       </Typography>
     ) : (
-      <Link to={currentLink} key={crumb}>
-        {t(breadcrumbsKeyMap[crumb] ?? crumb)}
-      </Link>
+      <Typography key={crumb} sx={{ color: 'text.default' }}>
+        <Link to={currentLink} key={crumb} style={{ color: 'inherit' }}>
+          {t(breadcrumbsKeyMap[crumb] ?? crumb)}
+        </Link>
+      </Typography>
     );
   });
 
@@ -54,7 +56,9 @@ export default function Breadcrumbs() {
         mb: { xs: 1, md: 2 },
       }}
     >
-      <Link to={"/"}>{t("breadcrumbs.homePage")}</Link>
+      <Typography sx={{ color: 'text.default' }}>
+        <Link to={"/"} style={{ color: 'inherit' }}>{t("breadcrumbs.homePage")}</Link>
+      </Typography>
       {crumbs}
     </MUIBreadcrumbs>
   );

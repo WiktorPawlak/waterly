@@ -348,7 +348,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .body("id", equalTo(1))
                     .body("number", equalTo("12a"))
                     .body("area", equalTo(40F))
-                    .body("ownerId", equalTo(2));
+                    .body("ownerName", equalTo("Szymon Ziemecki"));
 
         }
 

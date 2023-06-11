@@ -84,7 +84,7 @@ export const ProfileCard = ({ onCLick }: ProfileCardProps) => {
                 </Typography>
                 <Typography sx={{ fontSize: "14px", color: "primary.contrastText" }}>
                     {t("general.role")}
-                    {currentUserRole}
+                    {t("roles." + currentUserRole)}
                 </Typography>
             </Box>
             <Button onClick={handleClick}>
