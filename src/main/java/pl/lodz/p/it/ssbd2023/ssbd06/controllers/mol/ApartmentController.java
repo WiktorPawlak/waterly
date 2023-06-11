@@ -28,7 +28,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.ApartmentEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
-import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ApartmentOrderBy;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Order;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Page;
@@ -75,7 +74,7 @@ public class ApartmentController extends RepeatableTransactionController {
     @RolesAllowed(FACILITY_MANAGER)
     @Path("/{id}")
     public Response getApartmentById(@PathParam("id") final long apartmentId) {
-        Apartment apartment = apartmentEndpoint.getApartmentById(apartmentId);
+        ApartmentDto apartment = apartmentEndpoint.getApartmentById(apartmentId);
         return Response.ok().entity(apartment).build();
     }
 

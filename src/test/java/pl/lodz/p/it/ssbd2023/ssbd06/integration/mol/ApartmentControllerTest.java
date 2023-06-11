@@ -333,6 +333,36 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
     }
 
     @Nested
+    class ApartmentDetails {
+
+        @Test
+        void shouldReturnApartmentDetails() {
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .get(APARTMENT_PATH + "/" + APARTMENT_ID)
+                    .then()
+                    .statusCode(OK.getStatusCode())
+                    .body("id", equalTo(1))
+                    .body("number", equalTo("12a"))
+                    .body("area", equalTo(40F))
+                    .body("ownerId", equalTo(2));
+
+        }
+
+        @Test
+        void shouldReturn404WhenNoApartment() {
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .get(APARTMENT_PATH + "/" + 123)
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode());
+        }
+
+    }
+
+    @Nested
     class ApartmentGetPaginatedLists {
 
         @Test
