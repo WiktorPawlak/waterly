@@ -1,4 +1,4 @@
-import { post, ApiResponse, get, put } from "./api";
+import { ApiResponse, get, post, put } from "./api";
 
 const INVOICES_PATH = "/invoices";
 
@@ -25,6 +25,13 @@ export interface InvoiceDto {
   version: number;
 }
 
+export interface CreateInvoiceDto {
+  invoiceNumber: String;
+  waterUsage: number;
+  totalCost: number;
+  date: Date;
+}
+
 export async function getInvoicesList(
   getPagedListDto: GetPagedInvoicesListDto
 ): Promise<ApiResponse<PaginatedList<InvoiceDto>>> {
@@ -32,13 +39,21 @@ export async function getInvoicesList(
 }
 
 export async function getInvoiceById(
-  id: number,
+  id: number
 ): Promise<ApiResponse<InvoiceDto>> {
   return get(`${INVOICES_PATH}/${id}`);
 }
 
-export async function updateInvoice(id: number, updatedInvoice: InvoiceDto, etag: string) {
-  return put(`${INVOICES_PATH}/${id}`, updatedInvoice,{
-      "If-Match": etag,
+export async function updateInvoice(
+  id: number,
+  updatedInvoice: InvoiceDto,
+  etag: string
+) {
+  return put(`${INVOICES_PATH}/${id}`, updatedInvoice, {
+    "If-Match": etag,
   });
+}
+
+export async function addInvoice(createInvoice: CreateInvoiceDto) {
+  return post(`${INVOICES_PATH}`, createInvoice);
 }
