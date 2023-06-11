@@ -12,8 +12,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 
 @ToString(callSuper = true)
 @Entity
@@ -38,4 +41,12 @@ public class Invoice extends AbstractEntity {
     @NotNull
     @Column(nullable = false)
     private LocalDate date;
+
+    @SneakyThrows
+    public Invoice(@NotNull final CreateInvoiceDto createInvoiceDto) {
+        this.invoiceNumber = createInvoiceDto.getInvoiceNumber();
+        this.waterUsage = createInvoiceDto.getWaterUsage();
+        this.totalCost = createInvoiceDto.getTotalCost();
+        this.date = DateConverter.convertInvoiceDate(createInvoiceDto.getDate());
+    }
 }

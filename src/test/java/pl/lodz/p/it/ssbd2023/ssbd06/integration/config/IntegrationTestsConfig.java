@@ -35,7 +35,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final String WATERMETER_PATH = "/water-meters";
     protected static final String APARTMENT_PATH = "/apartments";
     protected static final String CHANGE_OWNER_PATH = "/owner";
-
+    protected static final String INVOICE_PATH = "/invoices";
     protected static final String TARIFF_PATH = "/tariffs";
 
     protected static final long ADMIN_ID = 1;
@@ -49,6 +49,8 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final long APARTMENT_ID = 1;
     protected static final long SECOND_APARTMENT_ID = 2;
     protected static final String IF_MATCH_HEADER_NAME = "If-Match";
+    protected static final String TEST_INVOICE_NUMBER = "FV 0212137/01/23";
+    protected static final String TEST_INVOICE_DATE = "2023-10";
 
     protected static final long COLD_WATER_METER_ID = 1;
     protected static final long HOT_WATER_METER_ID = 2;

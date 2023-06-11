@@ -270,7 +270,7 @@ public class AccountController extends RepeatableTransactionController {
         return Response.ok().entity(accounts).build();
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed(FACILITY_MANAGER)
     @GET
     @Path("/owners")
     @Produces(MediaType.APPLICATION_JSON)

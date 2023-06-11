@@ -46,4 +46,13 @@ public class DateConverter {
     public static YearMonth convert(final LocalDate date) {
         return YearMonth.of(date.getYear(), date.getMonth());
     }
+
+    public static LocalDate convertInvoiceDate(final String value) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setLenient(false);
+        Date dateToConvert = dateFormat.parse(value + "-01");
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
 }

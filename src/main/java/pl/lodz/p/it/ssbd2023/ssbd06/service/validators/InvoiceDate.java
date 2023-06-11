@@ -1,21 +1,21 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.validators;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import jakarta.validation.constraints.Pattern;
 
-@Target({ElementType.FIELD, ElementType.PARAMETER})
-@Constraint(validatedBy = {})
+@Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
-@Pattern(regexp = ValidationRegex.INVOICE_NUMBER, message = "VALIDATION.INVOICE_INVALID_NUMBER")
-public @interface InvoiceNumber {
-    String message() default "VALIDATION.INVOICE_INVALID_NUMBER";
+@Constraint(validatedBy = InvoiceDateValidator.class)
+public @interface InvoiceDate {
+
+    String message() default "VALIDATION.INVOICE_DATE_PATTERN";
 
     Class<?>[] groups() default {};
 
