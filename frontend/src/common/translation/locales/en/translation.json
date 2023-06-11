@@ -302,7 +302,9 @@
     "waterPrice": "Price needs to be specified with two decimal places",
     "invoiceNumber": "Invoice numer have to follow pattern FV YYYY/MM/DD",
     "waterUsage": "Water usage needs to be specified with three decimal places",
-    "totalCost": "Total cost needs to be specified with two decimal places"
+    "totalCost": "Total cost needs to be specified with two decimal places",
+    "startingValue": "Starting value needs to be specified with three decimal places",
+    "type": "Water meter types can be only either hot water or cold water"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -435,6 +437,15 @@
   "addTariffDialog": {
     "tariffAddedSuccessfully": "Tariff added successfully",
     "addTariff": "Add tariff"
+  },
+  "assignWaterMeterDialog": {
+    "startingValue": "Starting value",
+    "date": "Expiration date",
+    "type": "Select water meter type",
+    "waterMeterAssignedSuccessfully": "Water meter added successfully",
+    "addWaterMeter": "Add water meter",
+    "coldWater": "Cold water",
+    "hotWater": "Hot water"
   },
   "twoFactor": {
     "yes": "On",

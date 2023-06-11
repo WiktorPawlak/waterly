@@ -21,6 +21,12 @@ export interface CreateApartmentDto {
   ownerId: number;
 }
 
+export interface AssignWaterMeterDto {
+  expiryDate: Date;
+  startingValue: number;
+  type: string;
+}
+
 export async function getAllAprtmentsList(
   getPagedListDto: GetPagedListDto,
   pattern: string
@@ -57,4 +63,11 @@ export async function getOwnerApartments(
   getPagedListDto: GetPagedListDto
 ): Promise<ApiResponse<List<ApartmentDto>>> {
   return get(`${APARTMENTS_PATH}/self`, { ...getPagedListDto });
+}
+
+export async function assignWaterMeterToApartment(
+  apartmentId: number,
+  body: AssignWaterMeterDto
+) {
+  return post(`${APARTMENTS_PATH}/${apartmentId}/water-meter`, body);
 }
