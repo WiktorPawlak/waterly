@@ -15,6 +15,8 @@ import NotFound from "../pages/NotFound";
 import { PATHS } from "./paths";
 import { ManageTariffsPage } from "../pages/facilityManager/ManageTariffsPage";
 import { ApartmentListPage } from "../pages/facilityManager/ApartmentsListPage";
+import { ApartmentDetailsPage } from "../pages/facilityManager/ApartmentDetailsPage";
+import { ApartmentDashboardPage } from "../pages/owner/ApartmentDashboardPage";
 
 export const Pathnames = {
   public: {
@@ -34,6 +36,8 @@ export const Pathnames = {
     notFound: PATHS.NOT_FOUND,
     acceptMail: PATHS.ACCEPT_EMAIL,
     manageTariffs: PATHS.MANAGE_TARIFFS,
+    manageApartments: PATHS.MANAGE_APARTMENTS,
+    apartmentDetails: PATHS.APARTMENT_DETAILS,
   },
   facilityManager: {
     home: PATHS.HOME,
@@ -45,6 +49,7 @@ export const Pathnames = {
     acceptMail: PATHS.ACCEPT_EMAIL,
     manageTariffs: PATHS.MANAGE_TARIFFS,
     manageApartments: PATHS.MANAGE_APARTMENTS,
+    apartmentDetails: PATHS.APARTMENT_DETAILS,
   },
   admin: {
     home: PATHS.HOME,
@@ -105,6 +110,15 @@ export const ownerRoutes: RouteType[] = [
     name: "navigation.home",
   },
   {
+    path: Pathnames.owner.manageApartments,
+    Component: ApartmentDashboardPage,
+    name: "navigation.apartments",
+  },
+  {
+    path: Pathnames.owner.apartmentDetails,
+    Component: ApartmentDashboardPage,
+  },
+  {
     path: Pathnames.public.manageTariffs,
     Component: ManageTariffsPage,
     name: "navigation.tariffs",
@@ -134,6 +148,10 @@ export const facilityManagerRoutes: RouteType[] = [
     path: Pathnames.facilityManager.manageApartments,
     Component: ApartmentListPage,
     name: "navigation.apartments",
+  },
+  {
+    path: Pathnames.facilityManager.apartmentDetails,
+    Component: ApartmentDetailsPage,
   },
   {
     path: Pathnames.public.manageTariffs,

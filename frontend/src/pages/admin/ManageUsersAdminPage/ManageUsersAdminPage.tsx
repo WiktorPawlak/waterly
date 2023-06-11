@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   getAccountNames,
   getAccountsList,
-  GetPagedAccountListDto,
+  GetPagedListDto,
   getSelfSearchPreferences,
   ListAccountDto,
   PaginatedList,
@@ -51,7 +51,7 @@ export const ManageUsersAdminPage = () => {
     totalPages: 0,
   });
 
-  const [listRequest, setListRequest] = useState<GetPagedAccountListDto>({
+  const [listRequest, setListRequest] = useState<GetPagedListDto>({
     page: 1,
     pageSize: 10,
     order: "asc",

@@ -49,6 +49,17 @@ export interface PaginatedList<T> {
   totalPages: number;
 }
 
+export interface List<T> {
+  data: T[];
+}
+
+export interface GetPagedListDto {
+  page: number | null;
+  pageSize: number | null;
+  order: string;
+  orderBy: string;
+}
+
 export interface ListAccountDto {
   id: number;
   login: string;
@@ -60,13 +71,6 @@ export interface ListAccountDto {
 
 export interface AccountSearchPreferencesDto {
   pageSize: number;
-  order: string;
-  orderBy: string;
-}
-
-export interface GetPagedAccountListDto {
-  page: number | null;
-  pageSize: number | null;
   order: string;
   orderBy: string;
 }
@@ -176,14 +180,14 @@ export async function getSelfSearchPreferences(): Promise<
 }
 
 export async function getAccountsList(
-  getPagedListDto: GetPagedAccountListDto,
+  getPagedListDto: GetPagedListDto,
   pattern: string
 ): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
   return post(`${ACCOUNTS_PATH}/list`, getPagedListDto, { pattern: pattern });
 }
 
 export async function getNotConfirmedAccoutsList(
-  getPagedListDto: GetPagedAccountListDto,
+  getPagedListDto: GetPagedListDto,
   pattern: string
 ): Promise<ApiResponse<PaginatedList<ListAccountDto>>> {
   return post(`${ACCOUNTS_PATH}/to-verify`, getPagedListDto, {

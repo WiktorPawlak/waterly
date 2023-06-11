@@ -479,5 +479,20 @@
         "area": "Powierzchnia"
       }
     }
+  },
+  "apartmentDetailsPage": {
+    "header": "Szczegóły lokalu",
+    "description": "Tutaj możesz zarządzać szczegółami lokalu",
+    "localeTitle": "Lokal ",
+    "ownerTitle": "Właściciel",
+    "areaTitle": "Metraż"
+  },
+  "apartmentsDashboardPage": {
+    "header": "Panel zarządzania lokalami",
+    "description": "Tutaj możesz zarządzać swoimi lokalami"
+  },
+  "apartmentCard": {
+    "localeTitle": "Lokal ",
+    "checkButton": "Sprawdź"
   }
 }

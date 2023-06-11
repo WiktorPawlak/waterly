@@ -19,4 +19,5 @@ export const PATHS = {
   MANAGE_TARIFFS: "/tariffs",
 
   MANAGE_APARTMENTS: "/apartments",
+  APARTMENT_DETAILS: "/apartments/:id",
 } as const;
