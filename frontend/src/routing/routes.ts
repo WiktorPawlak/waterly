@@ -17,6 +17,7 @@ import { ManageTariffsPage } from "../pages/facilityManager/ManageTariffsPage";
 import { ApartmentListPage } from "../pages/facilityManager/ApartmentsListPage";
 import { ApartmentDetailsPage } from "../pages/facilityManager/ApartmentDetailsPage";
 import { ApartmentDashboardPage } from "../pages/owner/ApartmentDashboardPage";
+import { BillsPage } from "../pages/facilityManager/BillsPage";
 
 export const Pathnames = {
   public: {
@@ -50,6 +51,7 @@ export const Pathnames = {
     manageTariffs: PATHS.MANAGE_TARIFFS,
     manageApartments: PATHS.MANAGE_APARTMENTS,
     apartmentDetails: PATHS.APARTMENT_DETAILS,
+    apartemtnBills: PATHS.APARTMENT_BILLS,
   },
   admin: {
     home: PATHS.HOME,
@@ -171,6 +173,10 @@ export const facilityManagerRoutes: RouteType[] = [
     path: Pathnames.facilityManager.verifyUsers,
     Component: VerifyUsersFMPage,
     name: "navigation.verifyUsers",
+  },
+  {
+    path: Pathnames.facilityManager.apartemtnBills,
+    Component: BillsPage,
   },
   {
     path: Pathnames.facilityManager.invoices,

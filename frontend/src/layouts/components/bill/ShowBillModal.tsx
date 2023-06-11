@@ -1,23 +1,24 @@
 import {
-    Box,
-    Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
+  Box,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { resolveApiError } from "../../../api/apiErrors";
 import { GetBillsByOwnerIdDto, getBillsByOwnerId } from "../../../api/billApi";
-import { DatePicker, LocalizationProvider, plPL } from "@mui/x-date-pickers";
-import dayjs, { Dayjs } from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { monthName } from "../../../common/dates";
+import dayjs from "dayjs";
 
 interface Props {
-    apartmentId: number
+  apartmentId: number;
+  yearMonthDate?: Date;
 }
 
 const initialBillData: GetBillsByOwnerIdDto = {
@@ -47,47 +48,49 @@ const initialBillData: GetBillsByOwnerIdDto = {
     },
 };
 
-export const ShowBillModal = ({
-    apartmentId
-}: Props) => {
-    const { t } = useTranslation();
-    const [isLoading, setIsLoading] = useState(false);
-    const [billData, setBillData] = useState(initialBillData);
-    const [date, setDate] = useState<Dayjs | null>(dayjs());
-    const [found, setFound] = useState<boolean>(true);
+export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
+  const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [billData, setBillData] = useState(initialBillData);
+  const [found, setFound] = useState<boolean>(true);
 
-    useEffect(() => {
-        setFound(false);
-    }, [apartmentId]);
+  useEffect(() => {
+    setFound(false);
+  }, [apartmentId]);
 
-    const fetchData = async () => {
-        setIsLoading(true);
-        const response = await getBillsByOwnerId(date!.format('YYYY-MM'), apartmentId);
-        console.log(response);
-        if (response.status !== 200) {
-            enqueueSnackbar(t(resolveApiError(response.error)), {
-                variant: "error",
-            });
-            setFound(false);
-        } else {
-            setBillData(response.data as GetBillsByOwnerIdDto);
-            setFound(true);
-        }
-        setIsLoading(false);
-    };
+  const fetchData = async () => {
+    setIsLoading(true);
+    const response = await getBillsByOwnerId(
+      dayjs(yearMonthDate!!).format("YYYY-MM"),
+      apartmentId
+    );
+    if (response.status !== 200) {
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
+      setFound(false);
+    } else {
+      setBillData(response.data as GetBillsByOwnerIdDto);
+      setFound(true);
+    }
+    setIsLoading(false);
+  };
 
-    const handleClick = (() => {
-        fetchData();
-    });
+  useEffect(() => {
+    fetchData();
+  }, [yearMonthDate]);
 
+  const handleClick = () => {
+    fetchData();
+  };
 
-    const headers = [
-        { label: t("bill.advancedUsage") },
-        { label: t("bill.realUsage") },
-        { label: t("bill.advancedCost") },
-        { label: t("bill.realCost") },
-        { label: t("bill.rowBalance") }
-    ];
+  const headers = [
+    { label: t("bill.advancedUsage") },
+    { label: t("bill.realUsage") },
+    { label: t("bill.advancedCost") },
+    { label: t("bill.realCost") },
+    { label: t("bill.rowBalance") },
+  ];
 
     const tableData = useMemo(() => [
         {
@@ -147,62 +150,54 @@ export const ShowBillModal = ({
         }
     ], [billData]);
 
+  if (isLoading && !found) {
     return (
-        <Box>
-            <LocalizationProvider adapterLocale="pl"
-                dateAdapter={AdapterDayjs}
-                localeText={plPL.components.MuiLocalizationProvider.defaultProps.localeText}>
-                <DatePicker
-                    format="YYYY-MM"
-                    value={date}
-                    onChange={(newValue) => setDate(newValue)}
-                    views={['month', 'year']}
-                    sx={{
-                        mx: '20px',
-                        mt: '20px',
-                    }}
-                />
-            </LocalizationProvider>
-            <Button
-                variant="contained"
-                sx={{
-                    textTransform: "none",
-                    fontWeight: "700",
-                    width: "fit-content",
-                    marginLeft: '20px',
-                    mt: '30px'
-                }}
-                onClick={() => handleClick()}
-            >
-                {t("apartmentCard.checkButton")}
-            </Button>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>
-                        </TableCell>
-                        {/* Empty cell for the top-left corner */}
-                        {headers.map((header) => (
-                            <TableCell key={header.label}>{header.label}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {tableData.map((row) => (
-                        <TableRow key={row.id}>
-                            <TableCell component="th" scope="row">
-                                {row.name}
-                            </TableCell>
-                            <TableCell>{found ? row.advancedUsage : '-'}</TableCell>
-                            <TableCell>{found ? row.realUsage : '-'}</TableCell>
-                            <TableCell>{found ? row.advancedCost : '-'}</TableCell>
-                            <TableCell>{found ? row.realCost : '-'}</TableCell>
-                            <TableCell>{found ? row.balance : '-'}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </Box>
-    )
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <Box>
+      <Box sx={{ mt: 3, ml: 3 }}>
+        <Typography sx={{ fontSize: "35px" }}>
+          {t(monthName(yearMonthDate?.getMonth()!!))}{" "}
+          {yearMonthDate?.getFullYear()}
+        </Typography>
+      </Box>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell></TableCell>
+            {/* Empty cell for the top-left corner */}
+            {headers.map((header) => (
+              <TableCell key={header.label}>{header.label}</TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tableData.map((row) => (
+            <TableRow key={row.id}>
+              <TableCell component="th" scope="row">
+                {row.name}
+              </TableCell>
+              <TableCell>{row.advancedUsage}</TableCell>
+              <TableCell>{row.realUsage}</TableCell>
+              <TableCell>{row.advancedCost}</TableCell>
+              <TableCell>{row.realCost}</TableCell>
+              <TableCell>{row.balance}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Box>
+  );
 };

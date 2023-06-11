@@ -1,17 +1,18 @@
-import {useTranslation} from "react-i18next";
-import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
-import {resolveApiError} from "../../api/apiErrors";
-import {useSnackbar} from "notistack";
-import {Box, Button, Typography} from "@mui/material";
-import {Loading} from "../../layouts/components/Loading";
-import {ApartmentDto, getApartmentDetails} from "../../api/apartmentApi";
-import {ApartmentDetails} from "../../layouts/components/apartment/ApartmentDetails";
-import {MainLayout} from "../../layouts/MainLayout";
-import {AssignWaterMeterToApartmentDialog} from "../../layouts/components/watermeter/AssingWaterMeterToApartmentModal";
+import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { resolveApiError } from "../../api/apiErrors";
+import { useSnackbar } from "notistack";
+import { Box, Button, Typography } from "@mui/material";
+import { Loading } from "../../layouts/components/Loading";
+import { ApartmentDto, getApartmentDetails } from "../../api/apartmentApi";
+import { ApartmentDetails } from "../../layouts/components/apartment/ApartmentDetails";
+import { MainLayout } from "../../layouts/MainLayout";
+import { AssignWaterMeterToApartmentDialog } from "../../layouts/components/watermeter/AssingWaterMeterToApartmentModal";
 import AddIcon from "@mui/icons-material/Add";
-import {getApartmentWaterMeters} from "../../api/waterMeterApi";
-import {WaterMeterCard} from "../../layouts/components/watermeter/WaterMeterCard";
+import { getApartmentWaterMeters } from "../../api/waterMeterApi";
+import { WaterMeterCard } from "../../layouts/components/watermeter/WaterMeterCard";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 
 type WaterMeterDto = {
   id: number;
@@ -32,6 +33,7 @@ export const ApartmentDetailsPage = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [assignWaterMeterDialogOpen, setAssignWaterMeterDialogOpen] =
     useState(false);
@@ -83,18 +85,32 @@ export const ApartmentDetailsPage = () => {
         <Typography sx={{ mb: { xs: 5, md: 5 }, color: "text.secondary" }}>
           {t("apartmentDetailsPage.description")}
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          sx={{
-            textTransform: "none",
-            mb: { xs: 3, md: 2 },
-            width: "30vh",
-          }}
-          onClick={() => setAssignWaterMeterDialogOpen(true)}
-        >
-          {t("assignWaterMeterDialog.addWaterMeter")}
-        </Button>
+        <Box sx={{ display: "flex", rowGap: "20px" }}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              textTransform: "none",
+              mb: { xs: 3, md: 2 },
+              width: "30vh",
+            }}
+            onClick={() => setAssignWaterMeterDialogOpen(true)}
+          >
+            {t("assignWaterMeterDialog.addWaterMeter")}
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AssessmentIcon />}
+            sx={{
+              textTransform: "none",
+              mb: { xs: 3, md: 2, marginLeft: "20px" },
+              width: "30vh",
+            }}
+            onClick={() => navigate(`/apartments/${id}/bills`)}
+          >
+            {t("apartmentDetailsPage.showBills")}
+          </Button>
+        </Box>
         <AssignWaterMeterToApartmentDialog
           isOpen={assignWaterMeterDialogOpen}
           setIsOpen={setAssignWaterMeterDialogOpen}

@@ -488,7 +488,8 @@
     "profile": "Profil",
     "tariffs": "Przeglądaj taryfy",
     "invoices": "Przeglądaj faktury",
-    "water-meters": "Wodomierze"
+    "water-meters": "Wodomierze",
+    "bills": "Rozliczenia"
   },
   "homePage": {
     "button": "Zacznij",
@@ -547,7 +548,8 @@
     "description": "Tutaj możesz zarządzać szczegółami lokalu",
     "localeTitle": "Lokal ",
     "ownerTitle": "Właściciel",
-    "areaTitle": "Metraż"
+    "areaTitle": "Metraż",
+    "showBills": "Pokaż rozliczenia"
   },
   "apartmentsDashboardPage": {
     "header": "Panel zarządzania lokalami",
@@ -571,7 +573,7 @@
   "addMainWaterMeterDialog": {
     "waterMeterAddedSuccessfully": "Pomyślnie dodano wodomierz główny",
     "button": "Dodaj wodomierz główny",
-    "addWaterMeter":"Dodaj wodomierz główny",
+    "addWaterMeter": "Dodaj wodomierz główny",
     "startingValue": "Wartość początkowa",
     "expiryDate": "Data ważności"
   },
@@ -586,5 +588,22 @@
     "waterMeterExpectedUsage": "Miesięczne zużycie",
     "waterMeterHeader": "Wprowadź nowe przewidywane zużycie",
     "waterMeterError": "Podana wartość musi być liczbą maksymalnie 7 liczbową z dokładnością do 3 miejsc po przecinku"
+  },
+  "billPage": {
+    "noBills": "Nie ma rozliczeń"
+  },
+  "month": {
+    "january": "Styczeń",
+    "february": "Luty",
+    "march": "Marzec",
+    "april": "Kwiecień",
+    "may": "Maj",
+    "june": "Czerwiec",
+    "july": "Lipiec",
+    "august": "Sierpien",
+    "september": "Wrzesień",
+    "october": "Październik",
+    "november": "Listopad",
+    "december": "Grudzień"
   }
 }

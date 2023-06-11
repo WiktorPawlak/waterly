@@ -14,7 +14,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.BillEndpoint;
 
@@ -37,7 +37,7 @@ public class BillController extends RepeatableTransactionProcessor {
     @GET
     @Path("/apartment/{id}")
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public List<ApartmentBillsDto> getBillsByApartmentId(@PathParam("id") final long apartmentId) {
+    public List<ApartmentBillDto> getBillsByApartmentId(@PathParam("id") final long apartmentId) {
         return billEndpoint.getBillsByApartmentId(apartmentId);
     }
 

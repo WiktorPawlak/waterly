@@ -14,8 +14,9 @@ export default function Breadcrumbs() {
     profile: "breadcrumbs.profile",
     tariffs: "breadcrumbs.tariffs",
     apartments: "breadcrumbs.apartments",
-  	'invoices' : 'breadcrumbs.invoices',
-    'water-meters': 'breadcrumbs.water-meters'
+    bills: "breadcrumbs.bills",
+    invoices: "breadcrumbs.invoices",
+    "water-meters": "breadcrumbs.water-meters",
   };
 
   const excludedPaths = [PATHS.LOGIN, PATHS.REGISTER] as string[];
@@ -32,8 +33,8 @@ export default function Breadcrumbs() {
         {t(breadcrumbsKeyMap[crumb] ?? crumb)}
       </Typography>
     ) : (
-      <Typography key={crumb} sx={{ color: 'text.default' }}>
-        <Link to={currentLink} key={crumb} style={{ color: 'inherit' }}>
+      <Typography key={crumb} sx={{ color: "text.default" }}>
+        <Link to={currentLink} key={crumb} style={{ color: "inherit" }}>
           {t(breadcrumbsKeyMap[crumb] ?? crumb)}
         </Link>
       </Typography>
@@ -57,8 +58,10 @@ export default function Breadcrumbs() {
         mb: { xs: 1, md: 2 },
       }}
     >
-      <Typography sx={{ color: 'text.default' }}>
-        <Link to={"/"} style={{ color: 'inherit' }}>{t("breadcrumbs.homePage")}</Link>
+      <Typography sx={{ color: "text.default" }}>
+        <Link to={"/"} style={{ color: "inherit" }}>
+          {t("breadcrumbs.homePage")}
+        </Link>
       </Typography>
       {crumbs}
     </MUIBreadcrumbs>
