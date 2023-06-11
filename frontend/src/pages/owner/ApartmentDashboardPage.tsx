@@ -88,7 +88,7 @@ export const ApartmentDashboardPage = () => {
             </Box>
           ))}
         </Box>
-        {id &&  
+        {id &&
         <ApartmentDetails
           apartment={apartmentsList.data.find((obj) => obj.id === parseInt(id)) as ApartmentDto}
         />}

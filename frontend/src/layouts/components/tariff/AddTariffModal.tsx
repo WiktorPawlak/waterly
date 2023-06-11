@@ -80,7 +80,7 @@ export const AddTariffDialog = ({
             }
         );
         if (response.status === 201) {
-            enqueueSnackbar(t("addTariffDialog.tariffAddedSuccesfully"), {
+            enqueueSnackbar(t("addTariffDialog.tariffAddedSuccessfully"), {
                 variant: "success",
             });
             handleClose();

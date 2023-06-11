@@ -22,9 +22,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackI
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.BillService;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.MolAccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 
 @TransactionRollbackInterceptor
 @Monitored
@@ -35,21 +37,34 @@ public class BillEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @Inject
     private BillService billService;
+    @Inject
+    private MolAccountService molAccountService;
+    @Inject
+    private AuthenticatedAccount callerContext;
 
-    @RolesAllowed({OWNER})
-    public BillDto getBillsByOwnerId(final long ownerId, final String date) {
+    @RolesAllowed({OWNER, FACILITY_MANAGER})
+    public BillDto getBillDetail(final String date, final long apartmentId) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
             YearMonth yearMonth = YearMonth.parse(date, formatter);
             LocalDate localDate = yearMonth.atDay(1);
-            Optional<Bill> optionalBill = billService.getBillsByOwnerId(ownerId, localDate);
+            Optional<Bill> optionalBill = billService.getBillByDateAndApartmentId(localDate, apartmentId);
             if (optionalBill.isPresent()){
+                if (!callerContext.isFacilityManager()) {
+                    checkBillBelongsToOwner(optionalBill.get());
+                }
                 return new BillDto(optionalBill.get());
             } else {
                 throw ApplicationBaseException.noSuchBillException();
             }
         } catch (final DateTimeParseException e) {
             throw ApplicationBaseException.invalidDateException();
+        }
+    }
+
+    private void checkBillBelongsToOwner(final Bill bill) {
+        if (bill.getAccount().getId() != molAccountService.getPrincipalId()) {
+            throw ApplicationBaseException.billDoesNotBelongToOwnerException();
         }
     }
 

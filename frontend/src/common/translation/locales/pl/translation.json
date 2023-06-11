@@ -269,7 +269,8 @@
     "invalidTariffPeriod": "Wprowadzono niepoprawny okres obowiązywania taryfy",
     "tariffsColiding": "Istnieje taryfa z nakładającym się okresem obowiązywania",
     "invoicesColliding": "Wprowadzono już fakturę na podany miesiąc",
-    "invoiceNumberExists": "Istnieje już faktura z podanym numerem"
+    "invoiceNumberExists": "Istnieje już faktura z podanym numerem",
+    "noSuchBill": "Brak rozliczeń na podany miesiąc"
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",
@@ -425,7 +426,7 @@
     "editOwner": "Edytuj właścicela"
   },
   "addTariffDialog": {
-    "tariffAddedSuccesfully": "Pomyślnie dodano taryfę",
+    "tariffAddedSuccessfully": "Pomyślnie dodano taryfę",
     "addTariff": "Dodaj taryfę"
   },
   "addInvoiceModal": {
@@ -434,7 +435,7 @@
     "waterUsage": "Zużycie wody [m<sup>3</sup>]",
     "addInvoice": "Dodaj fakturę",
     "invoiceNumber": "Numer Faktury",
-    "invoiceAddedSuccessfully": "Faktura dodana pomyślnie"
+    "invoiceAddedSuccesfully": "Faktura dodana pomyślnie"
   },
   "twoFactor": {
     "yes": "włączone",
@@ -493,6 +494,18 @@
         "area": "Powierzchnia"
       }
     }
+  },
+  "bill": {
+    "advancedUsage": "Przewidywane zużycie",
+    "realUsage": "Faktyczne zużycie",
+    "advancedCost": "Przewidywany koszt",
+    "realCost": "Faktyczny koszt",
+    "rowBalance": "Bilas",
+    "coldWater": "Woda zimna",
+    "hotWater": "Woda ciepła",
+    "trash": "Śmieci",
+    "unbilledWater": "Woda niezbilansowana",
+    "summary": "Razem:"
   },
   "apartmentDetailsPage": {
     "header": "Szczegóły lokalu",

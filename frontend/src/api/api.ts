@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { axiosClient } from "./axois/axoisInstance";
+import { errorUtil } from "zod/lib/helpers/errorUtil";
 
 export interface ApiResponse<T> {
   headers?: any;
@@ -24,8 +25,8 @@ export async function get<T>(
         status: response.status,
       };
     })
-    .catch((error: unknown) => {
-      return { error: (error as Error).message };
+    .catch((error: any) => {
+      return { error: error.response?.data?.message };
     });
 }
 

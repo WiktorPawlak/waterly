@@ -27,9 +27,9 @@ public class BillService {
     @Inject
     private BillFacade billFacade;
 
-    @RolesAllowed({OWNER})
-    public Optional<Bill> getBillsByOwnerId(final long ownerId, final LocalDate date) {
-        return billFacade.findByOwnerId(ownerId, date);
+    @RolesAllowed({OWNER, FACILITY_MANAGER})
+    public Optional<Bill> getBillByDateAndApartmentId(final LocalDate date, final long apartmentId) {
+        return billFacade.findByDateAndApartmentId(date, apartmentId);
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})

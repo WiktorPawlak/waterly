@@ -56,11 +56,9 @@ export const ApartmentsList = () => {
     order: "asc",
     orderBy: "number",
   });
-
-  const [selectedApartment, setSelectedApartment] = useState<ApartmentDto>();
+ const [selectedApartment, setSelectedApartment] = useState<ApartmentDto>();
   const [editApartmentOwnerModalOpen, setEditApartmentOwnerModalOpen] =
     useState(false);
-
   useEffect(() => {
     if (listRequest) {
       fetchData();
