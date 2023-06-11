@@ -393,7 +393,7 @@ public class AccountService {
                 orderBy);
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed(FACILITY_MANAGER)
     public List<Account> getOwnersAccounts() {
         return accountFacade.findAllOwnersAccounts();
     }

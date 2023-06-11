@@ -32,14 +32,7 @@ public class InvoiceService {
 
     @RolesAllowed({FACILITY_MANAGER})
     public void createInvoice(final CreateInvoiceDto invoice) {
-        //dto -> Invoice
-        createInvoice();
-        generateBillsService.generateBills(new Invoice());
-    }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private void createInvoice() {
-        invoiceFacade.create(new Invoice());
+        invoiceFacade.create(new Invoice(invoice));
     }
 
     @RolesAllowed({FACILITY_MANAGER})

@@ -255,7 +255,7 @@ public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
         return new AccountDto(account);
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed(FACILITY_MANAGER)
     public List<ListAccountDto> getOwnersAccounts() {
         return accountService.getOwnersAccounts()
                 .stream().map(ListAccountDto::new)

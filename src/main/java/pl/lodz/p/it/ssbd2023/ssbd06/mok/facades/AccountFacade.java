@@ -113,7 +113,7 @@ public class AccountFacade extends AbstractFacade<Account> {
         }
     }
 
-    @RolesAllowed(ADMINISTRATOR)
+    @RolesAllowed(FACILITY_MANAGER)
     public List<Account> findAllOwnersAccounts() {
         TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findOwners", Account.class);
         accountTypedQuery.setFlushMode(FlushModeType.COMMIT);
