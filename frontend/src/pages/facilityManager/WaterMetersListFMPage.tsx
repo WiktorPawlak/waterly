@@ -1,15 +1,36 @@
-import {useTranslation} from "react-i18next";
-import {DataGrid, GridColDef, GridColumnHeaderParams, GridSortModel,} from "@mui/x-data-grid";
-import React, {useCallback, useEffect, useState} from "react";
+import { useTranslation } from "react-i18next";
+import {
+  DataGrid,
+  GridColDef,
+  GridColumnHeaderParams,
+  GridSortModel,
+} from "@mui/x-data-grid";
+import React, { useCallback, useEffect, useState } from "react";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-import {Autocomplete, Box, Button, FormControl, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, TextField, Typography,} from "@mui/material";
-import {PaginatedList} from "../../api/accountApi";
-import {MainLayout} from "../../layouts/MainLayout";
-import {enqueueSnackbar} from "notistack";
-import {resolveApiError} from "../../api/apiErrors";
-import {GetPagedWaterMetersListDto, getWaterMetersList, ListWaterMeterDto,} from "../../api/waterMeterApi";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Pagination,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { PaginatedList } from "../../api/accountApi";
+import { MainLayout } from "../../layouts/MainLayout";
+import { enqueueSnackbar } from "notistack";
+import { resolveApiError } from "../../api/apiErrors";
+import {
+  GetPagedWaterMetersListDto,
+  getWaterMetersList,
+  ListWaterMeterDto,
+} from "../../api/waterMeterApi";
+import { WaterMeterLock } from "../../layouts/components/watermeter/WaterMeterLock";
 
 export const WaterMetersListFMPage = () => {
   const { t } = useTranslation();
@@ -44,6 +65,21 @@ export const WaterMetersListFMPage = () => {
         });
       }
       setIsLoading(false);
+    });
+  };
+
+  const handleWaterMeterStatusChange = (
+    waterMeterId: number,
+    isActive: boolean
+  ) => {
+    setPageState((prevPageState) => {
+      const updatedData = prevPageState.data.map((item) => {
+        if (item.id === waterMeterId) {
+          return { ...item, active: isActive };
+        }
+        return item;
+      });
+      return { ...prevPageState, data: updatedData };
     });
   };
 
@@ -138,9 +174,11 @@ export const WaterMetersListFMPage = () => {
       sortable: false,
       width: 80,
       renderCell: (params) => (
-        <Button>
-          <DeleteOutlineIcon />
-        </Button>
+        <WaterMeterLock
+          waterMeterId={params.row.id}
+          active={params.row.active}
+          onStatusChange={handleWaterMeterStatusChange}
+        />
       ),
     },
     {

@@ -198,6 +198,15 @@
         "startingValue": "Starting Value",
         "type": "Type"
       }
+    },
+    "toastActivateSuccess": "The water meter has been activated",
+    "toastDeactivateSuccess": "The water meter has been deactivated",
+    "popup": {
+      "msg": "Are you sure you want to:",
+      "deactivate": "deactivate this water meter?",
+      "activate": "activate this water meter?",
+      "no": "No",
+      "yes": "Yes"
     }
   },
   "navigation": {
