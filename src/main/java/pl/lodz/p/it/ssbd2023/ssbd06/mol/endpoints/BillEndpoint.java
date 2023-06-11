@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +18,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.MolAccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.ReadOnlyBillService;
@@ -69,9 +68,11 @@ public class BillEndpoint extends TransactionBoundariesTracingBean {
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public List<ApartmentBillsDto> getBillsByApartmentId(final long apartmentId) {
-        readOnlyBillService.getBillsByApartmentId(apartmentId);
-        return Collections.emptyList();
+    public List<ApartmentBillDto> getBillsByApartmentId(final long apartmentId) {
+        var bills = readOnlyBillService.getBillsByApartmentId(apartmentId);
+        return bills.stream()
+                .map(ApartmentBillDto::of)
+                .toList();
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})

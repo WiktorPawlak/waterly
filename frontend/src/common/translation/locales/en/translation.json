@@ -487,7 +487,8 @@
     "profile": "Profile",
     "tariffs": "View tariffs",
     "invoices": "View Invoices",
-    "water-meters": "Water Meters"
+    "water-meters": "Water Meters",
+    "bills": "Bills"
   },
   "homePage": {
     "button": "Get Started",
@@ -546,7 +547,8 @@
     "description": "Here you can manage apartment details",
     "localeTitle": "Apartment ",
     "ownerTitle": "Owner",
-    "areaTitle": "Area"
+    "areaTitle": "Area",
+    "showBills": "Show bills"
   },
   "apartmentsDashboardPage": {
     "header": "Apartments dashboard",
@@ -570,7 +572,7 @@
   "addMainWaterMeterDialog": {
     "waterMeterAddedSuccessfully": "Main water meter added successfully",
     "button": "Add main water meter",
-    "addWaterMeter":"Add main water meter",
+    "addWaterMeter": "Add main water meter",
     "startingValue": "Starting Value",
     "expiryDate": "Expiry Date"
   },
@@ -585,5 +587,22 @@
     "waterMeterExpectedUsage": "Monthly usage",
     "waterMeterHeader": "Enter new expected usage",
     "waterMeterError": "The value must be a number with maximum lenght of 7 with accuracy to 3 decimal places"
+  },
+  "billPage": {
+    "noBills": "No bills"
+  },
+  "month": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
   }
 }
