@@ -18,9 +18,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
 
@@ -33,15 +35,22 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
                 @Index(name = "bill_owner_idx", columnList = "owner_id"),
                 @Index(name = "bill_advance_usage_idx", columnList = "advance_usage"),
                 @Index(name = "bill_real_usage_idx", columnList = "real_usage")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "bill_date_apartment_owner_unique", columnNames = {"date", "apartment_id", "owner_id"})
         }
 )
 @Getter
+@Setter
+@NamedQuery(name = "Bill.findBillsWithNullRealUsage", query = "SELECT b FROM Bill b WHERE b.realUsage IS NULL")
 @NamedQuery(name = "Bill.findBillsByApartmentId", query = "select b from Bill b where b.apartment.id = :apartmentId")
 @NamedQuery(name = "Bill.findBillsByOwnerId", query = "select b from Bill b where b.account.id = :ownerId")
 @NamedQuery(name = "Bill.findBillOwnerIdByApartmentIdAndDate",
         query = "select b.account.id from Bill b where b.apartment.id = :apartmentId and b.date = :billDate")
 @NamedQuery(name = "Bill.findBillsByYearAndMonthAndApartmentId",
         query = "select b from Bill b where b.apartment.id = :apartmentId AND YEAR(b.date) = :year AND MONTH(b.date) = :month")
+@NamedQuery(name = "Bill.findBillsByDate",
+        query = "select b from Bill b where YEAR(b.date) = :year AND MONTH(b.date) = :month")
 @NoArgsConstructor
 @EntityListeners({MolAuditingEntityListener.class})
 public class Bill extends AbstractEntity {
@@ -62,10 +71,10 @@ public class Bill extends AbstractEntity {
     @ToString.Exclude
     @NotNull
     @OneToOne(cascade = {PERSIST, MERGE, REFRESH}, fetch = LAZY)
-    @JoinColumn(name = "advance_usage", updatable = false, nullable = false, foreignKey = @ForeignKey(name = "bill_advance_usage"))
+    @JoinColumn(name = "advance_usage", nullable = false, foreignKey = @ForeignKey(name = "bill_advance_usage"))
     private UsageReport advanceUsage;
     @ToString.Exclude
     @OneToOne(cascade = {PERSIST, MERGE, REFRESH}, fetch = LAZY)
-    @JoinColumn(name = "real_usage", updatable = false, foreignKey = @ForeignKey(name = "bill_real_usage_fk"))
+    @JoinColumn(name = "real_usage", foreignKey = @ForeignKey(name = "bill_real_usage_fk"))
     private UsageReport realUsage;
 }

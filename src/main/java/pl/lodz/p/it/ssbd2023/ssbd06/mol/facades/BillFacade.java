@@ -43,11 +43,13 @@ public class BillFacade extends AbstractFacade<Bill> {
         return em;
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
     public Bill create(final Bill bill) {
         return super.create(bill);
     }
 
+    public Bill update(final Bill bill) {
+        return super.update(bill);
+    }
 
     @RolesAllowed({OWNER, FACILITY_MANAGER})
     public Optional<Bill> findByDateAndApartmentId(final LocalDate date, final long apartmentId) {
@@ -72,10 +74,13 @@ public class BillFacade extends AbstractFacade<Bill> {
         return billsByApartmentIdTypedQuery.getResultList();
     }
 
-    @Override
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Bill findById(final Long id) {
         return super.findById(id);
+    }
+
+    public Optional<Bill> findBillById(final Long id) {
+        return Optional.ofNullable(getEntityManager().find(Bill.class, id));
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
@@ -89,5 +94,19 @@ public class BillFacade extends AbstractFacade<Bill> {
         } catch (final NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    public List<Bill> findBillsWithNullRealUsage() {
+        TypedQuery<Bill> typedQuery = em.createNamedQuery("Bill.findBillsWithNullRealUsage", Bill.class);
+        typedQuery.setFlushMode(FlushModeType.COMMIT);
+        return typedQuery.getResultList();
+    }
+
+    public List<Bill> findBillsByDate(final LocalDate date) {
+        TypedQuery<Bill> typedQuery = em.createNamedQuery("Bill.findBillsByDate", Bill.class);
+        typedQuery.setParameter("month", date.getMonthValue());
+        typedQuery.setParameter("year", date.getYear());
+        typedQuery.setFlushMode(FlushModeType.COMMIT);
+        return typedQuery.getResultList();
     }
 }

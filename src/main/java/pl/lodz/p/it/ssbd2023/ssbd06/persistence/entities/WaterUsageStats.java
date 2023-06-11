@@ -36,6 +36,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.config.YearMonthDateAttributeCon
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @EntityListeners({MolAuditingEntityListener.class})
 public class WaterUsageStats extends AbstractEntity {
     @ToString.Exclude

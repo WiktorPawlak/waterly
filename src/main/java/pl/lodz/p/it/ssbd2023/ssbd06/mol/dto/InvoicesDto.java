@@ -1,7 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import javax.annotation.Nonnegative;
 
@@ -28,7 +27,7 @@ public class InvoicesDto implements Signable {
     @Money
     private BigDecimal totalCost;
     @NotNull
-    private LocalDate date;
+    private java.time.LocalDate date;
     @Nonnegative
     private long version;
 

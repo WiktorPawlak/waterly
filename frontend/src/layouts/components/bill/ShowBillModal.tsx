@@ -127,7 +127,9 @@ export const ShowBillModal = ({
         {
             id: 4,
             name: t("bill.summary"),
-            balance: billData.balance
+            balance: billData.balance,
+            advancedCost: billData.forecast.totalCost,
+            realCost: billData.realUsage.totalCost
         }
     ], [billData]);
 

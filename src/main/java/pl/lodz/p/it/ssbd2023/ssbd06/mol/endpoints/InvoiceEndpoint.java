@@ -10,18 +10,23 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedInvoicesListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.InvoiceCreatedEvent;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.InvoiceUpdatedEvent;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.InvoiceService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
 
@@ -39,9 +44,18 @@ public class InvoiceEndpoint extends TransactionBoundariesTracingEndpoint {
     @Property("default.list.page.size")
     private int defaultListPageSize;
 
+    @Inject
+    private Event<InvoiceCreatedEvent> invoiceCreatedEventEvent;
+
+    @Inject
+    private Event<InvoiceUpdatedEvent> invoiceUpdatedEvent;
+
+    @SneakyThrows
     @RolesAllowed({FACILITY_MANAGER})
     public void addInvoice(final CreateInvoiceDto dto) {
         invoiceService.createInvoice(dto);
+        InvoiceCreatedEvent event = new InvoiceCreatedEvent(DateConverter.convertInvoiceDate(dto.getDate()));
+        invoiceCreatedEventEvent.fire(event);
     }
 
     @RolesAllowed({FACILITY_MANAGER})
@@ -51,6 +65,9 @@ public class InvoiceEndpoint extends TransactionBoundariesTracingEndpoint {
             throw ApplicationBaseException.optimisticLockException();
         }
         invoiceService.updateInvoice(invoice, dto);
+
+        InvoiceUpdatedEvent event = new InvoiceUpdatedEvent(dto.getDate());
+        invoiceUpdatedEvent.fire(event);
     }
 
     @RolesAllowed({FACILITY_MANAGER})
