@@ -307,7 +307,9 @@
     "waterPrice": "Cena musi być podana z dokładnością do dwóch miejsc po przecinku",
     "invoiceNumber": "Numer faktury musi zgadzać się ze schematem FV YYYY/MM/DD",
     "waterUsage": "Zużycie wody musi być podane z dokładnością do trzech miejsc po przecinku",
-    "totalCost": "Całkowity koszt musi być podany z dokładnością do dwóch miejsc po przecinku"
+    "totalCost": "Całkowity koszt musi być podany z dokładnością do dwóch miejsc po przecinku",
+    "startingValue": "Wartość początkowa musi być podane z dokładnością do trzech miejsc po przecinku",
+    "type": "Dostępne typy wodomierza to: woda zimna lub woda ciepła"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -428,6 +430,15 @@
   "addTariffDialog": {
     "tariffAddedSuccessfully": "Pomyślnie dodano taryfę",
     "addTariff": "Dodaj taryfę"
+  },
+  "assignWaterMeterDialog": {
+    "startingValue": "Stan początkowy",
+    "date": "Homologacja",
+    "type": "Wybierz typ wodomierza",
+    "waterMeterAssignedSuccessfully": "Wodomierz dodany pomyślnie",
+    "addWaterMeter": "Dodaj wodomierz",
+    "coldWater": "Zimna woda",
+    "hotWater": "Ciepła woda"
   },
   "addInvoiceModal": {
     "date": "Data",
