@@ -309,7 +309,9 @@
     "waterUsage": "Zużycie wody musi być podane z dokładnością do trzech miejsc po przecinku",
     "totalCost": "Całkowity koszt musi być podany z dokładnością do dwóch miejsc po przecinku",
     "startingValue": "Wartość początkowa musi być podane z dokładnością do trzech miejsc po przecinku",
-    "type": "Dostępne typy wodomierza to: woda zimna lub woda ciepła"
+    "type": "Dostępne typy wodomierza to: woda zimna lub woda ciepła",
+    "expectedDailyUsage": "Przewidywane zużycie dzienne musi być podane z dokładnością do trzech miejsc po przecinku",
+    "expiryDateAlreadyExpired": "Data przydatności musi być po dacie aktualnej"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -532,5 +534,16 @@
   "apartmentCard": {
     "localeTitle": "Lokal ",
     "checkButton": "Sprawdź"
+  },
+  "editWaterMeterDialog": {
+    "editWaterMeter": "Edytuj Wodomierz",
+    "expectedDailyUsage": "Przewidywane zużycie dzienne",
+    "startingValue": "Wartość początkowa",
+    "expiryDate": "Data ważności",
+    "waterMeterEditedSuccessfully": "Pomyślnie edytowano wodomierz"
+  },
+  "apartmentDropdown": {
+    "localeTitle": "Lokal ",
+    "chooseApartment": "Wybierz lokal"
   }
 }
