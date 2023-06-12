@@ -482,9 +482,11 @@
   },
   "apartmentPage": {
     "createApartment": "Dodaj lokal",
+    "editApartment": "Edytuj lokal",
     "selectOwner": "Wybierz właściciela",
     "ownerId": "Id właściciela",
     "apartmentCreatedSuccessfully": "Lokal dodany pomyślnie",
+    "apartmentEditedSuccessfully": "Pomyślnie edytowano lokal",
     "ownerChangedSuccessfully": "Właściciel zmieniony pomyślnie",
     "header": "Zarządaj lokalami",
     "description": "Tutaj możesz zarządzać lokalami",

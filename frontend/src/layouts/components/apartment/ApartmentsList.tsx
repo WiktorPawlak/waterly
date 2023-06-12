@@ -35,6 +35,7 @@ import { MainLayout } from "../../MainLayout";
 import { CreateApartmentDialog } from "./CreateApartmentDialog";
 import { EditApartmentUserModal } from "./EditApartmentUserModal";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import { EditApartmentDialog } from "./EditApartmentDialog";
 
 export const ApartmentsList = () => {
   const navigate = useNavigate();
@@ -42,6 +43,8 @@ export const ApartmentsList = () => {
   const [pattern, setPattern] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [addApartmentDialogIsOpen, setAddApartmentDialogIsOpen] =
+    useState(false);
+  const [editApartmentDialogIsOpen, setEditApartmentDialogIsOpen] =
     useState(false);
   const [pageState, setPageState] = useState<PaginatedList<ApartmentDto>>({
     data: [],
@@ -54,9 +57,9 @@ export const ApartmentsList = () => {
     page: 1,
     pageSize: 10,
     order: "asc",
-    orderBy: "number",
+    orderBy: "id",
   });
- const [selectedApartment, setSelectedApartment] = useState<ApartmentDto>();
+  const [selectedApartment, setSelectedApartment] = useState<ApartmentDto>();
   const [editApartmentOwnerModalOpen, setEditApartmentOwnerModalOpen] =
     useState(false);
   useEffect(() => {
@@ -68,6 +71,7 @@ export const ApartmentsList = () => {
     pattern,
     addApartmentDialogIsOpen,
     editApartmentOwnerModalOpen,
+    editApartmentDialogIsOpen,
   ]);
 
   const fetchData = () => {
@@ -104,20 +108,20 @@ export const ApartmentsList = () => {
 
   const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
     if (
-      column.field != "id" &&
-      column.field != "roles" &&
-      column.field != "changeUser" &&
-      column.field != "edit"
-    )
+      column.field === "id" ||
+      column.field === "number" ||
+      column.field === "area"
+    ) {
       setListRequest((old) => ({ ...old, orderBy: column.field }));
+    }
   };
 
   const handleSortModelChange = useCallback((sortModel: GridSortModel) => {
     setListRequest((old) => ({ ...old, order: sortModel[0]?.sort as string }));
   }, []);
 
-  const handleCellClick = async (params: GridCellParams) => {
-    const response = await getApartmentById(params.row.id);
+  const getApartment = async (id: number) => {
+    const response = await getApartmentById(id);
     if (response.data) {
       setSelectedApartment(response.data!);
     } else {
@@ -125,7 +129,16 @@ export const ApartmentsList = () => {
         variant: "error",
       });
     }
-    if (params.field != "changeUser" && params.field != "edit") {
+  };
+
+  const handleCellClick = async (params: GridCellParams) => {
+    if (params.field === "changeUser") {
+      await getApartment(params.row.id);
+      setEditApartmentOwnerModalOpen(true);
+    } else if (params.field === "edit") {
+      await getApartment(params.row.id);
+      setEditApartmentDialogIsOpen(true);
+    } else {
       const apartmentId = params.row.id;
       navigate(`/apartments/${apartmentId}`);
     }
@@ -137,7 +150,7 @@ export const ApartmentsList = () => {
       renderHeader: () => <strong>{"ID"}</strong>,
       width: 150,
       filterable: false,
-      sortable: false,
+      sortable: true,
       disableColumnMenu: true,
       disableReorder: true,
     },
@@ -161,40 +174,41 @@ export const ApartmentsList = () => {
       width: 130,
     },
     {
-      field: "ownerId",
-      renderHeader: () => <strong>{t("apartmentPage.ownerId")}</strong>,
-      width: 130,
+      field: "ownerName",
+      sortable: false,
+      renderHeader: () => (
+        <strong>{t("apartmentDetailsPage.ownerTitle")}</strong>
+      ),
+      width: 250,
     },
     {
       headerName: "",
-      field: "edit",
+      field: "changeUser",
       sortable: false,
       hideable: true,
       width: 80,
       align: "right",
-      renderCell: (params) => (
+      renderCell: (_) => (
         <>
-          <Button onClick={() => setEditApartmentOwnerModalOpen(true)}>
+          <Button>
             <ManageAccountsIcon />
           </Button>
-          <EditApartmentUserModal
-            isOpen={editApartmentOwnerModalOpen}
-            setIsOpen={setEditApartmentOwnerModalOpen}
-            apartmentId={selectedApartment?.id!}
-          />
         </>
       ),
     },
     {
       headerName: "",
-      field: "changeUser",
+      field: "edit",
       hideable: true,
+      sortable: false,
       width: 80,
       align: "right",
-      renderCell: (params) => (
-        <Button>
-          <EditOutlinedIcon />
-        </Button>
+      renderCell: (_) => (
+        <>
+          <Button>
+            <EditOutlinedIcon />
+          </Button>
+        </>
       ),
     },
   ];
@@ -204,6 +218,16 @@ export const ApartmentsList = () => {
       <CreateApartmentDialog
         isOpen={addApartmentDialogIsOpen}
         setIsOpen={setAddApartmentDialogIsOpen}
+      />
+      <EditApartmentUserModal
+        isOpen={editApartmentOwnerModalOpen}
+        setIsOpen={setEditApartmentOwnerModalOpen}
+        apartment={selectedApartment}
+      />
+      <EditApartmentDialog
+        apartment={selectedApartment}
+        isOpen={editApartmentDialogIsOpen}
+        setIsOpen={setEditApartmentDialogIsOpen}
       />
       <Box
         sx={{

@@ -481,9 +481,11 @@
   },
   "apartmentPage": {
     "createApartment": "Create apartment",
+    "editApartment": "Edit apartment",
     "selectOwner": "Select owner",
     "ownerId": "Owner id",
     "apartmentCreatedSuccessfully": "Apartment created successfully",
+    "apartmentEditedSuccessfully": "Apartment edited successfully",
     "ownerChangedSuccessfully": "Apartment owner changed successfully",
     "header": "Manage apartments",
     "description": "Here you can manage your apartments",

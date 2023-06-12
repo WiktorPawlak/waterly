@@ -167,7 +167,7 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
 
     private From<?, ?> resolveFieldClass(final Root<Apartment> root, final String fieldName) {
         return switch (fieldName) {
-            case "number", "area" -> root;
+            case "number", "area", "id" -> root;
             default -> {
                 log.severe(() -> "Error, trying to query by invalid field");
                 throw ApplicationBaseException.generalErrorException();

@@ -16,12 +16,14 @@ public class ApartmentDto {
     private long id;
     private String number;
     private BigDecimal area;
+    private long ownerId;
     private String ownerName;
 
     public ApartmentDto(final Apartment apartment) {
         this.id = apartment.getId();
         this.number = apartment.getNumber();
         this.area = apartment.getArea();
+        this.ownerId = apartment.getOwnerId();
 
         AccountDetails accountDetails = apartment.getOwner().getAccountDetails();
         this.ownerName = accountDetails.getFirstName() + ' ' + accountDetails.getLastName();
