@@ -34,7 +34,7 @@ public class DateConverter {
         return Date.from(localDateTime.atZone(zoneId).toInstant());
     }
 
-    public static LocalDate convertDateToLocalDate(final String value) throws ParseException {
+    public static LocalDate convertStringDateToLocalDate(final String value) throws ParseException {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setLenient(false);
         Date dateToConvert = dateFormat.parse(value);

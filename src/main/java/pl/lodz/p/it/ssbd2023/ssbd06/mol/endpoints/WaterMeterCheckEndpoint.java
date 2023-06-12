@@ -4,6 +4,8 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +16,7 @@ import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
@@ -72,31 +75,36 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
         }
 
         final WaterMeterCheck check = newWaterMeterChecks.get(0);
-        var usageStats = getWaterUsageStatsForWaterMeterCheck(check);
+        var usageStats = getWaterUsageStatsForNewChecks(check);
 
         upsertWaterUsageStats(expectedMonthHotWaterUsage, expectedMonthColdWaterUsage, check, usageStats);
     }
 
+    @SneakyThrows(ParseException.class)
     private List<WaterMeterCheck> prepareWaterMeterChecks(final WaterMeterChecksDto dto) {
+        boolean managerAuthored = callerContext.isFacilityManager();
+        final LocalDate checkDate = managerAuthored
+                ? DateConverter.convertStringDateToLocalDate(dto.getCheckDate())
+                : timeProvider.currentLocalDate();
+
         return dto.getWaterMeterChecks().stream()
-                .map(this::prepareWaterMeterCheck)
+                .map(checkDto -> prepareWaterMeterCheck(checkDto, checkDate, managerAuthored))
                 .toList();
     }
 
-    private WaterMeterCheck prepareWaterMeterCheck(final WaterMeterCheckDto dto) {
+    private WaterMeterCheck prepareWaterMeterCheck(final WaterMeterCheckDto dto, final LocalDate checkDate, final boolean managerAuthored) {
         var waterMeter = waterMeterService.findWaterMeterById(dto.getWaterMeterId());
-        if (!callerContext.isFacilityManager()) {
+
+        if (!managerAuthored) {
             checkWaterMeterBelongsToOwner(waterMeter);
+            checkCheckDateIsCurrent(checkDate);
         }
-//        if (!callerContext.isFacilityManager() && !timeProvider.currentLocalDate().isEqual(data-przekazana-jako-parametr)) {
-//            //todo zgłosić wyjątek - OWNER może tylko w obecnym dniu wprowadzić pomiar, facilityManager tylko w tym miesiącu
-//        }
         checkWaterMeterIsNotMain(waterMeter);
 
         return WaterMeterCheck.builder()
                 .meterReading(dto.getReading())
-                .checkDate(timeProvider.currentLocalDate())
-                .managerAuthored(callerContext.isFacilityManager())
+                .checkDate(checkDate)
+                .managerAuthored(managerAuthored)
                 .waterMeter(waterMeter)
                 .build();
     }
@@ -104,6 +112,12 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
     private void checkWaterMeterBelongsToOwner(final WaterMeter waterMeter) {
         if (waterMeter.getApartmentOwnerId() != molAccountService.getPrincipalId()) {
             throw ApplicationBaseException.waterMeterDoesNotBelongToOwnerException();
+        }
+    }
+
+    private void checkCheckDateIsCurrent(final LocalDate checkDate) {
+        if (!timeProvider.currentLocalDate().isEqual(checkDate)) {
+            throw ApplicationBaseException.invalidWaterMeterCheckDateException();
         }
     }
 
@@ -141,7 +155,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
         }
     }
 
-    private Optional<WaterUsageStats> getWaterUsageStatsForWaterMeterCheck(final WaterMeterCheck check) {
+    private Optional<WaterUsageStats> getWaterUsageStatsForNewChecks(final WaterMeterCheck check) {
         final YearMonth yearMonthOfWaterMeterCheck = YearMonth.of(check.getCheckDate().getYear(), check.getCheckDate().getMonth());
         final Apartment waterMeterApartment = check.getWaterMeter().getApartment();
         return waterUsageStatsService.findByApartmentAndYearMonth(waterMeterApartment, yearMonthOfWaterMeterCheck);
@@ -159,6 +173,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
                     .coldWaterUsage(expectedMonthColdWaterUsage)
                     .hotWaterUsage(expectedMonthHotWaterUsage)
                     .build();
+
             waterUsageStatsService.createWaterUsageStats(newUsageStats);
         } else {
             usageStats.get().setColdWaterUsage(expectedMonthColdWaterUsage);

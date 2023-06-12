@@ -14,6 +14,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -35,25 +36,16 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
     public static final WaterMeterChecksDto CHECKS_DTO = WaterMeterChecksDto.of(List.of(
             WaterMeterCheckDto.of(COLD_WATER_METER_ID, COLD_WATER_METER_READING),
             WaterMeterCheckDto.of(HOT_WATER_METER_ID, HOT_WATER_METER_READING)
-    ));
+    ), String.valueOf(LocalDate.now()));
 
     @Test
     @SneakyThrows
     void shouldPerformFirstWaterMeterCheckByOwner() {
         //given
-        long coldWaterMeterId = 1L;
-        long hotWaterMeterId = 2L;
-        BigDecimal coldWaterMeterReading = BigDecimal.valueOf(500.000);
-        BigDecimal hotWaterMeterReading = BigDecimal.valueOf(300.000);
-        WaterMeterChecksDto checksDto = WaterMeterChecksDto.of(List.of(
-                WaterMeterCheckDto.of(coldWaterMeterId, coldWaterMeterReading),
-                WaterMeterCheckDto.of(hotWaterMeterId, hotWaterMeterReading)
-        ));
-
         //when
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
-                .body(checksDto)
+                .body(CHECKS_DTO)
                 .when()
                 .post(WATERMETER_PATH + "/water-meter-checks")
                 .then()
@@ -63,7 +55,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
         BigDecimal coldWaterUsage = databaseConnector.executeQuery(
                 "SELECT s.cold_water_usage FROM water_usage_stats s WHERE s.apartment_id = 1"
         ).getBigDecimal("cold_water_usage");
-        assertEquals(BigDecimal.valueOf(200950).movePointLeft(3), coldWaterUsage);
+        assertEquals(BigDecimal.valueOf(200900).movePointLeft(3), coldWaterUsage);
     }
 
     @Test
@@ -92,7 +84,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
         BigDecimal coldWaterUsage = databaseConnector.executeQuery(
                 "SELECT s.cold_water_usage FROM water_usage_stats s WHERE s.apartment_id = 1"
         ).getBigDecimal("cold_water_usage");
-        assertEquals(BigDecimal.valueOf(200950).movePointLeft(3), coldWaterUsage);
+        assertEquals(BigDecimal.valueOf(200900).movePointLeft(3), coldWaterUsage);
     }
 
     @Test

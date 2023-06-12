@@ -45,8 +45,8 @@ public class TariffService {
     @RolesAllowed({FACILITY_MANAGER})
     @SneakyThrows(ParseException.class)
     public void addTariff(final CreateTariffDto createTariffDto) {
-        YearMonth startYearMonth = YearMonth.from(DateConverter.convertDateToLocalDate(createTariffDto.getStartDate()));
-        YearMonth endYearMonth = YearMonth.from(DateConverter.convertDateToLocalDate(createTariffDto.getEndDate()));
+        YearMonth startYearMonth = YearMonth.from(DateConverter.convertStringDateToLocalDate(createTariffDto.getStartDate()));
+        YearMonth endYearMonth = YearMonth.from(DateConverter.convertStringDateToLocalDate(createTariffDto.getEndDate()));
 
         Tariff tariff = Tariff.builder()
                 .coldWaterPrice(createTariffDto.getColdWaterPrice())
