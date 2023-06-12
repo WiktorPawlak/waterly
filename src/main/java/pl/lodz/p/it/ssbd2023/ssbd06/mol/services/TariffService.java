@@ -22,7 +22,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.TariffFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @Monitored
 @ServiceExceptionHandler
@@ -32,9 +31,6 @@ public class TariffService {
 
     @Inject
     TariffFacade tariffFacade;
-
-    @Inject
-    TimeProvider timeProvider;
 
 
     @PermitAll

@@ -27,6 +27,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @TransactionRollbackInterceptor
 @Monitored
@@ -49,6 +50,9 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @Inject
     private WaterMeterService waterMeterService;
+
+    @Inject
+    private TimeProvider timeProvider;
 
     @RolesAllowed(FACILITY_MANAGER)
     public void createApartment(final CreateApartmentDto dto) {
@@ -128,8 +132,6 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
     public void changeApartmentOwner(final long id, final ChangeApartmentOwnerDto dto) {
         apartmentService.changeApartmentOwner(id, dto);
     }
-
-
 }
 
 

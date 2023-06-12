@@ -32,10 +32,20 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterExpectedUsagesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 @Order(6)
 class ApartmentControllerTest extends IntegrationTestsConfig {
+    public static final BigDecimal EXPECTED_USAGE = BigDecimal.valueOf(300.000);
+    public static final ChangeApartmentOwnerDto CHANGE_APARTMENT_OWNER_DTO = ChangeApartmentOwnerDto.of(
+            OWNER_ID,
+            List.of(
+                    WaterMeterExpectedUsagesDto.of(COLD_WATER_METER_ID, EXPECTED_USAGE),
+                    WaterMeterExpectedUsagesDto.of(HOT_WATER_METER_ID, EXPECTED_USAGE)
+    ));
 
     @Nested
     class ApartmentCreation {
@@ -172,13 +182,13 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldChangeApartmentOwner() {
-            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .body(changeOwnerDto)
-                      .when()
+                    .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
                     .then()
                     .statusCode(OK.getStatusCode());
@@ -186,7 +196,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldReturnNotFoundWhenThereIsNoSuchApartmentOwner() {
-            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(99L);
 
             given()
@@ -200,7 +210,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldReturnNotFoundWhenThereIsNoSuchApartment() {
-            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
@@ -214,7 +224,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldReturnUnauthorizedWhenNoAuthToken() {
-            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
@@ -227,7 +237,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldReturnForbiddenWhenInsufficientRoles() {
-            ChangeApartmentOwnerDto changeOwnerDto = new ChangeApartmentOwnerDto();
+            ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()

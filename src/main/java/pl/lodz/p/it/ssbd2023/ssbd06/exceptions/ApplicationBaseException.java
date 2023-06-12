@@ -70,26 +70,21 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_RESOURCE_NOT_FOUND = "ERROR.RESOURCE_NOT_FOUND";
     public static final String ERROR_ROLE_NOT_FOUND = "ERROR.ROLE_NOT_FOUND";
     public static final String ERROR_ACCOUNT_LOCKED = "ERROR.ACCOUNT_LOCKED";
-
     public static final String ERROR_EMAIL_DO_NOT_MATCH = "ERROR.NO_MATCHING_EMAILS";
     public static final String ERROR_ACCOUNT_NOT_ACTIVE = "ERROR.NOT_ACTIVE_ACCOUNT";
     public static final String ERROR_ACCOUNT_NOT_CONFIRMED = "ERROR.NOT_CONFIRMED_ACCOUNT";
-
     public static final String ERROR_JWS_PROCESSING = "ERROR.JWS_PROCESSING";
     public static final String ERROR_NO_ETAG_PAYLOAD = "ERROR.NO_ETAG_PAYLOAD";
     public static final String ERROR_ENTITY_INTEGRITY_VIOLATED = "ERROR.ENTITY_INTEGRITY_VIOLATED";
-
     public static final String ERROR_IF_RECAPTCHA_INVALID = "ERROR.IF_RECAPTCHA_INVALID";
     public static final String ERROR_IF_MATCH_HEADER_MISSING = "ERROR.IF_MATCH_HEADER_MISSING";
     public static final String ERROR_INVALID_OTP = "ERROR.INVALID_OTP";
-
     public static final String ERROR_INVALID_DATE = "ERROR_INVALID_DATE";
     public static final String ERROR_NO_SUCH_BILL = "ERROR_NO_SUCH_BILL";
     public static final String ERROR_MAIN_WATER_METER_ALREADY_EXISTS = "ERROR.MAIN_WATER_METER_ALREADY_EXISTS";
     public static final String ERROR_EXPIRY_DATE_ALREADY_EXPIRED = "ERROR.EXPIRY_DATE_ALREADY_EXPIRED";
     public static final String ERROR_WATER_METER_EXPIRED = "ERROR.WATER_METER_EXPIRED";
     public static final String ERROR_WATER_METER_DOES_NOT_BELONG_TO_OWNER = "ERROR.WATER_METER_DOES_NOT_BELONG_TO_OWNER";
-
     public static final String ERROR_BILL_DOES_NOT_BELONG_TO_OWNER = "ERROR.BILL_DOES_NOT_BELONG_TO_OWNER";
     public static final String ERROR_ILLEGAL_MAIN_WATER_METER_CHECK = "ERROR.ILLEGAL_MAIN_WATER_METER_CHECK";
     public static final String ERROR_CHECK_WAS_ALREADY_PERFORMED = "ERROR.CHECK_WAS_ALREADY_PERFORMED";
@@ -98,10 +93,8 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
     public static final String INFO_TWO_FA_CODE_REQUESTED = "INFO.TWO_FA_CODE_REQUESTES";
-
     public static final String ERROR_TARIFFS_COLIDING = "ERROR.TARIFFS_COLIDING";
     public static final String ERROR_INVALID_TARIFF_PERIOD = "ERROR.INVALID_TARIFF_PERIOD";
-
     public static final String ERROR_INVOICE_NUMBER_EXISTS = "ERROR.INVOICE_NUMBER_EXISTS";
     public static final String ERROR_INVOICES_COLLIDING = "ERROR.INVOICES_COLLIDING";
 
