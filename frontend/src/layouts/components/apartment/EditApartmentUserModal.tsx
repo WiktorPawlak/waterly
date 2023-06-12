@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 import { enqueueSnackbar } from "notistack";
 import ErrorIcon from "@mui/icons-material/Error";
-import { changeApartmentOwner } from "../../../api/apartmentApi";
+import { ApartmentDto, changeApartmentOwner } from "../../../api/apartmentApi";
 import { useState } from "react";
 import { OwnerAccountsSelect } from "../account/OwnersAccountsSelect";
 import { resolveApiError } from "../../../api/apiErrors";
@@ -32,16 +32,16 @@ const ErrorTooltip = styled(({ className, ...props }: TooltipProps) => (
 interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  apartmentId: number;
+  apartment?: ApartmentDto;
 }
 
 export const EditApartmentUserModal = ({
   isOpen,
   setIsOpen,
-  apartmentId,
+  apartment,
 }: Props) => {
   const { t } = useTranslation();
-  const [ownerId, setOwnerId] = useState<number>();
+  const [ownerId, setOwnerId] = useState<number | undefined>();
 
   const handleClose = () => {
     setIsOpen(false);
@@ -51,7 +51,7 @@ export const EditApartmentUserModal = ({
   const handleFormSubmit = async () => {
     if (!ownerId) return;
 
-    const response = await changeApartmentOwner(apartmentId, ownerId);
+    const response = await changeApartmentOwner(apartment!!.id, ownerId);
 
     if (response.status === 200) {
       enqueueSnackbar(t("apartmentPage.ownerChangedSuccessfully"), {
@@ -106,7 +106,11 @@ export const EditApartmentUserModal = ({
                   flexDirection: { xs: "column", md: "row" },
                 }}
               ></Box>
-              <OwnerAccountsSelect setOwnerId={setOwnerId} ownerId={ownerId} />
+              <OwnerAccountsSelect
+                setOwnerId={setOwnerId}
+                ownerId={ownerId}
+                defaultOwnerId={apartment?.ownerId}
+              />
             </Box>
           </DialogContent>
           <DialogActions>

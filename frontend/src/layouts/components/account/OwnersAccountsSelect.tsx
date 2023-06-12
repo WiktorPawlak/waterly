@@ -15,10 +15,15 @@ import { enqueueSnackbar } from "notistack";
 
 interface Props {
   ownerId: number | undefined;
+  defaultOwnerId?: number;
   setOwnerId: (ownerId: number) => void;
 }
 
-export const OwnerAccountsSelect = ({ setOwnerId, ownerId }: Props) => {
+export const OwnerAccountsSelect = ({
+  setOwnerId,
+  ownerId,
+  defaultOwnerId,
+}: Props) => {
   const [pattern, setPattern] = useState("");
   const [ownersAccounts, setOwnersAccounts] = useState<ListAccountDto[]>();
   const { t } = useTranslation();
@@ -61,6 +66,8 @@ export const OwnerAccountsSelect = ({ setOwnerId, ownerId }: Props) => {
     }
   };
 
+  console.log(ownerId);
+
   return (
     <>
       <Typography
@@ -98,7 +105,7 @@ export const OwnerAccountsSelect = ({ setOwnerId, ownerId }: Props) => {
             width: "100% !important",
           }}
           exclusive
-          value={ownerId}
+          value={ownerId ?? defaultOwnerId}
           onChange={(_, value) => {
             handleOwnerIdChange(value);
           }}

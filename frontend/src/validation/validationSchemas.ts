@@ -73,6 +73,25 @@ export const createApartmentSchema = z
     }
   );
 
+export const editApartmentSchema = z
+  .object({
+    number: z
+      .string()
+      .min(1, "apartmentPage.validation.number.min")
+      .max(20, "apartmentPage.validation.number.max")
+      .regex(/^[\p{L}0-9._-]+$/u, "apartmentPage.validation.number.syntax"),
+    area: z
+      .string()
+      .regex(/^\d*(\.\d{0,2})?$/, "apartmentPage.validation.area.decimal"),
+  })
+  .refine(
+    (data) => parseFloat(data.area) >= 1 && parseFloat(data.area) < 1000,
+    {
+      message: "apartmentPage.validation.area.value",
+      path: ["area"],
+    }
+  );
+
 export const accountDetailsSchema = z
   .object({
     email: z
@@ -223,7 +242,9 @@ export const addTariffSchema = z.object({
 });
 
 export const addInvoiceSchema = z.object({
-  invoiceNumber: z.string().regex(/^FV \d{4}\/\d{2}\/\d{2}$/, "validation.invoiceNumber"),
+  invoiceNumber: z
+    .string()
+    .regex(/^FV \d{4}\/\d{2}\/\d{2}$/, "validation.invoiceNumber"),
   waterUsage: z.string().regex(/^\d+(\.\d{3})?$/, "validation.waterUsage"),
   totalCost: z.string().regex(/^\d+(\.\d{2})?$/, "validation.totalCost"),
 });
@@ -251,6 +272,8 @@ export type ChangeOwnPasswordSchemaType = z.infer<
 export type AccountDetailsSchemaType = z.infer<typeof accountDetailsSchema>;
 
 export type CreateApartmentSchemaType = z.infer<typeof createApartmentSchema>;
+
+export type EditApartmentSchemaType = z.infer<typeof editApartmentSchema>;
 
 export type EditAccountSchemaType = z.infer<typeof editAccountSchema>;
 

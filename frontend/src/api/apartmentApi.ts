@@ -8,11 +8,17 @@ export interface ApartmentDto {
   number: string;
   area: number;
   ownerName: string;
+  ownerId: number;
 }
 
 export interface ChangeApartmentOwnerDto {
   id: number;
   newOwnerLogin: string;
+}
+
+export interface EditApartmentDto {
+  number: string;
+  area: number;
 }
 
 export interface CreateApartmentDto {
@@ -38,6 +44,13 @@ export async function createAprtment(
   body: CreateApartmentDto
 ): Promise<ApiResponse<PaginatedList<ApartmentDto>>> {
   return post(`${APARTMENTS_PATH}`, body);
+}
+
+export async function editApartment(
+  id: number,
+  body: EditApartmentDto
+): Promise<ApiResponse<PaginatedList<ApartmentDto>>> {
+  return put(`${APARTMENTS_PATH}/${id}`, body);
 }
 
 export async function getApartmentById(
