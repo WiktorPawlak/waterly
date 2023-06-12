@@ -38,6 +38,7 @@ const apiErrors = new Map<string, string>([
   ["ERROR.OWNER_ACCOUNT_NOT_FOUND", "apiError.ownerAccountNotFound"],
   ["ERROR.APARTMENT_WITH_NUMBER_EXIST", "apiError.apartmentWithNumberExist"],
   ["ERROR_NO_SUCH_BILL", "apiError.noSuchBill"],
+  ["ERROR.EXPIRY_DATE_ALREADY_EXPIRED", "validation.expiryDateAlreadyExpired"],
   ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
   ["VALIDATION.EMAIL", "validation.emailInvalid"],
   ["VALIDATION.EMAIL_SIZE", "validation.emailInvalidSize"],
@@ -67,7 +68,7 @@ const apiErrors = new Map<string, string>([
   ["VALIDATION.PHONE_NUMBER_PATTERN", "validation.phoneNumberInvalidPattern"],
   ["VALIDATION.PHONE_NUMBER", "validation.phoneNumberInvalid"],
   ["VALIDATION.UUID_PATTERN", "validation.uuidInvalidPattern"],
-  ["VALIDATION.UUID", "validation.uuidInvalid"],
+  ["VALIDATION.UUID", "validation.uuidInvalid"]
 ]);
 
 const UNKNOWN_ERROR = "apiError.unknownError";

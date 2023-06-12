@@ -304,7 +304,9 @@
     "waterUsage": "Water usage needs to be specified with three decimal places",
     "totalCost": "Total cost needs to be specified with two decimal places",
     "startingValue": "Starting value needs to be specified with three decimal places",
-    "type": "Water meter types can be only either hot water or cold water"
+    "type": "Water meter types can be only either hot water or cold water",
+    "expectedDailyUsage": "Expected Daily Usage needs to be specified with three decimal places",
+    "expiryDateAlreadyExpired": "Expiry date needs to be after current date"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -531,5 +533,16 @@
   "apartmentCard": {
     "localeTitle": "Apartment ",
     "checkButton": "Check"
+  },
+  "editWaterMeterDialog": {
+    "editWaterMeter": "Edit Water Meter",
+    "expectedDailyUsage": "Expected Daily Usage",
+    "startingValue": "Starting Value",
+    "expiryDate": "Expiry Date",
+    "waterMeterEditedSuccessfully": "Water Meter edited successfully"
+  },
+  "apartmentDropdown": {
+    "localeTitle": "Apartment ",
+    "chooseApartment": "Choose apartment"
   }
 }

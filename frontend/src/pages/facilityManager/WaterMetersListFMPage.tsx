@@ -27,16 +27,24 @@ import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../api/apiErrors";
 import {
   GetPagedWaterMetersListDto,
+  getWaterMeterById,
   getWaterMetersList,
-  ListWaterMeterDto,
+  WaterMeterDto,
 } from "../../api/waterMeterApi";
 import { WaterMeterLock } from "../../layouts/components/watermeter/WaterMeterLock";
+import { EditWaterMeterModal } from "../../layouts/components/watermeter/EditWaterMeterModal";
+import { roles } from "../../types";
+import { useAccount } from "../../hooks/useAccount";
 
 export const WaterMetersListFMPage = () => {
+  const { account } = useAccount();
   const { t } = useTranslation();
 
+  const [editWaterMeterDialogOpen, setEditWaterMeterDialogOpen] = useState(false);
+  const [selectedWaterMeter, setSelectedWaterMeter] = useState<WaterMeterDto>();
+  const [selectedWaterMeterEtag, setSelectedWaterMeterEtag] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [pageState, setPageState] = useState<PaginatedList<ListWaterMeterDto>>({
+  const [pageState, setPageState] = useState<PaginatedList<WaterMeterDto>>({
     data: [],
     pageNumber: 1,
     itemsInPage: 0,
@@ -52,7 +60,7 @@ export const WaterMetersListFMPage = () => {
     if (listRequest) {
       fetchData();
     }
-  }, [listRequest]);
+  }, [listRequest, editWaterMeterDialogOpen]);
 
   const fetchData = () => {
     setIsLoading(true);
@@ -99,6 +107,21 @@ export const WaterMetersListFMPage = () => {
       page: 1,
     }));
   };
+
+  const handleCellClick = async (id: number) => {
+    if (account?.currentRole === roles.facilityManager) {
+        const response = await getWaterMeterById(id);
+        if (response.data) {
+            setSelectedWaterMeter(response.data!);
+            setSelectedWaterMeterEtag(response.headers!["etag"] as string);
+        } else {
+            enqueueSnackbar(t(resolveApiError(response.error)), {
+                variant: "error",
+            });
+        }
+        setEditWaterMeterDialogOpen(true);
+    }
+};
 
   const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
     if (column.field != "actions")
@@ -188,7 +211,7 @@ export const WaterMetersListFMPage = () => {
       sortable: false,
       width: 80,
       renderCell: (params) => (
-        <Button>
+        <Button onClick={() => handleCellClick(params.row.id)}>
           <EditOutlinedIcon />
         </Button>
       ),
@@ -205,6 +228,12 @@ export const WaterMetersListFMPage = () => {
           mx: 2,
         }}
       >
+        <EditWaterMeterModal
+          isOpen={editWaterMeterDialogOpen}
+          setIsOpen={setEditWaterMeterDialogOpen}
+          waterMeter={selectedWaterMeter}
+          etag={selectedWaterMeterEtag}
+        />
         <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>
           {t("WaterMetersListFMPage.header")}
         </Typography>

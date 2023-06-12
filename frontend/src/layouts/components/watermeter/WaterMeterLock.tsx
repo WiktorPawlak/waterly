@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
-  ListWaterMeterDto,
+  WaterMeterDto,
   WaterMeterActiveStatusDto,
   changeWaterMeterActiveStatus,
 } from "../../../api/waterMeterApi";
@@ -16,7 +16,7 @@ import { resolveApiError } from "../../../api/apiErrors";
 export interface LockProps {
   waterMeterId: any;
   active: boolean;
-  onStatusChange: (waterMeter: ListWaterMeterDto, isActive: boolean) => void;
+  onStatusChange: (waterMeter: WaterMeterDto, isActive: boolean) => void;
 }
 
 export const WaterMeterLock = ({
