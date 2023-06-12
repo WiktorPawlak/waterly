@@ -3,6 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.util.Date;
 import java.util.List;
 
 import jakarta.annotation.security.PermitAll;
@@ -95,12 +96,15 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
         return em.createQuery(query).getSingleResult();
     }
 
-    public List<WaterMeter> findAllByApartmentId(final long apartmentId) {
+    public List<WaterMeter> findAllByApartmentId(final long apartmentId, final Date currentDate) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<WaterMeter> criteriaQuery = cb.createQuery(WaterMeter.class);
         Root<WaterMeter> waterMeter = criteriaQuery.from(WaterMeter.class);
         Predicate predicate = cb.equal(waterMeter.get("apartment").get("id"), apartmentId);
-        criteriaQuery.where(predicate);
+        Predicate predicateActiveWaterMeter = cb.equal(waterMeter.get("active"), true);
+        Predicate predicateExpiryDate = cb.lessThan(waterMeter.get("expiryDate"), currentDate);
+        Predicate finalPredicate = cb.and(predicateActiveWaterMeter, predicate, predicateExpiryDate);
+        criteriaQuery.where(finalPredicate);
 
         return getEntityManager().createQuery(criteriaQuery)
                 .getResultList();

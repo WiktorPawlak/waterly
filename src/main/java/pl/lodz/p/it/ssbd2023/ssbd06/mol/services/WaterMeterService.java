@@ -20,6 +20,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @Monitored
 @ServiceExceptionHandler
@@ -29,6 +30,9 @@ public class WaterMeterService {
 
     @Inject
     private WaterMeterFacade waterMeterFacade;
+
+    @Inject
+    private TimeProvider timeProvider;
 
     @RolesAllowed(FACILITY_MANAGER)
     public WaterMeter findById(final long id) {
@@ -83,7 +87,7 @@ public class WaterMeterService {
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public List<WaterMeter> getWaterMetersByApartmentId(final long apartmentId) {
-        return waterMeterFacade.findAllByApartmentId(apartmentId);
+        return waterMeterFacade.findAllByApartmentId(apartmentId, timeProvider.currentDate());
     }
 
     @RolesAllowed({FACILITY_MANAGER})
