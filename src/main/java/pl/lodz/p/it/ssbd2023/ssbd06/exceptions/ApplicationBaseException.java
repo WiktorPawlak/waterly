@@ -28,6 +28,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.ExpiryDateAlreadyExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.IllegalMainWaterMeterCheckException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidTariffPeriodException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidWaterMeterCheckDateException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvoicesCollidingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.MainWaterMeterAlreadyExistsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
@@ -92,6 +93,8 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_BILL_DOES_NOT_BELONG_TO_OWNER = "ERROR.BILL_DOES_NOT_BELONG_TO_OWNER";
     public static final String ERROR_ILLEGAL_MAIN_WATER_METER_CHECK = "ERROR.ILLEGAL_MAIN_WATER_METER_CHECK";
     public static final String ERROR_CHECK_WAS_ALREADY_PERFORMED = "ERROR.CHECK_WAS_ALREADY_PERFORMED";
+    public static final String ERROR_INVALID_CHECK_DATE = "ERROR.INVALID_CHECK_DATE";
+
 
     public static final String ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION = "ERROR_ACCOUNT_NOT_WAITING_FOR_CONFIRMATION";
     public static final String INFO_TWO_FA_CODE_REQUESTED = "INFO.TWO_FA_CODE_REQUESTES";
@@ -284,5 +287,9 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static BillDoesNotBelongToOwnerException billDoesNotBelongToOwnerException() {
         return new BillDoesNotBelongToOwnerException();
+    }
+
+    public static InvalidWaterMeterCheckDateException invalidWaterMeterCheckDateException() {
+        return new InvalidWaterMeterCheckDateException();
     }
 }
