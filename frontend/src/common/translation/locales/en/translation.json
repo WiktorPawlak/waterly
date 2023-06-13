@@ -449,6 +449,14 @@
     "coldWater": "Cold water",
     "hotWater": "Hot water"
   },
+  "waterMeterDetails": {
+    "waterMeter": "Water meter",
+    "expiryDate": "Expiry date: ",
+    "expectedDailyUsage": "Expected daily usage: ",
+    "type": "Type: ",
+    "currentState": "Current state: ",
+    "startingValue": "Starting value: "
+  },
   "twoFactor": {
     "yes": "On",
     "no": "Off",

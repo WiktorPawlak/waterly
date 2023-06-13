@@ -79,7 +79,7 @@ export async function getOwnerApartments(
 }
 
 export async function assignWaterMeterToApartment(
-  apartmentId: number,
+  apartmentId: undefined,
   body: AssignWaterMeterDto
 ) {
   return post(`${APARTMENTS_PATH}/${apartmentId}/water-meter`, body);

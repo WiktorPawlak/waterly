@@ -1,20 +1,35 @@
-import { useTranslation } from "react-i18next";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { resolveApiError } from "../../api/apiErrors";
-import { useSnackbar } from "notistack";
-import { Box, Button, Typography } from "@mui/material";
-import { Loading } from "../../layouts/components/Loading";
-import { ApartmentDto, getApartmentDetails } from "../../api/apartmentApi";
-import { ApartmentDetails } from "../../layouts/components/apartment/ApartmentDetails";
-import { MainLayout } from "../../layouts/MainLayout";
-import { AssignWaterMeterToApartmentDialog } from "../../layouts/components/watermeter/AssingWaterMeterToApartmentModal";
+import {useTranslation} from "react-i18next";
+import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
+import {resolveApiError} from "../../api/apiErrors";
+import {useSnackbar} from "notistack";
+import {Box, Button, Typography} from "@mui/material";
+import {Loading} from "../../layouts/components/Loading";
+import {ApartmentDto, getApartmentDetails} from "../../api/apartmentApi";
+import {ApartmentDetails} from "../../layouts/components/apartment/ApartmentDetails";
+import {MainLayout} from "../../layouts/MainLayout";
+import {AssignWaterMeterToApartmentDialog} from "../../layouts/components/watermeter/AssingWaterMeterToApartmentModal";
 import AddIcon from "@mui/icons-material/Add";
+import {getApartmentWaterMeters} from "../../api/waterMeterApi";
+import {WaterMeterCard} from "../../layouts/components/watermeter/WaterMeterCard";
+
+// Define the WaterMeterDto type
+type WaterMeterDto = {
+  id: number;
+  active: boolean;
+  expiryDate: Date;
+  expectedDailyUsage?: number;
+  startingValue: number;
+  type: string;
+  apartmentId: number;
+  version: number;
+};
 
 export const ApartmentDetailsPage = () => {
   const [apartmentDetails, setApartmentDetails] = useState<
     ApartmentDto | undefined
   >(undefined);
+  const [waterMeters, setWaterMeters] = useState<WaterMeterDto[]>();
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
@@ -33,8 +48,20 @@ export const ApartmentDetailsPage = () => {
     }
   };
 
+  const fetchWaterMeters = async () => {
+    const response = await getApartmentWaterMeters(parseInt(id as string));
+    if (response.status === 200) {
+      setWaterMeters(response.data);
+    } else {
+      enqueueSnackbar(t("errorFetchingWaterMeters"), {
+        variant: "error",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchApartmentDetails();
+    fetchWaterMeters();
   }, [assignWaterMeterDialogOpen]);
 
   if (!apartmentDetails) {
@@ -76,6 +103,44 @@ export const ApartmentDetailsPage = () => {
         />
       </Box>
       <ApartmentDetails apartment={apartmentDetails} />
+
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          height: "100%",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            flexDirection: id == null ? "row" : "column",
+            justifyContent: "space-around",
+            alignItems: "center",
+            marginRight: "50px",
+            height: "100%",
+          }}
+        >
+          {waterMeters?.map((obj) => (
+            <Box sx={{ marginBottom: "25px" }} key={obj.id}>
+              <WaterMeterCard
+                waterMeter={{
+                  id: obj.id,
+                  active: obj.active,
+                  expiryDate: obj.expiryDate,
+                  expectedDailyUsage: obj.expectedDailyUsage || 0,
+                  startingValue: obj.startingValue,
+                  type: obj.type,
+                  apartmentId: obj.apartmentId,
+                  version: obj.version,
+                }}
+              />
+            </Box>
+          ))}
+        </Box>
+      </Box>
     </MainLayout>
   );
 };

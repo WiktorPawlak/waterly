@@ -29,8 +29,12 @@ export interface WaterMeterActiveStatusDto {
   active: boolean;
 }
 
+export interface List<T> {
+  data: T[];
+}
+
 export async function getWaterMeterById(
-  id: number,
+  id: number
 ): Promise<ApiResponse<WaterMeterDto>> {
   return get(`${WATERMETERS_PATH}/${id}`);
 }
@@ -48,8 +52,18 @@ export async function changeWaterMeterActiveStatus(
   return put(`${WATERMETERS_PATH}/${waterMeterId}/active`, body);
 }
 
-export async function updateWaterMeter(id: number, updatedWaterMeter: WaterMeterDto, etag: string) {
-  return put(`${WATERMETERS_PATH}/${id}`, updatedWaterMeter,{
-      "If-Match": etag,
+export async function updateWaterMeter(
+  id: number,
+  updatedWaterMeter: WaterMeterDto,
+  etag: string
+) {
+  return put(`${WATERMETERS_PATH}/${id}`, updatedWaterMeter, {
+    "If-Match": etag,
   });
+}
+
+export async function getApartmentWaterMeters(
+  apartmentId: number
+): Promise<ApiResponse<WaterMeterDto[]>> {
+  return get(`${WATERMETERS_PATH}/apartment/${apartmentId}`);
 }
