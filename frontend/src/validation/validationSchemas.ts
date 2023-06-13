@@ -257,7 +257,7 @@ export const assignWaterMeterToApartmentSchema = z.object({
 });
 
 export const editWaterMeterSchema = z.object({
-  expectedDailyUsage: z.string().regex(/^\d+(\.\d{3})?$/, "validation.expectedDailyUsage"),
+  expectedDailyUsage: z.string().regex(/^$|\d+(\.\d{3})?$/, "validation.expectedDailyUsage"),
   startingValue: z.string().regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
 });
 

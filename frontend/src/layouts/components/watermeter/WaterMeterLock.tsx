@@ -58,14 +58,6 @@ export const WaterMeterLock = ({
     });
   };
 
-  const renderLockIcon = () => {
-    if (isActive) {
-      return <LockOpenIcon sx={{ color: "green" }} />;
-    } else {
-      return <LockOutlinedIcon sx={{ color: "red" }} />;
-    }
-  };
-
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -81,7 +73,10 @@ export const WaterMeterLock = ({
   return (
     <>
       <Button variant="text" onClick={handlePopoverOpen}>
-        {renderLockIcon()}
+      {active ? 
+        <LockOpenIcon sx={{ color: "green" }} /> 
+        : <LockOutlinedIcon sx={{ color: "red" }} />
+      }
       </Button>
       <Popup
         isOpen={isOpen}

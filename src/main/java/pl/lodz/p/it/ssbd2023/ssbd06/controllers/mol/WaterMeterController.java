@@ -91,10 +91,11 @@ public class WaterMeterController extends RepeatableTransactionController {
     }
 
     @POST
-    @Path("/{id}")
+    @Path("/{id}/replace")
     @RolesAllowed(FACILITY_MANAGER)
-    public void replaceWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final ReplaceWaterMeterDto dto) {
-        waterMeterEndpoint.replaceWaterMeter(waterMeterId, dto);
+    public Response replaceWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final ReplaceWaterMeterDto dto) {
+        retry(() -> waterMeterEndpoint.replaceWaterMeter(waterMeterId, dto), waterMeterEndpoint);
+        return Response.status(NO_CONTENT).build();
     }
 
     @PUT

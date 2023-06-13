@@ -2,6 +2,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +33,7 @@ import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
@@ -427,6 +429,68 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
         }
     }
 
+    @Nested
+    class ReplaceWaterMeter {
+
+        @Test
+        @SneakyThrows
+        void shouldReplaceMeterWhenCorrectData() {
+            // given
+            ResultSet resultSetBefore = databaseConnector.executeQuery(
+                    "SELECT * FROM water_meter WHERE id = " + COLD_WATER_METER_ID
+            );
+
+            // when
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .body(ReplaceWaterMeterDto.builder()
+                            .expiryDate(TEST_DATE)
+                            .startingValue(BigDecimal.ONE)
+                            .build())
+                    .post(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/replace")
+                    .then()
+                    .statusCode(NO_CONTENT.getStatusCode());
+
+            // then
+            ResultSet resultSetAfter = databaseConnector.executeQuery(
+                    "SELECT * FROM water_meter WHERE id = " + COLD_WATER_METER_ID
+            );
+            ResultSet resultSetAfterNewWaterMeter = databaseConnector.executeQuery(
+                    "SELECT * FROM water_meter WHERE id = " + NEW_WATER_METER_ID
+            );
+
+            assertTrue(resultSetBefore.getBoolean("active"));
+            assertFalse(resultSetAfter.getBoolean("active"));
+            assertTrue(resultSetAfterNewWaterMeter.getBoolean("active"));
+        }
+
+        @Test
+        @SneakyThrows
+        void shouldNotReplaceWaterMeterWhenOldWaterMeterInactive() {
+            // given
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(DEACTIVATE_WATER_METER)
+                    .when()
+                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/active")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            // then
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .body(ReplaceWaterMeterDto.builder()
+                            .expiryDate(TEST_DATE)
+                            .startingValue(BigDecimal.ONE)
+                            .build())
+                    .post(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/replace")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode());
+        }
+    }
+
     private static Stream<Arguments> provideTokensForParameterizedTests() {
         return Stream.of(
                 Arguments.of(Named.of("Owner permission level", OWNER_TOKEN))
@@ -442,14 +506,14 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                                 .id(COLD_WATER_METER_ID)
                                 .startingValue(BigDecimal.ONE)
                                 .expiryDate(TEST_DATE)
-                                .expectedDailyUsage(BigDecimal.ONE)
+                                .expectedDailyUsage("1")
                                 .version(0)
                                 .build())),
                 Arguments.of(Named.of("No startingValue",
                         UpdateWaterMeterDto.builder()
                                 .id(COLD_WATER_METER_ID)
                                 .expiryDate(TEST_DATE)
-                                .expectedDailyUsage(BigDecimal.ONE)
+                                .expectedDailyUsage("1")
                                 .apartmentId(1L)
                                 .version(0)
                                 .build())),

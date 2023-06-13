@@ -5,6 +5,8 @@ const WATERMETERS_PATH = "/water-meters";
 export interface GetPagedWaterMetersListDto {
   order: string;
   page: number;
+  pageSize: number;
+  orderBy: string;
 }
 
 export interface PaginatedList<T> {
@@ -26,6 +28,11 @@ export interface WaterMeterDto {
 }
 
 export interface CreateMainWaterMeterDto {
+  expiryDate: Date;
+  startingValue: number;
+}
+
+export interface ReplaceMainWaterMeterDto {
   expiryDate: Date;
   startingValue: number;
 }
@@ -68,9 +75,16 @@ export async function updateWaterMeter(
 }
 
 export async function createMainWaterMeter(
-  body: WaterMeterDto
+  body: CreateMainWaterMeterDto
 ) {
   return post(`${WATERMETERS_PATH}/main-water-meter`, body);
+}
+
+export async function replaceMainWaterMeter(
+  id: number,
+  body: ReplaceMainWaterMeterDto
+) {
+  return post(`${WATERMETERS_PATH}/${id}/replace`, body);
 }
 
 export async function getApartmentWaterMeters(

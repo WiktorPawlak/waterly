@@ -7,7 +7,7 @@ import {
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import {
   Autocomplete,
   Box,
@@ -38,6 +38,8 @@ import { useAccount } from "../../hooks/useAccount";
 import { AddMainWaterMeterModal } from "../../layouts/components/watermeter/AddMainWaterMeterModal";
 import { ApartmentDto, getAllAprtmentsList } from "../../api/apartmentApi";
 import { HttpStatusCode } from "axios";
+import { ReplaceWaterMeterModal } from "../../layouts/components/watermeter/ReplaceWaterMeterModal";
+import { waterMeterType } from "../../types/waterMeterTypeEnum";
 
 export const WaterMetersListFMPage = () => {
   const { account } = useAccount();
@@ -45,6 +47,7 @@ export const WaterMetersListFMPage = () => {
 
   const [addMainWaterMeterDialogOpen, setAddMainWaterMeterDialogOpen] = useState(false);
   const [editWaterMeterDialogOpen, setEditWaterMeterDialogOpen] = useState(false);
+  const [replaceWaterMeterDialogOpen, setReplaceWaterMeterDialogOpen] = useState(false);
   const [selectedWaterMeter, setSelectedWaterMeter] = useState<WaterMeterDto>();
   const [selectedWaterMeterEtag, setSelectedWaterMeterEtag] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +61,8 @@ export const WaterMetersListFMPage = () => {
   const [waterMetersListRequest, setWaterMetersListRequest] = useState<GetPagedWaterMetersListDto>({
     page: 1,
     order: "asc",
+    pageSize: 10,
+    orderBy: "apartment"
   });
 
   const [apartmentsPageState, setApartmentsPageState] = useState<PaginatedList<ApartmentDto>>({
@@ -78,7 +83,12 @@ export const WaterMetersListFMPage = () => {
     if (waterMetersListRequest) {
       fetchData();
     }
-  }, [waterMetersListRequest, editWaterMeterDialogOpen, addMainWaterMeterDialogOpen]);
+  }, [
+    waterMetersListRequest, 
+    editWaterMeterDialogOpen, 
+    addMainWaterMeterDialogOpen, 
+    replaceWaterMeterDialogOpen
+  ]);
 
   const fetchData = () => {
     setIsLoading(true);
@@ -132,10 +142,11 @@ export const WaterMetersListFMPage = () => {
     setWaterMetersListRequest((prevListRequest) => ({
       ...prevListRequest,
       page: 1,
+      pageSize: parseInt(event.target.value),
     }));
   };
 
-  const handleCellClick = async (id: number) => {
+  const handleEditButtonClick = async (id: number) => {
     if (account?.currentRole === roles.facilityManager) {
         const response = await getWaterMeterById(id);
         if (response.data) {
@@ -148,11 +159,32 @@ export const WaterMetersListFMPage = () => {
         }
         setEditWaterMeterDialogOpen(true);
     }
-};
+  };
+
+  const handleReplaceButtonClick = async (id: number) => {
+    if (account?.currentRole === roles.facilityManager) {
+        const response = await getWaterMeterById(id);
+        if (response.data) {
+            setSelectedWaterMeter(response.data!);
+        } else {
+            enqueueSnackbar(t(resolveApiError(response.error)), {
+                variant: "error",
+            });
+        }
+        setReplaceWaterMeterDialogOpen(true);
+    }
+  };
 
   const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
-    if (column.field != "actions")
+    if (
+      column.field === "apartment" ||
+      column.field === "expiryDate" ||
+      column.field === "expectedDailyUsage" ||
+      column.field === "startingValue" ||
+      column.field === "type"
+    ) {
       setWaterMetersListRequest((old) => ({ ...old, orderBy: column.field }));
+    }
   };
 
   const handleSortModelChange = useCallback((sortModel: GridSortModel) => {
@@ -168,7 +200,7 @@ export const WaterMetersListFMPage = () => {
       width: 50,
     },
     {
-      field: "apartmentId",
+      field: "apartment",
       renderHeader: () => (
         <strong>
           {t("WaterMetersListFMPage.dataGrid.headers.apartmentNo")}
@@ -220,26 +252,26 @@ export const WaterMetersListFMPage = () => {
       ),
       renderCell: (params) => (
         <span>
-          {params.row.type === 'MAIN' ? (
+          {params.row.type === waterMeterType.main ? (
             <span>
               {t("WaterMetersListFMPage.dataGrid.cells.type.main")}
             </span>
-          ) : params.row.type === 'COLD_WATER' ? (
+          ) : params.row.type === waterMeterType.coldWater ? (
             <span>
               {t("WaterMetersListFMPage.dataGrid.cells.type.coldWater")}
             </span>
-          ) : params.row.type === 'HOT_WATER' ? (
+          ) : params.row.type === waterMeterType.hotWater ? (
             <span>
               {t("WaterMetersListFMPage.dataGrid.cells.type.hotWater")}
             </span>
           ) : null}
         </span>
       ),
-      width: 150,
+      width: 100,
     },
     {
       headerName: "",
-      field: "accept",
+      field: "activation",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 80,
@@ -253,13 +285,29 @@ export const WaterMetersListFMPage = () => {
     },
     {
       headerName: "",
-      field: "reject",
+      field: "edit",
+      hideable: true,
+      sortable: false,
+      width: 80,
+      align: "right",
+      renderCell: (params) => (
+        <Button onClick={() => handleEditButtonClick(params.row.id)}>
+          <EditOutlinedIcon />
+        </Button>
+      ),
+    },
+    {
+      headerName: "",
+      field: "replace",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 80,
       renderCell: (params) => (
-        <Button onClick={() => handleCellClick(params.row.id)}>
-          <EditOutlinedIcon />
+        <Button 
+          disabled={!params.row.active}
+          onClick={() => handleReplaceButtonClick(params.row.id)}
+        >
+          <ChangeCircleIcon />
         </Button>
       ),
     },
@@ -285,6 +333,11 @@ export const WaterMetersListFMPage = () => {
           waterMeter={selectedWaterMeter}
           apartments={apartmentsPageState}
           etag={selectedWaterMeterEtag}
+        />
+        <ReplaceWaterMeterModal
+          isOpen={replaceWaterMeterDialogOpen}
+          setIsOpen={setReplaceWaterMeterDialogOpen}
+          waterMeter={selectedWaterMeter}
         />
         <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>
           {t("WaterMetersListFMPage.header")}
@@ -361,6 +414,7 @@ export const WaterMetersListFMPage = () => {
                   id="demo-simple-select-standard"
                   onChange={handlePageSizeChange}
                   label="pageSize"
+                  defaultValue="10"
                 >
                   <MenuItem value={10}>10</MenuItem>
                   <MenuItem value={20}>20</MenuItem>

@@ -314,7 +314,8 @@
     "type": "Water meter types can be only either hot water or cold water",
     "expectedDailyUsage": "Expected Daily Usage needs to be specified with three decimal places",
     "expiryDateAlreadyExpired": "Expiry date needs to be after current date",
-    "mainWaterMeterAlreadyExists": "Active main water meter already exists"
+    "mainWaterMeterAlreadyExists": "Active main water meter already exists",
+    "inactiveWaterMeter": "Inactive water meter cannot be replaced"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -568,6 +569,12 @@
     "waterMeterAddedSuccessfully": "Main water meter added successfully",
     "button": "Add main water meter",
     "addWaterMeter":"Add main water meter",
+    "startingValue": "Starting Value",
+    "expiryDate": "Expiry Date"
+  },
+  "replaceWaterMeterDialog": {
+    "waterMeterReplacedSuccessfully": "Water meter replaced successfully",
+    "replaceWaterMeter":"Replace water meter",
     "startingValue": "Starting Value",
     "expiryDate": "Expiry Date"
   }

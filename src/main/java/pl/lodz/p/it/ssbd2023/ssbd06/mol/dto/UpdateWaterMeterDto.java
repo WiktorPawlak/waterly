@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.Signable;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ExpiryDate;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsageNullable;
 
 @Data
 @Builder
@@ -24,8 +25,8 @@ public class UpdateWaterMeterDto implements Signable {
     private BigDecimal startingValue;
     @ExpiryDate
     private String expiryDate;
-    @WaterUsage
-    private BigDecimal expectedDailyUsage;
+    @WaterUsageNullable
+    private String expectedDailyUsage;
     @Nonnegative
     private Long apartmentId;
     @Nonnegative

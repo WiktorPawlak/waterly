@@ -103,7 +103,7 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
         Root<WaterMeter> waterMeter = criteriaQuery.from(WaterMeter.class);
         Predicate predicate = cb.equal(waterMeter.get("apartment").get("id"), apartmentId);
         Predicate predicateActiveWaterMeter = cb.equal(waterMeter.get("active"), true);
-        Predicate predicateExpiryDate = cb.lessThan(waterMeter.get("expiryDate"), currentDate);
+        Predicate predicateExpiryDate = cb.greaterThan(waterMeter.get("expiryDate"), currentDate);
         Predicate finalPredicate = cb.and(predicateActiveWaterMeter, predicate, predicateExpiryDate);
         criteriaQuery.where(finalPredicate);
 

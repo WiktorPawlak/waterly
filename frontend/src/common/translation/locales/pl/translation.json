@@ -319,7 +319,8 @@
     "type": "Dostępne typy wodomierza to: woda zimna lub woda ciepła",
     "expectedDailyUsage": "Przewidywane zużycie dzienne musi być podane z dokładnością do trzech miejsc po przecinku",
     "expiryDateAlreadyExpired": "Data przydatności musi być po dacie aktualnej",
-    "mainWaterMeterAlreadyExists": "Istnieje już aktywny wodomierz główny"
+    "mainWaterMeterAlreadyExists": "Istnieje już aktywny wodomierz główny",
+    "inactiveWaterMeter": "Nieaktywny wodomierz nie może zostać wymieniony"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -569,6 +570,12 @@
     "waterMeterAddedSuccessfully": "Pomyślnie dodano wodomierz główny",
     "button": "Dodaj wodomierz główny",
     "addWaterMeter":"Dodaj wodomierz główny",
+    "startingValue": "Wartość początkowa",
+    "expiryDate": "Data ważności"
+  },
+  "replaceWaterMeterDialog": {
+    "waterMeterReplacedSuccessfully": "Pomyślnie wymieniono wodomierz",
+    "replaceWaterMeter":"Wymień wodomierz",
     "startingValue": "Wartość początkowa",
     "expiryDate": "Data ważności"
   }

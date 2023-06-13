@@ -55,6 +55,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final long COLD_WATER_METER_ID = 1;
     protected static final long HOT_WATER_METER_ID = 2;
     protected static final long MAIN_WATER_METER_ID = 3;
+    protected static final long NEW_WATER_METER_ID = 4;
 
     protected static final long NEW_OWNER_ID = 5;
     protected static final Credentials ADMIN_CREDENTIALS = new Credentials("admin", "admin12345");
@@ -77,7 +78,7 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
             COLD_WATER_METER_ID,
             BigDecimal.valueOf(10),
             TEST_DATE,
-            BigDecimal.valueOf(12),
+            "12",
             SECOND_APARTMENT_ID,
             0
     );

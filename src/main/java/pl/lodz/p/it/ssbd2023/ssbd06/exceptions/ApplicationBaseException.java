@@ -27,6 +27,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TwoFARequestedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.ExpiryDateAlreadyExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.IllegalMainWaterMeterCheckException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InactiveWaterMeterException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidTariffPeriodException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidWaterMeterCheckDateException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvoicesCollidingException;
@@ -83,6 +84,7 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_NO_SUCH_BILL = "ERROR_NO_SUCH_BILL";
     public static final String ERROR_MAIN_WATER_METER_ALREADY_EXISTS = "ERROR.MAIN_WATER_METER_ALREADY_EXISTS";
     public static final String ERROR_EXPIRY_DATE_ALREADY_EXPIRED = "ERROR.EXPIRY_DATE_ALREADY_EXPIRED";
+    public static final String ERROR_INACTIVE_WATER_METER = "ERROR.INACTIVE_WATER_METER";
     public static final String ERROR_WATER_METER_EXPIRED = "ERROR.WATER_METER_EXPIRED";
     public static final String ERROR_WATER_METER_DOES_NOT_BELONG_TO_OWNER = "ERROR.WATER_METER_DOES_NOT_BELONG_TO_OWNER";
     public static final String ERROR_BILL_DOES_NOT_BELONG_TO_OWNER = "ERROR.BILL_DOES_NOT_BELONG_TO_OWNER";
@@ -284,5 +286,9 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static InvalidWaterMeterCheckDateException invalidWaterMeterCheckDateException() {
         return new InvalidWaterMeterCheckDateException();
+    }
+
+    public static InactiveWaterMeterException inactiveWaterMeterException() {
+        return new InactiveWaterMeterException();
     }
 }

@@ -13,7 +13,6 @@ import AddIcon from "@mui/icons-material/Add";
 import {getApartmentWaterMeters} from "../../api/waterMeterApi";
 import {WaterMeterCard} from "../../layouts/components/watermeter/WaterMeterCard";
 
-// Define the WaterMeterDto type
 type WaterMeterDto = {
   id: number;
   active: boolean;
@@ -116,7 +115,7 @@ export const ApartmentDetailsPage = () => {
           sx={{
             display: "flex",
             flexWrap: "wrap",
-            flexDirection: id == null ? "row" : "column",
+            flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",
             marginRight: "50px",
@@ -124,7 +123,7 @@ export const ApartmentDetailsPage = () => {
           }}
         >
           {waterMeters?.map((obj) => (
-            <Box sx={{ marginBottom: "25px" }} key={obj.id}>
+            <Box sx={{ margin: "25px" }} key={obj.id}>
               <WaterMeterCard
                 waterMeter={{
                   id: obj.id,
