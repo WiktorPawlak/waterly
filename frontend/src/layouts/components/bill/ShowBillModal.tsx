@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { resolveApiError } from "../../../api/apiErrors";
 import { GetBillsByOwnerIdDto, getBillsByOwnerId } from "../../../api/billApi";
 import { DatePicker, LocalizationProvider, plPL } from "@mui/x-date-pickers";
@@ -29,7 +29,8 @@ const initialBillData: GetBillsByOwnerIdDto = {
         coldWaterCost: 0,
         hotWaterCost: 0,
         coldWaterUsage: 0,
-        hotWaterUsage: 0
+        hotWaterUsage: 0,
+        totalCost: 0
     },
     realUsage: {
         garbageCost: 0,
@@ -41,7 +42,8 @@ const initialBillData: GetBillsByOwnerIdDto = {
         coldWaterUsage: 0,
         hotWaterUsage: 0,
         unbilledWaterCost: 0,
-        unbilledWaterAmount: 0
+        unbilledWaterAmount: 0,
+        totalCost: 0
     },
 };
 
@@ -90,7 +92,10 @@ export const ShowBillModal = ({
     const tableData = useMemo(() => [
         {
             id: 0,
-            name: t("bill.coldWater"),
+            name: <Trans
+                i18nKey={"bill.coldWater"}
+                components={{ sup: <sup /> }}
+            />,
             advancedUsage: billData.forecast.coldWaterUsage,
             realUsage: billData.realUsage.coldWaterUsage,
             advancedCost: billData.forecast.coldWaterCost,
@@ -99,7 +104,10 @@ export const ShowBillModal = ({
         },
         {
             id: 1,
-            name: t("bill.hotWater"),
+            name: <Trans
+                i18nKey={"bill.hotWater"}
+                components={{ sup: <sup /> }}
+            />,
             advancedUsage: billData.forecast.hotWaterUsage,
             realUsage: billData.realUsage.hotWaterUsage,
             advancedCost: billData.forecast.hotWaterCost,
@@ -108,7 +116,10 @@ export const ShowBillModal = ({
         },
         {
             id: 2,
-            name: t("bill.trash"),
+            name: <Trans
+                i18nKey={"bill.trash"}
+                components={{ sup: <sup /> }}
+            />,
             advancedUsage: "-",
             realUsage: "-",
             advancedCost: billData.forecast.garbageCost,
@@ -117,7 +128,10 @@ export const ShowBillModal = ({
         },
         {
             id: 3,
-            name: t("bill.unbilledWater"),
+            name: <Trans
+                i18nKey={"bill.unbilledWater"}
+                components={{ sup: <sup /> }}
+            />,
             advancedUsage: "-",
             realUsage: billData.realUsage.unbilledWaterAmount,
             advancedCost: "-",

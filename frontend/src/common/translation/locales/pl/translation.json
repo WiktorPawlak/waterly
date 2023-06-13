@@ -461,7 +461,7 @@
   },
   "addInvoiceModal": {
     "date": "Data",
-    "totalCost": "Całkowity koszt [PLN]",
+    "totalCost": "Całkowity koszt [zł]",
     "waterUsage": "Zużycie wody [m<sup>3</sup>]",
     "addInvoice": "Dodaj fakturę",
     "invoiceNumber": "Numer Faktury",
@@ -533,12 +533,12 @@
     "realUsage": "Faktyczne zużycie",
     "advancedCost": "Przewidywany koszt",
     "realCost": "Faktyczny koszt",
-    "rowBalance": "Bilas",
-    "coldWater": "Woda zimna",
-    "hotWater": "Woda ciepła",
-    "trash": "Śmieci",
-    "unbilledWater": "Woda niezbilansowana",
-    "summary": "Razem:"
+    "rowBalance": "Bilans",
+    "coldWater": "Woda zimna [m<sup>3</sup>]",
+    "hotWater": "Woda ciepła [m<sup>3</sup>]",
+    "trash": "Śmieci [zł]",
+    "unbilledWater": "Woda niezbilansowana [m<sup>3</sup>]",
+    "summary": "Razem [zł]:"
   },
   "apartmentDetailsPage": {
     "header": "Szczegóły lokalu",
@@ -578,5 +578,11 @@
     "replaceWaterMeter":"Wymień wodomierz",
     "startingValue": "Wartość początkowa",
     "expiryDate": "Data ważności"
+  },
+  "waterMeterOwnerChange": {
+    "waterMeterId": "ID wodomierza: ",
+    "waterMeterExpectedUsage": "Miesięczne zużycie",
+    "waterMeterHeader": "Wprowadź nowe przewidywane zużycie",
+    "waterMeterError": "Podana wartość musi być liczbą maksymalnie 7 liczbową z dokładnością do 3 miejsc po przecinku"
   }
 }

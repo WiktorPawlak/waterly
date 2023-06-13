@@ -19,7 +19,7 @@ export interface PaginatedList<T> {
 export interface WaterMeterDto {
   id: number;
   active: boolean;
-  expiryDate: Date;
+  expiryDate: string;
   expectedDailyUsage: number;
   startingValue: number;
   type: string;

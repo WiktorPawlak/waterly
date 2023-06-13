@@ -66,8 +66,6 @@ export const OwnerAccountsSelect = ({
     }
   };
 
-  console.log(ownerId);
-
   return (
     <>
       <Typography
