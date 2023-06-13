@@ -21,7 +21,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PaginatedList } from "../../api/accountApi";
+import { GetPagedListDto, PaginatedList } from "../../api/accountApi";
 import { MainLayout } from "../../layouts/MainLayout";
 import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../api/apiErrors";
@@ -35,52 +35,79 @@ import { WaterMeterLock } from "../../layouts/components/watermeter/WaterMeterLo
 import { EditWaterMeterModal } from "../../layouts/components/watermeter/EditWaterMeterModal";
 import { roles } from "../../types";
 import { useAccount } from "../../hooks/useAccount";
+import { AddMainWaterMeterModal } from "../../layouts/components/watermeter/AddMainWaterMeterModal";
+import { ApartmentDto, getAllAprtmentsList } from "../../api/apartmentApi";
+import { HttpStatusCode } from "axios";
 
 export const WaterMetersListFMPage = () => {
   const { account } = useAccount();
   const { t } = useTranslation();
 
+  const [addMainWaterMeterDialogOpen, setAddMainWaterMeterDialogOpen] = useState(false);
   const [editWaterMeterDialogOpen, setEditWaterMeterDialogOpen] = useState(false);
   const [selectedWaterMeter, setSelectedWaterMeter] = useState<WaterMeterDto>();
   const [selectedWaterMeterEtag, setSelectedWaterMeterEtag] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [pageState, setPageState] = useState<PaginatedList<WaterMeterDto>>({
+  const [waterMetersPageState, setWaterMetersPageState] = useState<PaginatedList<WaterMeterDto>>({
     data: [],
     pageNumber: 1,
     itemsInPage: 0,
     totalPages: 0,
   });
 
-  const [listRequest, setListRequest] = useState<GetPagedWaterMetersListDto>({
+  const [waterMetersListRequest, setWaterMetersListRequest] = useState<GetPagedWaterMetersListDto>({
     page: 1,
     order: "asc",
   });
 
+  const [apartmentsPageState, setApartmentsPageState] = useState<PaginatedList<ApartmentDto>>({
+    data: [],
+    pageNumber: 1,
+    itemsInPage: 0,
+    totalPages: 0,
+  });
+
+  const [apartmentsListRequest, setApartmentsListRequest] = useState<GetPagedListDto>({
+    page: 1,
+    pageSize: 100,
+    order: "asc",
+    orderBy: "number",
+  });
+
   useEffect(() => {
-    if (listRequest) {
+    if (waterMetersListRequest) {
       fetchData();
     }
-  }, [listRequest, editWaterMeterDialogOpen]);
+  }, [waterMetersListRequest, editWaterMeterDialogOpen, addMainWaterMeterDialogOpen]);
 
   const fetchData = () => {
     setIsLoading(true);
-    getWaterMetersList(listRequest).then((response) => {
-      if (response.status === 200) {
-        setPageState(response.data!);
+    getWaterMetersList(waterMetersListRequest).then((response) => {
+      if (response.status === HttpStatusCode.Ok) {
+        setWaterMetersPageState(response.data!);
       } else {
         enqueueSnackbar(t(resolveApiError(response.error)), {
           variant: "error",
         });
       }
-      setIsLoading(false);
     });
+    getAllAprtmentsList(apartmentsListRequest, '').then((response) => {
+      if (response.status === HttpStatusCode.Ok) {
+        setApartmentsPageState(response.data!);
+      } else {
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
+      }
+    });
+    setIsLoading(false);
   };
 
   const handleWaterMeterStatusChange = (
     waterMeterId: number,
     isActive: boolean
   ) => {
-    setPageState((prevPageState) => {
+    setWaterMetersPageState((prevPageState) => {
       const updatedData = prevPageState.data.map((item) => {
         if (item.id === waterMeterId) {
           return { ...item, active: isActive };
@@ -95,14 +122,14 @@ export const WaterMetersListFMPage = () => {
     event: React.ChangeEvent<unknown>,
     page: number
   ) => {
-    setListRequest((prevListRequest) => ({
+    setWaterMetersListRequest((prevListRequest) => ({
       ...prevListRequest,
       page: page,
     }));
   };
 
   const handlePageSizeChange = (event: SelectChangeEvent) => {
-    setListRequest((prevListRequest) => ({
+    setWaterMetersListRequest((prevListRequest) => ({
       ...prevListRequest,
       page: 1,
     }));
@@ -125,11 +152,11 @@ export const WaterMetersListFMPage = () => {
 
   const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
     if (column.field != "actions")
-      setListRequest((old) => ({ ...old, orderBy: column.field }));
+      setWaterMetersListRequest((old) => ({ ...old, orderBy: column.field }));
   };
 
   const handleSortModelChange = useCallback((sortModel: GridSortModel) => {
-    setListRequest((old) => ({ ...old, order: sortModel[0]?.sort as string }));
+    setWaterMetersListRequest((old) => ({ ...old, order: sortModel[0]?.sort as string }));
   }, []);
 
   const columns: GridColDef[] = [
@@ -138,23 +165,21 @@ export const WaterMetersListFMPage = () => {
       renderHeader: () => (
         <strong>{t("WaterMetersListFMPage.dataGrid.headers.id")}</strong>
       ),
-      width: 70,
-    },
-    {
-      field: "active",
-      renderHeader: () => (
-        <strong>{t("WaterMetersListFMPage.dataGrid.headers.active")}</strong>
-      ),
-      width: 70,
+      width: 50,
     },
     {
       field: "apartmentId",
       renderHeader: () => (
         <strong>
-          {t("WaterMetersListFMPage.dataGrid.headers.apartmentId")}
+          {t("WaterMetersListFMPage.dataGrid.headers.apartmentNo")}
         </strong>
       ),
-      width: 150,
+      renderCell: (params) => (
+        <span>
+          {apartmentsPageState.data.find((obj) => obj.id === params.row.apartmentId)?.number}
+        </span>
+      ),
+      width: 120,
     },
     {
       field: "expectedDailyUsage",
@@ -163,7 +188,12 @@ export const WaterMetersListFMPage = () => {
           {t("WaterMetersListFMPage.dataGrid.headers.expectedDailyUsage")}
         </strong>
       ),
-      width: 150,
+      renderCell: (params) => (
+        <span>
+          {params.row.type === 'MAIN' ? '' : params.row.expectedDailyUsage}
+        </span>
+      ),
+      width: 180,
     },
     {
       field: "expiryDate",
@@ -188,7 +218,24 @@ export const WaterMetersListFMPage = () => {
       renderHeader: () => (
         <strong>{t("WaterMetersListFMPage.dataGrid.headers.type")}</strong>
       ),
-      width: 120,
+      renderCell: (params) => (
+        <span>
+          {params.row.type === 'MAIN' ? (
+            <span>
+              {t("WaterMetersListFMPage.dataGrid.cells.type.main")}
+            </span>
+          ) : params.row.type === 'COLD_WATER' ? (
+            <span>
+              {t("WaterMetersListFMPage.dataGrid.cells.type.coldWater")}
+            </span>
+          ) : params.row.type === 'HOT_WATER' ? (
+            <span>
+              {t("WaterMetersListFMPage.dataGrid.cells.type.hotWater")}
+            </span>
+          ) : null}
+        </span>
+      ),
+      width: 150,
     },
     {
       headerName: "",
@@ -228,10 +275,15 @@ export const WaterMetersListFMPage = () => {
           mx: 2,
         }}
       >
+        <AddMainWaterMeterModal
+          isOpen={addMainWaterMeterDialogOpen}
+          setIsOpen={setAddMainWaterMeterDialogOpen}
+        />
         <EditWaterMeterModal
           isOpen={editWaterMeterDialogOpen}
           setIsOpen={setEditWaterMeterDialogOpen}
           waterMeter={selectedWaterMeter}
+          apartments={apartmentsPageState}
           etag={selectedWaterMeterEtag}
         />
         <Typography variant="h4" sx={{ fontWeight: "700", mb: 2 }}>
@@ -248,6 +300,18 @@ export const WaterMetersListFMPage = () => {
             minWidth: "1000px",
           }}
         >
+        {account?.currentRole === roles.facilityManager &&
+          <Button
+            disabled={!!waterMetersPageState.data.find((obj) => (obj.type === 'MAIN' && obj.active))}
+            variant="contained"
+            sx={{
+                textTransform: "none", mb: { xs: 3, md: 2 },
+                width: "30vh"
+            }}
+            onClick={() => setAddMainWaterMeterDialogOpen(true)}
+          >
+              {t("addMainWaterMeterDialog.button")}
+          </Button>}
           <Autocomplete
             disablePortal
             freeSolo
@@ -266,7 +330,7 @@ export const WaterMetersListFMPage = () => {
               autoHeight
               hideFooter
               loading={isLoading}
-              rows={pageState?.data ?? []}
+              rows={waterMetersPageState?.data ?? []}
               columns={columns}
               onColumnHeaderClick={handleOnColumnHeaderClick}
               sortingMode="server"
@@ -284,8 +348,8 @@ export const WaterMetersListFMPage = () => {
               }}
             >
               <Pagination
-                count={pageState.totalPages as number}
-                page={listRequest.page as number}
+                count={waterMetersPageState.totalPages as number}
+                page={waterMetersListRequest.page as number}
                 onChange={handlePageChange}
               />
               <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>

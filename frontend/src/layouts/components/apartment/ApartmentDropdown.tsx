@@ -7,42 +7,17 @@ import { resolveApiError } from "../../../api/apiErrors";
 import { enqueueSnackbar } from "notistack";
 
 interface Props {
+  apartments: PaginatedList<ApartmentDto>;
   setApartmentId: (id: number) => void;
   apartmentId: number;
 }
 
-export const ApartmentDropdown = ({ setApartmentId, apartmentId }: Props) => {
+export const ApartmentDropdown = ({ 
+  apartments, 
+  setApartmentId, 
+  apartmentId 
+}: Props) => {
   const { t } = useTranslation();
-
-  const [pageState, setPageState] = useState<PaginatedList<ApartmentDto>>({
-    data: [],
-    pageNumber: 1,
-    itemsInPage: 0,
-    totalPages: 0,
-  });
-
-  const [listRequest, setListRequest] = useState<GetPagedListDto>({
-    page: 1,
-    pageSize: 100,
-    order: "asc",
-    orderBy: "number",
-  });
-
-  const fetchApartments = async () => {
-    const response = await getAllAprtmentsList(listRequest, '');
-
-    if (response.status === 200) {
-      setPageState(response.data!);
-    } else {
-      enqueueSnackbar(t(resolveApiError(response.error)), {
-        variant: "error",
-      });
-    }
-  };
-
-  useEffect(() => {
-    fetchApartments();
-  }, []);
 
   return (
     <Box>
@@ -61,7 +36,7 @@ export const ApartmentDropdown = ({ setApartmentId, apartmentId }: Props) => {
               sx={{ width: "100% !important" }}
               onChange={(newValue) => setApartmentId(parseInt(newValue.target.value as string))}
           >
-            {pageState.data.map((obj) => (
+            {apartments.data.map((obj) => (
               <MenuItem value={obj.id}>
                 {t("apartmentDropdown.localeTitle")} {obj.number}
               </MenuItem>

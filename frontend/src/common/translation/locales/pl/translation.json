@@ -198,11 +198,18 @@
       "headers": {
         "id": "Id",
         "active": "Aktywny",
-        "apartmentId": "Id lokalu",
-        "expectedDailyUsage": "Przewidywane zużycie dzienne",
+        "apartmentNo": "Nr lokalu",
+        "expectedDailyUsage": "Przew. zużycie dzienne",
         "expiryDate": "Data ważności",
         "startingValue": "Wartość startowa",
         "type": "Typ"
+      },
+      "cells": {
+        "type": {
+          "main": "Główny",
+          "coldWater": "Zimna woda",
+          "hotWater": "Ciepła woda"
+        }
       }
     },
     "toastActivateSuccess": "Wodomierz został aktywowany",
@@ -311,7 +318,8 @@
     "startingValue": "Wartość początkowa musi być podane z dokładnością do trzech miejsc po przecinku",
     "type": "Dostępne typy wodomierza to: woda zimna lub woda ciepła",
     "expectedDailyUsage": "Przewidywane zużycie dzienne musi być podane z dokładnością do trzech miejsc po przecinku",
-    "expiryDateAlreadyExpired": "Data przydatności musi być po dacie aktualnej"
+    "expiryDateAlreadyExpired": "Data przydatności musi być po dacie aktualnej",
+    "mainWaterMeterAlreadyExists": "Istnieje już aktywny wodomierz główny"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -476,7 +484,8 @@
     "apartments": "Lokale",
     "profile": "Profil",
     "tariffs": "Przeglądaj taryfy",
-    "invoices": "Przeglądaj faktury"
+    "invoices": "Przeglądaj faktury",
+    "water-meters": "Wodomierze"
   },
   "homePage": {
     "button": "Zacznij",
@@ -555,5 +564,12 @@
   "apartmentDropdown": {
     "localeTitle": "Lokal ",
     "chooseApartment": "Wybierz lokal"
+  },
+  "addMainWaterMeterDialog": {
+    "waterMeterAddedSuccessfully": "Pomyślnie dodano wodomierz główny",
+    "button": "Dodaj wodomierz główny",
+    "addWaterMeter":"Dodaj wodomierz główny",
+    "startingValue": "Wartość początkowa",
+    "expiryDate": "Data ważności"
   }
 }

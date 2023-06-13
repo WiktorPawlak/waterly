@@ -25,6 +25,11 @@ export interface WaterMeterDto {
   version: number;
 }
 
+export interface CreateMainWaterMeterDto {
+  expiryDate: Date;
+  startingValue: number;
+}
+
 export interface WaterMeterActiveStatusDto {
   active: boolean;
 }
@@ -60,6 +65,12 @@ export async function updateWaterMeter(
   return put(`${WATERMETERS_PATH}/${id}`, updatedWaterMeter, {
     "If-Match": etag,
   });
+}
+
+export async function createMainWaterMeter(
+  body: WaterMeterDto
+) {
+  return post(`${WATERMETERS_PATH}/main-water-meter`, body);
 }
 
 export async function getApartmentWaterMeters(
