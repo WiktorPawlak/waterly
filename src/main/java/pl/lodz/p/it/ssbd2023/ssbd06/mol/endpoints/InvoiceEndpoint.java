@@ -28,14 +28,14 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 
 @TransactionRollbackInterceptor
 @Monitored
 @LocalBean
 @Stateful
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class InvoiceEndpoint extends TransactionBoundariesTracingEndpoint {
+public class InvoiceEndpoint extends TransactionBoundariesTracingBean {
 
     @Inject
     private InvoiceService invoiceService;

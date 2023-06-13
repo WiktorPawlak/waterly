@@ -37,6 +37,10 @@ public class BillPolicyResolver implements BillGenerationPolicyFactory {
     private BillGenerationPolicy standardBillGenerationPolicy;
 
     @Inject
+    @Named("updateForecastPolicy")
+    private BillGenerationPolicy updateForecastPolicy;
+
+    @Inject
     private BillFacade billFacade;
 
     @Inject
@@ -49,6 +53,7 @@ public class BillPolicyResolver implements BillGenerationPolicyFactory {
         Optional<Bill> optBill = billFacade.findByDateAndApartmentId(dateResolved, apartment.getId());
 
         boolean shouldPickFirstGenerationPolicy = invoice.isEmpty() && optBill.isEmpty();
+        boolean shouldPickUpdateForecastPolicy = invoice.isEmpty() && optBill.isPresent();
         boolean shouldPickStandardPolicy = invoice.isPresent() && optBill.isPresent();
 
         if (shouldPickFirstGenerationPolicy) {
@@ -57,6 +62,10 @@ public class BillPolicyResolver implements BillGenerationPolicyFactory {
             newBill.setAccount(apartment.getOwner());
             newBill.setApartment(apartment);
             return Tuple.of(firstBillGenerationPolicy, newBill);
+        }
+
+        if (shouldPickUpdateForecastPolicy) {
+            return Tuple.of(updateForecastPolicy, optBill.get());
         }
 
         if (shouldPickStandardPolicy) {

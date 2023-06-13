@@ -25,7 +25,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.MolAccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.ReadOnlyBillService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 
 @TransactionRollbackInterceptor
@@ -33,7 +33,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 @LocalBean
 @Stateful
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class BillEndpoint extends TransactionBoundariesTracingEndpoint {
+public class BillEndpoint extends TransactionBoundariesTracingBean {
 
     @Inject
     private ReadOnlyBillService readOnlyBillService;

@@ -40,6 +40,8 @@ const apiErrors = new Map<string, string>([
   ["ERROR_NO_SUCH_BILL", "apiError.noSuchBill"],
   ["ERROR.EXPIRY_DATE_ALREADY_EXPIRED", "validation.expiryDateAlreadyExpired"],
   ["ERROR.MAIN_WATER_METER_ALREADY_EXISTS", "validation.mainWaterMeterAlreadyExists"],
+  ["ERROR.TARIFF_NOT_FOUND_FOR_INVOICE", "apiError.tariffNotFoundForInvoice"],
+  ["ERROR.NOT_ALL_WATER_METER_CHECKS_PERFORMED", "apiError.notAllWaterMeterChecksPerformed"],
   ["ERROR.INACTIVE_WATER_METER", "validation.inactiveWaterMeter"],
   ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
   ["VALIDATION.EMAIL", "validation.emailInvalid"],

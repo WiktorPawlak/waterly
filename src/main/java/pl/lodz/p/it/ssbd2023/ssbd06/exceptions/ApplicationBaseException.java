@@ -32,7 +32,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidTariffPeriodException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvalidWaterMeterCheckDateException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvoicesCollidingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.MainWaterMeterAlreadyExistsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.NotAllWaterMeterChecksHaveBeenPerformed;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.TariffNotFoundForInvoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.TariffsColidingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterCheckWasAlreadyPerformedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterDoesNotBelongToOwnerException;
@@ -99,6 +101,8 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_INVALID_TARIFF_PERIOD = "ERROR.INVALID_TARIFF_PERIOD";
     public static final String ERROR_INVOICE_NUMBER_EXISTS = "ERROR.INVOICE_NUMBER_EXISTS";
     public static final String ERROR_INVOICES_COLLIDING = "ERROR.INVOICES_COLLIDING";
+    public static final String ERROR_TARIFF_NOT_FOUND_FOR_INVOICE = "ERROR.TARIFF_NOT_FOUND_FOR_INVOICE";
+    public static final String ERROR_NOT_ALL_WATER_METER_CHECKS_PERFORMED = "ERROR.NOT_ALL_WATER_METER_CHECKS_PERFORMED";
 
     public ApplicationBaseException(final Response.Status status, final String message) {
         super(Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON_TYPE).build());
@@ -287,6 +291,15 @@ public class ApplicationBaseException extends WebApplicationException {
     public static InvalidWaterMeterCheckDateException invalidWaterMeterCheckDateException() {
         return new InvalidWaterMeterCheckDateException();
     }
+
+    public static NotAllWaterMeterChecksHaveBeenPerformed notAllWaterMeterChecksHaveBeenPerformed() {
+        return new NotAllWaterMeterChecksHaveBeenPerformed();
+    }
+
+    public static TariffNotFoundForInvoice tariffNotFoundForInvoice() {
+        return new TariffNotFoundForInvoice();
+    }
+
 
     public static InactiveWaterMeterException inactiveWaterMeterException() {
         return new InactiveWaterMeterException();

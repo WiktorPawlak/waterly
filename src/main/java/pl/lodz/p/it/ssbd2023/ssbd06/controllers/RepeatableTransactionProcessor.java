@@ -11,7 +11,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionAware;
 
 @Log
-public abstract class RepeatableTransactionController {
+public abstract class RepeatableTransactionProcessor {
 
     @Inject
     @Property("transactions.retry-count")

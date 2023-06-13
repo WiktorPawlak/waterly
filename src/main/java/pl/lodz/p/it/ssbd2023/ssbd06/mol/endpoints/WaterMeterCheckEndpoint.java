@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
@@ -45,29 +46,22 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 @LocalBean
 @Stateful
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoint {
+public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
 
-    @Inject
-    private WaterMeterCheckService waterMeterCheckService;
-    @Inject
-    private WaterMeterService waterMeterService;
-    @Inject
-    private WaterUsageStatsService waterUsageStatsService;
-    @Inject
-    private AuthenticatedAccount callerContext;
-    @Inject
-    private MolAccountService molAccountService;
-    @Inject
-    private TimeProvider timeProvider;
-    @Inject
-    private WaterUsageStatsPolicyFactory waterUsageStatsPolicyFactory;
-    @Inject
-    private Event<WaterMeterCheckAddedEvent> waterMeterCheckAddedEventEvent;
-    @Inject
-    private Event<WaterMeterCheckUpdatedEvent> waterMeterCheckUpdatedEventEvent;
+    @Inject private WaterMeterCheckService waterMeterCheckService;
+    @Inject private WaterMeterService waterMeterService;
+    @Inject private WaterUsageStatsService waterUsageStatsService;
+    @Inject private AuthenticatedAccount callerContext;
+    @Inject private MolAccountService molAccountService;
+    @Inject private TimeProvider timeProvider;
+    @Inject private WaterUsageStatsPolicyFactory waterUsageStatsPolicyFactory;
+    @Inject private Event<WaterMeterCheckAddedEvent> waterMeterCheckAddedEventEvent;
+    @Inject private Event<WaterMeterCheckUpdatedEvent> waterMeterCheckUpdatedEventEvent;
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public void performWaterMeterChecks(final WaterMeterChecksDto dto) {
+        boolean currentMonthChecksExists = checkIfCurrenctChecksArePresent(dto);
+
         var newWaterMeterChecks = prepareWaterMeterChecks(dto);
         var expectedMonthHotWaterUsage = BigDecimal.ZERO;
         var expectedMonthColdWaterUsage = BigDecimal.ZERO;
@@ -85,21 +79,26 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
         var usageStats = getWaterUsageStatsForNewChecks(check);
 
         upsertWaterUsageStats(expectedMonthHotWaterUsage, expectedMonthColdWaterUsage, check, usageStats);
-        if (usageStats.isEmpty()) {
+        if (usageStats.isEmpty() || !currentMonthChecksExists) {
             waterMeterCheckAddedEventEvent.fire(new WaterMeterCheckAddedEvent(check.getCheckDate(), dto));
         }
+    }
+
+    private boolean checkIfCurrenctChecksArePresent(final WaterMeterChecksDto dto) {
+        List<WaterMeter> waterMeters = new ArrayList<>();
+        dto.getWaterMeterChecks().forEach(dtoCheck -> {
+            waterMeters.add(waterMeterService.findWaterMeterById(dtoCheck.getWaterMeterId()));
+        });
+        return waterMeters.stream()
+                .allMatch(waterMeter -> waterMeterCheckService.findWaterMeterCheckForCheckDate(LocalDate.parse(dto.getCheckDate()), waterMeter).isPresent());
     }
 
     @SneakyThrows(ParseException.class)
     private List<WaterMeterCheck> prepareWaterMeterChecks(final WaterMeterChecksDto dto) {
         boolean managerAuthored = callerContext.isFacilityManager();
-        final LocalDate checkDate = managerAuthored
-                ? DateConverter.convertStringDateToLocalDate(dto.getCheckDate())
-                : timeProvider.currentLocalDate();
+        final LocalDate checkDate = managerAuthored ? DateConverter.convertStringDateToLocalDate(dto.getCheckDate()) : timeProvider.currentLocalDate();
 
-        return dto.getWaterMeterChecks().stream()
-                .map(checkDto -> prepareWaterMeterCheck(checkDto, checkDate, managerAuthored))
-                .toList();
+        return dto.getWaterMeterChecks().stream().map(checkDto -> prepareWaterMeterCheck(checkDto, checkDate, managerAuthored)).toList();
     }
 
     private WaterMeterCheck prepareWaterMeterCheck(final WaterMeterCheckDto dto, final LocalDate checkDate, final boolean managerAuthored) {
@@ -111,12 +110,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
         }
         checkWaterMeterIsNotMain(waterMeter);
 
-        return WaterMeterCheck.builder()
-                .meterReading(dto.getReading())
-                .checkDate(checkDate)
-                .managerAuthored(managerAuthored)
-                .waterMeter(waterMeter)
-                .build();
+        return WaterMeterCheck.builder().meterReading(dto.getReading()).checkDate(checkDate).managerAuthored(managerAuthored).waterMeter(waterMeter).build();
     }
 
     private void checkWaterMeterBelongsToOwner(final WaterMeter waterMeter) {
@@ -171,18 +165,12 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingEndpoin
         return waterUsageStatsService.findByApartmentAndYearMonth(waterMeterApartment, yearMonthOfWaterMeterCheck);
     }
 
-    private void upsertWaterUsageStats(final BigDecimal expectedMonthHotWaterUsage,
-                                       final BigDecimal expectedMonthColdWaterUsage,
-                                       final WaterMeterCheck check,
+    private void upsertWaterUsageStats(final BigDecimal expectedMonthHotWaterUsage, final BigDecimal expectedMonthColdWaterUsage, final WaterMeterCheck check,
                                        final Optional<WaterUsageStats> usageStats) {
         WaterUsageStats newUsageStats;
         if (usageStats.isEmpty()) {
-            newUsageStats = WaterUsageStats.builder()
-                    .yearMonth(DateConverter.convert(check.getCheckDate()))
-                    .apartment(check.getWaterMeter().getApartment())
-                    .coldWaterUsage(expectedMonthColdWaterUsage)
-                    .hotWaterUsage(expectedMonthHotWaterUsage)
-                    .build();
+            newUsageStats = WaterUsageStats.builder().yearMonth(DateConverter.convert(check.getCheckDate())).apartment(check.getWaterMeter().getApartment())
+                    .coldWaterUsage(expectedMonthColdWaterUsage).hotWaterUsage(expectedMonthHotWaterUsage).build();
 
             waterUsageStatsService.createWaterUsageStats(newUsageStats);
         } else {

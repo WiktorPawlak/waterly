@@ -277,7 +277,9 @@
     "tariffsColiding": "Istnieje taryfa z nakładającym się okresem obowiązywania",
     "invoicesColliding": "Wprowadzono już fakturę na podany miesiąc",
     "invoiceNumberExists": "Istnieje już faktura z podanym numerem",
-    "noSuchBill": "Brak rozliczeń na podany miesiąc"
+    "noSuchBill": "Brak rozliczeń na podany miesiąc",
+    "notAllWaterMeterChecksPerformed":"Należy wprowadzić brakujące odczyty wodomierzy za poprzedni miesiąc",
+    "tariffNotFoundForInvoice": "Należy wprowadzić brakującą taryfę"
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",
@@ -402,8 +404,8 @@
   },
   "rolesModal": {
     "selectRole": "Wybierz role",
-    "roleAddedSuccesfully": "Pomyślnie dodano role",
-    "roleRemovedSuccesfully": "Pomyślnie odebrano role"
+    "roleAddedSuccessfully": "Pomyślnie dodano role",
+    "roleRemovedSuccessfully": "Pomyślnie odebrano role"
   },
   "common": {
     "close": "Zamknij",
@@ -425,7 +427,7 @@
     "startDate": "Rozpoczęcie",
     "endDate": "Zakończenie",
     "editTariff": "Edytuj taryfę",
-    "tariffEditedSuccesfully": "Pomyślnie edytowano taryfę"
+    "tariffEditedSuccessfully": "Pomyślnie edytowano taryfę"
   },
   "editInvoiceModal": {
     "date": "Data",
@@ -433,7 +435,7 @@
     "waterUsage": "Zużycie wody [m<sup>3</sup>]",
     "editInvoice": "Edytuj fakturę",
     "invoiceNumber": "Numer Faktury",
-    "invoiceEditedSuccesfully": "Pomyślnie edytowano fakturę"
+    "invoiceEditedSuccessfully": "Pomyślnie edytowano fakturę"
   },
   "changeApartmentOwnerModal": {
     "editOwner": "Edytuj właścicela"
@@ -465,7 +467,7 @@
     "waterUsage": "Zużycie wody [m<sup>3</sup>]",
     "addInvoice": "Dodaj fakturę",
     "invoiceNumber": "Numer Faktury",
-    "invoiceAddedSuccesfully": "Faktura dodana pomyślnie"
+    "invoiceAddedSuccessfully": "Faktura dodana pomyślnie"
   },
   "twoFactor": {
     "yes": "włączone",

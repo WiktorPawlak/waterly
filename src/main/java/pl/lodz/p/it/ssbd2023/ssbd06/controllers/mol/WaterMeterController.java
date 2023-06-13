@@ -22,7 +22,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedWaterMetersListDto;
@@ -39,7 +39,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 @Log
 @Path("/water-meters")
 @RequestScoped
-public class WaterMeterController extends RepeatableTransactionController {
+public class WaterMeterController extends RepeatableTransactionProcessor {
 
     @Inject
     private WaterMeterEndpoint waterMeterEndpoint;

@@ -31,9 +31,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.UsageReport;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 
-public abstract class AbstractBillService {
+public abstract class AbstractBillService extends TransactionBoundariesTracingBean {
     public static final int ROUNDING_MODE = 2;
     @Inject
     protected BillFacade billFacade;
@@ -115,12 +117,42 @@ public abstract class AbstractBillService {
         return advanceUsage;
     }
 
-    protected static void updateAdvanceUsage(final UsageReport advanceUsage, final Tariff tariffForBill, final WaterUsageStats forecast) {
+    protected static UsageReport createAndFillAdvanceUsage(final Tariff tariffForBill,
+                                                           final List<WaterMeter> apartmentWaterMeters,
+                                                           final LocalDate billDate) {
+        UsageReport advanceUsage = new UsageReport();
+        BigDecimal coldWaterForecastUsage = calculateExpectedMonthUsage(apartmentWaterMeters, COLD_WATER, billDate);
+        BigDecimal hotWaterForecastUsage = calculateExpectedMonthUsage(apartmentWaterMeters, HOT_WATER, billDate);
+        advanceUsage.setColdWaterUsage(coldWaterForecastUsage);
+        advanceUsage.setColdWaterCost(coldWaterForecastUsage.multiply(tariffForBill.getColdWaterPrice()));
+        advanceUsage.setHotWaterUsage(hotWaterForecastUsage);
+        advanceUsage.setHotWaterCost(hotWaterForecastUsage.multiply(tariffForBill.getColdWaterPrice().add(tariffForBill.getHotWaterPrice())));
+        advanceUsage.setGarbageCost(hotWaterForecastUsage.add(coldWaterForecastUsage).multiply(tariffForBill.getTrashPrice()));
+        return advanceUsage;
+    }
+
+    protected static void updateAdvanceUsage(final UsageReport advanceUsage,
+                                             final Tariff tariffForBill,
+                                             final WaterUsageStats forecast) {
         advanceUsage.setColdWaterUsage(forecast.getColdWaterUsage());
         advanceUsage.setColdWaterCost(forecast.getColdWaterUsage().multiply(tariffForBill.getColdWaterPrice()));
         advanceUsage.setHotWaterUsage(forecast.getHotWaterUsage());
         advanceUsage.setHotWaterCost(forecast.getHotWaterUsage().multiply(tariffForBill.getColdWaterPrice().add(tariffForBill.getHotWaterPrice())));
         advanceUsage.setGarbageCost(forecast.getColdWaterUsage().add(advanceUsage.getHotWaterUsage()).multiply(tariffForBill.getTrashPrice()));
+    }
+
+    protected static void updateAdvanceUsage(final UsageReport advanceUsage,
+                                             final Tariff tariffForBill,
+                                             final Apartment apartment,
+                                             final LocalDate billDate) {
+        List<WaterMeter> apartmentWaterMeters = apartment.getWaterMeters();
+        BigDecimal coldWaterForecastUsage = calculateExpectedMonthUsage(apartmentWaterMeters, COLD_WATER, billDate);
+        BigDecimal hotWaterForecastUsage = calculateExpectedMonthUsage(apartmentWaterMeters, HOT_WATER, billDate);
+        advanceUsage.setColdWaterUsage(coldWaterForecastUsage);
+        advanceUsage.setColdWaterCost(coldWaterForecastUsage.multiply(tariffForBill.getColdWaterPrice()));
+        advanceUsage.setHotWaterUsage(hotWaterForecastUsage);
+        advanceUsage.setHotWaterCost(hotWaterForecastUsage.multiply(tariffForBill.getColdWaterPrice().add(tariffForBill.getHotWaterPrice())));
+        advanceUsage.setGarbageCost(hotWaterForecastUsage.add(coldWaterForecastUsage).multiply(tariffForBill.getTrashPrice()));
     }
 
     protected static BigDecimal calculateColdWaterUsageForForecast(final Bill newBill, final List<WaterMeter> waterMetersForApartment) {
@@ -249,4 +281,14 @@ public abstract class AbstractBillService {
                 .map(WaterMeterCheckDto::getWaterMeterId)
                 .toList();
     }
+
+    private static BigDecimal calculateExpectedMonthUsage(final List<WaterMeter> apartmentWaterMeters, final WaterMeterType type, final LocalDate billDate) {
+        return apartmentWaterMeters.stream().filter(waterMeter -> waterMeter.getType().equals(type)).map(WaterMeter::getExpectedDailyUsage)
+                .reduce(BigDecimal.ZERO, (firstDailyUsage, secondDailyUsage) -> {
+                    var firstDailyUsageMonthUsage = firstDailyUsage.multiply(BigDecimal.valueOf(billDate.lengthOfMonth()));
+                    var secondWaterMeterMonthUsage = secondDailyUsage.multiply(BigDecimal.valueOf(billDate.lengthOfMonth()));
+                    return firstDailyUsageMonthUsage.add(secondWaterMeterMonthUsage);
+                });
+    }
+
 }

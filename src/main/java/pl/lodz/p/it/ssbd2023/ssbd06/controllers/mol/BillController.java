@@ -13,14 +13,14 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.BillEndpoint;
 
 @Path("/bills")
 @RequestScoped
-public class BillController extends RepeatableTransactionController {
+public class BillController extends RepeatableTransactionProcessor {
 
     @Inject
     private BillEndpoint billEndpoint;

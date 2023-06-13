@@ -42,8 +42,7 @@ public class FirstWaterMeterCheckPolicy implements WaterUsageStatsPolicy {
     private BigDecimal calculateExpectedMonthWaterMeterUsage(final WaterMeterCheck newWaterMeterCheck,
                                                              final BigDecimal realUsage,
                                                              final BigDecimal expectedDailyUsage) {
-        BigDecimal daysRemainingInMonth = BigDecimal.valueOf(timeProvider.getDaysRemainingInMonth(newWaterMeterCheck.getCheckDate()),
-                DIGITS_AFTER_WATER_METER_DECIMAL_POINT);
+        BigDecimal daysRemainingInMonth = BigDecimal.valueOf(timeProvider.getDaysRemainingInMonth(newWaterMeterCheck.getCheckDate()));
         BigDecimal expectedUsageForRestOfTheMonth = daysRemainingInMonth.multiply(expectedDailyUsage);
         return realUsage.add(expectedUsageForRestOfTheMonth);
     }

@@ -14,7 +14,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedInvoicesListDto;
@@ -24,7 +24,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 
 @Path("/invoices")
 @RequestScoped
-public class InvoiceController extends RepeatableTransactionController {
+public class InvoiceController extends RepeatableTransactionProcessor {
 
     @Inject
     private InvoiceEndpoint invoiceEndpoint;

@@ -38,7 +38,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @Log
@@ -47,7 +47,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 @LocalBean
 @Stateful
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
+public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
 
     @Inject
     private WaterMeterService waterMeterService;
