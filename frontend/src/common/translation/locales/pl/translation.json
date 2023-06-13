@@ -442,6 +442,14 @@
     "coldWater": "Zimna woda",
     "hotWater": "Ciepła woda"
   },
+  "waterMeterDetails": {
+    "waterMeter": "Wodomierz",
+    "expiryDate": "Data ważności: ",
+    "expectedDailyUsage": "Oczekiwane dzienne zużycie: ",
+    "type": "Typ: ",
+    "currentState": "Aktualny stan: ",
+    "startingValue": "Wartość początkowa: "
+  },
   "addInvoiceModal": {
     "date": "Data",
     "totalCost": "Całkowity koszt [PLN]",
