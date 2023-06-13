@@ -105,8 +105,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     private void updateWaterMeterEntity(final WaterMeter waterMeter, final UpdateWaterMeterDto dto) {
         waterMeter.setStartingValue(dto.getStartingValue() == null ?
                 waterMeter.getStartingValue() : dto.getStartingValue());
-        waterMeter.setExpectedDailyUsage(dto.getExpectedDailyUsage() == null ?
-                waterMeter.getExpectedDailyUsage() : dto.getExpectedDailyUsage());
+        waterMeter.setExpectedDailyUsage(dto.getExpectedDailyUsage() == null || dto.getExpectedDailyUsage().isBlank() ?
+                null : new BigDecimal(dto.getExpectedDailyUsage()));
 
         waterMeter.setExpiryDate(DateConverter.convert(dto.getExpiryDate()));
 
@@ -119,8 +119,24 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
     @RolesAllowed(FACILITY_MANAGER)
     public void replaceWaterMeter(final long waterMeterId, final ReplaceWaterMeterDto dto) {
         WaterMeter waterMeter = waterMeterService.findWaterMeterById(waterMeterId);
+        if (!waterMeter.isActive()) {
+            throw ApplicationBaseException.inactiveWaterMeterException();
+        }
         waterMeterService.changeActiveStatus(waterMeter, false);
-        waterMeterService.addReplacementWaterMeter(waterMeterId, dto);
+        WaterMeter newWaterMeter = prepareNewWaterMeter(waterMeter, dto);
+        waterMeterService.addWaterMeter(newWaterMeter);
+    }
+
+    @SneakyThrows(ParseException.class)
+    private WaterMeter prepareNewWaterMeter(final WaterMeter oldWaterMeter, final ReplaceWaterMeterDto dto) {
+        return WaterMeter.builder()
+                .expiryDate(DateConverter.convert(dto.getExpiryDate()))
+                .startingValue(dto.getStartingValue())
+                .type(oldWaterMeter.getType())
+                .apartment(oldWaterMeter.getApartment())
+                .expectedDailyUsage(oldWaterMeter.getExpectedDailyUsage())
+                .active(true)
+                .build();
     }
 
     @SneakyThrows(ParseException.class)

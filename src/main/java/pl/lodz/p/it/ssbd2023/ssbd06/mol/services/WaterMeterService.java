@@ -15,7 +15,6 @@ import jakarta.inject.Inject;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
@@ -62,11 +61,8 @@ public class WaterMeterService {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public void addReplacementWaterMeter(final long id, final ReplaceWaterMeterDto dto) {
-        waterMeterFacade.findById(id);
-        // merge dto and old entity (apartment)
-        // ReplaceWaterMeterDto -> WaterMeter
-        waterMeterFacade.create(new WaterMeter());
+    public void addWaterMeter(final WaterMeter waterMeter) {
+        waterMeterFacade.create(waterMeter);
     }
 
     @RolesAllowed(FACILITY_MANAGER)

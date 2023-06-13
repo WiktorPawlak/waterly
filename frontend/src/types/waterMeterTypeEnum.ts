@@ -1,6 +1,7 @@
-export const roles = {
+export const waterMeterType = {
   hotWater: "HOT_WATER",
   coldWater: "COLD_WATER",
+  main: "MAIN"
 };
 
 export const RolesEnum = {
