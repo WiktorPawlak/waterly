@@ -43,6 +43,10 @@ const apiErrors = new Map<string, string>([
   ["ERROR.TARIFF_NOT_FOUND_FOR_INVOICE", "apiError.tariffNotFoundForInvoice"],
   ["ERROR.NOT_ALL_WATER_METER_CHECKS_PERFORMED", "apiError.notAllWaterMeterChecksPerformed"],
   ["ERROR.INACTIVE_WATER_METER", "validation.inactiveWaterMeter"],
+  ["ERROR.ILLEGAL_MAIN_WATER_METER_CHECK", "apiError.illegalMainWaterMeterCheck"],
+  ["ERROR.INVALID_CHECK_DATE", "apiError.invalidCheckDate"],
+  ["ERROR.CHECK_WAS_ALREADY_PERFORMED", "apiError.checkWasAlreadyPerformed"],
+  ["ERROR.WATER_METER_EXPIRED", "apiError.waterMeterExpired"],
   ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
   ["VALIDATION.EMAIL", "validation.emailInvalid"],
   ["VALIDATION.EMAIL_SIZE", "validation.emailInvalidSize"],
@@ -72,7 +76,8 @@ const apiErrors = new Map<string, string>([
   ["VALIDATION.PHONE_NUMBER_PATTERN", "validation.phoneNumberInvalidPattern"],
   ["VALIDATION.PHONE_NUMBER", "validation.phoneNumberInvalid"],
   ["VALIDATION.UUID_PATTERN", "validation.uuidInvalidPattern"],
-  ["VALIDATION.UUID", "validation.uuidInvalid"]
+  ["VALIDATION.UUID", "validation.uuidInvalid"],
+  ["VALIDATION.WATER_USAGE_INVALID_PRECISION", "validation.waterUsageInvalid"],
 ]);
 
 const UNKNOWN_ERROR = "apiError.unknownError";

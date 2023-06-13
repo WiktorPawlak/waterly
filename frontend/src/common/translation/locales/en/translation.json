@@ -317,7 +317,8 @@
     "expectedDailyUsage": "Expected Daily Usage needs to be specified with three decimal places",
     "expiryDateAlreadyExpired": "Expiry date needs to be after current date",
     "mainWaterMeterAlreadyExists": "Active main water meter already exists",
-    "inactiveWaterMeter": "Inactive water meter cannot be replaced"
+    "inactiveWaterMeter": "Inactive water meter cannot be replaced",
+    "readingValue": "Reading value needs to be specified with 5 digits before and 3 digits after decimal point"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -608,5 +609,30 @@
   "threeDotWaterMeterMenu": {
     "replace": "Replace",
     "edit": "Edit"
+  },
+  "WaterMeterListDialog": {
+    "button": "Perform water meter checks",
+    "date": "Check date",
+    "header": "Water Meter Checks",
+    "acceptButton": "Perform",
+    "modal": {
+      "id": "Water Meter Id",
+      "type": "Type",
+      "reading": "Reading",
+      "HOT_WATER": "Hot Water",
+      "COLD_WATER": "Cold Water"
+    },
+    "toast": {
+      "created": "Water Meter checks preformed successfully"
+    },
+    "validation": {
+      "waterusageInvalid": "Invalid precision of water meter reading"
+    },
+    "apiError": {
+      "illegalMainWaterMeterCheck": "Main water meter must not have any checks",
+      "invalidCheckDate": "Water meter check date must be for today",
+      "checkWasAlreadyPerformed": "Water meter check for this month was already performed by the manager",
+      "waterMeterExpired": "Water meter expired"
+    }
   }
 }

@@ -45,6 +45,16 @@ export interface List<T> {
   data: T[];
 }
 
+export interface WaterMeterChecksDto {
+  checkDate: Date;
+  waterMeterChecks: WaterMeterCheckDto[];
+}
+
+export interface WaterMeterCheckDto {
+  waterMeterId: number;
+  reading: string;
+}
+
 export async function getWaterMeterById(
   id: number
 ): Promise<ApiResponse<WaterMeterDto>> {
@@ -89,6 +99,18 @@ export async function replaceMainWaterMeter(
 
 export async function getApartmentWaterMeters(
   apartmentId: number
+): Promise<ApiResponse<WaterMeterDto[]>> {
+  return get(`${WATERMETERS_PATH}/apartment/${apartmentId}`);
+}
+
+export async function performWaterMeterChecks(
+    waterMeterChecksDto: WaterMeterChecksDto
+) {
+  return post(`${WATERMETERS_PATH}/water-meter-checks`, waterMeterChecksDto);
+}
+
+export async function getWaterMatersByApartmentId(
+    apartmentId: number
 ): Promise<ApiResponse<WaterMeterDto[]>> {
   return get(`${WATERMETERS_PATH}/apartment/${apartmentId}`);
 }
