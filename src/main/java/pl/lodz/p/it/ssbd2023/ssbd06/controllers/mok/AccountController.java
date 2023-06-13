@@ -27,7 +27,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
@@ -54,7 +54,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 @Log
 @Path("/accounts")
 @RequestScoped
-public class AccountController extends RepeatableTransactionController {
+public class AccountController extends RepeatableTransactionProcessor {
 
     @Inject
     private AccountEndpoint accountEndpoint;

@@ -271,7 +271,9 @@
     "tariffsColiding": "There is existing colliding tariff",
     "invoicesColliding": "There is existing invoice for provided date",
     "invoiceNumberExists": "There is existing invoice with provided invoice nubmer",
-    "noSuchBill": "There is no bill available for chosen month"
+    "noSuchBill": "There is no bill available for chosen month",
+    "notAllWaterMeterChecksPerformed":"There are missing water meter checks for last month",
+    "tariffNotFoundForInvoice": "There is missing tariff for invoice date"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -334,7 +336,7 @@
       "submitPasswordReset": "Reset password"
     },
     "alert": {
-      "passwordReseted": "Password reseted succesfully. You will be redirected to the login page in a moment.",
+      "passwordReseted": "Password reseted successfully. You will be redirected to the login page in a moment.",
       "passwordNotReseted": "Password not reseted successfully."
     },
     "passwordsValidation": {
@@ -397,8 +399,8 @@
   },
   "rolesModal": {
     "selectRole": "Select role",
-    "roleAddedSuccesfully": "Role addedd successfully",
-    "roleRemovedSuccesfully": "Role removed successfully"
+    "roleAddedSuccessfully": "Role addedd successfully",
+    "roleRemovedSuccessfully": "Role removed successfully"
   },
   "common": {
     "close": "Close",
@@ -424,7 +426,7 @@
     "startDate": "Start date",
     "endDate": "End date",
     "editTariff": "Edit Tariff",
-    "tariffEditedSuccesfully": "Tariff edited successfully"
+    "tariffEditedSuccessfully": "Tariff edited successfully"
   },
   "editInvoiceModal": {
     "date": "Date",
@@ -475,7 +477,7 @@
     "cancel": "cancel"
   },
   "loginPage": {
-    "succesfulLogin": "Logged in succesfully"
+    "succesfulLogin": "Logged in successfully"
   },
   "breadcrumbs": {
     "homePage": "Home",

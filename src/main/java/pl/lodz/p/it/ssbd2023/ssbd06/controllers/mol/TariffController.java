@@ -15,7 +15,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedTariffsListDto;
@@ -26,7 +26,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 
 @Path("/tariffs")
 @RequestScoped
-public class TariffController extends RepeatableTransactionController {
+public class TariffController extends RepeatableTransactionProcessor {
 
     @Inject
     private TariffEndpoint tariffEndpoint;

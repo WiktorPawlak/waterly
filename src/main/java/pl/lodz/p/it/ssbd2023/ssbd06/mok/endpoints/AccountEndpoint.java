@@ -40,7 +40,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.ReCAPTCHA;
@@ -51,7 +51,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
 @LocalBean
 @Stateful
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class AccountEndpoint extends TransactionBoundariesTracingEndpoint {
+public class AccountEndpoint extends TransactionBoundariesTracingBean {
 
     @Inject
     private AuthenticatedAccount authenticatedAccount;

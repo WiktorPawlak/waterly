@@ -19,7 +19,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionController;
+import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
@@ -35,7 +35,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PageSize;
 
 @Path("/apartments")
 @RequestScoped
-public class ApartmentController extends RepeatableTransactionController {
+public class ApartmentController extends RepeatableTransactionProcessor {
 
     @Inject
     private ApartmentEndpoint apartmentEndpoint;

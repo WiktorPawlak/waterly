@@ -25,7 +25,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
@@ -34,7 +34,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 @LocalBean
 @Stateful
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class ApartmentEndpoint extends TransactionBoundariesTracingEndpoint {
+public class ApartmentEndpoint extends TransactionBoundariesTracingBean {
 
     @Inject
     private MolAccountService molAccountService;

@@ -1,11 +1,13 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import javax.annotation.Nonnegative;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
@@ -16,6 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class InvoicesDto implements Signable {
 
     @Nonnegative
@@ -27,7 +30,7 @@ public class InvoicesDto implements Signable {
     @Money
     private BigDecimal totalCost;
     @NotNull
-    private java.time.LocalDate date;
+    private LocalDate date;
     @Nonnegative
     private long version;
 

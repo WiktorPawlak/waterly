@@ -15,7 +15,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats;
 
 @Named("standardBillGeneration")
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class StandardBillGenerationPolicy extends AbstractBillService implements BillGenerationPolicy {
     @Override
     public void performBillOperations(final Bill bill, final BigDecimal totalApartmentsArea, final BigDecimal unbilledWaterAmount, final Tariff tariffForBill) {

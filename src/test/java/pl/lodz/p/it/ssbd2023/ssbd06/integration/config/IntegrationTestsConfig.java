@@ -21,6 +21,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
@@ -153,6 +155,19 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
 
     protected static TimeProvider timeProvider() {
         return new TimeProviderImpl();
+    }
+
+
+    protected Tuple2<InvoicesDto, String> getInvoiceWithEtag(long invoiceId) {
+        String eTag = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(INVOICE_PATH + "/" + invoiceId).getHeader("ETag");
+        InvoicesDto dto = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(INVOICE_PATH + "/" + invoiceId).as(InvoicesDto.class);
+        return Tuple.of(dto, eTag);
+    }
+
+    private Tuple2<TariffsDto, String> getTariffWithEtag(long tariffId) {
+        String eTag = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(tariffId + "/" + tariffId).getHeader("ETag");
+        TariffsDto dto = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(tariffId + "/" + tariffId).as(TariffsDto.class);
+        return Tuple.of(dto, eTag);
     }
 
     @BeforeEach

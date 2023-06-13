@@ -24,14 +24,14 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.TariffService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 
 @TransactionRollbackInterceptor
 @Monitored
 @LocalBean
 @Stateful
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class TariffEndpoint extends TransactionBoundariesTracingEndpoint {
+public class TariffEndpoint extends TransactionBoundariesTracingBean {
 
     @Inject
     private TariffService tariffService;

@@ -13,9 +13,9 @@ import jakarta.ejb.SessionSynchronization;
 import jakarta.ejb.TransactionAttribute;
 import lombok.Getter;
 
-public abstract class TransactionBoundariesTracingEndpoint implements SessionSynchronization, TransactionAware {
+public abstract class TransactionBoundariesTracingBean implements SessionSynchronization, TransactionAware {
 
-    private final Logger log = Logger.getLogger(TransactionBoundariesTracingEndpoint.class.getName());
+    private final Logger log = Logger.getLogger(TransactionBoundariesTracingBean.class.getName());
 
     @Getter
     private String transactionId;
