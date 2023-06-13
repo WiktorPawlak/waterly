@@ -322,7 +322,8 @@
     "expectedDailyUsage": "Przewidywane zużycie dzienne musi być podane z dokładnością do trzech miejsc po przecinku",
     "expiryDateAlreadyExpired": "Data przydatności musi być po dacie aktualnej",
     "mainWaterMeterAlreadyExists": "Istnieje już aktywny wodomierz główny",
-    "inactiveWaterMeter": "Nieaktywny wodomierz nie może zostać wymieniony"
+    "inactiveWaterMeter": "Nieaktywny wodomierz nie może zostać wymieniony",
+    "readingValue": "Wartość odczytu musi być określona z 5 cyframi przed i 3 cyframi po przecinku"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -609,5 +610,30 @@
   "threeDotWaterMeterMenu": {
     "replace": "Wymień",
     "edit": "Edytuj"
+  },
+  "WaterMeterListDialog": {
+    "button": "Wprowadź stan wodomierzy",
+    "date": "Data pomiaru",
+    "header": "Pomiary wodomierzy",
+    "acceptButton": "Wprowadź",
+    "modal": {
+      "id": "ID wodomierza",
+      "type": "Typ",
+      "reading": "Pomiar",
+      "HOT_WATER": "Ciepła Woda",
+      "COLD_WATER": "Zimna Woda"
+    },
+    "toast": {
+      "created": "Pomiary wodomierzy wykonane pomyślnie"
+    },
+    "validation": {
+      "waterusageInvalid": "Nieprawidłowa precyzja stanu zużycia wody"
+    },
+    "apiError": {
+      "illegalMainWaterMeterCheck": "Wodomierz główny nie może mieć pomiaru",
+      "invalidCheckDate": "Data pomiaru musi być dzisiejsza",
+      "checkWasAlreadyPerformed": "Pomiar na ten miesiąc został już wykonany przez managera",
+      "waterMeterExpired": "Homologacja wodomierza wygasła"
+    }
   }
 }

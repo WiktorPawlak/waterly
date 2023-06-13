@@ -13,9 +13,9 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 
 @Target({FIELD, PARAMETER})
-@Retention(RUNTIME)
 @Constraint(validatedBy = {})
-@Digits(integer = 6, fraction = 3)
+@Retention(RUNTIME)
+@Digits(integer = 5, fraction = 3)
 @NotNull
 public @interface WaterUsage {
     String message() default "VALIDATION.WATER_USAGE_INVALID_PRECISION";

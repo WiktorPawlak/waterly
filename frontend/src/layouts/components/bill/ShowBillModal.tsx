@@ -15,6 +15,7 @@ import { resolveApiError } from "../../../api/apiErrors";
 import { GetBillsByOwnerIdDto, getBillsByOwnerId } from "../../../api/billApi";
 import { monthName } from "../../../common/dates";
 import dayjs from "dayjs";
+import { WaterMeterListDialog } from "../watermeter/WaterMeterListDialog";
 
 interface Props {
   apartmentId: number;
@@ -22,36 +23,37 @@ interface Props {
 }
 
 const initialBillData: GetBillsByOwnerIdDto = {
-    billId: 0,
-    balance: 0,
-    apartmentId: 0,
-    forecast: {
-        garbageCost: 0,
-        coldWaterCost: 0,
-        hotWaterCost: 0,
-        coldWaterUsage: 0,
-        hotWaterUsage: 0,
-        totalCost: 0
-    },
-    realUsage: {
-        garbageCost: 0,
-        garbageBalance: 0,
-        coldWaterCost: 0,
-        coldWaterBalance: 0,
-        hotWaterCost: 0,
-        hotWaterbalance: 0,
-        coldWaterUsage: 0,
-        hotWaterUsage: 0,
-        unbilledWaterCost: 0,
-        unbilledWaterAmount: 0,
-        totalCost: 0
-    },
+  billId: 0,
+  balance: 0,
+  apartmentId: 0,
+  forecast: {
+    garbageCost: 0,
+    coldWaterCost: 0,
+    hotWaterCost: 0,
+    coldWaterUsage: 0,
+    hotWaterUsage: 0,
+    totalCost: 0,
+  },
+  realUsage: {
+    garbageCost: 0,
+    garbageBalance: 0,
+    coldWaterCost: 0,
+    coldWaterBalance: 0,
+    hotWaterCost: 0,
+    hotWaterbalance: 0,
+    coldWaterUsage: 0,
+    hotWaterUsage: 0,
+    unbilledWaterCost: 0,
+    unbilledWaterAmount: 0,
+    totalCost: 0,
+  },
 };
 
 export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [billData, setBillData] = useState(initialBillData);
+
   const [found, setFound] = useState<boolean>(true);
 
   useEffect(() => {
@@ -92,63 +94,58 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
     { label: t("bill.rowBalance") },
   ];
 
-    const tableData = useMemo(() => [
-        {
-            id: 0,
-            name: <Trans
-                i18nKey={"bill.coldWater"}
-                components={{ sup: <sup /> }}
-            />,
-            advancedUsage: billData.forecast.coldWaterUsage,
-            realUsage: billData.realUsage.coldWaterUsage,
-            advancedCost: billData.forecast.coldWaterCost,
-            realCost: billData.realUsage.coldWaterCost,
-            balance: billData.realUsage.coldWaterBalance
-        },
-        {
-            id: 1,
-            name: <Trans
-                i18nKey={"bill.hotWater"}
-                components={{ sup: <sup /> }}
-            />,
-            advancedUsage: billData.forecast.hotWaterUsage,
-            realUsage: billData.realUsage.hotWaterUsage,
-            advancedCost: billData.forecast.hotWaterCost,
-            realCost: billData.realUsage.hotWaterCost,
-            balance: billData.realUsage.hotWaterbalance
-        },
-        {
-            id: 2,
-            name: <Trans
-                i18nKey={"bill.trash"}
-                components={{ sup: <sup /> }}
-            />,
-            advancedUsage: "-",
-            realUsage: "-",
-            advancedCost: billData.forecast.garbageCost,
-            realCost: billData.realUsage.garbageCost,
-            balance: billData.realUsage.garbageBalance
-        },
-        {
-            id: 3,
-            name: <Trans
-                i18nKey={"bill.unbilledWater"}
-                components={{ sup: <sup /> }}
-            />,
-            advancedUsage: "-",
-            realUsage: billData.realUsage.unbilledWaterAmount,
-            advancedCost: "-",
-            realCost: billData.realUsage.unbilledWaterCost,
-            balance: "-",
-        },
-        {
-            id: 4,
-            name: t("bill.summary"),
-            balance: billData.balance,
-            advancedCost: billData.forecast.totalCost,
-            realCost: billData.realUsage.totalCost
-        }
-    ], [billData]);
+  const tableData = useMemo(
+    () => [
+      {
+        id: 0,
+        name: (
+          <Trans i18nKey={"bill.coldWater"} components={{ sup: <sup /> }} />
+        ),
+        advancedUsage: billData.forecast.coldWaterUsage,
+        realUsage: billData.realUsage.coldWaterUsage,
+        advancedCost: billData.forecast.coldWaterCost,
+        realCost: billData.realUsage.coldWaterCost,
+        balance: billData.realUsage.coldWaterBalance,
+      },
+      {
+        id: 1,
+        name: <Trans i18nKey={"bill.hotWater"} components={{ sup: <sup /> }} />,
+        advancedUsage: billData.forecast.hotWaterUsage,
+        realUsage: billData.realUsage.hotWaterUsage,
+        advancedCost: billData.forecast.hotWaterCost,
+        realCost: billData.realUsage.hotWaterCost,
+        balance: billData.realUsage.hotWaterbalance,
+      },
+      {
+        id: 2,
+        name: <Trans i18nKey={"bill.trash"} components={{ sup: <sup /> }} />,
+        advancedUsage: "-",
+        realUsage: "-",
+        advancedCost: billData.forecast.garbageCost,
+        realCost: billData.realUsage.garbageCost,
+        balance: billData.realUsage.garbageBalance,
+      },
+      {
+        id: 3,
+        name: (
+          <Trans i18nKey={"bill.unbilledWater"} components={{ sup: <sup /> }} />
+        ),
+        advancedUsage: "-",
+        realUsage: billData.realUsage.unbilledWaterAmount,
+        advancedCost: "-",
+        realCost: billData.realUsage.unbilledWaterCost,
+        balance: "-",
+      },
+      {
+        id: 4,
+        name: t("bill.summary"),
+        balance: billData.balance,
+        advancedCost: billData.forecast.totalCost,
+        realCost: billData.realUsage.totalCost,
+      },
+    ],
+    [billData]
+  );
 
   if (isLoading && !found) {
     return (

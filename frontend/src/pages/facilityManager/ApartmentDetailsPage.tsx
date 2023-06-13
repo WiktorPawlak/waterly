@@ -5,13 +5,22 @@ import { resolveApiError } from "../../api/apiErrors";
 import { useSnackbar } from "notistack";
 import { Box, Button, Typography } from "@mui/material";
 import { Loading } from "../../layouts/components/Loading";
-import { ApartmentDto, getAllAprtmentsList, getApartmentDetails } from "../../api/apartmentApi";
+import {
+  ApartmentDto,
+  getAllAprtmentsList,
+  getApartmentDetails,
+} from "../../api/apartmentApi";
 import { ApartmentDetails } from "../../layouts/components/apartment/ApartmentDetails";
 import { MainLayout } from "../../layouts/MainLayout";
 import { AssignWaterMeterToApartmentDialog } from "../../layouts/components/watermeter/AssingWaterMeterToApartmentModal";
 import AddIcon from "@mui/icons-material/Add";
-import {PaginatedList, WaterMeterDto, getApartmentWaterMeters, getWaterMeterById} from "../../api/waterMeterApi";
-import {WaterMeterCard} from "../../layouts/components/watermeter/WaterMeterCard";
+import {
+  PaginatedList,
+  WaterMeterDto,
+  getApartmentWaterMeters,
+  getWaterMeterById,
+} from "../../api/waterMeterApi";
+import { WaterMeterCard } from "../../layouts/components/watermeter/WaterMeterCard";
 import { EditWaterMeterModal } from "../../layouts/components/watermeter/EditWaterMeterModal";
 import { ReplaceWaterMeterModal } from "../../layouts/components/watermeter/ReplaceWaterMeterModal";
 import { roles } from "../../types";
@@ -19,6 +28,7 @@ import { HttpStatusCode } from "axios";
 import { GetPagedListDto } from "../../api/accountApi";
 import { useAccount } from "../../hooks/useAccount";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import { WaterMeterListDialog } from "../../layouts/components/watermeter/WaterMeterListDialog";
 
 export const ApartmentDetailsPage = () => {
   const [apartmentDetails, setApartmentDetails] = useState<
@@ -27,9 +37,13 @@ export const ApartmentDetailsPage = () => {
   const { account } = useAccount();
   const [waterMeters, setWaterMeters] = useState<WaterMeterDto[]>();
 
-  const [editWaterMeterDialogOpen, setEditWaterMeterDialogOpen] = useState(false);
-  const [replaceWaterMeterDialogOpen, setReplaceWaterMeterDialogOpen] = useState(false);
-  const [selectedWaterMeter, setSelectedWaterMeter] = useState<WaterMeterDto | undefined>();
+  const [editWaterMeterDialogOpen, setEditWaterMeterDialogOpen] =
+    useState(false);
+  const [replaceWaterMeterDialogOpen, setReplaceWaterMeterDialogOpen] =
+    useState(false);
+  const [selectedWaterMeter, setSelectedWaterMeter] = useState<
+    WaterMeterDto | undefined
+  >();
   const [selectedWaterMeterEtag, setSelectedWaterMeterEtag] = useState("");
 
   const { enqueueSnackbar } = useSnackbar();
@@ -39,19 +53,22 @@ export const ApartmentDetailsPage = () => {
   const [assignWaterMeterDialogOpen, setAssignWaterMeterDialogOpen] =
     useState(false);
 
-  const [apartmentsPageState, setApartmentsPageState] = useState<PaginatedList<ApartmentDto>>({
+  const [apartmentsPageState, setApartmentsPageState] = useState<
+    PaginatedList<ApartmentDto>
+  >({
     data: [],
     pageNumber: 1,
     itemsInPage: 0,
     totalPages: 0,
   });
 
-  const [apartmentsListRequest, setApartmentsListRequest] = useState<GetPagedListDto>({
-    page: 1,
-    pageSize: 100,
-    order: "asc",
-    orderBy: "number",
-  });
+  const [apartmentsListRequest, setApartmentsListRequest] =
+    useState<GetPagedListDto>({
+      page: 1,
+      pageSize: 100,
+      order: "asc",
+      orderBy: "number",
+    });
 
   const fetchApartmentDetails = async () => {
     const response = await getApartmentDetails(parseInt(id as string));
@@ -76,7 +93,7 @@ export const ApartmentDetailsPage = () => {
   };
 
   const fetchAllApartments = () => {
-    getAllAprtmentsList(apartmentsListRequest, '').then((response) => {
+    getAllAprtmentsList(apartmentsListRequest, "").then((response) => {
       if (response.status === HttpStatusCode.Ok) {
         setApartmentsPageState(response.data!);
       } else {
@@ -89,30 +106,30 @@ export const ApartmentDetailsPage = () => {
 
   const handleEditButtonClick = async (id: number) => {
     if (account?.currentRole === roles.facilityManager) {
-        const response = await getWaterMeterById(id);
-        if (response.data) {
-            setSelectedWaterMeter(response.data!);
-            setSelectedWaterMeterEtag(response.headers!["etag"] as string);
-        } else {
-            enqueueSnackbar(t(resolveApiError(response.error)), {
-                variant: "error",
-            });
-        }
-        setEditWaterMeterDialogOpen(true);
+      const response = await getWaterMeterById(id);
+      if (response.data) {
+        setSelectedWaterMeter(response.data!);
+        setSelectedWaterMeterEtag(response.headers!["etag"] as string);
+      } else {
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
+      }
+      setEditWaterMeterDialogOpen(true);
     }
   };
 
   const handleReplaceButtonClick = async (id: number) => {
     if (account?.currentRole === roles.facilityManager) {
-        const response = await getWaterMeterById(id);
-        if (response.data) {
-            setSelectedWaterMeter(response.data!);
-        } else {
-            enqueueSnackbar(t(resolveApiError(response.error)), {
-                variant: "error",
-            });
-        }
-        setReplaceWaterMeterDialogOpen(true);
+      const response = await getWaterMeterById(id);
+      if (response.data) {
+        setSelectedWaterMeter(response.data!);
+      } else {
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
+      }
+      setReplaceWaterMeterDialogOpen(true);
     }
   };
 
@@ -122,7 +139,11 @@ export const ApartmentDetailsPage = () => {
     }
     fetchApartmentDetails();
     fetchWaterMeters();
-  }, [assignWaterMeterDialogOpen, editWaterMeterDialogOpen, replaceWaterMeterDialogOpen]);
+  }, [
+    assignWaterMeterDialogOpen,
+    editWaterMeterDialogOpen,
+    replaceWaterMeterDialogOpen,
+  ]);
 
   if (!apartmentDetails) {
     return <Loading />;
@@ -169,6 +190,7 @@ export const ApartmentDetailsPage = () => {
           >
             {t("assignWaterMeterDialog.addWaterMeter")}
           </Button>
+          <WaterMeterListDialog apartmentId={parseInt(id!!)} />
           <Button
             variant="contained"
             startIcon={<AssessmentIcon />}

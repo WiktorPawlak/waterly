@@ -7,9 +7,7 @@ interface Props {
   apartment: ApartmentDto;
 }
 
-export const ApartmentDetails = ({
-  apartment,
-}: Props) => {
+export const ApartmentDetails = ({ apartment }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -18,45 +16,45 @@ export const ApartmentDetails = ({
         display: "flex",
         flexDirection: "column",
         rowGap: "20px",
-        flex: '3',
-        bgcolor: 'background.paper',
-        height: '100%',
-        minHeight: '160px',
+        flex: "3",
+        bgcolor: "background.paper",
+        height: "100%",
+        minHeight: "160px",
         borderRadius: 1,
         boxShadow: 8,
-        marginBottom: '25px'
+        marginBottom: "25px",
       }}
     >
       <Typography
         variant="h5"
         sx={{
           fontWeight: "700",
-          paddingLeft: '25px',
-          paddingTop: '25px'
+          paddingLeft: "25px",
+          paddingTop: "25px",
         }}
       >
         {t("apartmentDetailsPage.localeTitle")} {apartment.number}
       </Typography>
       <Box
         sx={{
-          display: 'flex',
+          display: "flex",
         }}
       >
         <Box>
           <Typography
             sx={{
-              fontSize: '18px',
-              fontWeight: '10',
-              paddingLeft: '25px'
+              fontSize: "18px",
+              fontWeight: "10",
+              paddingLeft: "25px",
             }}
           >
             {t("apartmentDetailsPage.ownerTitle")}
           </Typography>
           <Typography
             sx={{
-              fontSize: '15px',
-              color: 'text.secondary',
-              paddingLeft: '25px'
+              fontSize: "15px",
+              color: "text.secondary",
+              paddingLeft: "25px",
             }}
           >
             {apartment.ownerName}
@@ -65,18 +63,18 @@ export const ApartmentDetails = ({
         <Box>
           <Typography
             sx={{
-              fontSize: '18px',
-              fontWeight: '10',
-              paddingLeft: '25px'
+              fontSize: "18px",
+              fontWeight: "10",
+              paddingLeft: "25px",
             }}
           >
             {t("apartmentDetailsPage.areaTitle")}
           </Typography>
           <Typography
             sx={{
-              fontSize: '15px',
-              color: 'text.secondary',
-              paddingLeft: '25px'
+              fontSize: "15px",
+              color: "text.secondary",
+              paddingLeft: "25px",
             }}
           >
             {apartment.area.toFixed(2)} m<sup>2</sup>
@@ -85,7 +83,7 @@ export const ApartmentDetails = ({
       </Box>
       <Box
         sx={{
-          mb: '25px'
+          mb: "25px",
         }}
       >
         <ShowBillModal apartmentId={apartment.id} />

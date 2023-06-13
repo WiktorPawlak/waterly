@@ -11,7 +11,10 @@ import { GetPagedListDto, List } from "../../api/accountApi";
 import { ApartmentDetails } from "../../layouts/components/apartment/ApartmentDetails";
 import { ApartmentCard } from "../../layouts/components/apartment/ApartmentCard";
 import { WaterMeterCard } from "../../layouts/components/watermeter/WaterMeterCard";
-import { WaterMeterDto, getApartmentWaterMeters } from "../../api/waterMeterApi";
+import {
+  WaterMeterDto,
+  getApartmentWaterMeters,
+} from "../../api/waterMeterApi";
 
 export const ApartmentDashboardPage = () => {
   const [apartmentsList, setApartmentsList] = useState<
@@ -118,45 +121,45 @@ export const ApartmentDashboardPage = () => {
           />
         )}
         {id && (
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            height: "100%",
-            justifyContent: "space-between",
-          }}
-        >
           <Box
             sx={{
               display: "flex",
               flexWrap: "wrap",
-              flexDirection: id == null ? "row" : "column",
-              justifyContent: "space-around",
-              alignItems: "center",
-              marginRight: "50px",
               height: "100%",
+              justifyContent: "space-between",
             }}
           >
-            {waterMeters?.map((obj) => (
-              <Box sx={{ margin: "25px" }} key={obj.id}>
-                <WaterMeterCard
-                  handleEditButtonClick={() => {}}
-                  handleReplaceButtonClick={() => {}}
-                  waterMeter={{
-                    id: obj.id,
-                    active: obj.active,
-                    expiryDate: obj.expiryDate,
-                    expectedDailyUsage: obj.expectedDailyUsage || 0,
-                    startingValue: obj.startingValue,
-                    type: obj.type,
-                    apartmentId: obj.apartmentId,
-                    version: obj.version,
-                  }}
-                />
-              </Box>
-            ))}
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                flexDirection: id == null ? "row" : "column",
+                justifyContent: "space-around",
+                alignItems: "center",
+                marginRight: "50px",
+                height: "100%",
+              }}
+            >
+              {waterMeters?.map((obj) => (
+                <Box sx={{ margin: "25px" }} key={obj.id}>
+                  <WaterMeterCard
+                    handleEditButtonClick={() => {}}
+                    handleReplaceButtonClick={() => {}}
+                    waterMeter={{
+                      id: obj.id,
+                      active: obj.active,
+                      expiryDate: obj.expiryDate,
+                      expectedDailyUsage: obj.expectedDailyUsage || 0,
+                      startingValue: obj.startingValue,
+                      type: obj.type,
+                      apartmentId: obj.apartmentId,
+                      version: obj.version,
+                    }}
+                  />
+                </Box>
+              ))}
+            </Box>
           </Box>
-        </Box>
         )}
       </Box>
     </MainLayout>
