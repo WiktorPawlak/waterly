@@ -67,7 +67,18 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed(FACILITY_MANAGER)
     public void changeWaterMeterActiveStatus(final long id, final WaterMeterActiveStatusDto dto) {
-        waterMeterService.changeActiveStatus(id, dto.isActive());
+        WaterMeter waterMeter = waterMeterService.findWaterMeterById(id);
+        if (Objects.equals(waterMeter.getType(), MAIN)) {
+            checkIfMainWaterMeterActive(waterMeter.getId());
+        }
+        waterMeterService.changeActiveStatus(waterMeter, dto.isActive());
+    }
+
+    private void checkIfMainWaterMeterActive(final long id) {
+        Optional<WaterMeter> activeMainWaterMeter = waterMeterService.findActiveMainWaterMeter();
+        if (activeMainWaterMeter.isPresent() && activeMainWaterMeter.get().getId() != id) {
+            throw ApplicationBaseException.mainWaterMeterAlreadyExistsException();
+        }
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -107,7 +118,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingEndpoint {
 
     @RolesAllowed(FACILITY_MANAGER)
     public void replaceWaterMeter(final long waterMeterId, final ReplaceWaterMeterDto dto) {
-        waterMeterService.changeActiveStatus(waterMeterId, false);
+        WaterMeter waterMeter = waterMeterService.findWaterMeterById(waterMeterId);
+        waterMeterService.changeActiveStatus(waterMeter, false);
         waterMeterService.addReplacementWaterMeter(waterMeterId, dto);
     }
 

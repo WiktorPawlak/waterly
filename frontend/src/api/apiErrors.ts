@@ -39,6 +39,7 @@ const apiErrors = new Map<string, string>([
   ["ERROR.APARTMENT_WITH_NUMBER_EXIST", "apiError.apartmentWithNumberExist"],
   ["ERROR_NO_SUCH_BILL", "apiError.noSuchBill"],
   ["ERROR.EXPIRY_DATE_ALREADY_EXPIRED", "validation.expiryDateAlreadyExpired"],
+  ["ERROR.MAIN_WATER_METER_ALREADY_EXISTS", "validation.mainWaterMeterAlreadyExists"],
   ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
   ["VALIDATION.EMAIL", "validation.emailInvalid"],
   ["VALIDATION.EMAIL_SIZE", "validation.emailInvalidSize"],

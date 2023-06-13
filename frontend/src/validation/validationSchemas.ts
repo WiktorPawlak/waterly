@@ -261,6 +261,10 @@ export const editWaterMeterSchema = z.object({
   startingValue: z.string().regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
 });
 
+export const addMainWaterMeterSchema = z.object({
+  startingValue: z.string().regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
+});
+
 export type ChangePasswordByAdminSchema = z.infer<
   typeof changePasswordByAdminSchema
 >;
@@ -306,3 +310,5 @@ export type AssignWaterMeterToApartmentSchema = z.infer<
 >;
 
 export type EditWaterMeterSchema = z.infer<typeof editWaterMeterSchema>;
+
+export type AddMainWaterMeterSchema = z.infer<typeof addMainWaterMeterSchema>;

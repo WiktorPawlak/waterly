@@ -139,6 +139,35 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .statusCode(NOT_FOUND.getStatusCode());
         }
 
+        @Test
+        void shouldRespondWith409WhenActivationMainWaterMeterWhenThereAlreadyIsOne() {
+            // given
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(DEACTIVATE_WATER_METER)
+                    .when()
+                    .put(WATERMETER_PATH + "/" + MAIN_WATER_METER_ID + "/active")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CREATE_MAIN_WATER_METER_DTO)
+                    .when()
+                    .post(WATERMETER_PATH + "/main-water-meter")
+                    .then()
+                    .statusCode(CREATED.getStatusCode());
+
+            // then
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(ACTIVATE_WATER_METER)
+                    .when()
+                    .put(WATERMETER_PATH + "/" + MAIN_WATER_METER_ID + "/active")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode());
+        }
+
         @ParameterizedTest
         @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.WaterMeterControllerTest#provideTokensForParameterizedTests")
         void shouldForbidNonFacilityManagerUsersToActivateWaterMeter(String token) {

@@ -51,8 +51,7 @@ public class WaterMeterService {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public void changeActiveStatus(final long id, final boolean active) {
-        var waterMeter = waterMeterFacade.findById(id);
+    public void changeActiveStatus(final WaterMeter waterMeter, final boolean active) {
         waterMeter.setActive(active);
         waterMeterFacade.update(waterMeter);
     }

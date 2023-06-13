@@ -16,7 +16,7 @@ import { resolveApiError } from "../../../api/apiErrors";
 export interface LockProps {
   waterMeterId: any;
   active: boolean;
-  onStatusChange: (waterMeter: WaterMeterDto, isActive: boolean) => void;
+  onStatusChange: (waterMeterId: number, isActive: boolean) => void;
 }
 
 export const WaterMeterLock = ({

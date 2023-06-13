@@ -192,11 +192,18 @@
       "headers": {
         "id": "Id",
         "active": "Active",
-        "apartmentId": "Apartment Id",
-        "expectedDailyUsage": "Expected daily Usage",
+        "apartmentNo": "Apartment no.",
+        "expectedDailyUsage": "Exp. daily usage",
         "expiryDate": "Expiry Date",
         "startingValue": "Starting Value",
         "type": "Type"
+      },
+      "cells": {
+        "type": {
+          "main": "Main",
+          "coldWater": "Cold water",
+          "hotWater": "Hot water"
+        }
       }
     },
     "toastActivateSuccess": "The water meter has been activated",
@@ -306,7 +313,8 @@
     "startingValue": "Starting value needs to be specified with three decimal places",
     "type": "Water meter types can be only either hot water or cold water",
     "expectedDailyUsage": "Expected Daily Usage needs to be specified with three decimal places",
-    "expiryDateAlreadyExpired": "Expiry date needs to be after current date"
+    "expiryDateAlreadyExpired": "Expiry date needs to be after current date",
+    "mainWaterMeterAlreadyExists": "Active main water meter already exists"
   },
   "resetEmailSuccess": {
     "alert": {
@@ -475,7 +483,8 @@
     "apartments": "Apartments",
     "profile": "Profile",
     "tariffs": "View tariffs",
-    "invoices": "View Invoices"
+    "invoices": "View Invoices",
+    "water-meters": "Water Meters"
   },
   "homePage": {
     "button": "Get Started",
@@ -554,5 +563,12 @@
   "apartmentDropdown": {
     "localeTitle": "Apartment ",
     "chooseApartment": "Choose apartment"
+  },
+  "addMainWaterMeterDialog": {
+    "waterMeterAddedSuccessfully": "Main water meter added successfully",
+    "button": "Add main water meter",
+    "addWaterMeter":"Add main water meter",
+    "startingValue": "Starting Value",
+    "expiryDate": "Expiry Date"
   }
 }
