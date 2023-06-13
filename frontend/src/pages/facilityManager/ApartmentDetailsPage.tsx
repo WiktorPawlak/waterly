@@ -16,7 +16,7 @@ import {WaterMeterCard} from "../../layouts/components/watermeter/WaterMeterCard
 type WaterMeterDto = {
   id: number;
   active: boolean;
-  expiryDate: Date;
+  expiryDate: string;
   expectedDailyUsage?: number;
   startingValue: number;
   type: string;
@@ -100,6 +100,7 @@ export const ApartmentDetailsPage = () => {
           setIsOpen={setAssignWaterMeterDialogOpen}
           apartmentId={apartmentDetails.id}
         />
+        {/* <WaterMeterList apartmentId={apartmentDetails.id} /> */}
       </Box>
       <ApartmentDetails apartment={apartmentDetails} />
 

@@ -41,6 +41,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 )
 @NamedQuery(name = "WaterMeter.findAllActiveByType", query = "select w from WaterMeter w where w.type = :type and w.active = true")
 @NamedQuery(name = "WaterMeter.findApartmentsByWaterMeters", query = "SELECT DISTINCT wm.apartment FROM WaterMeter wm WHERE wm.id IN :meterIds")
+@NamedQuery(name = "WaterMeter.findAllActiveByApartmentIdAndDate", query =
+        "SELECT wm FROM WaterMeter wm " +
+                "WHERE wm.apartment.id = :apartmentId " +
+                "AND wm.active = true " +
+                "AND wm.expiryDate > :currentDate")
 @Getter
 @Setter
 @Builder

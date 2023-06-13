@@ -93,7 +93,7 @@ export const EditApartmentDialog = ({
       sx={{
         flexDirection: "column",
         display: "flex",
-        width: "60%",
+        width: "90%",
       }}
     >
       <Box
@@ -103,10 +103,19 @@ export const EditApartmentDialog = ({
           flexDirection: "column",
           alignItems: { xs: "center", md: "flex-start" },
           justifyContent: { xs: "center", md: "flex-start" },
+          width: "1000px"
         }}
       ></Box>
       <Box>
-        <Dialog open={isOpen} onClose={handleClose}>
+        <Dialog
+          open={isOpen}
+          onClose={handleClose}
+          sx={{
+            ".MuiPaper-root": {
+              maxWidth: "1000px",
+            },
+          }}
+        >
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <Box
               sx={{
@@ -122,7 +131,7 @@ export const EditApartmentDialog = ({
                 <CloseIcon />
               </Button>
             </Box>
-            <DialogContent sx={{ width: "400px" }}>
+            <DialogContent sx={{ width: "700px" }}>
               <Box sx={{ width: "100%" }}>
                 <Box
                   sx={{

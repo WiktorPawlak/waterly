@@ -533,11 +533,11 @@
     "advancedCost": "Advanced cost",
     "realCost": "Real cost",
     "rowBalance": "Balance",
-    "coldWater": "Cold water",
-    "hotWater": "Hot water",
-    "trash": "Trash",
-    "unbilledWater": "Unbilled Water",
-    "summary": "Summary:"
+    "coldWater": "Cold water [m<sup>3</sup>]",
+    "hotWater": "Hot water [m<sup>3</sup>]",
+    "trash": "Trash [PLN]",
+    "unbilledWater": "Unbilled Water [m<sup>3</sup>]",
+    "summary": "Summary [PLN]:"
   },
   "apartmentDetailsPage": {
     "header": "Apartment details",
@@ -577,5 +577,11 @@
     "replaceWaterMeter":"Replace water meter",
     "startingValue": "Starting Value",
     "expiryDate": "Expiry Date"
+  },
+  "waterMeterOwnerChange": {
+    "waterMeterId": "Watermeter ID: ",
+    "waterMeterExpectedUsage": "Monthly usage",
+    "waterMeterHeader": "Enter new expected usage",
+    "waterMeterError": "The value must be a number with maximum lenght of 7 with accuracy to 3 decimal places"
   }
 }

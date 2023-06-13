@@ -265,6 +265,16 @@ export const addMainWaterMeterSchema = z.object({
   startingValue: z.string().regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
 });
 
+export const changeOwnerSchemaType = z.object({
+  expectedUsage: z
+    .string()
+    .regex(/^\d+(\.\d{3})?$/, "gówno"),
+});
+
+export type ChangeOwnerSchema = z.infer<
+  typeof changeOwnerSchemaType
+>;
+
 export type ChangePasswordByAdminSchema = z.infer<
   typeof changePasswordByAdminSchema
 >;

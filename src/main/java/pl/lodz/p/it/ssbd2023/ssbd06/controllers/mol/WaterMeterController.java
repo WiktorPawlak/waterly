@@ -69,6 +69,7 @@ public class WaterMeterController extends RepeatableTransactionController {
 
     @GET
     @Path("/apartment/{apartmentId}")
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Response getWaterMatersByApartmentId(@PathParam("apartmentId") final long apartmentId) {
         List<WaterMeterDto> waterMeters = retry(() -> (waterMeterEndpoint.getWaterMetersByApartmentId(apartmentId)), waterMeterEndpoint);
         return Response.ok().entity(waterMeters).build();
