@@ -20,6 +20,5 @@ public class ChangeApartmentOwnerDto {
     @Nonnegative
     private Long newOwnerId;
     @NotNull
-    @Valid
-    private List<WaterMeterExpectedUsagesDto> waterMeterExpectedUsages;
+    private List<@Valid WaterMeterExpectedUsagesDto> waterMeterExpectedUsages;
 }
