@@ -147,48 +147,46 @@ export const ApartmentDashboardPage = () => {
                   }
                 />
               </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  height: "100%",
-                  width: "41vw",
-                  justifyContent: "center",
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              height: "100%",width: "41vw",
+              justifyContent: "center",
                   mt: 3,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginRight: "50px",
-                    height: "100%",
-                  }}
-                >
-                  {waterMeters?.map((obj) => (
-                    <Box sx={{ margin: "15px" }} key={obj.id}>
-                      <WaterMeterCard
-                        handleEditButtonClick={() => {}}
-                        handleReplaceButtonClick={() => {}}
-                        waterMeter={{
-                          id: obj.id,
-                          active: obj.active,
-                          expiryDate: obj.expiryDate,
-                          expectedDailyUsage: obj.expectedDailyUsage || 0,
-                          startingValue: obj.startingValue,
-                          type: obj.type,
-                          apartmentId: obj.apartmentId,
-                          version: obj.version,
-                        }}
-                      />
-                    </Box>
-                  ))}
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginRight: "50px",
+                height: "100%",
+              }}
+            >
+              {waterMeters?.map((obj) => (
+                <Box sx={{ margin: "15px" }} key={obj.id}>
+                  <WaterMeterCard
+                    handleEditButtonClick={() => {}}
+                        handleReplaceButtonClick={() => {}}waterMeter={{
+                      id: obj.id,
+                      active: obj.active,
+                      expiryDate: obj.expiryDate,
+                      expectedDailyUsage: obj.expectedDailyUsage || 0,
+                      startingValue: obj.startingValue,
+                      type: obj.type,
+                      apartmentId: obj.apartmentId,
+                      version: obj.version,
+                    }}
+                  />
                 </Box>
-              </Box>
-            </>
+              ))}
+            </Box>
+          </Box>
+        </>
           )}
         </ApartmentInfoContainer>
       </Box>
