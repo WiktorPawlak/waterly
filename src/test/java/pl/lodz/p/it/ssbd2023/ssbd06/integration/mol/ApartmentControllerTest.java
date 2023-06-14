@@ -19,26 +19,28 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterExpectedUsagesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 @Order(6)
 class ApartmentControllerTest extends IntegrationTestsConfig {
     public static final BigDecimal EXPECTED_USAGE = BigDecimal.valueOf(300.000);
-    public static final ChangeApartmentOwnerDto CHANGE_APARTMENT_OWNER_DTO = ChangeApartmentOwnerDto.of(
-            OWNER_ID,
-            List.of(
+    public static final ChangeApartmentOwnerDto CHANGE_APARTMENT_OWNER_DTO = ChangeApartmentOwnerDto.builder()
+            .newOwnerId(OWNER_ID)
+            .waterMeterExpectedUsages(List.of(
                     WaterMeterExpectedUsagesDto.of(COLD_WATER_METER_ID, EXPECTED_USAGE),
                     WaterMeterExpectedUsagesDto.of(HOT_WATER_METER_ID, EXPECTED_USAGE)
-    ));
+            ))
+            .version(0)
+            .build();
+
 
     @Nested
     class ApartmentCreation {
@@ -175,25 +177,44 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldChangeApartmentOwner() {
+
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
                     .then()
                     .statusCode(OK.getStatusCode());
+
+
+          ApartmentDto apartmentDto = given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .get(APARTMENT_PATH + "/" + APARTMENT_ID)
+                    .then()
+                  .statusCode(OK.getStatusCode())
+                  .extract().as(ApartmentDto.class);
+
+          assertEquals(NEW_OWNER_ID, apartmentDto.getOwnerId());
         }
+
 
         @Test
         void shouldReturnNotFoundWhenThereIsNoSuchApartmentOwner() {
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(99L);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -203,11 +224,15 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldReturnNotFoundWhenThereIsNoSuchApartment() {
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
+
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/99" + CHANGE_OWNER_PATH)
@@ -217,10 +242,13 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldReturnUnauthorizedWhenNoAuthToken() {
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -230,11 +258,14 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldReturnForbiddenWhenInsufficientRoles() {
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
                     .header(AUTHORIZATION, OWNER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -248,14 +279,17 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                 "4, 1200"
         })
         void shouldForbidApartmentChangeWithInvalidWaterMetersId(long waterMetedId, BigDecimal expectedMonthlyUsage) {
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             ChangeApartmentOwnerDto changeOwnerDto = ChangeApartmentOwnerDto.of(
                     OWNER_ID,
                     List.of(
                             WaterMeterExpectedUsagesDto.of(waterMetedId, expectedMonthlyUsage)
-                    ));
+                    ), 0);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -269,14 +303,17 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                 "2, 2.222222"
         })
         void shouldForbidApartmentChangeWithInvalidUsage(long waterMetedId, BigDecimal expectedMonthlyUsage) {
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             ChangeApartmentOwnerDto changeOwnerDto = ChangeApartmentOwnerDto.of(
                     OWNER_ID,
                     List.of(
                             WaterMeterExpectedUsagesDto.of(waterMetedId, expectedMonthlyUsage)
-                    ));
+                    ), 0);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)

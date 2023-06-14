@@ -13,12 +13,12 @@ export interface ApartmentDto {
 
 export interface ChangeApartmentOwnerDto {
   newOwnerId: number;
-  waterMeterExpectedUsages: WaterMeterExpectedUsagesDto[]
+  waterMeterExpectedUsages: WaterMeterExpectedUsagesDto[];
 }
 
 export interface WaterMeterExpectedUsagesDto {
-  waterMeterId: number,
-  expectedMonthlyUsage?: number
+  waterMeterId: number;
+  expectedMonthlyUsage?: number;
 }
 
 export interface EditApartmentDto {
@@ -66,9 +66,12 @@ export async function getApartmentById(
 
 export async function changeApartmentOwner(
   id: number,
-  body: ChangeApartmentOwnerDto
+  body: ChangeApartmentOwnerDto,
+  etag?: string
 ): Promise<ApiResponse<ChangeApartmentOwnerDto>> {
-  return put(`${APARTMENTS_PATH}/${id}/owner`, body);
+  return put(`${APARTMENTS_PATH}/${id}/owner`, body, {
+    "If-Match": etag,
+  });
 }
 
 export async function getApartmentDetails(
