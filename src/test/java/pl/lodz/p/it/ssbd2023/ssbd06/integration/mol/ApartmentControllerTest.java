@@ -1,18 +1,11 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
+import static jakarta.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
-import static jakarta.ws.rs.core.Response.Status.CONFLICT;
-import static jakarta.ws.rs.core.Response.Status.CREATED;
-import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
-import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
-import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
-import static jakarta.ws.rs.core.Response.Status.OK;
-import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -247,6 +240,48 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
                     .then()
                     .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @ParameterizedTest(name = "waterMeterId: {0}, expectedMonthlyUsage: {1}")
+        @CsvSource({
+                "5, 1200",
+                "4, 1200"
+        })
+        void shouldForbidApartmentChangeWithInvalidWaterMetersId(long waterMetedId, BigDecimal expectedMonthlyUsage) {
+            ChangeApartmentOwnerDto changeOwnerDto = ChangeApartmentOwnerDto.of(
+                    OWNER_ID,
+                    List.of(
+                            WaterMeterExpectedUsagesDto.of(waterMetedId, expectedMonthlyUsage)
+                    ));
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(changeOwnerDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
+                    .then()
+                    .statusCode(NOT_FOUND.getStatusCode());
+        }
+
+        @ParameterizedTest(name = "waterMeterId: {0}, expectedMonthlyUsage: {1}")
+        @CsvSource({
+                "1, 1.111111",
+                "2, 2.222222"
+        })
+        void shouldForbidApartmentChangeWithInvalidUsage(long waterMetedId, BigDecimal expectedMonthlyUsage) {
+            ChangeApartmentOwnerDto changeOwnerDto = ChangeApartmentOwnerDto.of(
+                    OWNER_ID,
+                    List.of(
+                            WaterMeterExpectedUsagesDto.of(waterMetedId, expectedMonthlyUsage)
+                    ));
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(changeOwnerDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
         }
 
     }

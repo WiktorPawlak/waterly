@@ -7,12 +7,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
+@Constraint(validatedBy = {})
 @Digits(integer = 6, fraction = 3)
 @NotNull
 public @interface WaterUsage {
