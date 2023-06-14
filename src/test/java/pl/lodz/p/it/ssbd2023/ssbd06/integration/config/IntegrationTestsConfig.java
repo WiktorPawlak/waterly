@@ -19,6 +19,7 @@ import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
@@ -150,6 +151,12 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected Tuple2<WaterMeterDto, String> getWaterMeterWithEtag(long id) {
         String eTag = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(WATERMETER_PATH + "/" + id).getHeader("ETag");
         WaterMeterDto dto = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(WATERMETER_PATH + "/" + id).as(WaterMeterDto.class);
+        return Tuple.of(dto, eTag);
+    }
+
+    protected Tuple2<ApartmentDto, String> getApartmentWithEtag(long id) {
+        String eTag = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(APARTMENT_PATH + "/" + id).getHeader("ETag");
+        ApartmentDto dto = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(APARTMENT_PATH + "/" + id).as(ApartmentDto.class);
         return Tuple.of(dto, eTag);
     }
 

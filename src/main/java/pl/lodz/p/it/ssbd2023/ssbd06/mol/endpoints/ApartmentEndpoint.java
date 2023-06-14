@@ -12,6 +12,7 @@ import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.config.PaginationConfig;
@@ -130,6 +131,10 @@ public class ApartmentEndpoint extends TransactionBoundariesTracingBean {
 
     @RolesAllowed({FACILITY_MANAGER})
     public void changeApartmentOwner(final long id, final ChangeApartmentOwnerDto dto) {
+        Apartment apartment = apartmentService.getApartmentById(id);
+        if (apartment.getVersion() != dto.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
         apartmentService.changeApartmentOwner(id, dto);
     }
 }

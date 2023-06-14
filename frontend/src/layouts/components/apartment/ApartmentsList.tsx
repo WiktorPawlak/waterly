@@ -60,6 +60,7 @@ export const ApartmentsList = () => {
     orderBy: "id",
   });
   const [selectedApartment, setSelectedApartment] = useState<ApartmentDto>();
+  const [selectedApartmentEtag, setSelectedApartmentEtag] = useState("");
   const [editApartmentOwnerModalOpen, setEditApartmentOwnerModalOpen] =
     useState(false);
   useEffect(() => {
@@ -124,6 +125,7 @@ export const ApartmentsList = () => {
     const response = await getApartmentById(id);
     if (response.data) {
       setSelectedApartment(response.data!);
+      setSelectedApartmentEtag(response.headers!["etag"] as string);
     } else {
       enqueueSnackbar(t(resolveApiError(response.error)), {
         variant: "error",
@@ -223,6 +225,7 @@ export const ApartmentsList = () => {
         isOpen={editApartmentOwnerModalOpen}
         setIsOpen={setEditApartmentOwnerModalOpen}
         apartment={selectedApartment}
+        etag={selectedApartmentEtag}
       />
       <EditApartmentDialog
         apartment={selectedApartment}
