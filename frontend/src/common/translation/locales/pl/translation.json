@@ -605,5 +605,9 @@
     "october": "Październik",
     "november": "Listopad",
     "december": "Grudzień"
+  },
+  "threeDotWaterMeterMenu": {
+    "replace": "Wymień",
+    "edit": "Edytuj"
   }
 }
