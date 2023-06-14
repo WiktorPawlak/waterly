@@ -14,15 +14,15 @@
         <role-name>OWNER</role-name>
     </security-role>
 
-<!--    DISABLED FOR DEV PURPOSE ONLY - SHOULD BE UNCOMMENTED ON PRODUCTION-->
-<!--    <security-constraint>-->
-<!--        <web-resource-collection>-->
-<!--            <web-resource-name>Secured URL</web-resource-name>-->
-<!--            <url-pattern>/*</url-pattern>-->
-<!--        </web-resource-collection>-->
-<!--        <user-data-constraint>-->
-<!--            <transport-guarantee>CONFIDENTIAL</transport-guarantee>-->
-<!--        </user-data-constraint>-->
-<!--    </security-constraint>-->
+    <!--    DISABLED FOR DEV PURPOSE ONLY - SHOULD BE UNCOMMENTED ON PRODUCTION-->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Secured URL</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 
 </web-app>
