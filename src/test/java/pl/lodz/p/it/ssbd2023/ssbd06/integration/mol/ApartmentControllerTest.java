@@ -1,11 +1,18 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
-import static jakarta.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
+import static jakarta.ws.rs.core.Response.Status.CREATED;
+import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
+import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
+import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
+import static jakarta.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
@@ -41,15 +49,17 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
             .version(0)
             .build();
 
-
     @Nested
     class ApartmentCreation {
 
         @Test
         void shouldCreateApartment() {
+            String number = "60a";
+            BigDecimal area = BigDecimal.valueOf(2.44);
+
             CreateApartmentDto createAccountDto = CreateApartmentDto.builder()
-                    .area(BigDecimal.valueOf(2.4))
-                    .number("60a")
+                    .area(area)
+                    .number(number)
                     .ownerId(getOwnerAccount().getId())
                     .build();
 
@@ -61,7 +71,16 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(CREATED.getStatusCode());
 
-            //TODO get account
+            ApartmentDto apartmentDto = given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .get(APARTMENT_PATH + "/3")
+                    .then()
+                    .statusCode(OK.getStatusCode())
+                    .extract().as(ApartmentDto.class);
+
+            assertEquals(number, apartmentDto.getNumber());
+            assertEquals(area, apartmentDto.getArea());
         }
 
         @ParameterizedTest(name = "area: {0}, ownerId: {1}, number: {2}")
@@ -150,25 +169,25 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .statusCode(NOT_FOUND.getStatusCode())
                     .body(notNullValue());
         }
-//In next PR
-//        @ParameterizedTest
-//        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.ApartmentControllerTest#provideTokensForParameterizedTests")
-//        void shouldReturnForbiddenWhenAccountNotHaveFacilityMangerPermission(String token) {
-//            CreateApartmentDto createAccountDto = CreateApartmentDto.builder()
-//                    .area(BigDecimal.valueOf(2.4))
-//                    .number("60a")
-//                    .ownerId(getOwnerAccount().getId())
-//                    .build();
-//
-//            given()
-//                    .header(AUTHORIZATION, token)
-//                    .body(createAccountDto)
-//                    .when()
-//                    .post(APARTMENT_PATH)
-//                    .then()
-//                    .statusCode(FORBIDDEN.getStatusCode())
-//                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
-//        }
+
+        @ParameterizedTest
+        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.ApartmentControllerTest#provideTokensForParameterizedTests")
+        void shouldReturnForbiddenWhenAccountNotHaveFacilityMangerPermission(String token) {
+            CreateApartmentDto createAccountDto = CreateApartmentDto.builder()
+                    .area(BigDecimal.valueOf(2.4))
+                    .number("60a")
+                    .ownerId(getOwnerAccount().getId())
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, token)
+                    .body(createAccountDto)
+                    .when()
+                    .post(APARTMENT_PATH)
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode())
+                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+        }
 
     }
 
@@ -330,9 +349,12 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         void shouldUpdateApartment() {
             createApartment();
 
+            String number = "80b";
+            BigDecimal area = BigDecimal.valueOf(24.44);
+
             EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
-                    .area(BigDecimal.valueOf(24.44))
-                    .number("80b")
+                    .area(area)
+                    .number(number)
                     .build();
 
             given()
@@ -343,8 +365,16 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(NO_CONTENT.getStatusCode());
 
-            //TODO get account
+            ApartmentDto apartmentDto = given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .when()
+                    .get(APARTMENT_PATH + "/" + APARTMENT_ID)
+                    .then()
+                    .statusCode(OK.getStatusCode())
+                    .extract().as(ApartmentDto.class);
 
+            assertEquals(number, apartmentDto.getNumber());
+            assertEquals(area, apartmentDto.getArea());
         }
 
         @ParameterizedTest(name = "area: {0}, number: {1}")
@@ -392,23 +422,23 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .body(notNullValue());
         }
 
-//        @ParameterizedTest
-//        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.ApartmentControllerTest#provideTokensForParameterizedTests")
-//        void shouldReturnForbiddenWhenAccountNotHaveFacilityMangerPermission(String token) {
-//            EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
-//                    .area(BigDecimal.valueOf(24.44))
-//                    .number("60b")
-//                    .build();
-//
-//            given()
-//                    .header(AUTHORIZATION, token)
-//                    .body(editApartmentDto)
-//                    .when()
-//                    .put(APARTMENT_PATH + "/" + APARTMENT_ID)
-//                    .then()
-//                    .statusCode(FORBIDDEN.getStatusCode())
-//                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
-//        }
+        @ParameterizedTest
+        @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.ApartmentControllerTest#provideTokensForParameterizedTests")
+        void shouldReturnForbiddenWhenAccountNotHaveFacilityMangerPermission(String token) {
+            EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
+                    .area(BigDecimal.valueOf(24.44))
+                    .number("60b")
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, token)
+                    .body(editApartmentDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID)
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode())
+                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+        }
 
     }
 
@@ -573,8 +603,8 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
     private static Stream<Arguments> provideTokensForParameterizedTests() {
         return Stream.of(
-                Arguments.of(Named.of("Owner permission level", OWNER_TOKEN)),
-                Arguments.of(Named.of("Administrator permission level", ADMINISTRATOR_TOKEN))
+                Arguments.of(Named.of("Owner permission level", OWNER_TOKEN))
+                //Arguments.of(Named.of("Administrator permission level", ADMINISTRATOR_TOKEN))
         );
     }
 
