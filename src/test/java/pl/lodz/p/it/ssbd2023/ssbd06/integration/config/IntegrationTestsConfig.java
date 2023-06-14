@@ -164,9 +164,9 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
         return Tuple.of(dto, eTag);
     }
 
-    private Tuple2<TariffsDto, String> getTariffWithEtag(long tariffId) {
-        String eTag = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(tariffId + "/" + tariffId).getHeader("ETag");
-        TariffsDto dto = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(tariffId + "/" + tariffId).as(TariffsDto.class);
+    protected Tuple2<TariffsDto, String> getTariffWithEtag(long tariffId) {
+        String eTag = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(TARIFF_PATH + "/" + tariffId).getHeader("ETag");
+        TariffsDto dto = given().header(AUTHORIZATION, FACILITY_MANAGER_TOKEN).get(TARIFF_PATH + "/" + tariffId).as(TariffsDto.class);
         return Tuple.of(dto, eTag);
     }
 

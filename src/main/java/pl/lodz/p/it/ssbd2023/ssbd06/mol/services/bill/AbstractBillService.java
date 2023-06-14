@@ -284,11 +284,7 @@ public abstract class AbstractBillService extends TransactionBoundariesTracingBe
 
     private static BigDecimal calculateExpectedMonthUsage(final List<WaterMeter> apartmentWaterMeters, final WaterMeterType type, final LocalDate billDate) {
         return apartmentWaterMeters.stream().filter(waterMeter -> waterMeter.getType().equals(type)).map(WaterMeter::getExpectedDailyUsage)
-                .reduce(BigDecimal.ZERO, (firstDailyUsage, secondDailyUsage) -> {
-                    var firstDailyUsageMonthUsage = firstDailyUsage.multiply(BigDecimal.valueOf(billDate.lengthOfMonth()));
-                    var secondWaterMeterMonthUsage = secondDailyUsage.multiply(BigDecimal.valueOf(billDate.lengthOfMonth()));
-                    return firstDailyUsageMonthUsage.add(secondWaterMeterMonthUsage);
-                });
+                .reduce(BigDecimal.ZERO, BigDecimal::add).multiply(BigDecimal.valueOf(billDate.lengthOfMonth()));
     }
 
 }
