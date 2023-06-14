@@ -16,6 +16,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 @AllArgsConstructor
 @Builder
 public class CreateInvoiceDto {
+
     @InvoiceNumber
     private String invoiceNumber;
     @WaterUsage

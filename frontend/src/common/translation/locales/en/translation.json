@@ -226,7 +226,8 @@
     "waterMeters": "Water meters",
     "editAccountDetails": "Edit account details",
     "tariffs": "Tariff",
-    "apartments": "Apartments"
+    "apartments": "Apartments",
+    "bills": "Bills"
   },
   "general": {
     "role": "Role: ",

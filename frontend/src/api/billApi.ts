@@ -38,6 +38,14 @@ export interface ApartmentBillDto {
   balance: number;
 }
 
+export interface OwnerBillDto {
+  billId: number;
+  billDate: string;
+  balance: number;
+  apartmentId: number;
+  apartmentNumber: string;
+}
+
 export async function getBillsByOwnerId(
   date: string,
   apartmentId: number
@@ -51,4 +59,10 @@ export async function getBillsByApartmentId(
   apartmentId: number
 ): Promise<ApiResponse<ApartmentBillDto[]>> {
   return get(`${BILLS_PATH}/apartment/${apartmentId}`);
+}
+
+export async function getOwnerBills(
+  ownerLogin: string
+): Promise<ApiResponse<OwnerBillDto[]>> {
+  return get(`${BILLS_PATH}/owner/${ownerLogin}`);
 }

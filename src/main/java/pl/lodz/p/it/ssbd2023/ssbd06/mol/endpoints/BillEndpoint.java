@@ -20,6 +20,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.OwnerBillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.MolAccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.ReadOnlyBillService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
@@ -75,9 +76,11 @@ public class BillEndpoint extends TransactionBoundariesTracingBean {
                 .toList();
     }
 
-    @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public BillDto getBillById(final long billId) {
-        readOnlyBillService.getBillById(billId);
-        return null;
+    @RolesAllowed(OWNER)
+    public List<OwnerBillDto> getOwnerBills(final String login) {
+        var bills = readOnlyBillService.findOwnerBillsByLogin(login);
+        return bills.stream()
+                .map(OwnerBillDto::of)
+                .toList();
     }
 }

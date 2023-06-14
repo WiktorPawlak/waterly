@@ -28,8 +28,6 @@ public class CreateApartmentDto {
     @Nonnegative
     Long ownerId;
 
-    //TODO Water meters list
-
     public Apartment toDomain(final Account ownerAccount) {
         return Apartment.builder().area(area).number(number).owner(ownerAccount).build();
     }
