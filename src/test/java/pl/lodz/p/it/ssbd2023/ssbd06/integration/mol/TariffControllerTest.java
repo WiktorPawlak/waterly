@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.HttpHeaders.IF_MATCH;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
@@ -14,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +36,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 
 @Order(7)
@@ -58,9 +59,30 @@ public class TariffControllerTest extends IntegrationTestsConfig {
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .body(createTariffDto)
                     .when()
-                    .post("/tariffs")
+                    .post(TARIFF_PATH)
                     .then()
                     .statusCode(CREATED.getStatusCode());
+
+            String hotWaterPrice = databaseConnector.executeQuery(
+                    "SELECT hot_water_price FROM tariff WHERE id = 2"
+            ).getString("hot_water_price");
+            String coldWaterPrice = databaseConnector.executeQuery(
+                    "SELECT cold_water_price FROM tariff WHERE id = 2"
+            ).getString("cold_water_price");
+            String trashPrice = databaseConnector.executeQuery(
+                    "SELECT trash_price FROM tariff WHERE id = 2"
+            ).getString("trash_price");
+
+            TariffsDto dto = given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .get(TARIFF_PATH + "/" + "2")
+                    .as(TariffsDto.class);
+
+            assertEquals("100.00" , coldWaterPrice);
+            assertEquals("100.00", hotWaterPrice);
+            assertEquals("100.00" , trashPrice);
+            assertEquals(LocalDate.parse("2024-06-01"), dto.getStartDate());
+            assertEquals(LocalDate.parse("2024-06-30"), dto.getEndDate());
         }
 
         @Test
@@ -107,6 +129,24 @@ public class TariffControllerTest extends IntegrationTestsConfig {
                     .post(TARIFF_PATH)
                     .then()
                     .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @Test
+        void shouldForbidTariffCreationWithNoAuth() {
+            CreateTariffDto createTariffDto = CreateTariffDto.builder()
+                    .coldWaterPrice(STARTING_VALUE)
+                    .hotWaterPrice(STARTING_VALUE)
+                    .trashPrice(STARTING_VALUE)
+                    .startDate(TEST_DATE)
+                    .endDate(TEST_DATE)
+                    .build();
+
+            given()
+                    .body(createTariffDto)
+                    .when()
+                    .post(TARIFF_PATH)
+                    .then()
+                    .statusCode(UNAUTHORIZED.getStatusCode());
         }
 
         @ParameterizedTest(name = "coldWaterPrice: {0}, hotWaterPrice: {1}, trashPrice: {2}")
