@@ -11,18 +11,7 @@ import { GetPagedListDto, List } from "../../api/accountApi";
 import { ApartmentDetails } from "../../layouts/components/apartment/ApartmentDetails";
 import { ApartmentCard } from "../../layouts/components/apartment/ApartmentCard";
 import { WaterMeterCard } from "../../layouts/components/watermeter/WaterMeterCard";
-import { getApartmentWaterMeters } from "../../api/waterMeterApi";
-
-type WaterMeterDto = {
-  id: number;
-  active: boolean;
-  expiryDate: Date;
-  expectedDailyUsage?: number;
-  startingValue: number;
-  type: string;
-  apartmentId: number;
-  version: number;
-};
+import { WaterMeterDto, getApartmentWaterMeters } from "../../api/waterMeterApi";
 
 export const ApartmentDashboardPage = () => {
   const [apartmentsList, setApartmentsList] = useState<
@@ -46,7 +35,7 @@ export const ApartmentDashboardPage = () => {
     if (response.status === 200) {
       setWaterMeters(response.data);
     } else {
-      enqueueSnackbar(t("errorFetchingWaterMeters"), {
+      enqueueSnackbar(t(resolveApiError(response.error)), {
         variant: "error",
       });
     }
@@ -151,6 +140,8 @@ export const ApartmentDashboardPage = () => {
             {waterMeters?.map((obj) => (
               <Box sx={{ margin: "25px" }} key={obj.id}>
                 <WaterMeterCard
+                  handleEditButtonClick={() => {}}
+                  handleReplaceButtonClick={() => {}}
                   waterMeter={{
                     id: obj.id,
                     active: obj.active,

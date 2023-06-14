@@ -1,20 +1,23 @@
 import { useTranslation } from "react-i18next";
 import { Box, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { WaterMeterDto } from "../../../api/waterMeterApi";
-import React from "react";
+import { ThreeDotWaterMeterMenu } from "./ThreeDotWaterMeterMenu";
+import { roles } from "../../../types";
+import { useAccount } from "../../../hooks/useAccount";
 
 interface Props {
   waterMeter: WaterMeterDto;
+  handleReplaceButtonClick: (id: number) => void;
+  handleEditButtonClick: (id: number) => void;
 }
 
-export const WaterMeterCard = ({ waterMeter }: Props) => {
+export const WaterMeterCard = ({ 
+  waterMeter, 
+  handleEditButtonClick, 
+  handleReplaceButtonClick 
+}: Props) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-
-  const handleClick = (id: number) => {
-    navigate("/apartments/" + id);
-  };
+  const { account } = useAccount();
 
   let waterType = "";
   if (waterMeter.type === "HOT_WATER") {
@@ -29,7 +32,6 @@ export const WaterMeterCard = ({ waterMeter }: Props) => {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
         width: "fit-content",
         height: "fit-content",
         bgcolor: "background.paper",
@@ -136,6 +138,20 @@ export const WaterMeterCard = ({ waterMeter }: Props) => {
           {waterMeter.startingValue}
         </Typography>
       </Box>
+      {account?.currentRole === roles.facilityManager &&
+      <Box
+        sx={{
+          color: "text.secondary",
+          marginLeft: '10px'
+        }}
+      >
+        <ThreeDotWaterMeterMenu 
+          waterMeterId={waterMeter.id}
+          handleReplaceButtonClick={handleReplaceButtonClick} 
+          handleEditButtonClick={handleEditButtonClick}
+        />
+      </Box>
+    }
     </Box>
   );
 };

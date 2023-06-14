@@ -16,6 +16,32 @@ export const ApartmentDropdown = ({
                                   }: Props) => {
     const {t} = useTranslation();
 
+  return (
+    <Box>
+        <FormControl sx={{ width: '100%' }}>
+          {t("apartmentDropdown.chooseApartment")}
+          <Select
+              autoFocus
+              label={
+                  <Trans
+                  i18nKey={"apartmentDropdown.chooseApartment"}
+                  components={{ sup: <sup /> }}
+                  />
+              }
+              variant="standard"
+              defaultValue={apartmentId}
+              sx={{ width: "100% !important" }}
+              onChange={(newValue) => setApartmentId(parseInt(newValue.target.value as string))}
+          >
+            {apartments.data.map((obj) => (
+              <MenuItem value={obj.id}>
+                {t("apartmentDropdown.localeTitle")} {obj.number}
+              </MenuItem>
+            ))}
+          </Select>
+      </FormControl>
+    </Box>
+  );
     return (
         <Box>
             <FormControl sx={{width: "100%"}}>

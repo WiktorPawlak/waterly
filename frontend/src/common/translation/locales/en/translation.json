@@ -604,5 +604,9 @@
     "october": "October",
     "november": "November",
     "december": "December"
+  },
+  "threeDotWaterMeterMenu": {
+    "replace": "Replace",
+    "edit": "Edit"
   }
 }
