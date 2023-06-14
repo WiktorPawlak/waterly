@@ -38,13 +38,12 @@ public class ReadOnlyBillService {
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public Bill getBillById(final long billId) {
-        return billFacade.findById(billId);
-    }
-
-    @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Optional<Long> findBillOwnerIdByApartmentAndDate(final Apartment apartment, final LocalDate billDate) {
         return billFacade.findBillOwnerIdByApartmentIdAndDate(apartment.getId(), billDate);
     }
 
+    @RolesAllowed(OWNER)
+    public List<Bill> findOwnerBillsByLogin(final String login) {
+        return billFacade.findBillsByOwnerLogin(login);
+    }
 }

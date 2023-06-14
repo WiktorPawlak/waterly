@@ -48,19 +48,28 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
 
-    @Inject private WaterMeterCheckService waterMeterCheckService;
-    @Inject private WaterMeterService waterMeterService;
-    @Inject private WaterUsageStatsService waterUsageStatsService;
-    @Inject private AuthenticatedAccount callerContext;
-    @Inject private MolAccountService molAccountService;
-    @Inject private TimeProvider timeProvider;
-    @Inject private WaterUsageStatsPolicyFactory waterUsageStatsPolicyFactory;
-    @Inject private Event<WaterMeterCheckAddedEvent> waterMeterCheckAddedEventEvent;
-    @Inject private Event<WaterMeterCheckUpdatedEvent> waterMeterCheckUpdatedEventEvent;
+    @Inject
+    private WaterMeterCheckService waterMeterCheckService;
+    @Inject
+    private WaterMeterService waterMeterService;
+    @Inject
+    private WaterUsageStatsService waterUsageStatsService;
+    @Inject
+    private AuthenticatedAccount callerContext;
+    @Inject
+    private MolAccountService molAccountService;
+    @Inject
+    private TimeProvider timeProvider;
+    @Inject
+    private WaterUsageStatsPolicyFactory waterUsageStatsPolicyFactory;
+    @Inject
+    private Event<WaterMeterCheckAddedEvent> waterMeterCheckAddedEventEvent;
+    @Inject
+    private Event<WaterMeterCheckUpdatedEvent> waterMeterCheckUpdatedEventEvent;
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public void performWaterMeterChecks(final WaterMeterChecksDto dto) {
-        boolean currentMonthChecksExists = checkIfCurrenctChecksArePresent(dto);
+        boolean currentMonthChecksExists = currentChecksArePresent(dto);
 
         var newWaterMeterChecks = prepareWaterMeterChecks(dto);
         var expectedMonthHotWaterUsage = BigDecimal.ZERO;
@@ -84,7 +93,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
         }
     }
 
-    private boolean checkIfCurrenctChecksArePresent(final WaterMeterChecksDto dto) {
+    private boolean currentChecksArePresent(final WaterMeterChecksDto dto) {
         List<WaterMeter> waterMeters = new ArrayList<>();
         dto.getWaterMeterChecks().forEach(dtoCheck -> {
             waterMeters.add(waterMeterService.findWaterMeterById(dtoCheck.getWaterMeterId()));

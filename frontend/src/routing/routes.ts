@@ -18,6 +18,7 @@ import { ApartmentListPage } from "../pages/facilityManager/ApartmentsListPage";
 import { ApartmentDetailsPage } from "../pages/facilityManager/ApartmentDetailsPage";
 import { ApartmentDashboardPage } from "../pages/owner/ApartmentDashboardPage";
 import { BillsPage } from "../pages/facilityManager/BillsPage";
+import { BillListPage } from "../pages/owner/BillListPage";
 
 export const Pathnames = {
   public: {
@@ -40,6 +41,7 @@ export const Pathnames = {
     manageApartments: PATHS.MANAGE_APARTMENTS,
     apartmentDetails: PATHS.APARTMENT_DETAILS,
     apartemtnBills: PATHS.APARTMENT_BILLS,
+    bills: PATHS.BILLS,
   },
   facilityManager: {
     home: PATHS.HOME,
@@ -134,6 +136,11 @@ export const ownerRoutes: RouteType[] = [
     path: Pathnames.owner.editAccountDetails,
     Component: EditAccountDetailsPage,
     name: "navigation.editAccountDetails",
+  },
+  {
+    path: Pathnames.owner.bills,
+    Component: BillListPage,
+    name: "navigation.bills",
   },
   {
     path: Pathnames.owner.notFound,

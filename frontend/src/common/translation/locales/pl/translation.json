@@ -233,7 +233,8 @@
     "waterMeters": "Wodomierze",
     "editAccountDetails": "Edytuj konto",
     "tariffs": "Taryfa",
-    "apartments": "Lokale"
+    "apartments": "Lokale",
+    "bills": "Rozliczenia"
   },
   "general": {
     "role": "Rola: ",

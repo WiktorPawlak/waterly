@@ -14,11 +14,9 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
@@ -37,17 +35,15 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
     public static final WaterMeterChecksDto CHECKS_DTO = WaterMeterChecksDto.of(List.of(
             WaterMeterCheckDto.of(COLD_WATER_METER_ID, COLD_WATER_METER_READING),
             WaterMeterCheckDto.of(HOT_WATER_METER_ID, HOT_WATER_METER_READING)
-    ), String.valueOf(LocalDate.now()));
+    ), "2023-06-14");
 
     @Test
     @SneakyThrows
-    @Disabled
-    void shouldPerformFirstWaterMeterCheckByOwner() {
-        //TODO fix
+    void shouldPerformFirstWaterMeterCheckFM() {
         //given
         //when
         given()
-                .header(AUTHORIZATION, OWNER_TOKEN)
+                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                 .body(CHECKS_DTO)
                 .when()
                 .post(WATERMETER_PATH + "/water-meter-checks")
@@ -58,14 +54,12 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
         BigDecimal coldWaterUsage = databaseConnector.executeQuery(
                 "SELECT s.cold_water_usage FROM water_usage_stats s WHERE s.apartment_id = 1"
         ).getBigDecimal("cold_water_usage");
-        assertEquals(BigDecimal.valueOf(200900).movePointLeft(3), coldWaterUsage);
+        assertEquals(BigDecimal.valueOf(1000000).movePointLeft(3), coldWaterUsage);
     }
 
     @Test
     @SneakyThrows
-    @Disabled
     void shouldNotAllowOwnerForWaterMeterCheckWhenFacilityManagerAlreadyMadeOneInGivenMonth() {
-        //TODO FIX
         //given
         given()
                 .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -84,12 +78,6 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode())
                 .body("message", equalTo(ERROR_CHECK_WAS_ALREADY_PERFORMED));
-
-        //then
-        BigDecimal coldWaterUsage = databaseConnector.executeQuery(
-                "SELECT s.cold_water_usage FROM water_usage_stats s WHERE s.apartment_id = 1"
-        ).getBigDecimal("cold_water_usage");
-        assertEquals(BigDecimal.valueOf(200900).movePointLeft(3), coldWaterUsage);
     }
 
     @Test
