@@ -57,6 +57,7 @@ export const WaterMeterListDialog = ({ apartmentId }: Props) => {
     <>
       <Button
         variant="contained"
+        disabled={waterMeters.length === 0}
         sx={{
           textTransform: "none",
           mb: { xs: 3, md: 2 },

@@ -39,6 +39,7 @@ export const Pathnames = {
     manageTariffs: PATHS.MANAGE_TARIFFS,
     manageApartments: PATHS.MANAGE_APARTMENTS,
     apartmentDetails: PATHS.APARTMENT_DETAILS,
+    apartemtnBills: PATHS.APARTMENT_BILLS,
   },
   facilityManager: {
     home: PATHS.HOME,
@@ -110,6 +111,10 @@ export const ownerRoutes: RouteType[] = [
     path: Pathnames.public.home,
     Component: HomePage,
     name: "navigation.home",
+  },
+  {
+    path: Pathnames.owner.apartemtnBills,
+    Component: BillsPage,
   },
   {
     path: Pathnames.owner.manageApartments,

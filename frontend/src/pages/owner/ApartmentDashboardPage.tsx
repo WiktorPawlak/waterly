@@ -1,27 +1,36 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { resolveApiError } from "../../api/apiErrors";
 import { useSnackbar } from "notistack";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Loading } from "../../layouts/components/Loading";
 import { ApartmentDto, getOwnerApartments } from "../../api/apartmentApi";
 import { MainLayout } from "../../layouts/MainLayout";
 import { GetPagedListDto, List } from "../../api/accountApi";
 import { ApartmentDetails } from "../../layouts/components/apartment/ApartmentDetails";
 import { ApartmentCard } from "../../layouts/components/apartment/ApartmentCard";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import { WaterMeterCard } from "../../layouts/components/watermeter/WaterMeterCard";
 import {
   WaterMeterDto,
   getApartmentWaterMeters,
 } from "../../api/waterMeterApi";
+import styled from "@emotion/styled";
+import { WaterMeterListDialog } from "../../layouts/components/watermeter/WaterMeterListDialog";
+
+const ApartmentInfoContainer = styled.div`
+  display: flex;
+  column-gap: 50px;
+  flex-direction: column;
+`;
 
 export const ApartmentDashboardPage = () => {
   const [apartmentsList, setApartmentsList] = useState<
     List<ApartmentDto> | undefined
   >(undefined);
   const [waterMeters, setWaterMeters] = useState<WaterMeterDto[]>();
-
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
   const { id } = useParams();
@@ -89,7 +98,7 @@ export const ApartmentDashboardPage = () => {
       <Box
         sx={{
           display: "flex",
-          flexWrap: "wrap",
+          flexWrap: "nowrap",
           height: "100%",
           justifyContent: "space-between",
         }}
@@ -111,56 +120,77 @@ export const ApartmentDashboardPage = () => {
             </Box>
           ))}
         </Box>
-        {id && (
-          <ApartmentDetails
-            apartment={
-              apartmentsList.data.find(
-                (obj) => obj.id === parseInt(id)
-              ) as ApartmentDto
-            }
-          />
-        )}
-        {id && (
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              height: "100%",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                flexDirection: id == null ? "row" : "column",
-                justifyContent: "space-around",
-                alignItems: "center",
-                marginRight: "50px",
-                height: "100%",
-              }}
-            >
-              {waterMeters?.map((obj) => (
-                <Box sx={{ margin: "25px" }} key={obj.id}>
-                  <WaterMeterCard
-                    handleEditButtonClick={() => {}}
-                    handleReplaceButtonClick={() => {}}
-                    waterMeter={{
-                      id: obj.id,
-                      active: obj.active,
-                      expiryDate: obj.expiryDate,
-                      expectedDailyUsage: obj.expectedDailyUsage || 0,
-                      startingValue: obj.startingValue,
-                      type: obj.type,
-                      apartmentId: obj.apartmentId,
-                      version: obj.version,
-                    }}
-                  />
+        <ApartmentInfoContainer>
+          {id && (
+            <>
+              <Box sx={{ display: "flex" }}>
+                <WaterMeterListDialog apartmentId={parseInt(id!!)} />
+                <Button
+                  variant="contained"
+                  startIcon={<AssessmentIcon />}
+                  sx={{
+                    textTransform: "none",
+                    mb: { xs: 3, md: 2, marginLeft: "20px" },
+                    width: "30vh",
+                  }}
+                  onClick={() => navigate(`/apartments/${id}/bills`)}
+                >
+                  {t("apartmentDetailsPage.showBills")}
+                </Button>
+              </Box>
+              <Box sx={{ width: "41vw" }}>
+                <ApartmentDetails
+                  apartment={
+                    apartmentsList.data.find(
+                      (obj) => obj.id === parseInt(id)
+                    ) as ApartmentDto
+                  }
+                />
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  height: "100%",
+                  width: "41vw",
+                  justifyContent: "center",
+                  mt: 3,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginRight: "50px",
+                    height: "100%",
+                  }}
+                >
+                  {waterMeters?.map((obj) => (
+                    <Box sx={{ margin: "15px" }} key={obj.id}>
+                      <WaterMeterCard
+                        handleEditButtonClick={() => {}}
+                        handleReplaceButtonClick={() => {}}
+                        waterMeter={{
+                          id: obj.id,
+                          active: obj.active,
+                          expiryDate: obj.expiryDate,
+                          expectedDailyUsage: obj.expectedDailyUsage || 0,
+                          startingValue: obj.startingValue,
+                          type: obj.type,
+                          apartmentId: obj.apartmentId,
+                          version: obj.version,
+                        }}
+                      />
+                    </Box>
+                  ))}
                 </Box>
-              ))}
-            </Box>
-          </Box>
-        )}
+              </Box>
+            </>
+          )}
+        </ApartmentInfoContainer>
       </Box>
     </MainLayout>
   );

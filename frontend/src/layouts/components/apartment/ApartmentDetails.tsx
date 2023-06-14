@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Box, Typography } from "@mui/material";
 import { ApartmentDto } from "../../../api/apartmentApi";
-import { ShowBillModal } from "../bill/ShowBillModal";
 
 interface Props {
   apartment: ApartmentDto;
@@ -80,13 +79,6 @@ export const ApartmentDetails = ({ apartment }: Props) => {
             {apartment.area.toFixed(2)} m<sup>2</sup>
           </Typography>
         </Box>
-      </Box>
-      <Box
-        sx={{
-          mb: "25px",
-        }}
-      >
-        <ShowBillModal apartmentId={apartment.id} />
       </Box>
     </Box>
   );

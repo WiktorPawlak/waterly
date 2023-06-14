@@ -82,10 +82,6 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
     fetchData();
   }, [yearMonthDate]);
 
-  const handleClick = () => {
-    fetchData();
-  };
-
   const headers = [
     { label: t("bill.advancedUsage") },
     { label: t("bill.realUsage") },
