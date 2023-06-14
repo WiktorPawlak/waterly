@@ -20,7 +20,7 @@ public class FirstBillGenerationPolicy extends AbstractBillService implements Bi
 
     @Override
     public void performBillOperations(final Bill bill, final BigDecimal totalApartmentsArea, final BigDecimal unbilledWaterAmount, final Tariff tariffForBill) {
-        List<WaterMeter> apartmentWaterMeters = bill.getApartment().getWaterMeters();
+        List<WaterMeter> apartmentWaterMeters = bill.getApartment().getWaterMeters().stream().filter(WaterMeter::isActive).toList();
         UsageReport advanceUsage = createAndFillAdvanceUsage(tariffForBill, apartmentWaterMeters, bill.getDate());
         bill.setAdvanceUsage(advanceUsage);
         billFacade.create(bill);

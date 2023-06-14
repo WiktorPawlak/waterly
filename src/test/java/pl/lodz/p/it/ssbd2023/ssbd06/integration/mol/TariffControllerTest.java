@@ -2,14 +2,29 @@ package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.HttpHeaders.IF_MATCH;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
+import static jakarta.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.restassured.RestAssured;
+import io.restassured.config.ObjectMapperConfig;
+import io.vavr.Tuple2;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
@@ -21,6 +36,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 
 @Order(7)
 public class TariffControllerTest extends IntegrationTestsConfig {
@@ -141,11 +157,178 @@ public class TariffControllerTest extends IntegrationTestsConfig {
         }
     }
 
+    @Nested
+    class TariffUpdate {
+
+        @BeforeAll
+        static void configureObjectMapper() {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
+            RestAssured.config = RestAssured.config().objectMapperConfig(
+                    new ObjectMapperConfig().jackson2ObjectMapperFactory((cls, charset) -> objectMapper));
+        }
+
+        @Test
+        @SneakyThrows
+        void shouldEditTariffProperly() {
+            initTariff();
+
+            Tuple2<TariffsDto, String> tariffWithEtag = getTariffWithEtag(1);
+            TariffsDto editTariffDto = tariffWithEtag._1;
+            editTariffDto.setHotWaterPrice(BigDecimal.valueOf(200));
+            editTariffDto.setColdWaterPrice(BigDecimal.valueOf(300));
+            editTariffDto.setTrashPrice(BigDecimal.valueOf(400));
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(editTariffDto)
+                    .when()
+                    .header("If-Match", tariffWithEtag._2)
+                    .put(TARIFF_PATH + "/1")
+                    .then()
+                    .statusCode(OK.getStatusCode());
+
+            String hotWaterPrice = databaseConnector.executeQuery(
+                    "SELECT hot_water_price FROM tariff WHERE id = 1"
+            ).getString("hot_water_price");
+            String coldWaterPrice = databaseConnector.executeQuery(
+                    "SELECT cold_water_price FROM tariff WHERE id = 1"
+            ).getString("cold_water_price");
+            String trashPrice = databaseConnector.executeQuery(
+                    "SELECT trash_price FROM tariff WHERE id = 1"
+            ).getString("trash_price");
+
+            assertEquals("200.00", hotWaterPrice);
+            assertEquals("300.00", coldWaterPrice);
+            assertEquals("400.00", trashPrice);
+        }
+
+        @Test
+        void shouldForbidTariffEditWhenDatesAreColliding() {
+            initTariff();
+
+            CreateTariffDto createAnotherTariffDto = CreateTariffDto.builder()
+                    .coldWaterPrice(STARTING_VALUE)
+                    .hotWaterPrice(STARTING_VALUE)
+                    .trashPrice(STARTING_VALUE)
+                    .startDate("2025-06-10")
+                    .endDate("2027-06-10")
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(createAnotherTariffDto)
+                    .when()
+                    .post("/tariffs")
+                    .then()
+                    .statusCode(CREATED.getStatusCode());
+
+            Tuple2<TariffsDto, String> tariffWithEtag = getTariffWithEtag(1);
+            TariffsDto editTariffDto = tariffWithEtag._1;
+
+            editTariffDto.setStartDate(LocalDate.of(2020,5,10));
+            editTariffDto.setEndDate(LocalDate.of(2029,7,10));
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(editTariffDto)
+                    .when()
+                    .header("If-Match", tariffWithEtag._2)
+                    .put(TARIFF_PATH + "/1")
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode());
+        }
+
+        @Test
+        void shouldForbidTariffEditWhenStartDateIsAfterExpiryDate() {
+            initTariff();
+
+            Tuple2<TariffsDto, String> tariffWithEtag = getTariffWithEtag(1);
+            TariffsDto editTariffDto = tariffWithEtag._1;
+
+            editTariffDto.setStartDate(LocalDate.of(2029,5,10));
+            editTariffDto.setEndDate(LocalDate.of(2028,7,10));
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(editTariffDto)
+                    .when()
+                    .header("If-Match", tariffWithEtag._2)
+                    .put(TARIFF_PATH + "/1")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
+        }
+
+        @Test
+        void shouldForbidTariffEditForNotFacilityManager() {
+            initTariff();
+
+            Tuple2<TariffsDto, String> tariffWithEtag = getTariffWithEtag(1);
+            TariffsDto editTariffDto = tariffWithEtag._1;
+            editTariffDto.setHotWaterPrice(BigDecimal.valueOf(200));
+            editTariffDto.setColdWaterPrice(BigDecimal.valueOf(300));
+            editTariffDto.setTrashPrice(BigDecimal.valueOf(400));
+
+            given()
+                    .header(AUTHORIZATION, OWNER_TOKEN)
+                    .body(editTariffDto)
+                    .when()
+                    .header("If-Match", tariffWithEtag._2)
+                    .put(TARIFF_PATH + "/1")
+                    .then()
+                    .statusCode(FORBIDDEN.getStatusCode());
+        }
+
+        @ParameterizedTest(name = "startDate: {0}, endDate: {1}")
+        @CsvSource({
+                " , 2023-05-10",
+                "2023-02-22,  "
+        })
+        void shouldForbidTariffEditWithInvalidData(LocalDate startDate, LocalDate endDate) {
+            initTariff();
+
+            Tuple2<TariffsDto, String> tariffWithEtag = getTariffWithEtag(1);
+            TariffsDto editTariffDto = tariffWithEtag._1;
+
+            editTariffDto.setStartDate(startDate);
+            editTariffDto.setEndDate(endDate);
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(editTariffDto)
+                    .when()
+                    .header("If-Match", tariffWithEtag._2)
+                    .put(TARIFF_PATH + "/1")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
+        }
+    }
+
     private static Stream<Arguments> provideTokensForParameterizedTests() {
         return Stream.of(
                 Arguments.of(Named.of("Owner permission level", OWNER_TOKEN)),
                 Arguments.of(Named.of("Administrator permission level", ADMINISTRATOR_TOKEN)),
                 Arguments.of(Named.of("Facility manager permission level", FACILITY_MANAGER_TOKEN))
         );
+    }
+
+    private void initTariff() {
+        CreateTariffDto createTariffDto = CreateTariffDto.builder()
+                .coldWaterPrice(STARTING_VALUE)
+                .hotWaterPrice(STARTING_VALUE)
+                .trashPrice(STARTING_VALUE)
+                .startDate(TEST_DATE)
+                .endDate(TEST_DATE)
+                .build();
+
+        given()
+                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                .body(createTariffDto)
+                .when()
+                .post("/tariffs")
+                .then()
+                .statusCode(CREATED.getStatusCode());
     }
 }
