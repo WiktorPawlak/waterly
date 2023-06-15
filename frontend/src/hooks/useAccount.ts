@@ -4,12 +4,13 @@ import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { useAccountState } from "../context/AccountContext";
 import { PATHS } from "../routing/paths";
-import { RolesEnum } from "../types";
+import { RolesEnum, roles } from "../types";
 
 export interface AuthAccount {
   username: string;
   roles: string[];
   currentRole: string;
+  prevRole: string;
 }
 
 enum StorageName {
@@ -31,20 +32,33 @@ export const useAccount = () => {
   const { account, setAccount, isLoading, setIsLoading } = useAccountState();
   const navigate = useNavigate();
 
+  const anonmousRole = roles.anonymous;
+  const prevRoleTimeout = 500;
+
   const hasRole = (requiredRoles: string[]): boolean => {
     return requiredRoles.some((requiredRole) =>
       account?.roles.includes(requiredRole)
     );
   };
 
+  const clearPrevRole = (updatedAccount: AuthAccount) => {
+    if (account) {
+      updatedAccount.prevRole = '';
+      setAccount(updatedAccount);
+      console.log(account);
+    }
+  }
+
   const setCurrentRole = (role: string) => {
     if (account) {
       const updatedAccount = {
         ...account,
         currentRole: role,
+        prevRole: account.currentRole
       };
       localStorage.setItem(StorageName.USER, JSON.stringify(updatedAccount));
       setAccount(updatedAccount);
+      setTimeout(() => clearPrevRole(updatedAccount), prevRoleTimeout);
     }
   };
 
@@ -76,26 +90,44 @@ export const useAccount = () => {
       const username = decodedToken.jti;
 
       const currentRole = sortedRoles[0];
+      const prevRole = anonmousRole;
 
       const userData = {
         username,
         roles,
         currentRole,
+        prevRole
       };
 
       localStorage.setItem(StorageName.TOKEN, token);
       localStorage.setItem(StorageName.USER, JSON.stringify(userData));
       setAccount(userData);
       navigate(PATHS.EDIT_PROFILE);
+      setTimeout(() => clearPrevRole(userData), prevRoleTimeout);
     }
   };
 
+  const setAnonymousPrevRole = () => {
+    const username = account?.username!;
+    const roles = account?.roles!;
+    const currentRole = account?.currentRole!;
+    const prevRole = anonmousRole;
+    const userData = {
+      username,
+      roles,
+      currentRole,
+      prevRole
+    };
+    setAccount(userData);
+  }
+
   const logout = () => {
     setIsLoading(true);
+    setAnonymousPrevRole();
     localStorage.removeItem(StorageName.TOKEN);
     localStorage.removeItem(StorageName.USER);
-    setAccount(null);
-    navigate(PATHS.LOGIN);
+    navigate(PATHS.LOGIN)
+    setTimeout(() => setAccount(null), prevRoleTimeout);
     setIsLoading(false);
   };
 
