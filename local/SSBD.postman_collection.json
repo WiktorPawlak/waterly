@@ -920,7 +920,7 @@
   "variable": [
     {
       "key": "API_BASE_URL",
-      "value": "http://localhost:8080/ssbd06-0.3.0/api",
+      "value": "http://localhost:8080/ssbd06-0.4.0/api",
       "type": "string"
     },
     {
