@@ -28,6 +28,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.ApartmentEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ApartmentOrderBy;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Order;
@@ -99,6 +100,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
 
     @PUT
     @Path("/{id}/owner")
+    @EtagValidationFilter
     @RolesAllowed(FACILITY_MANAGER)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeApartmentOwner(@PathParam("id") final long apartmentId, @NotNull @Valid final ChangeApartmentOwnerDto dto) {
