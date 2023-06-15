@@ -92,7 +92,7 @@ export const EditInvoiceModal = ({
     );
 
     if (response.status === 200) {
-      enqueueSnackbar(t("editInvoiceModal.invoiceEditedSuccesfully"), {
+      enqueueSnackbar(t("editInvoiceModal.invoiceEditedSuccessfully"), {
         variant: "success",
       });
       handleClose();

@@ -16,7 +16,6 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
-import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
@@ -24,10 +23,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackI
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.WaterMeterCheckAddedEvent;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.WaterMeterCheckUpdatedEvent;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.MolAccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterUsageStatsService;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.GenerateBillsService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.watermetercheck.WaterMeterCheckService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.watermetercheck.policy.usagestats.WaterUsageStatsPolicyFactory;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
@@ -60,9 +59,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
     @Inject
     private WaterUsageStatsPolicyFactory waterUsageStatsPolicyFactory;
     @Inject
-    private Event<WaterMeterCheckAddedEvent> waterMeterCheckAddedEventEvent;
-    @Inject
-    private Event<WaterMeterCheckUpdatedEvent> waterMeterCheckUpdatedEventEvent;
+    private GenerateBillsService generateBillsService;
 
     @RolesAllowed(OWNER)
     public void initializePerformWaterMeterChecksByOwner(final WaterMeterChecksDto dto) {
@@ -96,7 +93,8 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
 
         upsertWaterUsageStats(expectedMonthHotWaterUsage, expectedMonthColdWaterUsage, check, usageStats);
         if (usageStats.isEmpty() || !currentMonthChecksExists) {
-            waterMeterCheckAddedEventEvent.fire(new WaterMeterCheckAddedEvent(check.getCheckDate(), dto));
+            //ty był kiedyś event
+            generateBillsService.generateBillOnWaterMeterCheckEvent(new WaterMeterCheckAddedEvent(check.getCheckDate(), dto));
         }
     }
 

@@ -11,7 +11,6 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
-import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
@@ -19,8 +18,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedTariffsListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.TariffUpdatedEvent;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.TariffService;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.UpdateBillsService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
@@ -37,17 +36,16 @@ public class TariffEndpoint extends TransactionBoundariesTracingBean {
     private TariffService tariffService;
 
     @Inject
-    private Event<TariffUpdatedEvent> tariffUpdatedEventEvent;
-
-    @Inject
     @Property("default.list.page.size")
     private int defaultListPageSize;
+
+    @Inject
+    private UpdateBillsService updateBillsService;
 
     @RolesAllowed({FACILITY_MANAGER})
     public void addTariff(final CreateTariffDto createTariffDto) {
         tariffService.addTariff(createTariffDto);
     }
-
 
     @RolesAllowed({FACILITY_MANAGER})
     public void updateTariff(final long id, final TariffsDto dto) {
@@ -56,7 +54,7 @@ public class TariffEndpoint extends TransactionBoundariesTracingBean {
             throw ApplicationBaseException.optimisticLockException();
         }
         tariffService.updateTariff(tariff, dto);
-        tariffUpdatedEventEvent.fire(new TariffUpdatedEvent());
+        updateBillsService.updateBillsOnTariffUpdate();
     }
 
     @PermitAll
