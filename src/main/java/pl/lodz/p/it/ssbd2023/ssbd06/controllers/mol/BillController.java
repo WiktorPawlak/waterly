@@ -27,11 +27,20 @@ public class BillController extends RepeatableTransactionProcessor {
     private BillEndpoint billEndpoint;
 
     @GET
-    @Path("/owner")
-    @RolesAllowed({OWNER, FACILITY_MANAGER})
+    @Path("/facility-manager")
+    @RolesAllowed({FACILITY_MANAGER})
     public Response getBillDetails(@QueryParam("date") final String date,
                                    @QueryParam("apartmentId") final long apartmentId) {
         BillDto billDto = retry(() -> billEndpoint.getBillDetail(date, apartmentId), billEndpoint);
+        return Response.ok().entity(billDto).build();
+    }
+
+    @GET
+    @Path("/owner")
+    @RolesAllowed({OWNER})
+    public Response getBillDetailsByOwner(@QueryParam("date") final String date,
+                                          @QueryParam("apartmentId") final long apartmentId) {
+        BillDto billDto = retry(() -> billEndpoint.getBillDetailByOwner(date, apartmentId), billEndpoint);
         return Response.ok().entity(billDto).build();
     }
 
