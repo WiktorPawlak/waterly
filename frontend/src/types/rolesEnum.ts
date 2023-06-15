@@ -4,6 +4,7 @@ export const roles = {
   administrator: "ADMINISTRATOR",
   facilityManager: "FACILITY_MANAGER",
   owner: "OWNER",
+  anonymous: "ANONYMOUS"
 };
 
 export const RolesEnum = {

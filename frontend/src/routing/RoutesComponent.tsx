@@ -19,22 +19,22 @@ export const RoutesComponent = () => {
 
   return (
     <Routes>
-      {!account &&
+      {(!account || account?.prevRole === roles.anonymous) && 
         publicRoutes.map(({ path, Component }) => (
           <Route key={path} path={path} element={<Component />} />
         ))}
 
-      {account?.currentRole === roles.owner &&
+      {(account?.currentRole === roles.owner || account?.prevRole === roles.owner) &&
         ownerRoutes.map(({ path, Component }) => (
           <Route key={path} path={path} element={<Component />} />
         ))}
 
-      {account?.currentRole === roles.facilityManager &&
+      {(account?.currentRole === roles.facilityManager || account?.prevRole === roles.facilityManager) &&
         facilityManagerRoutes.map(({ path, Component }) => (
           <Route key={path} path={path} element={<Component />} />
         ))}
 
-      {account?.currentRole === roles.administrator &&
+      {(account?.currentRole === roles.administrator || account?.prevRole === roles.administrator) &&
         adminRoutes.map(({ path, Component }) => (
           <Route key={path} path={path} element={<Component />} />
         ))}
