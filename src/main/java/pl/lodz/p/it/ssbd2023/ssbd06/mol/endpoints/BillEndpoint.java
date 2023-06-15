@@ -26,7 +26,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.ReadOnlyBillService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 
 @TransactionRollbackInterceptor
 @Monitored

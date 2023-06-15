@@ -32,10 +32,14 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
 
     public static final BigDecimal COLD_WATER_METER_READING = BigDecimal.valueOf(500.000);
     public static final BigDecimal HOT_WATER_METER_READING = BigDecimal.valueOf(300.000);
-    public static final WaterMeterChecksDto CHECKS_DTO = WaterMeterChecksDto.of(List.of(
+    public static final WaterMeterChecksDto FM_CHECKS_DTO = WaterMeterChecksDto.of(List.of(
             WaterMeterCheckDto.of(COLD_WATER_METER_ID, COLD_WATER_METER_READING),
             WaterMeterCheckDto.of(HOT_WATER_METER_ID, HOT_WATER_METER_READING)
-    ), "2023-06-14");
+    ), "2023-06-14", true);
+    public static final WaterMeterChecksDto OWNER_CHECKS_DTO = WaterMeterChecksDto.of(List.of(
+            WaterMeterCheckDto.of(COLD_WATER_METER_ID, COLD_WATER_METER_READING),
+            WaterMeterCheckDto.of(HOT_WATER_METER_ID, HOT_WATER_METER_READING)
+    ), "2023-06-14", false);
 
     @Test
     @SneakyThrows
@@ -44,7 +48,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
         //when
         given()
                 .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                .body(CHECKS_DTO)
+                .body(FM_CHECKS_DTO)
                 .when()
                 .post(WATERMETER_PATH + "/water-meter-checks")
                 .then()
@@ -63,7 +67,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
         //given
         given()
                 .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                .body(CHECKS_DTO)
+                .body(FM_CHECKS_DTO)
                 .when()
                 .post(WATERMETER_PATH + "/water-meter-checks")
                 .then()
@@ -72,7 +76,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
         //when
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)
-                .body(CHECKS_DTO)
+                .body(OWNER_CHECKS_DTO)
                 .when()
                 .post(WATERMETER_PATH + "/water-meter-checks")
                 .then()
@@ -89,7 +93,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
         //then
         given()
                 .header(AUTHORIZATION, newFacilityManagerToken)
-                .body(CHECKS_DTO)
+                .body(FM_CHECKS_DTO)
                 .when()
                 .post(WATERMETER_PATH + "/water-meter-checks")
                 .then()
@@ -129,7 +133,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
 
     @Test
     void shouldRespondWith404WhenWaterMeterNotFound() {
-        var invalidWaterMeterIdDto = CHECKS_DTO;
+        var invalidWaterMeterIdDto = OWNER_CHECKS_DTO;
         invalidWaterMeterIdDto.getWaterMeterChecks().get(0).setWaterMeterId(NONE_EXISTENT_ACCOUNT_ID);
         given()
                 .header(AUTHORIZATION, OWNER_TOKEN)

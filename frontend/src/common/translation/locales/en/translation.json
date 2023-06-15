@@ -271,10 +271,14 @@
     "invalidTariffPeriod": "Invalid tariff period",
     "tariffsColiding": "There is existing colliding tariff",
     "invoicesColliding": "There is existing invoice for provided date",
-    "invoiceNumberExists": "There is existing invoice with provided invoice nubmer",
+    "invoiceNumberExists": "There is existing invoice with provided invoice number",
     "noSuchBill": "There is no bill available for chosen month",
     "notAllWaterMeterChecksPerformed": "There are missing water meter checks for last month",
-    "tariffNotFoundForInvoice": "There is missing tariff for invoice date"
+    "tariffNotFoundForInvoice": "There is missing tariff for invoice date",
+    "illegalMainWaterMeterCheck": "Main water meter must not have any checks",
+    "invalidCheckDate": "Water meter check date must be for today",
+    "checkWasAlreadyPerformed": "Water meter check for this month was already performed by the manager",
+    "waterMeterExpired": "Water meter expired"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -628,12 +632,6 @@
     },
     "validation": {
       "waterusageInvalid": "Invalid precision of water meter reading"
-    },
-    "apiError": {
-      "illegalMainWaterMeterCheck": "Main water meter must not have any checks",
-      "invalidCheckDate": "Water meter check date must be for today",
-      "checkWasAlreadyPerformed": "Water meter check for this month was already performed by the manager",
-      "waterMeterExpired": "Water meter expired"
     }
   }
 }
