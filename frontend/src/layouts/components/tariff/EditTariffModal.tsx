@@ -97,7 +97,7 @@ export const EditTariffDialog = ({
     );
 
     if (response.status === 200) {
-      enqueueSnackbar(t("editTariffDialog.tariffEditedSuccesfully"), {
+      enqueueSnackbar(t("editTariffDialog.tariffEditedSuccessfully"), {
         variant: "success",
       });
       handleClose();

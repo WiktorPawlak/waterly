@@ -50,4 +50,22 @@ public class PayloadSigner {
             throw ApplicationBaseException.jwsException();
         }
     }
+
+//    public String sign(final List<Signable> signables) {
+//        try {
+//            StringBuilder concatenatedSignables = new StringBuilder();
+//            var signedList = signables.stream()
+//                    .map(it -> {
+//                        String signedEntity = sign(it);
+//                        concatenatedSignables.append(signedEntity).append(".");
+//
+//                    })
+//                    .toList();
+//
+//
+//        } catch (final JOSEException e) {
+//            log.severe(() -> "Error while processing JWS:" + e.getCause());
+//            throw ApplicationBaseException.jwsException();
+//        }
+//    }
 }

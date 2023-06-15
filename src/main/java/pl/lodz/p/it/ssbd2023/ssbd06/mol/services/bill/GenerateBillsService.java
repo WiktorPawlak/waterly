@@ -17,7 +17,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @Monitored
 @ServiceExceptionHandler
 @Stateful
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+@TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class GenerateBillsService extends AbstractBillService {
 
     public static final int ONE_MONTH = 1;
