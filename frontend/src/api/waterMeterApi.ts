@@ -47,6 +47,7 @@ export interface List<T> {
 
 export interface WaterMeterChecksDto {
   checkDate: Date;
+  managerAuthored: boolean;
   waterMeterChecks: WaterMeterCheckDto[];
 }
 
@@ -84,9 +85,7 @@ export async function updateWaterMeter(
   });
 }
 
-export async function createMainWaterMeter(
-  body: CreateMainWaterMeterDto
-) {
+export async function createMainWaterMeter(body: CreateMainWaterMeterDto) {
   return post(`${WATERMETERS_PATH}/main-water-meter`, body);
 }
 
@@ -104,13 +103,13 @@ export async function getApartmentWaterMeters(
 }
 
 export async function performWaterMeterChecks(
-    waterMeterChecksDto: WaterMeterChecksDto
+  waterMeterChecksDto: WaterMeterChecksDto
 ) {
   return post(`${WATERMETERS_PATH}/water-meter-checks`, waterMeterChecksDto);
 }
 
 export async function getWaterMatersByApartmentId(
-    apartmentId: number
+  apartmentId: number
 ): Promise<ApiResponse<WaterMeterDto[]>> {
   return get(`${WATERMETERS_PATH}/apartment/${apartmentId}`);
 }

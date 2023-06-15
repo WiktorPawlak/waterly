@@ -280,7 +280,11 @@
     "invoiceNumberExists": "Istnieje już faktura z podanym numerem",
     "noSuchBill": "Brak rozliczeń na podany miesiąc",
     "notAllWaterMeterChecksPerformed": "Należy wprowadzić brakujące odczyty wodomierzy za poprzedni miesiąc",
-    "tariffNotFoundForInvoice": "Należy wprowadzić brakującą taryfę"
+    "tariffNotFoundForInvoice": "Należy wprowadzić brakującą taryfę",
+    "illegalMainWaterMeterCheck": "Wodomierz główny nie może mieć pomiaru",
+    "invalidCheckDate": "Data pomiaru musi być dzisiejsza",
+    "checkWasAlreadyPerformed": "Pomiar na ten miesiąc został już wykonany przez managera",
+    "waterMeterExpired": "Homologacja wodomierza wygasła"
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",
@@ -495,7 +499,7 @@
   },
   "homePage": {
     "button": "Zacznij",
-    "title": "Twoje rachunki w wodzie pod kontrolą!",
+    "title": "Twoje rozliczenia pod kontrolą!",
     "description": "Zarządzaj, optymalizuj. Dołącz do nas!"
   },
   "notFoundPage": {
@@ -629,12 +633,6 @@
     },
     "validation": {
       "waterusageInvalid": "Nieprawidłowa precyzja stanu zużycia wody"
-    },
-    "apiError": {
-      "illegalMainWaterMeterCheck": "Wodomierz główny nie może mieć pomiaru",
-      "invalidCheckDate": "Data pomiaru musi być dzisiejsza",
-      "checkWasAlreadyPerformed": "Pomiar na ten miesiąc został już wykonany przez managera",
-      "waterMeterExpired": "Homologacja wodomierza wygasła"
     }
   }
 }

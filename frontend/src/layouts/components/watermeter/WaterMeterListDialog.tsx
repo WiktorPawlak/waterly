@@ -10,6 +10,8 @@ import { WaterMeterCheckModal } from "./WaterMeterCheckModal";
 import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../../api/apiErrors";
 import { useTranslation } from "react-i18next";
+import { useAccount } from "../../../hooks/useAccount";
+import { roles } from "../../../types/rolesEnum";
 
 interface Props {
   apartmentId: number;
@@ -19,6 +21,9 @@ export const WaterMeterListDialog = ({ apartmentId }: Props) => {
   const { t } = useTranslation();
   const [waterMeters, setWaterMeters] = useState<WaterMeterDto[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { account } = useAccount();
+
+  const managerAuthored = account?.currentRole === roles.facilityManager;
 
   useEffect(() => {
     const fetchWaterMeters = async () => {
@@ -37,6 +42,7 @@ export const WaterMeterListDialog = ({ apartmentId }: Props) => {
   };
 
   const handleFormSubmit = async (data: WaterMeterChecksDto) => {
+    data.managerAuthored = managerAuthored;
     const response = await performWaterMeterChecks(data);
 
     if (response.status === 204) {

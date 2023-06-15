@@ -38,7 +38,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @TransactionRollbackInterceptor
@@ -55,8 +54,6 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
     @Inject
     private WaterUsageStatsService waterUsageStatsService;
     @Inject
-    private AuthenticatedAccount callerContext;
-    @Inject
     private MolAccountService molAccountService;
     @Inject
     private TimeProvider timeProvider;
@@ -67,11 +64,20 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
     @Inject
     private Event<WaterMeterCheckUpdatedEvent> waterMeterCheckUpdatedEventEvent;
 
-    @RolesAllowed({FACILITY_MANAGER, OWNER})
-    public void performWaterMeterChecks(final WaterMeterChecksDto dto) {
-        boolean currentMonthChecksExists = currentChecksArePresent(dto);
-
+    @RolesAllowed(OWNER)
+    public void initializePerformWaterMeterChecksByOwner(final WaterMeterChecksDto dto) {
         var newWaterMeterChecks = prepareWaterMeterChecks(dto);
+        performWaterMeterChecks(dto, newWaterMeterChecks);
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public void initializePerformWaterMeterChecksByFM(final WaterMeterChecksDto dto) {
+        var newWaterMeterChecks = prepareWaterMeterChecks(dto);
+        performWaterMeterChecks(dto, newWaterMeterChecks);
+    }
+
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
+    public void performWaterMeterChecks(final WaterMeterChecksDto dto, final List<WaterMeterCheck> newWaterMeterChecks) {
         var expectedMonthHotWaterUsage = BigDecimal.ZERO;
         var expectedMonthColdWaterUsage = BigDecimal.ZERO;
 
@@ -84,6 +90,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
             }
         }
 
+        boolean currentMonthChecksExists = currentChecksArePresent(dto);
         final WaterMeterCheck check = newWaterMeterChecks.get(0);
         var usageStats = getWaterUsageStatsForNewChecks(check);
 
@@ -104,10 +111,9 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
 
     @SneakyThrows(ParseException.class)
     private List<WaterMeterCheck> prepareWaterMeterChecks(final WaterMeterChecksDto dto) {
-        boolean managerAuthored = callerContext.isFacilityManager();
-        final LocalDate checkDate = managerAuthored ? DateConverter.convertStringDateToLocalDate(dto.getCheckDate()) : timeProvider.currentLocalDate();
+        final LocalDate checkDate = dto.isManagerAuthored() ? DateConverter.convertStringDateToLocalDate(dto.getCheckDate()) : timeProvider.currentLocalDate();
 
-        return dto.getWaterMeterChecks().stream().map(checkDto -> prepareWaterMeterCheck(checkDto, checkDate, managerAuthored)).toList();
+        return dto.getWaterMeterChecks().stream().map(checkDto -> prepareWaterMeterCheck(checkDto, checkDate, dto.isManagerAuthored())).toList();
     }
 
     private WaterMeterCheck prepareWaterMeterCheck(final WaterMeterCheckDto dto, final LocalDate checkDate, final boolean managerAuthored) {
