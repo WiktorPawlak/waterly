@@ -21,6 +21,6 @@ public class WaterMeterChecksDto {
     @NotNull
     @WaterMeterCheckDate
     private String checkDate;
-    
+
     private boolean managerAuthored;
 }

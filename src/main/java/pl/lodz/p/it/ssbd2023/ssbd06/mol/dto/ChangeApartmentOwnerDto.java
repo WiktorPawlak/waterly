@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.Signable;
 
 @Data
@@ -24,8 +25,11 @@ public class ChangeApartmentOwnerDto implements Signable {
     private List<@Valid WaterMeterExpectedUsagesDto> waterMeterExpectedUsages;
     @Nonnegative
     private long version;
+    @Nonnegative
+    private long apartmentId;
+
     @Override
     public String createPayload() {
-        return String.valueOf(newOwnerId + version);
+        return apartmentId + version + Apartment.class.getSimpleName();
     }
 }

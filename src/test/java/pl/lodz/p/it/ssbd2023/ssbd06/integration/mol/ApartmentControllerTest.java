@@ -200,11 +200,12 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
             Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
 
             ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
+            changeOwnerDto.setApartmentId(apartmentWithEtag._1.getId());
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -244,11 +245,12 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
             Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
 
             ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
+            changeOwnerDto.setApartmentId(apartmentWithEtag._1.getId());
             changeOwnerDto.setNewOwnerId(99L);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -261,12 +263,13 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
             Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
 
             ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
+            changeOwnerDto.setApartmentId(apartmentWithEtag._1.getId());
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/99" + CHANGE_OWNER_PATH)
@@ -319,11 +322,11 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     OWNER_ID,
                     List.of(
                             WaterMeterExpectedUsagesDto.of(waterMetedId, expectedMonthlyUsage)
-                    ), 0);
+                    ), 0, apartmentWithEtag._1().getId());
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -343,7 +346,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     OWNER_ID,
                     List.of(
                             WaterMeterExpectedUsagesDto.of(waterMetedId, expectedMonthlyUsage)
-                    ), 0);
+                    ), 0, apartmentWithEtag._1().getId());
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -604,6 +607,20 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .body(WRONG_TYPE_ASSIGN_WATER_METER_DTO)
                     .when()
                     .post(APARTMENT_PATH + "/" + APARTMENT_ID + "/water-meter")
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode())
+                    .body("[0].message", equalTo("VALIDATION.WATER_METERS_INVALID_TYPE"));
+        }
+
+        @Test
+        @SneakyThrows
+        void shouldFailWhenApartmentDoNotExists() {
+            // when
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(WRONG_TYPE_ASSIGN_WATER_METER_DTO)
+                    .when()
+                    .post(APARTMENT_PATH + "/10/water-meter")
                     .then()
                     .statusCode(BAD_REQUEST.getStatusCode())
                     .body("[0].message", equalTo("VALIDATION.WATER_METERS_INVALID_TYPE"));

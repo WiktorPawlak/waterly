@@ -15,6 +15,7 @@ export interface ApartmentDto {
 export interface ChangeApartmentOwnerDto {
   newOwnerId: number;
   waterMeterExpectedUsages: WaterMeterExpectedUsagesDto[];
+  apartmentId: number;
 }
 
 export interface WaterMeterExpectedUsagesDto {

@@ -19,6 +19,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
@@ -59,6 +61,28 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
                 "SELECT s.cold_water_usage FROM water_usage_stats s WHERE s.apartment_id = 1"
         ).getBigDecimal("cold_water_usage");
         assertEquals(BigDecimal.valueOf(1000000).movePointLeft(3), coldWaterUsage);
+    }
+
+    @ParameterizedTest(name = "coldWaterPrice: {0}, hotWaterPrice: {1}, trashPrice: {2}")
+    @CsvSource({
+            " 1,100.321321,2023-06-01",
+            "1,100.321,badDate",
+    })
+    @SneakyThrows
+    void shouldFailForBadRequestData(Long waterMeterId, BigDecimal meterReading, String checkDate) {
+        //given
+        WaterMeterChecksDto dto = WaterMeterChecksDto.of(List.of(
+                        WaterMeterCheckDto.of(waterMeterId, meterReading),
+                        WaterMeterCheckDto.of(waterMeterId, meterReading)),
+                checkDate, true);
+        //when && then
+        given()
+                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                .body(dto)
+                .when()
+                .post(WATERMETER_PATH + "/water-meter-checks")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
     }
 
     @Test

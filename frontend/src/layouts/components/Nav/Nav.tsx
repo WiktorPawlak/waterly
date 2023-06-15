@@ -20,6 +20,7 @@ import { ProfileCard } from "../ProfileCard";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import { useAccount } from "../../../hooks/useAccount";
+import CachedIcon from "@mui/icons-material/Cached";
 import { PATHS } from "../../../routing/paths";
 
 interface NavProps {
@@ -105,6 +106,10 @@ export const Nav = ({
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleRefresh = () => {
+    location.reload();
   };
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -211,8 +216,8 @@ export const Nav = ({
                         {t("navigation.home")}
                       </NavEntry>
                       <NavEntry to={PATHS.MANAGE_TARIFFS}>
-                          {t("navigation.tariffs")}
-                        </NavEntry>
+                        {t("navigation.tariffs")}
+                      </NavEntry>
                       <NavEntry to={PATHS.LOGIN}>
                         {t("navigation.login")}
                       </NavEntry>
@@ -274,6 +279,9 @@ export const Nav = ({
                     ) : (
                       <WbSunnyIcon />
                     )}
+                  </Button>
+                  <Button onClick={handleRefresh}>
+                    <CachedIcon />
                   </Button>
                 </Box>
               )}
