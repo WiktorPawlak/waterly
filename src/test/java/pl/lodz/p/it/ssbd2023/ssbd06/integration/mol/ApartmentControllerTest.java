@@ -223,6 +223,21 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
             assertEquals(NEW_OWNER_ID, apartmentDto.getOwnerId());
         }
 
+        @Test
+        void shouldGiveBadRequestWhenNoEtag() {
+
+            ChangeApartmentOwnerDto changeOwnerDto = CHANGE_APARTMENT_OWNER_DTO;
+            changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(changeOwnerDto)
+                    .when()
+                    .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
+        }
+
 
         @Test
         void shouldReturnNotFoundWhenThereIsNoSuchApartmentOwner() {
