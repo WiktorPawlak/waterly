@@ -163,6 +163,7 @@ export const EditApartmentUserModal = ({
     const dto: ChangeApartmentOwnerDto = {
       newOwnerId: ownerId,
       waterMeterExpectedUsages: waterMeterExpectedUsages,
+      apartmentId: apartment!!.id,
     };
 
     const response = await changeApartmentOwner(apartment!!.id, dto, etag);

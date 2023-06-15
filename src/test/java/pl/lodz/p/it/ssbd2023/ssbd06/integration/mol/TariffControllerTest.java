@@ -1,29 +1,19 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static jakarta.ws.rs.core.HttpHeaders.IF_MATCH;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
 import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.restassured.RestAssured;
-import io.restassured.config.ObjectMapperConfig;
-import io.vavr.Tuple2;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
@@ -33,10 +23,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import io.restassured.RestAssured;
+import io.restassured.config.ObjectMapperConfig;
+import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 
 @Order(7)
@@ -63,24 +59,14 @@ public class TariffControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(CREATED.getStatusCode());
 
-            String hotWaterPrice = databaseConnector.executeQuery(
-                    "SELECT hot_water_price FROM tariff WHERE id = 2"
-            ).getString("hot_water_price");
-            String coldWaterPrice = databaseConnector.executeQuery(
-                    "SELECT cold_water_price FROM tariff WHERE id = 2"
-            ).getString("cold_water_price");
-            String trashPrice = databaseConnector.executeQuery(
-                    "SELECT trash_price FROM tariff WHERE id = 2"
-            ).getString("trash_price");
-
             TariffsDto dto = given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .get(TARIFF_PATH + "/" + "2")
+                    .get(TARIFF_PATH + "/4")
                     .as(TariffsDto.class);
 
-            assertEquals("100.00" , coldWaterPrice);
-            assertEquals("100.00", hotWaterPrice);
-            assertEquals("100.00" , trashPrice);
+            assertEquals(new BigDecimal("100.00"), dto.getColdWaterPrice());
+            assertEquals(new BigDecimal("100.00"), dto.getHotWaterPrice());
+            assertEquals(new BigDecimal("100.00"), dto.getTrashPrice());
             assertEquals(LocalDate.parse("2024-06-01"), dto.getStartDate());
             assertEquals(LocalDate.parse("2024-06-30"), dto.getEndDate());
         }
@@ -268,8 +254,8 @@ public class TariffControllerTest extends IntegrationTestsConfig {
             Tuple2<TariffsDto, String> tariffWithEtag = getTariffWithEtag(1);
             TariffsDto editTariffDto = tariffWithEtag._1;
 
-            editTariffDto.setStartDate(LocalDate.of(2020,5,10));
-            editTariffDto.setEndDate(LocalDate.of(2029,7,10));
+            editTariffDto.setStartDate(LocalDate.of(2020, 5, 10));
+            editTariffDto.setEndDate(LocalDate.of(2029, 7, 10));
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -288,8 +274,8 @@ public class TariffControllerTest extends IntegrationTestsConfig {
             Tuple2<TariffsDto, String> tariffWithEtag = getTariffWithEtag(1);
             TariffsDto editTariffDto = tariffWithEtag._1;
 
-            editTariffDto.setStartDate(LocalDate.of(2029,5,10));
-            editTariffDto.setEndDate(LocalDate.of(2028,7,10));
+            editTariffDto.setStartDate(LocalDate.of(2029, 5, 10));
+            editTariffDto.setEndDate(LocalDate.of(2028, 7, 10));
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)

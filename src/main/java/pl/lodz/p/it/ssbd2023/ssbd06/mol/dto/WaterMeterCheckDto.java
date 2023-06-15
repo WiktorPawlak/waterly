@@ -15,7 +15,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 public class WaterMeterCheckDto {
 
     @Nonnegative
-    private long waterMeterId;
+    private Long waterMeterId;
     @WaterUsage
     private BigDecimal reading;
 }

@@ -1,23 +1,24 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
-import static jakarta.ws.rs.core.Response.Status.CONFLICT;
-import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
-import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
 import static jakarta.ws.rs.core.Response.Status.CREATED;
+import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 import static jakarta.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import jakarta.ejb.Local;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -27,8 +28,6 @@ import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
@@ -114,6 +113,67 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(BAD_REQUEST.getStatusCode())
                     .body("[0].message", equalTo("VALIDATION.INVOICE_DATE_PATTERN"));
+        }
+
+        @Test
+        void shouldFailCreateInvoiceWhenThereIsNoTariff() {
+            CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
+                    .invoiceNumber(TEST_INVOICE_NUMBER)
+                    .date("2031-12")
+                    .totalCost(BigDecimal.valueOf(100))
+                    .waterUsage(BigDecimal.valueOf(200))
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(createInvoiceDto)
+                    .when()
+                    .post(INVOICE_PATH)
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.TARIFF_NOT_FOUND_FOR_INVOICE"));
+        }
+
+        @Test
+        void shouldFailCreateInvoiceWhenThereAreNoWaterMeterMeterCheck() {
+            CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
+                    .invoiceNumber(TEST_INVOICE_NUMBER)
+                    .date("2031-05")
+                    .totalCost(BigDecimal.valueOf(100))
+                    .waterUsage(BigDecimal.valueOf(200))
+                    .build();
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(createInvoiceDto)
+                    .when()
+                    .post(INVOICE_PATH)
+                    .then()
+                    .statusCode(CONFLICT.getStatusCode())
+                    .body("message", equalTo("ERROR.NOT_ALL_WATER_METER_CHECKS_PERFORMED"));
+        }
+
+        @ParameterizedTest(name = "date: {0}, totalCost: {1}")
+        @CsvSource({
+                " , 100.00",
+                "2043-10-10, "
+        })
+        void shouldForbidInvoiceCreationWhenDataIsInvalid(String date, BigDecimal totalCost) {
+            CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
+                    .invoiceNumber(TEST_INVOICE_NUMBER)
+                    .date(date)
+                    .totalCost(totalCost)
+                    .waterUsage(BigDecimal.valueOf(200))
+                    .build();
+
+
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(createInvoiceDto)
+                    .when()
+                    .post(INVOICE_PATH)
+                    .then()
+                    .statusCode(BAD_REQUEST.getStatusCode());
         }
     }
 
