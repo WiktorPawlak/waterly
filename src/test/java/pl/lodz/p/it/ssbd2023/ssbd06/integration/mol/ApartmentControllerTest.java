@@ -212,15 +212,15 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .statusCode(OK.getStatusCode());
 
 
-          ApartmentDto apartmentDto = given()
+            ApartmentDto apartmentDto = given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .when()
                     .get(APARTMENT_PATH + "/" + APARTMENT_ID)
                     .then()
-                  .statusCode(OK.getStatusCode())
-                  .extract().as(ApartmentDto.class);
+                    .statusCode(OK.getStatusCode())
+                    .extract().as(ApartmentDto.class);
 
-          assertEquals(NEW_OWNER_ID, apartmentDto.getOwnerId());
+            assertEquals(NEW_OWNER_ID, apartmentDto.getOwnerId());
         }
 
 
@@ -347,18 +347,21 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
         @Test
         void shouldUpdateApartment() {
-            createApartment();
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
 
             String number = "80b";
             BigDecimal area = BigDecimal.valueOf(24.44);
 
             EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
+                    .id(apartmentWithEtag._1.getId())
                     .area(area)
                     .number(number)
+                    .version(apartmentWithEtag._1.getVersion())
                     .build();
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(editApartmentDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID)
@@ -407,13 +410,18 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         void shouldReturnConflictWhenApartmentWithNameExist() {
             createApartment();
 
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
+                    .id(apartmentWithEtag._1.getId())
                     .area(BigDecimal.valueOf(24.44))
                     .number("60a")
+                    .version(apartmentWithEtag._1.getVersion())
                     .build();
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(editApartmentDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID)
