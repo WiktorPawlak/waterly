@@ -273,7 +273,7 @@
     "invoicesColliding": "There is existing invoice for provided date",
     "invoiceNumberExists": "There is existing invoice with provided invoice nubmer",
     "noSuchBill": "There is no bill available for chosen month",
-    "notAllWaterMeterChecksPerformed":"There are missing water meter checks for last month",
+    "notAllWaterMeterChecksPerformed": "There are missing water meter checks for last month",
     "tariffNotFoundForInvoice": "There is missing tariff for invoice date"
   },
   "validation": {
@@ -580,15 +580,15 @@
   },
   "replaceWaterMeterDialog": {
     "waterMeterReplacedSuccessfully": "Water meter replaced successfully",
-    "replaceWaterMeter":"Replace water meter",
+    "replaceWaterMeter": "Replace water meter",
     "startingValue": "Starting Value",
     "expiryDate": "Expiry Date"
   },
   "waterMeterOwnerChange": {
     "waterMeterId": "Watermeter ID: ",
-    "waterMeterExpectedUsage": "Monthly usage",
+    "waterMeterExpectedUsage": "Expected monthly usage",
     "waterMeterHeader": "Enter new expected usage",
-    "waterMeterError": "The value must be a number with maximum lenght of 7 with accuracy to 3 decimal places"
+    "waterMeterError": "The value must be a number with maximum lenght of 5 with accuracy to 3 decimal places"
   },
   "billPage": {
     "noBills": "No bills"

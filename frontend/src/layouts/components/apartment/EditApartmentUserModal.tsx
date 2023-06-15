@@ -85,7 +85,7 @@ export const EditApartmentUserModal = ({
     setWaterMeterExpectedUsages(
       waterMeters.map((meter) => ({
         waterMeterId: meter.id,
-        expectedMonthlyUsage: 0,
+        expectedMonthlyUsage: 100,
       }))
     );
   }, [waterMeters]);
@@ -122,7 +122,7 @@ export const EditApartmentUserModal = ({
   const checkValidation = (value: string, index: number) => {
     const regex = /^\d+(\.\d{3})?$/;
 
-    if (!regex.test(value) || value.length < 1 || value.length > 11) {
+    if (!regex.test(value) || value.length < 1 || value.startsWith("0")) {
       setErrors((prevErrors) => {
         const updatedErrors = prevErrors.filter(
           (error) => error.index !== index
@@ -273,6 +273,8 @@ export const EditApartmentUserModal = ({
                         label={t(
                           "waterMeterOwnerChange.waterMeterExpectedUsage"
                         )}
+                        defaultValue={100}
+                        type="number"
                         onChange={(e) => {
                           fillExpectedUsage(e.target.value, meter.id, index);
                         }}

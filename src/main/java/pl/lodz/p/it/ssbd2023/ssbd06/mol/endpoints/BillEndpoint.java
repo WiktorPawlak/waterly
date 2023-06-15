@@ -39,20 +39,29 @@ public class BillEndpoint extends TransactionBoundariesTracingBean {
     private ReadOnlyBillService readOnlyBillService;
     @Inject
     private MolAccountService molAccountService;
-    @Inject
-    private AuthenticatedAccount callerContext;
 
-    @RolesAllowed({OWNER, FACILITY_MANAGER})
+    @RolesAllowed({FACILITY_MANAGER})
     public BillDto getBillDetail(final String date, final long apartmentId) {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
-            YearMonth yearMonth = YearMonth.parse(date, formatter);
-            LocalDate localDate = yearMonth.atDay(1);
+            LocalDate localDate = setFirstDayOfMonth(date);
             Optional<Bill> optionalBill = readOnlyBillService.getBillByDateAndApartmentId(localDate, apartmentId);
             if (optionalBill.isPresent()) {
-                if (!callerContext.isFacilityManager()) {
-                    checkBillBelongsToOwner(optionalBill.get());
-                }
+                return new BillDto(optionalBill.get());
+            } else {
+                throw ApplicationBaseException.noSuchBillException();
+            }
+        } catch (final DateTimeParseException e) {
+            throw ApplicationBaseException.invalidDateException();
+        }
+    }
+
+    @RolesAllowed({OWNER})
+    public BillDto getBillDetailByOwner(final String date, final long apartmentId) {
+        try {
+            LocalDate localDate = setFirstDayOfMonth(date);
+            Optional<Bill> optionalBill = readOnlyBillService.getBillByDateAndApartmentId(localDate, apartmentId);
+            if (optionalBill.isPresent()) {
+                checkBillBelongsToOwner(optionalBill.get());
                 return new BillDto(optionalBill.get());
             } else {
                 throw ApplicationBaseException.noSuchBillException();
@@ -66,6 +75,12 @@ public class BillEndpoint extends TransactionBoundariesTracingBean {
         if (bill.getAccount().getId() != molAccountService.getPrincipalId()) {
             throw ApplicationBaseException.billDoesNotBelongToOwnerException();
         }
+    }
+
+    private LocalDate setFirstDayOfMonth(final String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        YearMonth yearMonth = YearMonth.parse(date, formatter);
+        return yearMonth.atDay(1);
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})

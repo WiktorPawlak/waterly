@@ -12,10 +12,11 @@ import { enqueueSnackbar } from "notistack";
 import { useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { resolveApiError } from "../../../api/apiErrors";
-import { GetBillsByOwnerIdDto, getBillsByOwnerId } from "../../../api/billApi";
+import { GetBillsByOwnerIdDto, getBillsDetail, getBillsDetailByOwner } from "../../../api/billApi";
 import { monthName } from "../../../common/dates";
 import dayjs from "dayjs";
-import { WaterMeterListDialog } from "../watermeter/WaterMeterListDialog";
+import { roles } from "../../../types/rolesEnum";
+import { useAccount } from "../../../hooks/useAccount";
 
 interface Props {
   apartmentId: number;
@@ -53,8 +54,9 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [billData, setBillData] = useState(initialBillData);
-
+  const { account } = useAccount();
   const [found, setFound] = useState<boolean>(true);
+  const managerAuthored = account?.currentRole === roles.facilityManager;
 
   useEffect(() => {
     setFound(false);
@@ -62,10 +64,30 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const response = await getBillsByOwnerId(
-      dayjs(yearMonthDate!!).format("YYYY-MM"),
-      apartmentId
-    );
+    const response = await getBillsDetail
+      (
+        dayjs(yearMonthDate!!).format("YYYY-MM"),
+        apartmentId
+      );
+    if (response.status !== 200) {
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
+      setFound(false);
+    } else {
+      setBillData(response.data as GetBillsByOwnerIdDto);
+      setFound(true);
+    }
+    setIsLoading(false);
+  };
+
+  const fetchDataByOwner = async () => {
+    setIsLoading(true);
+    const response = await getBillsDetailByOwner
+      (
+        dayjs(yearMonthDate!!).format("YYYY-MM"),
+        apartmentId
+      );
     if (response.status !== 200) {
       enqueueSnackbar(t(resolveApiError(response.error)), {
         variant: "error",
@@ -79,7 +101,11 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
   };
 
   useEffect(() => {
-    fetchData();
+    if (managerAuthored) {
+      fetchData();
+    } else {
+      fetchDataByOwner();
+    }
   }, [yearMonthDate]);
 
   const headers = [

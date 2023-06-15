@@ -279,7 +279,7 @@
     "invoicesColliding": "Wprowadzono już fakturę na podany miesiąc",
     "invoiceNumberExists": "Istnieje już faktura z podanym numerem",
     "noSuchBill": "Brak rozliczeń na podany miesiąc",
-    "notAllWaterMeterChecksPerformed":"Należy wprowadzić brakujące odczyty wodomierzy za poprzedni miesiąc",
+    "notAllWaterMeterChecksPerformed": "Należy wprowadzić brakujące odczyty wodomierzy za poprzedni miesiąc",
     "tariffNotFoundForInvoice": "Należy wprowadzić brakującą taryfę"
   },
   "validation": {
@@ -581,15 +581,15 @@
   },
   "replaceWaterMeterDialog": {
     "waterMeterReplacedSuccessfully": "Pomyślnie wymieniono wodomierz",
-    "replaceWaterMeter":"Wymień wodomierz",
+    "replaceWaterMeter": "Wymień wodomierz",
     "startingValue": "Wartość początkowa",
     "expiryDate": "Data ważności"
   },
   "waterMeterOwnerChange": {
     "waterMeterId": "ID wodomierza: ",
-    "waterMeterExpectedUsage": "Miesięczne zużycie",
+    "waterMeterExpectedUsage": "Przewidywane miesięczne zużycie",
     "waterMeterHeader": "Wprowadź nowe przewidywane zużycie",
-    "waterMeterError": "Podana wartość musi być liczbą maksymalnie 7 liczbową z dokładnością do 3 miejsc po przecinku"
+    "waterMeterError": "Podana wartość musi być liczbą maksymalnie 5 cyfrową z dokładnością do 3 miejsc po przecinku"
   },
   "billPage": {
     "noBills": "Nie ma rozliczeń"
