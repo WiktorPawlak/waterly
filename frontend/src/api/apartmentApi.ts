@@ -9,6 +9,7 @@ export interface ApartmentDto {
   area: number;
   ownerName: string;
   ownerId: number;
+  version: number;
 }
 
 export interface ChangeApartmentOwnerDto {
@@ -22,8 +23,10 @@ export interface WaterMeterExpectedUsagesDto {
 }
 
 export interface EditApartmentDto {
+  id: number;
   number: string;
   area: number;
+  version: number;
 }
 
 export interface CreateApartmentDto {
@@ -53,9 +56,12 @@ export async function createAprtment(
 
 export async function editApartment(
   id: number,
-  body: EditApartmentDto
+  body: EditApartmentDto,
+  etag: string
 ): Promise<ApiResponse<PaginatedList<ApartmentDto>>> {
-  return put(`${APARTMENTS_PATH}/${id}`, body);
+  return put(`${APARTMENTS_PATH}/${id}`, body, {
+    "If-Match": etag,
+  });
 }
 
 export async function getApartmentById(

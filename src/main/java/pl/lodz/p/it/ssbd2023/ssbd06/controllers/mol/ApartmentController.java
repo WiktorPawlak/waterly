@@ -28,6 +28,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.ApartmentEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ApartmentOrderBy;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Order;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Page;
@@ -42,6 +43,9 @@ public class ApartmentController extends RepeatableTransactionProcessor {
 
     @Inject
     private WaterMeterEndpoint waterMeterEndpoint;
+
+    @Inject
+    private PayloadSigner payloadSigner;
 
     @GET
     @RolesAllowed(FACILITY_MANAGER)
@@ -75,7 +79,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
     @Path("/{id}")
     public Response getApartmentById(@PathParam("id") final long apartmentId) {
         ApartmentDto apartment = apartmentEndpoint.getApartmentById(apartmentId);
-        return Response.ok().entity(apartment).build();
+        return Response.ok().entity(apartment).header("ETag", payloadSigner.sign(apartment)).build();
     }
 
     @POST

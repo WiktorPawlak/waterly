@@ -14,6 +14,7 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.EditApartmentDetailsDto;
@@ -55,6 +56,9 @@ public class ApartmentService {
     @RolesAllowed(FACILITY_MANAGER)
     public void updateApartment(final long id, final EditApartmentDetailsDto dto) {
         Apartment apartment = apartmentFacade.findById(id);
+        if (dto.getVersion() != apartment.getVersion()) {
+            throw ApplicationBaseException.optimisticLockException();
+        }
         apartment.setArea(dto.getArea());
         apartment.setNumber(dto.getNumber());
         apartmentFacade.update(apartment);
@@ -127,7 +131,7 @@ public class ApartmentService {
         return apartmentFacade.findByWaterMeterId(waterMeterId);
     }
 
-    private BigDecimal calculateDailyUsage(final BigDecimal monthlyUsage)  {
+    private BigDecimal calculateDailyUsage(final BigDecimal monthlyUsage) {
         int daysInCurrentMonth = timeProvider.currentLocalDate().lengthOfMonth();
         return monthlyUsage.divide(BigDecimal.valueOf(daysInCurrentMonth), WATER_METER_SCALE);
     }

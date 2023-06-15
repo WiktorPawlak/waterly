@@ -231,6 +231,7 @@ export const ApartmentsList = () => {
         apartment={selectedApartment}
         isOpen={editApartmentDialogIsOpen}
         setIsOpen={setEditApartmentDialogIsOpen}
+        etag={selectedApartmentEtag}
       />
       <Box
         sx={{

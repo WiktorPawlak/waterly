@@ -24,12 +24,14 @@ interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   apartment: ApartmentDto | undefined;
+  etag: string;
 }
 
 export const EditApartmentDialog = ({
   isOpen,
   setIsOpen,
   apartment,
+  etag,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -71,10 +73,16 @@ export const EditApartmentDialog = ({
   }, [apartment]);
 
   const handleFormSubmit = async (formData: EditApartmentSchemaType) => {
-    const response = await editApartment(apartment!!.id, {
-      number: formData.number,
-      area: parseFloat(formData.area),
-    });
+    const response = await editApartment(
+      apartment!!.id,
+      {
+        id: apartment?.id!!,
+        number: formData.number,
+        area: parseFloat(formData.area),
+        version: apartment?.version!!,
+      },
+      etag
+    );
 
     if (response.status === 204) {
       enqueueSnackbar(t("apartmentPage.apartmentEditedSuccessfully"), {
@@ -103,7 +111,7 @@ export const EditApartmentDialog = ({
           flexDirection: "column",
           alignItems: { xs: "center", md: "flex-start" },
           justifyContent: { xs: "center", md: "flex-start" },
-          width: "1000px"
+          width: "1000px",
         }}
       ></Box>
       <Box>
