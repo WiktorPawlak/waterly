@@ -3,6 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -18,6 +19,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.From;
@@ -163,6 +165,16 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
 
             return Optional.of(em.createQuery(cq).getSingleResult());
         } catch (final NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public Optional<BigDecimal> findAverageWaterUsage() {
+        TypedQuery<Double> query = em.createNamedQuery("Invoice.findAverageWaterUsage", Double.class);
+        try {
+            return Optional.of(BigDecimal.valueOf(query.getSingleResult()));
+        } catch (NoResultException e) {
             return Optional.empty();
         }
     }

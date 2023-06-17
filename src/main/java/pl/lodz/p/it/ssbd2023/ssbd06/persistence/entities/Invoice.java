@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"invoice_number"}, name = "uk_invoice_number"),
         })
+@NamedQuery(
+        name = "Invoice.findAverageWaterUsage",
+        query = "SELECT AVG(i.waterUsage) FROM Invoice i"
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,16 +40,12 @@ public class Invoice extends AbstractEntity {
     @Column(name = "water_usage", nullable = false, precision = 8, scale = 3)
     private BigDecimal waterUsage;
     @NotNull
-    @Column(name = "total_cost", nullable = false)
-    private BigDecimal totalCost;
-    @NotNull
     @Column(nullable = false)
     private LocalDate date;
 
     public Invoice(@NotNull final CreateInvoiceDto createInvoiceDto) {
         this.invoiceNumber = createInvoiceDto.getInvoiceNumber();
         this.waterUsage = createInvoiceDto.getWaterUsage();
-        this.totalCost = createInvoiceDto.getTotalCost();
         this.date = DateConverter.convertInvoiceDate(createInvoiceDto.getDate());
     }
 }

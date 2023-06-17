@@ -19,7 +19,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 public class FirstBillGenerationPolicy extends AbstractBillService implements BillGenerationPolicy {
 
     @Override
-    public void performBillOperations(final Bill bill, final BigDecimal totalApartmentsArea, final BigDecimal unbilledWaterAmount, final Tariff tariffForBill) {
+    public void performBillOperations(final Bill bill,
+                                      final BigDecimal totalApartmentsArea,
+                                      final BigDecimal unbilledWaterAmount,
+                                      final Tariff tariffForBill) {
         List<WaterMeter> apartmentWaterMeters = bill.getApartment().getWaterMeters().stream().filter(WaterMeter::isActive).toList();
         UsageReport advanceUsage = createAndFillAdvanceUsage(tariffForBill, apartmentWaterMeters, bill.getDate());
         bill.setAdvanceUsage(advanceUsage);

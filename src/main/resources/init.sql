@@ -101,8 +101,8 @@ INSERT INTO public.facility_manager (id) VALUES (14);
 INSERT INTO public.administrator (id) VALUES (15);
 INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id) VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 5);
 -- mol
-INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, total_cost, date) values (nextval('invoice_id_seq'), 0, now(), null, now(), null, 'FV 2020/01/23', 29.090, 202.57, '2023-04-1');
-INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, total_cost, date) values (nextval('invoice_id_seq'), 1, now(), null, now(), null, 'FV 2020/02/23', 30.090, 222.57, '2023-05-1');
+INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, date) values (nextval('invoice_id_seq'), 0, now(), null, now(), null, 'FV 2020/01/23', 29.090, '2023-04-1');
+INSERT INTO public.invoice(id, version, created_on, created_by, updated_on, updated_by, invoice_number, water_usage, date) values (nextval('invoice_id_seq'), 1, now(), null, now(), null, 'FV 2020/02/23', 30.090, '2023-05-1');
 INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date) values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-01-01', '2023-05-31');
 INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date) values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-02-01', '2023-03-31');
 INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date) values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-06-01', '2024-08-30');

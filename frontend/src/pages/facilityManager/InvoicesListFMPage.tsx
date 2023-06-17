@@ -58,7 +58,7 @@ export const InvoicesListFMPage = () => {
     page: 1,
     pageSize: 10,
     order: "asc",
-    orderBy: "totalCost",
+    orderBy: "date",
   });
 
   useEffect(() => {
@@ -140,15 +140,7 @@ export const InvoicesListFMPage = () => {
       renderHeader: () => (
         <strong>{t("InvoicesListFMPage.dataGrid.headers.date")}</strong>
       ),
-      width: 150,
-    },
-    {
-      field: "totalCost",
-      sortable: true,
-      renderHeader: () => (
-        <strong>{t("InvoicesListFMPage.dataGrid.headers.totalCost")}</strong>
-      ),
-      width: 150,
+      width: 170,
     },
     {
       field: "waterUsage",
@@ -160,7 +152,7 @@ export const InvoicesListFMPage = () => {
           />
         </strong>
       ),
-      width: 150,
+      width: 170,
     },
     {
       headerName: "",
@@ -173,19 +165,7 @@ export const InvoicesListFMPage = () => {
           <EditOutlinedIcon />
         </Button>
       ),
-    },
-    {
-      headerName: "",
-      field: "reject",
-      description: "This column has a value getter and is not sortable.",
-      sortable: false,
-      width: 80,
-      renderCell: (params) => (
-        <Button>
-          <LocalPrintshopOutlinedIcon />
-        </Button>
-      ),
-    },
+    }
   ];
 
   return (
@@ -249,7 +229,7 @@ export const InvoicesListFMPage = () => {
               />
             )}
           />
-          <Box sx={{ height: 600, width: "100%" }}>
+          <Box sx={{ height: 600 }}>
             <DataGrid
               autoHeight
               hideFooter

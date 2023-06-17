@@ -54,18 +54,15 @@ export const AddInvoiceDialog = ({ isOpen, setIsOpen }: Props) => {
     defaultValues: {
       invoiceNumber: "",
       waterUsage: "",
-      totalCost: "",
     },
   });
 
   const {
     invoiceNumber: invoiceNumberError,
     waterUsage: waterUsageError,
-    totalCost: totalCostError,
   } = errors;
   const invoiceNumberErrorMessage = invoiceNumberError?.message;
   const waterUsageErrorMessage = waterUsageError?.message;
-  const totalCostErrorMessage = totalCostError?.message;
 
   const handleFormSubmit = async (formData: any) => {
     const response = await addInvoice({
@@ -134,19 +131,6 @@ export const AddInvoiceDialog = ({ isOpen, setIsOpen }: Props) => {
                 {...register("waterUsage")}
                 error={!!waterUsageErrorMessage}
                 helperText={waterUsageErrorMessage && t(waterUsageErrorMessage)}
-              />
-              <StyledTextField
-                label={
-                  <Trans
-                    i18nKey={"addInvoiceModal.totalCost"}
-                    components={{ sup: <sup /> }}
-                  />
-                }
-                sx={{ width: "100% !important" }}
-                variant="standard"
-                {...register("totalCost")}
-                error={!!totalCostErrorMessage}
-                helperText={totalCostErrorMessage && t(totalCostErrorMessage)}
               />
               <LocalizationProvider
                 adapterLocale="pl"

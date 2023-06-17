@@ -7,7 +7,6 @@ export interface InvoiceDto {
   id: number;
   invoiceNumber: string;
   date: string;
-  totalCost: number;
   waterUsage: number;
   version: number;
 }
@@ -15,7 +14,6 @@ export interface InvoiceDto {
 export interface CreateInvoiceDto {
   invoiceNumber: String;
   waterUsage: number;
-  totalCost: number;
   date: Date;
 }
 

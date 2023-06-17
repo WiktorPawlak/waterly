@@ -252,7 +252,7 @@ export const WaterMetersListFMPage = () => {
       ),
       renderCell: (params) => (
         <span>
-          {params.row.type === "MAIN" ? "" : params.row.expectedDailyUsage}
+          {params.row.expectedDailyUsage}
         </span>
       ),
       width: 145,

@@ -12,6 +12,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
         indexes = {
                 @Index(name = "water_meter_check_water_meter_idx", columnList = "water_meter_id")
         })
+@NamedQuery(
+        name = "WaterMeterCheck.findCheckByDateAndWaterMeterType",
+        query = "SELECT c FROM WaterMeterCheck c WHERE  YEAR(c.checkDate) = :year AND MONTH(c.checkDate) = :month AND c.waterMeter.type = :waterMeterType AND" +
+                " c.waterMeter.active = true"
+)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
