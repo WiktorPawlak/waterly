@@ -12,6 +12,7 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -25,6 +26,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandl
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterCheck;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Log
@@ -83,6 +85,20 @@ public class WaterMeterCheckFacade extends AbstractFacade<WaterMeterCheck> {
 
         try {
             return Optional.of(em.createQuery(criteriaQuery).getSingleResult());
+        } catch (final NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public Optional<WaterMeterCheck> findChecksForDateAndWaterMeterType(final WaterMeterType type, LocalDate date) {
+        try {
+            return Optional.of(em.createNamedQuery("WaterMeterCheck.findCheckByDateAndWaterMeterType", WaterMeterCheck.class)
+                    .setFlushMode(FlushModeType.COMMIT)
+                    .setParameter("waterMeterType", type)
+                    .setParameter("year", date.getYear())
+                    .setParameter("month", date.getMonthValue())
+                    .getSingleResult());
         } catch (final NoResultException e) {
             return Optional.empty();
         }

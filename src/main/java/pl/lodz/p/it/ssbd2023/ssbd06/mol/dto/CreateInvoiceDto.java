@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.InvoiceDate;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.InvoiceNumber;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Money;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 
 @Data
@@ -21,8 +20,6 @@ public class CreateInvoiceDto {
     private String invoiceNumber;
     @WaterUsage
     private BigDecimal waterUsage;
-    @Money
-    private BigDecimal totalCost;
     @InvoiceDate
     private String date;
 }

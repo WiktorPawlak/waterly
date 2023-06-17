@@ -43,7 +43,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
                     .invoiceNumber(TEST_INVOICE_NUMBER)
                     .date(TEST_INVOICE_DATE)
-                    .totalCost(BigDecimal.valueOf(100))
                     .waterUsage(BigDecimal.valueOf(200))
                     .build();
 
@@ -81,7 +80,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
                     .invoiceNumber("invalid number")
                     .date(TEST_INVOICE_DATE)
-                    .totalCost(BigDecimal.valueOf(100))
                     .waterUsage(BigDecimal.valueOf(200))
                     .build();
 
@@ -101,7 +99,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
                     .invoiceNumber(TEST_INVOICE_NUMBER)
                     .date("123456789-05-20")
-                    .totalCost(BigDecimal.valueOf(100))
                     .waterUsage(BigDecimal.valueOf(200))
                     .build();
 
@@ -120,7 +117,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
                     .invoiceNumber(TEST_INVOICE_NUMBER)
                     .date("2031-12")
-                    .totalCost(BigDecimal.valueOf(100))
                     .waterUsage(BigDecimal.valueOf(200))
                     .build();
 
@@ -139,7 +135,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
                     .invoiceNumber(TEST_INVOICE_NUMBER)
                     .date("2031-05")
-                    .totalCost(BigDecimal.valueOf(100))
                     .waterUsage(BigDecimal.valueOf(200))
                     .build();
 
@@ -162,7 +157,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
                     .invoiceNumber(TEST_INVOICE_NUMBER)
                     .date(date)
-                    .totalCost(totalCost)
                     .waterUsage(BigDecimal.valueOf(200))
                     .build();
 
@@ -199,7 +193,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
 
             InvoicesDto updateInvoiceDto = invoiceWithEtag._1;
             updateInvoiceDto.setWaterUsage(BigDecimal.valueOf(200));
-            updateInvoiceDto.setTotalCost(BigDecimal.valueOf(700));
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -257,7 +250,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             Tuple2<InvoicesDto, String> invoiceWithEtag = getInvoiceWithEtag(1);
             InvoicesDto updateInvoiceDto = invoiceWithEtag._1;
             updateInvoiceDto.setDate(date);
-            updateInvoiceDto.setTotalCost(totalCost);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
@@ -306,7 +298,6 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             CreateInvoiceDto createInvoiceDto = CreateInvoiceDto.builder()
                     .invoiceNumber(TEST_INVOICE_NUMBER)
                     .date(TEST_INVOICE_DATE)
-                    .totalCost(BigDecimal.valueOf(100.00))
                     .waterUsage(BigDecimal.valueOf(200.00))
                     .build();
 

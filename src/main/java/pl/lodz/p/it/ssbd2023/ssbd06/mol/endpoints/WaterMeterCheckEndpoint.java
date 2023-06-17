@@ -6,7 +6,6 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,6 +74,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
     public void performWaterMeterChecks(final WaterMeterChecksDto dto, final List<WaterMeterCheck> newWaterMeterChecks) {
         var expectedMonthHotWaterUsage = BigDecimal.ZERO;
         var expectedMonthColdWaterUsage = BigDecimal.ZERO;
+        boolean currentMonthChecksExists = currentChecksArePresent(dto);
 
         for (var newCheck : newWaterMeterChecks) {
             BigDecimal expectedMonthWaterMeterUsage = performWaterMeterCheck(newCheck);
@@ -85,7 +85,6 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
             }
         }
 
-        boolean currentMonthChecksExists = currentChecksArePresent(dto);
         final WaterMeterCheck check = newWaterMeterChecks.get(0);
         var usageStats = getWaterUsageStatsForNewChecks(check);
 
@@ -97,11 +96,8 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
     }
 
     private boolean currentChecksArePresent(final WaterMeterChecksDto dto) {
-        List<WaterMeter> waterMeters = new ArrayList<>();
-        dto.getWaterMeterChecks().forEach(dtoCheck -> {
-            waterMeters.add(waterMeterService.findWaterMeterById(dtoCheck.getWaterMeterId()));
-        });
-        return waterMeters.stream()
+        return dto.getWaterMeterChecks().stream()
+                .map(checkDto -> waterMeterService.findWaterMeterById(checkDto.getWaterMeterId()))
                 .allMatch(waterMeter -> waterMeterCheckService.findWaterMeterCheckForCheckDate(LocalDate.parse(dto.getCheckDate()), waterMeter).isPresent());
     }
 

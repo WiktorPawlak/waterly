@@ -50,18 +50,15 @@ export const EditInvoiceModal = ({
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      totalCost: invoice?.totalCost.toString(),
       waterUsage: invoice?.waterUsage.toString(),
       invoiceNumber: invoice?.invoiceNumber,
     },
   });
 
   const {
-    totalCost: totalCostError,
     waterUsage: waterUsageError,
     invoiceNumber: invoiceNumberError,
   } = errors;
-  const totalCostErrorMessage = totalCostError?.message;
   const waterUsageErrorMessage = waterUsageError?.message;
   const invoiceNumberErrorMessage = invoiceNumberError?.message;
 
@@ -73,7 +70,6 @@ export const EditInvoiceModal = ({
   useEffect(() => {
     if (invoice) {
       setValue("waterUsage", invoice!.waterUsage.toString());
-      setValue("totalCost", invoice!.totalCost.toString());
       setValue("invoiceNumber", invoice!.invoiceNumber);
       setDate(dayjs(invoice!.date));
     }
@@ -153,19 +149,6 @@ export const EditInvoiceModal = ({
                 {...register("waterUsage")}
                 error={!!waterUsageErrorMessage}
                 helperText={waterUsageErrorMessage && t(waterUsageErrorMessage)}
-              />
-              <StyledTextField
-                label={
-                  <Trans
-                    i18nKey={"editInvoiceModal.totalCost"}
-                    components={{ sup: <sup /> }}
-                  />
-                }
-                sx={{ width: "100% !important" }}
-                variant="standard"
-                {...register("totalCost")}
-                error={!!totalCostErrorMessage}
-                helperText={totalCostErrorMessage && t(totalCostErrorMessage)}
               />
               <LocalizationProvider
                 adapterLocale="pl"

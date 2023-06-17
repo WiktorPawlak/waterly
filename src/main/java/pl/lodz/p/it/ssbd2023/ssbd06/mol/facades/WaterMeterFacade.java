@@ -5,6 +5,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -13,6 +14,7 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -61,6 +63,18 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
                 .setFlushMode(FlushModeType.COMMIT)
                 .setParameter("type", type)
                 .getResultList();
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public Optional<WaterMeter> findOneActiveByType(final WaterMeterType type) {
+        try {
+            return Optional.of(em.createNamedQuery("WaterMeter.findAllActiveByType", WaterMeter.class)
+                    .setFlushMode(FlushModeType.COMMIT)
+                    .setParameter("type", type)
+                    .getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     @RolesAllowed(FACILITY_MANAGER)
