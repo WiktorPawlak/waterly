@@ -323,6 +323,7 @@
     "expiryDateAlreadyExpired": "Expiry date needs to be after current date",
     "mainWaterMeterAlreadyExists": "Active main water meter already exists",
     "inactiveWaterMeter": "Inactive water meter cannot be replaced",
+        "waterMeterCheckOnInactiveWaterMeter": "Cannot perform water meter check on inactive water meter",
     "readingValue": "Reading value needs to be specified with 5 digits before and 3 digits after decimal point"
   },
   "resetEmailSuccess": {

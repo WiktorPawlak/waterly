@@ -26,14 +26,16 @@ export const WaterMeterListDialog = ({ apartmentId }: Props) => {
   const managerAuthored = account?.currentRole === roles.facilityManager;
 
   useEffect(() => {
-    const fetchWaterMeters = async () => {
-      const response = await getWaterMatersByApartmentId(apartmentId);
-      setWaterMeters(response.data ?? []);
-    };
     fetchWaterMeters();
-  }, [apartmentId]);
+  }, []);
+
+  const fetchWaterMeters = async () => {
+    const response = await getWaterMatersByApartmentId(apartmentId);
+    setWaterMeters(response.data ?? []);
+  };
 
   const handleDialogOpen = () => {
+    fetchWaterMeters();
     setIsDialogOpen(true);
   };
 
@@ -51,9 +53,15 @@ export const WaterMeterListDialog = ({ apartmentId }: Props) => {
       });
       handleDialogClose();
     } else {
-      enqueueSnackbar(t(resolveApiError(response.error)), {
-        variant: "error",
-      });
+      if (response.error === "ERROR.INACTIVE_WATER_METER") {
+        enqueueSnackbar(t("validation.waterMeterCheckOnInactiveWaterMeter"), {
+          variant: "error",
+        });
+      } else {
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
+      }
     }
 
     setIsDialogOpen(false);
