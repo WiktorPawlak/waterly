@@ -131,9 +131,9 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
     private WaterMeterCheck prepareUnauthorizedWaterMeterCheck(final WaterMeterCheckDto dto, final LocalDate checkDate) {
         var waterMeter = waterMeterService.findWaterMeterById(dto.getWaterMeterId());
 
+        checkWaterMeterIsNotMain(waterMeter);
         checkWaterMeterBelongsToOwner(waterMeter);
         checkCheckDateIsCurrent(checkDate);
-        checkWaterMeterIsNotMain(waterMeter);
 
         return WaterMeterCheck.builder().meterReading(dto.getReading()).checkDate(checkDate).managerAuthored(false).waterMeter(waterMeter).build();
     }
@@ -187,7 +187,14 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
             waterMeterCheck.applyCheckPolicy(newCheck);
             waterMeterCheckService.updateWaterMeterCheck(waterMeterCheck);
         } else {
+            checkFirstCheckNotLesserThenStartingValue(newCheck);
             waterMeterCheckService.addWaterMeterCheck(newCheck);
+        }
+    }
+
+    private void checkFirstCheckNotLesserThenStartingValue(final WaterMeterCheck newCheck) {
+        if (newCheck.getMeterReading().compareTo(newCheck.getWaterMeter().getStartingValue()) < 0) {
+            throw ApplicationBaseException.waterMeterCheckLesserThenStartingValueException();
         }
     }
 

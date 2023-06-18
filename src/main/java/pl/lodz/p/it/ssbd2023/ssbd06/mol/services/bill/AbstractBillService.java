@@ -3,6 +3,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill;
 import static pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.GenerateBillsService.ONE_MONTH;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType.COLD_WATER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType.HOT_WATER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import io.vavr.Tuple2;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
@@ -35,6 +38,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 
+@RolesAllowed({FACILITY_MANAGER, OWNER})
 public abstract class AbstractBillService extends TransactionBoundariesTracingBean {
     public static final int ROUNDING_MODE = 2;
     @Inject

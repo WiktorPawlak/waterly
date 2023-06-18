@@ -1,8 +1,12 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
+
 import java.math.BigDecimal;
 import java.util.List;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -22,6 +26,7 @@ public class GenerateBillsService extends AbstractBillService {
 
     public static final int ONE_MONTH = 1;
 
+    @RolesAllowed(FACILITY_MANAGER)
     public void generateBillsOnInvoiceCreation(final InvoiceCreatedEvent event) {
         List<Apartment> apartmentList = apartmentFacade.findAll();
         Invoice invoice = invoiceFacade.findInvoiceForYearMonth(event.getInvoiceDate()).orElseThrow();
@@ -37,6 +42,7 @@ public class GenerateBillsService extends AbstractBillService {
                 totalUnbilledWaterAmount));
     }
 
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
     public void generateBillOnWaterMeterCheckEvent(final WaterMeterCheckAddedEvent event) {
         List<Apartment> apartmentsForUpdatedWaterMeters = waterMeterFacade.findApartmentsByWaterMeterIds(convertDtoToWaterMeterIds(event));
         apartmentsForUpdatedWaterMeters.forEach(apartment -> selectAndPerformPolicyOperations(event.getCheckDate(),

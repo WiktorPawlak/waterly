@@ -44,11 +44,13 @@ public class BillFacade extends AbstractFacade<Bill> {
     }
 
     @Override
+    @RolesAllowed({OWNER, FACILITY_MANAGER})
     public Bill create(final Bill bill) {
         return super.create(bill);
     }
 
     @Override
+    @RolesAllowed({OWNER, FACILITY_MANAGER})
     public Bill update(final Bill bill) {
         return super.update(bill);
     }
@@ -88,12 +90,14 @@ public class BillFacade extends AbstractFacade<Bill> {
         }
     }
 
+    @RolesAllowed({OWNER, FACILITY_MANAGER})
     public List<Bill> findBillsWithNullRealUsage() {
         TypedQuery<Bill> typedQuery = em.createNamedQuery("Bill.findBillsWithNullRealUsage", Bill.class);
         typedQuery.setFlushMode(FlushModeType.COMMIT);
         return typedQuery.getResultList();
     }
 
+    @RolesAllowed({OWNER, FACILITY_MANAGER})
     public List<Bill> findBillsByDate(final LocalDate date) {
         TypedQuery<Bill> typedQuery = em.createNamedQuery("Bill.findBillsByDate", Bill.class);
         typedQuery.setParameter("month", date.getMonthValue());

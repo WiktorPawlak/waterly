@@ -284,7 +284,9 @@
     "illegalMainWaterMeterCheck": "Wodomierz główny nie może mieć pomiaru",
     "invalidCheckDate": "Data pomiaru musi być dzisiejsza",
     "checkWasAlreadyPerformed": "Pomiar na ten miesiąc został już wykonany przez managera",
-    "waterMeterExpired": "Homologacja wodomierza wygasła"
+    "waterMeterExpired": "Homologacja wodomierza wygasła",
+    "previousMeterReadingGreaterThenNewOne": "Pomiar wodomierza nie może być mniejszy niż poprzedni",
+    "newMeterReadingLesserThenStartingValue": "Pomiar wodomierza nie może być mniejszy niż wartość startowa wodomierza"
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",
