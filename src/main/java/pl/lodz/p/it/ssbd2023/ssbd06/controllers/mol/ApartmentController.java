@@ -110,6 +110,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
 
     @POST
     @Path("/{id}/water-meter")
+    @RolesAllowed(FACILITY_MANAGER)
     public Response assignWaterMeterToApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final AssignWaterMeterDto dto) {
         retry(() -> waterMeterEndpoint.addWaterMeter(apartmentId, dto), waterMeterEndpoint);
         return Response.status(CREATED).build();

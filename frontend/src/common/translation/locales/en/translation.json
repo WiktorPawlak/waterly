@@ -278,7 +278,9 @@
     "illegalMainWaterMeterCheck": "Main water meter must not have any checks",
     "invalidCheckDate": "Water meter check date must be for today",
     "checkWasAlreadyPerformed": "Water meter check for this month was already performed by the manager",
-    "waterMeterExpired": "Water meter expired"
+    "waterMeterExpired": "Water meter expired",
+    "previousMeterReadingGreaterThenNewOne": "Water meter reading cannot be lesser then previous one",
+    "newMeterReadingLesserThenStartingValue": "Water meter reading cannot be lesser then water meter starting value"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",

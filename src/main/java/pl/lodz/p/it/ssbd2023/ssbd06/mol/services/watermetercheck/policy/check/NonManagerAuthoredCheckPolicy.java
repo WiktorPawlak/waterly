@@ -10,6 +10,9 @@ public class NonManagerAuthoredCheckPolicy implements WaterMeterCheckPolicy {
         if (existingCheck.isManagerAuthored()) {
             throw ApplicationBaseException.waterMeterCheckWasAlreadyPerformedException();
         }
+        if (existingCheck.getMeterReading().compareTo(newCheck.getMeterReading()) > 0) {
+            throw ApplicationBaseException.previousMeterReadingGreaterThenNewOneException();
+        }
         existingCheck.setMeterReading(newCheck.getMeterReading());
         existingCheck.setCheckDate(newCheck.getCheckDate());
         existingCheck.setManagerAuthored(false);

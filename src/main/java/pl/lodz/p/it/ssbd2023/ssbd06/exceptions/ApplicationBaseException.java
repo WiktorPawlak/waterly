@@ -34,8 +34,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.InvoicesCollidingException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.MainWaterMeterAlreadyExistsException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.NotAllWaterMeterChecksHaveBeenPerformed;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.OwnerAccountDoesNotExistException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.PreviousMeterReadingGreaterThenNewOneException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.TariffNotFoundForInvoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.TariffsColidingException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterCheckLesserThenStartingValueException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterCheckWasAlreadyPerformedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterDoesNotBelongToOwnerException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.WaterMeterExpiredException;
@@ -103,6 +105,8 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_INVOICES_COLLIDING = "ERROR.INVOICES_COLLIDING";
     public static final String ERROR_TARIFF_NOT_FOUND_FOR_INVOICE = "ERROR.TARIFF_NOT_FOUND_FOR_INVOICE";
     public static final String ERROR_NOT_ALL_WATER_METER_CHECKS_PERFORMED = "ERROR.NOT_ALL_WATER_METER_CHECKS_PERFORMED";
+    public static final String ERROR_PREVIOUS_METER_READING_GREATER_THEN_NEW_ONE = "ERROR.PREVIOUS_METER_READING_GREATER_THEN_NEW_ONE";
+    public static final String ERROR_NEW_METER_READING_LESSER_THEN_STARTING_VALUE = "ERROR.NEW_METER_READING_LESSER_THEN_STARTING_VALUE";
 
     public ApplicationBaseException(final Response.Status status, final String message) {
         super(Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON_TYPE).build());
@@ -303,5 +307,13 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static InactiveWaterMeterException inactiveWaterMeterException() {
         return new InactiveWaterMeterException();
+    }
+
+    public static PreviousMeterReadingGreaterThenNewOneException previousMeterReadingGreaterThenNewOneException() {
+        return new PreviousMeterReadingGreaterThenNewOneException();
+    }
+
+    public static WaterMeterCheckLesserThenStartingValueException waterMeterCheckLesserThenStartingValueException() {
+        return new WaterMeterCheckLesserThenStartingValueException();
     }
 }

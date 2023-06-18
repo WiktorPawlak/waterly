@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -96,7 +97,7 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
         return super.findById(id);
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Optional<Invoice> findInvoiceForYearMonth(final LocalDate date) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();

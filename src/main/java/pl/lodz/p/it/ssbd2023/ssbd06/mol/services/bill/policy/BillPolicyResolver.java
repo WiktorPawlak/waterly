@@ -1,12 +1,15 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.policy;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.GenerateBillsService.ONE_MONTH;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -47,6 +50,7 @@ public class BillPolicyResolver implements BillGenerationPolicyFactory {
     private InvoiceFacade invoiceFacade;
 
     @Override
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Tuple2<BillGenerationPolicy, Bill> resolveBillGenerationPolicy(final LocalDate date, final Apartment apartment) {
         LocalDate dateResolved = date.withDayOfMonth(FIRST_DAY);
         Optional<Invoice> invoice = invoiceFacade.findInvoiceForYearMonth(dateResolved.plusMonths(ONE_MONTH));

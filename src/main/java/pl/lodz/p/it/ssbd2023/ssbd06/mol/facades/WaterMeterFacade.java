@@ -117,6 +117,7 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
         return query.getResultList();
     }
 
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
     public List<Apartment> findApartmentsByWaterMeterIds(final List<Long> waterMeterIds) {
         return em.createNamedQuery("WaterMeter.findApartmentsByWaterMeters", Apartment.class)
                 .setFlushMode(FlushModeType.COMMIT)
