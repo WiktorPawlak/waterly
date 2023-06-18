@@ -12,7 +12,6 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
-import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
@@ -44,7 +43,6 @@ public class InvoiceService {
     @Inject
     private TariffFacade tariffFacade;
 
-    @SneakyThrows
     @RolesAllowed({FACILITY_MANAGER})
     public void createInvoice(final CreateInvoiceDto invoice) {
         LocalDate invoiceDate = DateConverter.convertInvoiceDate(invoice.getDate());

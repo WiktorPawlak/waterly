@@ -192,7 +192,8 @@
       "headers": {
         "id": "Id",
         "active": "Active",
-        "apartmentNo": "Apartment no.",
+        "serialNumber": "Serial no.",
+        "apartmentNo": "Apartm. no.",
         "expectedDailyUsage": "Exp. daily usage",
         "expiryDate": "Expiry Date",
         "startingValue": "Starting Value",
@@ -280,7 +281,8 @@
     "checkWasAlreadyPerformed": "Water meter check for this month was already performed by the manager",
     "waterMeterExpired": "Water meter expired",
     "previousMeterReadingGreaterThenNewOne": "Water meter reading cannot be lesser then previous one",
-    "newMeterReadingLesserThenStartingValue": "Water meter reading cannot be lesser then water meter starting value"
+    "newMeterReadingLesserThenStartingValue": "Water meter reading cannot be lesser then water meter starting value",
+    "waterMeterHasWaterMeterChecks": "Water meter with water meter checks cannot be moved between apartments"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -326,7 +328,11 @@
     "mainWaterMeterAlreadyExists": "Active main water meter already exists",
     "inactiveWaterMeter": "Inactive water meter cannot be replaced",
         "waterMeterCheckOnInactiveWaterMeter": "Cannot perform water meter check on inactive water meter",
-    "readingValue": "Reading value needs to be specified with 5 digits before and 3 digits after decimal point"
+    "readingValue": "Reading value needs to be specified with 5 digits before and 3 digits after decimal point",
+    "serialNumber": {
+      "min": "Serial number must be at least 1 character long",
+      "max": "Serial number must be at most 50 characters long"
+    }
   },
   "resetEmailSuccess": {
     "alert": {
@@ -467,7 +473,8 @@
     "waterMeterAssignedSuccessfully": "Water meter added successfully",
     "addWaterMeter": "Add water meter",
     "coldWater": "Cold water",
-    "hotWater": "Hot water"
+    "hotWater": "Hot water",
+    "serialNumber": "Serial no."
   },
   "waterMeterDetails": {
     "waterMeter": "Water meter",
@@ -572,6 +579,7 @@
     "expectedDailyUsage": "Expected Daily Usage",
     "startingValue": "Starting Value",
     "expiryDate": "Expiry Date",
+    "serialNumber": "Serial no.",
     "waterMeterEditedSuccessfully": "Water Meter edited successfully"
   },
   "apartmentDropdown": {
@@ -583,13 +591,15 @@
     "button": "Add main water meter",
     "addWaterMeter": "Add main water meter",
     "startingValue": "Starting Value",
-    "expiryDate": "Expiry Date"
+    "expiryDate": "Expiry Date",
+    "serialNumber": "Serial no."
   },
   "replaceWaterMeterDialog": {
     "waterMeterReplacedSuccessfully": "Water meter replaced successfully",
     "replaceWaterMeter": "Replace water meter",
     "startingValue": "Starting Value",
-    "expiryDate": "Expiry Date"
+    "expiryDate": "Expiry Date",
+    "serialNumber": "Serial no."
   },
   "waterMeterOwnerChange": {
     "waterMeterId": "Watermeter ID: ",

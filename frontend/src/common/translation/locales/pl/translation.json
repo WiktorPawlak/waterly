@@ -198,6 +198,7 @@
       "headers": {
         "id": "Id",
         "active": "Aktywny",
+        "serialNumber": "Nr seryjny",
         "apartmentNo": "Nr lokalu",
         "expectedDailyUsage": "Przew. zużycie dzienne",
         "expiryDate": "Data ważności",
@@ -286,7 +287,8 @@
     "checkWasAlreadyPerformed": "Pomiar na ten miesiąc został już wykonany przez managera",
     "waterMeterExpired": "Homologacja wodomierza wygasła",
     "previousMeterReadingGreaterThenNewOne": "Pomiar wodomierza nie może być mniejszy niż poprzedni",
-    "newMeterReadingLesserThenStartingValue": "Pomiar wodomierza nie może być mniejszy niż wartość startowa wodomierza"
+    "newMeterReadingLesserThenStartingValue": "Pomiar wodomierza nie może być mniejszy niż wartość startowa wodomierza",
+    "waterMeterHasWaterMeterChecks": "Wodomierz z pomiarami nie może zostać przenoszony pomiędzy lokalami"
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",
@@ -331,7 +333,11 @@
     "mainWaterMeterAlreadyExists": "Istnieje już aktywny wodomierz główny",
     "inactiveWaterMeter": "Nieaktywny wodomierz nie może zostać wymieniony",
     "waterMeterCheckOnInactiveWaterMeter": "Nie można wprowadzić stanu dla nieaktywnego wodomierza",
-    "readingValue": "Wartość odczytu musi być określona z 5 cyframi przed i 3 cyframi po przecinku"
+    "readingValue": "Wartość odczytu musi być określona z 5 cyframi przed i 3 cyframi po przecinku",
+    "serialNumber": {
+      "min": "Numer seryjny musi mieć przynajmniej 1 znak",
+      "max": "Numer seryjny nie może być dłuższy niż 50 znaków"
+    }
   },
   "resetEmailSuccess": {
     "alert": {
@@ -460,7 +466,8 @@
     "waterMeterAssignedSuccessfully": "Wodomierz dodany pomyślnie",
     "addWaterMeter": "Dodaj wodomierz",
     "coldWater": "Zimna woda",
-    "hotWater": "Ciepła woda"
+    "hotWater": "Ciepła woda",
+    "serialNumber": "Nr seryjny"
   },
   "waterMeterDetails": {
     "waterMeter": "Wodomierz",
@@ -573,6 +580,7 @@
     "expectedDailyUsage": "Przewidywane zużycie dzienne",
     "startingValue": "Wartość początkowa",
     "expiryDate": "Data ważności",
+    "serialNumber": "Nr seryjny",
     "waterMeterEditedSuccessfully": "Pomyślnie edytowano wodomierz"
   },
   "apartmentDropdown": {
@@ -584,13 +592,15 @@
     "button": "Dodaj wodomierz główny",
     "addWaterMeter": "Dodaj wodomierz główny",
     "startingValue": "Wartość początkowa",
-    "expiryDate": "Data ważności"
+    "expiryDate": "Data ważności",
+    "serialNumber": "Nr seryjny"
   },
   "replaceWaterMeterDialog": {
     "waterMeterReplacedSuccessfully": "Pomyślnie wymieniono wodomierz",
     "replaceWaterMeter": "Wymień wodomierz",
     "startingValue": "Wartość początkowa",
-    "expiryDate": "Data ważności"
+    "expiryDate": "Data ważności",
+    "serialNumber": "Nr seryjny"
   },
   "waterMeterOwnerChange": {
     "waterMeterId": "ID wodomierza: ",

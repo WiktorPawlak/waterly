@@ -12,6 +12,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.Signable;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ExpiryDate;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.SerialNumber;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsage;
 
 @Data
@@ -21,6 +22,8 @@ public class WaterMeterDto implements Signable {
 
     @Nonnegative
     private long id;
+    @SerialNumber
+    private String serialNumber;
     private boolean active;
     @ExpiryDate
     private String expiryDate;
@@ -37,6 +40,7 @@ public class WaterMeterDto implements Signable {
 
     public WaterMeterDto(final WaterMeter waterMeter) {
         this.id = waterMeter.getId();
+        this.serialNumber = waterMeter.getSerialNumber();
         this.active = waterMeter.isActive();
         this.expiryDate = DateConverter.convert(waterMeter.getExpiryDate());
         this.expectedDailyUsage = waterMeter.getExpectedDailyUsage();

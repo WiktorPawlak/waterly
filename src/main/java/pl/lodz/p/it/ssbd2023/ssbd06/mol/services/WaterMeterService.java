@@ -12,7 +12,6 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
-import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterFacade;
@@ -74,7 +73,6 @@ public class WaterMeterService {
         apartment.setWaterMeters(waterMeters);
     }
 
-    @SneakyThrows
     @RolesAllowed(FACILITY_MANAGER)
     public void createMainWaterMeter(final WaterMeter waterMeter) {
         waterMeterFacade.create(waterMeter);

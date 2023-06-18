@@ -96,7 +96,7 @@ export const WaterMeterCard = ({
             marginBottom: "10px",
           }}
         >
-          {waterMeter.id}
+          {waterMeter.serialNumber}
         </Typography>
         <Typography
           variant="h5"

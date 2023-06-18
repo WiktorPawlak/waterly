@@ -239,6 +239,7 @@ export const ApartmentDetailsPage = () => {
                 handleReplaceButtonClick={handleReplaceButtonClick}
                 waterMeter={{
                   id: obj.id,
+                  serialNumber: obj.serialNumber,
                   active: obj.active,
                   expiryDate: obj.expiryDate,
                   expectedDailyUsage: obj.expectedDailyUsage || 0,

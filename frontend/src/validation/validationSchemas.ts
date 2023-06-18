@@ -250,6 +250,9 @@ export const addInvoiceSchema = z.object({
 });
 
 export const assignWaterMeterToApartmentSchema = z.object({
+  serialNumber: z.string()
+    .min(1, "validation.serialNumber.min")
+    .max(50, "validation.serialNumber.max"),
   startingValue: z
     .string()
     .regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
@@ -257,11 +260,17 @@ export const assignWaterMeterToApartmentSchema = z.object({
 });
 
 export const editWaterMeterSchema = z.object({
+  serialNumber: z.string()
+    .min(1, "validation.serialNumber.min")
+    .max(50, "validation.serialNumber.max"),
   expectedDailyUsage: z.string().regex(/^$|\d+(\.\d{3})?$/, "validation.expectedDailyUsage"),
   startingValue: z.string().regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
 });
 
-export const addMainWaterMeterSchema = z.object({
+export const addWaterMeterSchema = z.object({
+  serialNumber: z.string()
+    .min(1, "validation.serialNumber.min")
+    .max(50, "validation.serialNumber.max"),
   startingValue: z.string().regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
 });
 
@@ -321,4 +330,4 @@ export type AssignWaterMeterToApartmentSchema = z.infer<
 
 export type EditWaterMeterSchema = z.infer<typeof editWaterMeterSchema>;
 
-export type AddMainWaterMeterSchema = z.infer<typeof addMainWaterMeterSchema>;
+export type AddWaterMeterSchema = z.infer<typeof addWaterMeterSchema>;
