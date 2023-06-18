@@ -6,7 +6,6 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,7 +18,6 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
@@ -88,31 +86,32 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         if (waterMeter.getVersion() != dto.getVersion()) {
             throw ApplicationBaseException.optimisticLockException();
         }
-        if (Objects.equals(waterMeter.getType(), MAIN)) {
-            updateMainWaterMeterEntity(waterMeter, dto);
-        } else {
-            updateWaterMeterEntity(waterMeter, dto);
-        }
+        updateWaterMeterEntity(waterMeter, dto);
         waterMeterService.updateWaterMeter(waterMeter);
     }
 
-    @SneakyThrows(ParseException.class)
-    private void updateMainWaterMeterEntity(final WaterMeter waterMeter, final UpdateWaterMeterDto dto) {
-        waterMeter.setExpiryDate(DateConverter.convert(dto.getExpiryDate()));
-    }
-
-    @SneakyThrows(ParseException.class)
     private void updateWaterMeterEntity(final WaterMeter waterMeter, final UpdateWaterMeterDto dto) {
-        waterMeter.setStartingValue(dto.getStartingValue() == null ?
-                waterMeter.getStartingValue() : dto.getStartingValue());
-        waterMeter.setExpectedDailyUsage(dto.getExpectedDailyUsage() == null || dto.getExpectedDailyUsage().isBlank() ?
-                null : new BigDecimal(dto.getExpectedDailyUsage()));
-
+        waterMeter.setSerialNumber(dto.getSerialNumber());
         waterMeter.setExpiryDate(DateConverter.convert(dto.getExpiryDate()));
 
-        if (dto.getApartmentId() != null) {
-            Apartment apartment = apartmentService.getApartmentById(dto.getApartmentId());
-            waterMeter.setApartment(apartment);
+        switch (waterMeter.getType()) {
+            case COLD_WATER, HOT_WATER -> {
+                waterMeter.setStartingValue(
+                        dto.getStartingValue() == null ? waterMeter.getStartingValue() : dto.getStartingValue()
+                );
+                waterMeter.setExpectedDailyUsage(
+                        dto.getExpectedDailyUsage() == null || dto.getExpectedDailyUsage().isBlank() ?
+                                null : new BigDecimal(dto.getExpectedDailyUsage())
+                );
+                if (dto.getApartmentId() != null && dto.getApartmentId() != waterMeter.getApartment().getId()) {
+                    if (!waterMeter.getWaterMeterChecks().isEmpty()) {
+                        throw ApplicationBaseException.waterMeterHasWaterMeterChecksException();
+                    }
+                    Apartment apartment = apartmentService.getApartmentById(dto.getApartmentId());
+                    waterMeter.setApartment(apartment);
+                }
+            }
+            default -> {}
         }
     }
 
@@ -127,9 +126,9 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         waterMeterService.addWaterMeter(newWaterMeter);
     }
 
-    @SneakyThrows(ParseException.class)
     private WaterMeter prepareNewWaterMeter(final WaterMeter oldWaterMeter, final ReplaceWaterMeterDto dto) {
         return WaterMeter.builder()
+                .serialNumber(dto.getSerialNumber())
                 .expiryDate(DateConverter.convert(dto.getExpiryDate()))
                 .startingValue(dto.getStartingValue())
                 .type(oldWaterMeter.getType())
@@ -139,7 +138,6 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
                 .build();
     }
 
-    @SneakyThrows(ParseException.class)
     @RolesAllowed(FACILITY_MANAGER)
     public void addWaterMeter(final long apartmentId, final AssignWaterMeterDto dto) {
         if (DateConverter.convert(dto.getExpiryDate()).before(timeProvider.currentDate())) {
@@ -182,18 +180,17 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
                 (long) Math.ceil(waterMeterService.getWaterMetersCount().doubleValue() / pageSizeResolved));
     }
 
-    @SneakyThrows(ParseException.class)
     private WaterMeter prepareMainWaterMeter(final CreateMainWaterMeterDto dto) {
         return WaterMeter.builder()
                 .active(true)
                 .type(MAIN)
+                .serialNumber(dto.getSerialNumber())
                 .expectedDailyUsage(BigDecimal.ZERO)
                 .startingValue(dto.getStartingValue())
                 .expiryDate(DateConverter.convert(dto.getExpiryDate()))
                 .build();
     }
 
-    @SneakyThrows(ParseException.class)
     private void validateExpiryDate(final String expiryDate) {
         if (DateConverter.convert(expiryDate).before(timeProvider.currentDate())) {
             throw ApplicationBaseException.expiryDateAlreadyExpiredException();

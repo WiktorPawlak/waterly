@@ -20,12 +20,12 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
@@ -54,6 +54,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 @EntityListeners({MolAuditingEntityListener.class})
 public class WaterMeter extends AbstractEntity {
     @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "serial_number", nullable = false)
+    private String serialNumber;
+    @NotNull
     @Column(name = "starting_value", nullable = false, precision = 8, scale = 3)
     private BigDecimal startingValue;
     @NotNull
@@ -75,8 +79,8 @@ public class WaterMeter extends AbstractEntity {
     @JoinColumn(name = "apartment_id", foreignKey = @ForeignKey(name = "water_meter_apartment_fk"))
     private Apartment apartment;
 
-    @SneakyThrows
     public WaterMeter(@NotNull final AssignWaterMeterDto assignWaterMeterDto, final Apartment apartment) {
+        this.serialNumber = assignWaterMeterDto.getSerialNumber();
         this.startingValue = assignWaterMeterDto.getStartingValue();
         this.expiryDate = DateConverter.convert(assignWaterMeterDto.getExpiryDate());
         this.active = true;

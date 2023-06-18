@@ -69,16 +69,18 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final WaterMeterActiveStatusDto DEACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(false);
     protected static final WaterMeterActiveStatusDto ACTIVATE_WATER_METER = WaterMeterActiveStatusDto.of(true);
     protected static final BigDecimal STARTING_VALUE = BigDecimal.valueOf(100.000);
+    protected static final String SERIAL_NUMBER = "123456789 D";
     protected static final String TEST_DATE = "2024-06-10";
-    protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(STARTING_VALUE, TEST_DATE);
-    protected static final AssignWaterMeterDto CORRECT_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(STARTING_VALUE,
+    protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE, TEST_DATE);
+    protected static final AssignWaterMeterDto CORRECT_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE,
             TEST_DATE, "HOT_WATER");
-    protected static final AssignWaterMeterDto WRONG_DATE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(STARTING_VALUE,
+    protected static final AssignWaterMeterDto WRONG_DATE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE,
             "2020-06-10", "HOT_WATER");
-    protected static final AssignWaterMeterDto WRONG_TYPE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(STARTING_VALUE,
+    protected static final AssignWaterMeterDto WRONG_TYPE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE,
             TEST_DATE, "WRONG_TYPE");
     protected static final UpdateWaterMeterDto UPDATE_WATER_METER_DTO = UpdateWaterMeterDto.of(
-            COLD_WATER_METER_ID,
+            NEW_WATER_METER_ID,
+            SERIAL_NUMBER,
             BigDecimal.valueOf(10),
             TEST_DATE,
             "12",

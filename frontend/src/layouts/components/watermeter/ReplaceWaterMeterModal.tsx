@@ -18,8 +18,8 @@ import { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    AddMainWaterMeterSchema,
-    addMainWaterMeterSchema,
+    AddWaterMeterSchema,
+    addWaterMeterSchema,
 } from "../../../validation/validationSchemas";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { WaterMeterDto, replaceMainWaterMeter } from "../../../api/waterMeterApi";
@@ -43,19 +43,22 @@ export const ReplaceWaterMeterModal = ({
         handleSubmit,
         formState: { errors },
         reset
-    } = useForm<AddMainWaterMeterSchema>({
-        resolver: zodResolver(addMainWaterMeterSchema),
+    } = useForm<AddWaterMeterSchema>({
+        resolver: zodResolver(addWaterMeterSchema),
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
+            serialNumber: "",
             startingValue: ""
         },
     });
 
     const {
+        serialNumber: serialNumberError,
         startingValue: startingValueError
     } = errors;
-    const startigValueErrorMessage = startingValueError?.message;
+    const serialNumberErrorMessage = serialNumberError?.message;
+    const startingValueErrorMessage = startingValueError?.message;
 
     const handleClose = () => {
         setIsOpen(false);
@@ -108,10 +111,18 @@ export const ReplaceWaterMeterModal = ({
                             <StyledTextField
                                 variant="standard"
                                 sx={{ width: "100% !important" }}
+                                label={<Trans i18nKey={"replaceWaterMeterDialog.serialNumber"} components={{ sup: <sup /> }} />}
+                                {...register("serialNumber")}
+                                error={!!serialNumberError}
+                                helperText={serialNumberErrorMessage && t(serialNumberErrorMessage)}
+                            />
+                            <StyledTextField
+                                variant="standard"
+                                sx={{ width: "100% !important" }}
                                 label={<Trans i18nKey={"replaceWaterMeterDialog.startingValue"} components={{ sup: <sup /> }} />}
                                 {...register("startingValue")}
                                 error={!!startingValueError}
-                                helperText={startigValueErrorMessage && t(startigValueErrorMessage)}
+                                helperText={startingValueErrorMessage && t(startingValueErrorMessage)}
                             />
                             <LocalizationProvider adapterLocale="pl" dateAdapter={AdapterDayjs} localeText={plPL.components.MuiLocalizationProvider.defaultProps.localeText}>
                                 <DatePicker

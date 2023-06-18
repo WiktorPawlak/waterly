@@ -54,18 +54,22 @@ export const AssignWaterMeterToApartmentDialog = ({
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    reset
   } = useForm<AssignWaterMeterToApartmentSchema>({
-    resolver: zodResolver(assignWaterMeterToApartmentSchema),
-    mode: "onChange",
-    reValidateMode: "onChange",
-    defaultValues: {
-      startingValue: "",
-      type: "",
-    },
+      resolver: zodResolver(assignWaterMeterToApartmentSchema),
+      mode: "onChange",
+      reValidateMode: "onChange",
+      defaultValues: {
+          serialNumber: "",
+          startingValue: ""
+      },
   });
 
-  const { startingValue: startingValueError } = errors;
+  const {
+      serialNumber: serialNumberError,
+      startingValue: startingValueError
+  } = errors;
+  const serialNumberErrorMessage = serialNumberError?.message;
   const startingValueErrorMessage = startingValueError?.message;
 
   const handleFormSubmit = async (formData: any) => {
@@ -110,6 +114,14 @@ export const AssignWaterMeterToApartmentDialog = ({
             <Box
               sx={{ width: "100%", display: "flex", flexDirection: "column" }}
             >
+              <StyledTextField
+                variant="standard"
+                sx={{ width: "100% !important" }}
+                label={<Trans i18nKey={"assignWaterMeterDialog.serialNumber"} components={{ sup: <sup /> }} />}
+                {...register("serialNumber")}
+                error={!!serialNumberError}
+                helperText={serialNumberErrorMessage && t(serialNumberErrorMessage)}
+              />
               <StyledTextField
                 autoFocus
                 label={

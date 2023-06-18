@@ -18,8 +18,8 @@ import { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    AddMainWaterMeterSchema,
-    addMainWaterMeterSchema,
+    AddWaterMeterSchema,
+    addWaterMeterSchema,
 } from "../../../validation/validationSchemas";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { createMainWaterMeter } from "../../../api/waterMeterApi";
@@ -42,18 +42,21 @@ export const AddMainWaterMeterModal = ({
         handleSubmit,
         formState: { errors },
         reset
-    } = useForm<AddMainWaterMeterSchema>({
-        resolver: zodResolver(addMainWaterMeterSchema),
+    } = useForm<AddWaterMeterSchema>({
+        resolver: zodResolver(addWaterMeterSchema),
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
+            serialNumber: "",
             startingValue: ""
         },
     });
 
     const {
+        serialNumber: serialNumberError,
         startingValue: startingValueError
     } = errors;
+    const serialNumberErrorMessage = serialNumberError?.message;
     const startigValueErrorMessage = startingValueError?.message;
 
     const handleClose = () => {
@@ -103,6 +106,14 @@ export const AddMainWaterMeterModal = ({
                         <Box
                             sx={{ width: "100%", display: "flex", flexDirection: "column" }}
                         >
+                            <StyledTextField
+                                variant="standard"
+                                sx={{ width: "100% !important" }}
+                                label={<Trans i18nKey={"addMainWaterMeterDialog.serialNumber"} components={{ sup: <sup /> }} />}
+                                {...register("serialNumber")}
+                                error={!!serialNumberError}
+                                helperText={serialNumberErrorMessage && t(serialNumberErrorMessage)}
+                            />
                             <StyledTextField
                                 variant="standard"
                                 sx={{ width: "100% !important" }}

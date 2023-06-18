@@ -64,6 +64,10 @@ const apiErrors = new Map<string, string>([
     "ERROR.NEW_METER_READING_LESSER_THEN_STARTING_VALUE",
     "apiError.newMeterReadingLesserThenStartingValue",
   ],
+  [
+    "ERROR.WATER_METER_HAS_WATER_METER_CHECKS",
+    "apiError.waterMeterHasWaterMeterChecks",
+  ],
   ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
   ["VALIDATION.EMAIL", "validation.emailInvalid"],
   ["VALIDATION.EMAIL_SIZE", "validation.emailInvalidSize"],

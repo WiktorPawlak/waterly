@@ -1,9 +1,8 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.validators;
 
-import java.text.ParseException;
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.DateParseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 
 public class WaterMeterCheckDateValidator implements ConstraintValidator<WaterMeterCheckDate, String> {
@@ -18,7 +17,7 @@ public class WaterMeterCheckDateValidator implements ConstraintValidator<WaterMe
         try {
             DateConverter.convert(date);
             return true;
-        } catch (final ParseException e) {
+        } catch (final DateParseException e) {
             return false;
         }
     }

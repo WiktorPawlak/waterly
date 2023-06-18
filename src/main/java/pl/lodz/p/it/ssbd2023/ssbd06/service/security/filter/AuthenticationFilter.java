@@ -18,7 +18,6 @@ import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticat
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.JwtProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.SimpleJWT;
 
@@ -32,7 +31,6 @@ public class AuthenticationFilter implements HttpAuthenticationMechanism {
     private JwtProvider jwtProvider;
     private final Pattern tokenPattern = Pattern.compile("^Bearer *([^ ]+) *$", Pattern.CASE_INSENSITIVE);
 
-    @SneakyThrows
     @Override
     public AuthenticationStatus validateRequest(
             final HttpServletRequest httpServletRequest,

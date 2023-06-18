@@ -57,17 +57,20 @@ export const EditWaterMeterModal = ({
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
+            serialNumber: "",
             expectedDailyUsage: "",
             startingValue: ""
         },
     });
 
     const {
+        serialNumber: serialNumberError,
         expectedDailyUsage: expectedDailyUsageError,
         startingValue: startingValueError
     } = errors;
+    const serialNumberErrorMessage = serialNumberError?.message;
     const expectedDailyUsageErrorMessage = expectedDailyUsageError?.message;
-    const startigValueErrorMessage = startingValueError?.message;
+    const startingValueErrorMessage = startingValueError?.message;
 
     const handleClose = () => {
         setIsOpen(false);
@@ -81,6 +84,7 @@ export const EditWaterMeterModal = ({
                     : "";
             setExpiryDate(dayjs(waterMeter!.expiryDate));
             setValue("expectedDailyUsage", edu);
+            setValue("serialNumber", waterMeter.serialNumber.toString());
             setValue("startingValue", waterMeter!.startingValue.toString());
             setApartmentId(waterMeter!.apartmentId);
         }
@@ -134,6 +138,14 @@ export const EditWaterMeterModal = ({
                         <Box
                             sx={{ width: "100%", display: "flex", flexDirection: "column" }}
                         >
+                            <StyledTextField
+                                variant="standard"
+                                sx={{ width: "100% !important" }}
+                                label={<Trans i18nKey={"editWaterMeterDialog.serialNumber"} components={{ sup: <sup /> }} />}
+                                {...register("serialNumber")}
+                                error={!!serialNumberError}
+                                helperText={serialNumberErrorMessage && t(serialNumberErrorMessage)}
+                            />
                             { waterMeter?.type !== 'MAIN' &&
                             <StyledTextField
                                 autoFocus
@@ -151,7 +163,7 @@ export const EditWaterMeterModal = ({
                                 label={<Trans i18nKey={"editWaterMeterDialog.startingValue"} components={{ sup: <sup /> }} />}
                                 {...register("startingValue")}
                                 error={!!startingValueError}
-                                helperText={startigValueErrorMessage && t(startigValueErrorMessage)}
+                                helperText={startingValueErrorMessage && t(startingValueErrorMessage)}
                             />
                             <LocalizationProvider adapterLocale="pl" dateAdapter={AdapterDayjs} localeText={plPL.components.MuiLocalizationProvider.defaultProps.localeText}>
                                 <DatePicker

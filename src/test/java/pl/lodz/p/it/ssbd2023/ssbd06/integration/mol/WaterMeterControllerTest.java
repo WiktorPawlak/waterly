@@ -235,7 +235,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
             // then
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .body(CreateMainWaterMeterDto.of(STARTING_VALUE, "invalid-format"))
+                    .body(CreateMainWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE, "invalid-format"))
                     .when()
                     .post(WATERMETER_PATH + "/main-water-meter")
                     .then()
@@ -247,7 +247,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
             // then
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .body(CreateMainWaterMeterDto.of(STARTING_VALUE, "1970-01-01"))
+                    .body(CreateMainWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE, "1970-01-01"))
                     .when()
                     .post(WATERMETER_PATH + "/main-water-meter")
                     .then()
@@ -276,7 +276,15 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
         @SneakyThrows
         void shouldUpdateWaterMeterWhenCorrectData() {
             // given
-            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CORRECT_ASSIGN_WATER_METER_DTO)
+                    .when()
+                    .post(APARTMENT_PATH + "/" + APARTMENT_ID + "/water-meter")
+                    .then()
+                    .statusCode(CREATED.getStatusCode());
+
+            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(NEW_WATER_METER_ID);
 
             // when
             given()
@@ -284,17 +292,17 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UPDATE_WATER_METER_DTO)
                     .when()
-                    .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
+                    .put(WATERMETER_PATH + "/" + NEW_WATER_METER_ID)
                     .then()
                     .statusCode(NO_CONTENT.getStatusCode());
 
             // then
             ResultSet resultSet = databaseConnector.executeQuery(
-                    "SELECT * FROM water_meter WHERE id = " + COLD_WATER_METER_ID
+                    "SELECT * FROM water_meter WHERE id = " + NEW_WATER_METER_ID
             );
-            assertEquals(resultSet.getString("starting_value"), "10.000");
-            assertEquals(resultSet.getString("expected_daily_usage"), "12.000");
-            assertEquals(resultSet.getString("apartment_id"), String.valueOf(SECOND_APARTMENT_ID));
+            assertEquals("10.000", resultSet.getString("starting_value"));
+            assertEquals("12.000", resultSet.getString("expected_daily_usage"));
+            assertEquals(String.valueOf(SECOND_APARTMENT_ID), resultSet.getString("apartment_id"));
         }
 
         @ParameterizedTest
@@ -316,7 +324,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
 
         @Test
         @SneakyThrows
-        void shouldUpdateOnlyExpiryDateInMainWaterMeterWhenRedundantData() {
+        void shouldUpdateOnlySerialNrAndExpiryDateInMainWaterMeterWhenRedundantData() {
             // given
             Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(MAIN_WATER_METER_ID);
 
@@ -330,6 +338,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UpdateWaterMeterDto.builder()
                             .id(MAIN_WATER_METER_ID)
+                            .serialNumber(SERIAL_NUMBER)
                             .startingValue(BigDecimal.ONE)
                             .expiryDate(TEST_DATE)
                             .apartmentId(APARTMENT_ID)
@@ -347,10 +356,11 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
             assertNotEquals(resultSetAfter.getString("starting_value"), BigDecimal.ONE.toString());
             assertNull(resultSetAfter.getString("apartment_id"));
             assertNotEquals(resultSetAfter.getString("expiry_date"), expiryDateBefore);
+            assertNotEquals(resultSetAfter.getString("serial_number"), expiryDateBefore);
         }
 
         @Test
-        void shouldNotUpdateWaterMeterWhenConflictingData() {
+        void shouldNotUpdateWaterMeterApartmentWhenThereIsWaterMeterCheckApplied() {
             // given
             Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
 
@@ -360,6 +370,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UpdateWaterMeterDto.builder()
                             .id(COLD_WATER_METER_ID)
+                            .serialNumber(SERIAL_NUMBER)
                             .expiryDate(TEST_DATE)
                             .apartmentId(123L)
                             .version(waterMeterWithEtag._1.getVersion())
@@ -367,15 +378,46 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
                     .then()
+                    .statusCode(CONFLICT.getStatusCode());
+        }
+
+        @Test
+        void shouldNotUpdateWaterMeterApartmentWhenThereIsNoApartmentAsGiven() {
+            // given
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(CORRECT_ASSIGN_WATER_METER_DTO)
+                    .when()
+                    .post(APARTMENT_PATH + "/" + APARTMENT_ID + "/water-meter")
+                    .then()
+                    .statusCode(CREATED.getStatusCode());
+
+            Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(NEW_WATER_METER_ID);
+
+            // then
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
+                    .body(UpdateWaterMeterDto.builder()
+                            .id(waterMeterWithEtag._1.getId())
+                            .serialNumber(SERIAL_NUMBER)
+                            .expiryDate(TEST_DATE)
+                            .apartmentId(123L)
+                            .version(waterMeterWithEtag._1.getVersion())
+                            .build())
+                    .when()
+                    .put(WATERMETER_PATH + "/" + NEW_WATER_METER_ID)
+                    .then()
                     .statusCode(NOT_FOUND.getStatusCode());
         }
 
         @ParameterizedTest
         @CsvSource({
-                "invalid-format",
-                "1970-01-01",
+                "123456789,invalid-format",
+                "123456789,1970-01-01",
+                ",9999-09-09",
         })
-        void shouldNotUpdateWaterMeterWhenInvalidData(String expiryDate) {
+        void shouldNotUpdateWaterMeterWhenInvalidData(String serialNumber, String expiryDate) {
             // given
             Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
 
@@ -385,6 +427,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
                     .body(UpdateWaterMeterDto.builder()
                             .id(COLD_WATER_METER_ID)
+                            .serialNumber(serialNumber)
                             .expiryDate(expiryDate)
                             .version(waterMeterWithEtag._1.getVersion())
                             .build())
@@ -445,6 +488,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .when()
                     .body(ReplaceWaterMeterDto.builder()
+                            .serialNumber(SERIAL_NUMBER)
                             .expiryDate(TEST_DATE)
                             .startingValue(BigDecimal.ONE)
                             .build())
@@ -482,6 +526,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
                     .when()
                     .body(ReplaceWaterMeterDto.builder()
+                            .serialNumber(SERIAL_NUMBER)
                             .expiryDate(TEST_DATE)
                             .startingValue(BigDecimal.ONE)
                             .build())
@@ -504,6 +549,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                 Arguments.of(Named.of("No apartmentId",
                         UpdateWaterMeterDto.builder()
                                 .id(COLD_WATER_METER_ID)
+                                .serialNumber(SERIAL_NUMBER)
                                 .startingValue(BigDecimal.ONE)
                                 .expiryDate(TEST_DATE)
                                 .expectedDailyUsage("1")
@@ -512,6 +558,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                 Arguments.of(Named.of("No startingValue",
                         UpdateWaterMeterDto.builder()
                                 .id(COLD_WATER_METER_ID)
+                                .serialNumber(SERIAL_NUMBER)
                                 .expiryDate(TEST_DATE)
                                 .expectedDailyUsage("1")
                                 .apartmentId(1L)
@@ -520,6 +567,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                 Arguments.of(Named.of("No expectedDailyUsage",
                         UpdateWaterMeterDto.builder()
                                 .id(COLD_WATER_METER_ID)
+                                .serialNumber(SERIAL_NUMBER)
                                 .startingValue(BigDecimal.ONE)
                                 .expiryDate(TEST_DATE)
                                 .apartmentId(1L)

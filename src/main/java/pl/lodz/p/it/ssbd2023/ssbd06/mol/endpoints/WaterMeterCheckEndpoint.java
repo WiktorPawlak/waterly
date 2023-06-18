@@ -4,7 +4,6 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
-import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
@@ -107,7 +105,6 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
                 .allMatch(waterMeter -> waterMeterCheckService.findWaterMeterCheckForCheckDate(LocalDate.parse(dto.getCheckDate()), waterMeter).isPresent());
     }
 
-    @SneakyThrows(ParseException.class)
     private List<WaterMeterCheck> prepareAuthorizedWaterMeterChecks(final WaterMeterChecksDto dto) {
         final LocalDate checkDate = DateConverter.convertStringDateToLocalDate(dto.getCheckDate());
 

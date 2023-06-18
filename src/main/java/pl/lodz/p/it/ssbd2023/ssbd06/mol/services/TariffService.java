@@ -2,7 +2,6 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -13,7 +12,6 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
-import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
@@ -39,7 +37,6 @@ public class TariffService {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    @SneakyThrows(ParseException.class)
     public void addTariff(final CreateTariffDto createTariffDto) {
         YearMonth startYearMonth = YearMonth.from(DateConverter.convertStringDateToLocalDate(createTariffDto.getStartDate()));
         YearMonth endYearMonth = YearMonth.from(DateConverter.convertStringDateToLocalDate(createTariffDto.getEndDate()));

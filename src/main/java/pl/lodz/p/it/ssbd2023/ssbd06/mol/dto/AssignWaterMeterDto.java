@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ExpiryDate;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.SerialNumber;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.StartingValue;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterMeterType;
 
@@ -16,6 +17,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterMeterType;
 @NoArgsConstructor
 public class AssignWaterMeterDto {
 
+    @SerialNumber
+    private String serialNumber;
     @StartingValue
     private BigDecimal startingValue;
     @ExpiryDate

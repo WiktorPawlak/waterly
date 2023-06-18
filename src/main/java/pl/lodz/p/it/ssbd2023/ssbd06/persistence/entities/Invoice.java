@@ -12,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.audit.MolAuditingEntityListener;
@@ -42,7 +41,6 @@ public class Invoice extends AbstractEntity {
     @Column(nullable = false)
     private LocalDate date;
 
-    @SneakyThrows
     public Invoice(@NotNull final CreateInvoiceDto createInvoiceDto) {
         this.invoiceNumber = createInvoiceDto.getInvoiceNumber();
         this.waterUsage = createInvoiceDto.getWaterUsage();

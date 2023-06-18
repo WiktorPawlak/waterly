@@ -13,7 +13,6 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
@@ -51,7 +50,6 @@ public class InvoiceEndpoint extends TransactionBoundariesTracingBean {
     @Inject
     private UpdateBillsService updateBillsService;
 
-    @SneakyThrows
     @RolesAllowed({FACILITY_MANAGER})
     public void addInvoice(final CreateInvoiceDto dto) {
         invoiceService.createInvoice(dto);

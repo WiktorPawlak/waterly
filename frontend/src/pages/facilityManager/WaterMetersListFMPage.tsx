@@ -200,6 +200,13 @@ export const WaterMetersListFMPage = () => {
       width: 50,
     },
     {
+      field: "serialNumber",
+      renderHeader: () => (
+        <strong>{t("WaterMetersListFMPage.dataGrid.headers.serialNumber")}</strong>
+      ),
+      width: 120,
+    },
+    {
       field: "apartment",
       renderHeader: () => (
         <strong>
@@ -211,7 +218,7 @@ export const WaterMetersListFMPage = () => {
           {apartmentsPageState.data.find((obj) => obj.id === params.row.apartmentId)?.number}
         </span>
       ),
-      width: 120,
+      width: 100,
     },
     {
       field: "expectedDailyUsage",
@@ -225,7 +232,7 @@ export const WaterMetersListFMPage = () => {
           {params.row.type === 'MAIN' ? '' : params.row.expectedDailyUsage}
         </span>
       ),
-      width: 180,
+      width: 145,
     },
     {
       field: "expiryDate",
@@ -274,7 +281,8 @@ export const WaterMetersListFMPage = () => {
       field: "activation",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
-      width: 80,
+      width: 60,
+      align: "center",
       renderCell: (params) => (
         <WaterMeterLock
           waterMeterId={params.row.id}
@@ -288,8 +296,8 @@ export const WaterMetersListFMPage = () => {
       field: "edit",
       hideable: true,
       sortable: false,
-      width: 80,
-      align: "right",
+      width: 60,
+      align: "center",
       renderCell: (params) => (
         <Button onClick={() => handleEditButtonClick(params.row.id)}>
           <EditOutlinedIcon />
@@ -301,7 +309,8 @@ export const WaterMetersListFMPage = () => {
       field: "replace",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
-      width: 80,
+      width: 60,
+      align: "center",
       renderCell: (params) => (
         <Button 
           disabled={!params.row.active}
