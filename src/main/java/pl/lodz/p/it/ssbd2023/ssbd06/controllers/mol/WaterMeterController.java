@@ -88,9 +88,9 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Response performWaterMeterChecks(@NotNull @Valid final WaterMeterChecksDto dto) {
         if (dto.isManagerAuthored()) {
-            waterMeterCheckEndpoint.initializePerformWaterMeterChecksByFM(dto);
+            retry(() -> waterMeterCheckEndpoint.initializePerformWaterMeterChecksByFM(dto), waterMeterEndpoint);
         } else {
-            waterMeterCheckEndpoint.initializePerformWaterMeterChecksByOwner(dto);
+            retry(() -> waterMeterCheckEndpoint.initializePerformWaterMeterChecksByOwner(dto), waterMeterEndpoint);
         }
         return Response.status(NO_CONTENT).build();
     }

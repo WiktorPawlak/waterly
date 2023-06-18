@@ -63,13 +63,13 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
 
     @RolesAllowed(OWNER)
     public void initializePerformWaterMeterChecksByOwner(final WaterMeterChecksDto dto) {
-        var newWaterMeterChecks = prepareWaterMeterChecks(dto);
+        var newWaterMeterChecks = prepareUnauthorizedWaterMeterChecks(dto);
         performWaterMeterChecks(dto, newWaterMeterChecks);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
     public void initializePerformWaterMeterChecksByFM(final WaterMeterChecksDto dto) {
-        var newWaterMeterChecks = prepareWaterMeterChecks(dto);
+        var newWaterMeterChecks = prepareAuthorizedWaterMeterChecks(dto);
         performWaterMeterChecks(dto, newWaterMeterChecks);
     }
 
@@ -93,7 +93,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
 
         upsertWaterUsageStats(expectedMonthHotWaterUsage, expectedMonthColdWaterUsage, check, usageStats);
         if (usageStats.isEmpty() || !currentMonthChecksExists) {
-            //ty był kiedyś event
+            //tu był kiedyś event
             generateBillsService.generateBillOnWaterMeterCheckEvent(new WaterMeterCheckAddedEvent(check.getCheckDate(), dto));
         }
     }
@@ -108,22 +108,34 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
     }
 
     @SneakyThrows(ParseException.class)
-    private List<WaterMeterCheck> prepareWaterMeterChecks(final WaterMeterChecksDto dto) {
-        final LocalDate checkDate = dto.isManagerAuthored() ? DateConverter.convertStringDateToLocalDate(dto.getCheckDate()) : timeProvider.currentLocalDate();
+    private List<WaterMeterCheck> prepareAuthorizedWaterMeterChecks(final WaterMeterChecksDto dto) {
+        final LocalDate checkDate = DateConverter.convertStringDateToLocalDate(dto.getCheckDate());
 
-        return dto.getWaterMeterChecks().stream().map(checkDto -> prepareWaterMeterCheck(checkDto, checkDate, dto.isManagerAuthored())).toList();
+        return dto.getWaterMeterChecks().stream().map(checkDto -> prepareAuthorizedWaterMeterCheck(checkDto, checkDate)).toList();
     }
 
-    private WaterMeterCheck prepareWaterMeterCheck(final WaterMeterCheckDto dto, final LocalDate checkDate, final boolean managerAuthored) {
+    private List<WaterMeterCheck> prepareUnauthorizedWaterMeterChecks(final WaterMeterChecksDto dto) {
+        final LocalDate checkDate = timeProvider.currentLocalDate();
+
+        return dto.getWaterMeterChecks().stream().map(checkDto -> prepareUnauthorizedWaterMeterCheck(checkDto, checkDate)).toList();
+    }
+
+    private WaterMeterCheck prepareAuthorizedWaterMeterCheck(final WaterMeterCheckDto dto, final LocalDate checkDate) {
         var waterMeter = waterMeterService.findWaterMeterById(dto.getWaterMeterId());
 
-        if (!managerAuthored) {
-            checkWaterMeterBelongsToOwner(waterMeter);
-            checkCheckDateIsCurrent(checkDate);
-        }
         checkWaterMeterIsNotMain(waterMeter);
 
-        return WaterMeterCheck.builder().meterReading(dto.getReading()).checkDate(checkDate).managerAuthored(managerAuthored).waterMeter(waterMeter).build();
+        return WaterMeterCheck.builder().meterReading(dto.getReading()).checkDate(checkDate).managerAuthored(true).waterMeter(waterMeter).build();
+    }
+
+    private WaterMeterCheck prepareUnauthorizedWaterMeterCheck(final WaterMeterCheckDto dto, final LocalDate checkDate) {
+        var waterMeter = waterMeterService.findWaterMeterById(dto.getWaterMeterId());
+
+        checkWaterMeterBelongsToOwner(waterMeter);
+        checkCheckDateIsCurrent(checkDate);
+        checkWaterMeterIsNotMain(waterMeter);
+
+        return WaterMeterCheck.builder().meterReading(dto.getReading()).checkDate(checkDate).managerAuthored(false).waterMeter(waterMeter).build();
     }
 
     private void checkWaterMeterBelongsToOwner(final WaterMeter waterMeter) {
@@ -146,6 +158,7 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
 
     private BigDecimal performWaterMeterCheck(final WaterMeterCheck newCheck) {
         checkWaterMeterExpired(newCheck);
+        checkWaterMeterInactive(newCheck);
 
         var thisMonthCheck = waterMeterCheckService.findWaterMeterCheckForCheckDate(newCheck.getCheckDate(), newCheck.getWaterMeter());
         upsertWaterMeterCheck(newCheck, thisMonthCheck);
@@ -159,6 +172,12 @@ public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
         var checkDate = DateConverter.convertLocalDateToDate(newCheck.getCheckDate());
         if (!timeProvider.checkDateIsBeforeOtherDate(checkDate.toInstant(), newCheck.getWaterMeter().getExpiryDate().toInstant())) {
             throw ApplicationBaseException.waterMeterExpiredException();
+        }
+    }
+
+    private void checkWaterMeterInactive(final WaterMeterCheck newCheck) {
+        if (!newCheck.getWaterMeter().isActive()) {
+            throw ApplicationBaseException.inactiveWaterMeterException();
         }
     }
 
