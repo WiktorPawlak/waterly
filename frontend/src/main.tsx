@@ -17,7 +17,7 @@ const Root = () => {
           <SnackbarCloseButton snackbarKey={snackbarKey} />
         )}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        autoHideDuration={5000}
+        autoHideDuration={null}
       >
         <App />
       </SnackbarProvider>
