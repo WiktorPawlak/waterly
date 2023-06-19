@@ -15,7 +15,6 @@ import { MainLayout } from "../../layouts/MainLayout";
 import { AssignWaterMeterToApartmentDialog } from "../../layouts/components/watermeter/AssingWaterMeterToApartmentModal";
 import AddIcon from "@mui/icons-material/Add";
 import {
-  PaginatedList,
   WaterMeterDto,
   getApartmentWaterMeters,
   getWaterMeterById,
@@ -25,7 +24,7 @@ import { EditWaterMeterModal } from "../../layouts/components/watermeter/EditWat
 import { ReplaceWaterMeterModal } from "../../layouts/components/watermeter/ReplaceWaterMeterModal";
 import { roles } from "../../types";
 import { HttpStatusCode } from "axios";
-import { GetPagedListDto } from "../../api/accountApi";
+import { GetPagedListDto, PaginatedList } from "../../api/accountApi";
 import { useAccount } from "../../hooks/useAccount";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import { WaterMeterListDialog } from "../../layouts/components/watermeter/WaterMeterListDialog";

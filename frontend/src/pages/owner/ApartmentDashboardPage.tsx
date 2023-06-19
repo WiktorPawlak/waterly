@@ -171,9 +171,11 @@ export const ApartmentDashboardPage = () => {
                 <Box sx={{ margin: "15px" }} key={obj.id}>
                   <WaterMeterCard
                     handleEditButtonClick={() => {}}
-                        handleReplaceButtonClick={() => {}}waterMeter={{
+                    handleReplaceButtonClick={() => {}}
+                    waterMeter={{
                       id: obj.id,
                       active: obj.active,
+                      serialNumber: obj.serialNumber,
                       expiryDate: obj.expiryDate,
                       expectedDailyUsage: obj.expectedDailyUsage || 0,
                       startingValue: obj.startingValue,

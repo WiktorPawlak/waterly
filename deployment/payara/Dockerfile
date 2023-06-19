@@ -15,5 +15,5 @@ ENV DB_MOL_PASSWORD=${db_mol_pass}
 
 ENV SSBD_ENVIRONMENT=PROD
 
-# Expose port 8181
-EXPOSE 8181
+# Expose port 8080
+EXPOSE 8080
