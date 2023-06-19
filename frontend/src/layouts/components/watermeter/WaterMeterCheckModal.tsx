@@ -13,7 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { WaterMeterChecksDto, WaterMeterDto } from "../../../api/waterMeterApi";
 import { z } from "zod";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useAccount } from "../../../hooks/useAccount";
 import { roles } from "../../../types/rolesEnum";
 import { DatePicker, LocalizationProvider, plPL } from "@mui/x-date-pickers";
@@ -125,14 +125,25 @@ export const WaterMeterCheckModal = ({ waterMeters, onSubmit }: Props) => {
         <TableHead>
           <TableRow>
             <TableCell>{t("WaterMeterListDialog.modal.id")}</TableCell>
+            <TableCell>
+              {t("WaterMeterListDialog.modal.serialNumber")}
+            </TableCell>
             <TableCell>{t("WaterMeterListDialog.modal.type")}</TableCell>
-            <TableCell>{t("WaterMeterListDialog.modal.reading")}</TableCell>
+            <TableCell>
+              <strong>
+                <Trans
+                  i18nKey={t("WaterMeterListDialog.modal.reading")}
+                  components={{ sup: <sup /> }}
+                />
+              </strong>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {waterMeters.map((waterMeter) => (
             <TableRow key={waterMeter.id}>
               <TableCell>{waterMeter.id}</TableCell>
+              <TableCell>{waterMeter.serialNumber}</TableCell>
               <TableCell>
                 {t("WaterMeterListDialog.modal." + waterMeter.type)}
               </TableCell>

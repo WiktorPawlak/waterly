@@ -635,8 +635,9 @@
     "acceptButton": "Perform",
     "modal": {
       "id": "Water Meter Id",
+      "serialNumber": "Serial Number",
       "type": "Type",
-      "reading": "Reading *",
+      "reading": "Reading [m<sup>3</sup>] *",
       "HOT_WATER": "Hot Water",
       "COLD_WATER": "Cold Water"
     },
