@@ -43,7 +43,9 @@ export const ManageUsersAdminPage = () => {
     useState(false);
 
   const [nameSuggestions, setNamesuggestions] = useState<String[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSearchPreferences, setIsLoadingSearchPreferences] =
+    useState(true);
   const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
     data: [],
     pageNumber: 1,
@@ -58,52 +60,61 @@ export const ManageUsersAdminPage = () => {
     orderBy: "login",
   });
 
+  const fetchSelfPreferences = async () => {
+    setIsLoadingSearchPreferences(true);
+    const response = await getSelfSearchPreferences();
+    if (response.status === 200) {
+      setListRequest((prevState) => ({
+        ...prevState,
+        pageSize: response.data?.pageSize || prevState.pageSize,
+        order: response.data?.order || prevState.order,
+        orderBy: response.data?.orderBy || prevState.orderBy,
+      }));
+    } else {
+      console.log(response.error);
+      fetchData();
+    }
+    setIsLoadingSearchPreferences(false);
+  };
+
   useEffect(() => {
-    getSelfSearchPreferences().then((response) => {
-      if (response.status === 200) {
-        setListRequest((prevState) => ({
-          ...prevState,
-          pageSize: response.data?.pageSize || prevState.pageSize,
-          order: response.data?.order || prevState.order,
-          orderBy: response.data?.orderBy || prevState.orderBy,
-        }));
-      } else {
-        console.log(response.error);
-      }
-    });
-    fetchData();
+    fetchSelfPreferences();
   }, []);
 
   useEffect(() => {
-    if (listRequest) {
+    if (!isLoadingSearchPreferences) {
       fetchData();
     }
   }, [listRequest, pattern, createAccountByAdminDialogOpen]);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setIsLoading(true);
-    getAccountsList(listRequest, pattern).then((response) => {
-      if (response.status === 200) {
-        setPageState(response.data!);
-      } else {
-        enqueueSnackbar(t(resolveApiError(response.error)), {
-          variant: "error",
-        });
-      }
-      setIsLoading(false);
-    });
+    const response = await getAccountsList(listRequest, pattern);
+    if (response.status === 200) {
+      setPageState(response.data!);
+    } else {
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
+    }
+    setIsLoading(false);
+  };
+
+  const fetchAccountNames = async () => {
+    const response = await getAccountNames(pattern);
+    if (response.status === 200) {
+      setNamesuggestions(response.data!);
+    } else {
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
+    }
   };
 
   useEffect(() => {
-    getAccountNames(pattern).then((response) => {
-      if (response.status === 200) {
-        setNamesuggestions(response.data!);
-      } else {
-        enqueueSnackbar(t(resolveApiError(response.error)), {
-          variant: "error",
-        });
-      }
-    });
+    if (pattern) {
+      fetchAccountNames();
+    }
   }, [pattern]);
 
   const handlePageChange = (
@@ -272,7 +283,7 @@ export const ManageUsersAdminPage = () => {
               autoHeight
               hideFooter
               rowHeight={65}
-              loading={isLoading}
+              loading={isLoading || isLoadingSearchPreferences}
               rows={pageState?.data ?? []}
               columns={columns}
               onColumnHeaderClick={handleOnColumnHeaderClick}
