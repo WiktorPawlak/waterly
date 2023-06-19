@@ -248,7 +248,8 @@ export const addInvoiceSchema = z.object({
 });
 
 export const assignWaterMeterToApartmentSchema = z.object({
-  serialNumber: z.string()
+  serialNumber: z
+    .string()
     .min(1, "validation.serialNumber.min")
     .max(50, "validation.serialNumber.max"),
   startingValue: z
@@ -258,29 +259,33 @@ export const assignWaterMeterToApartmentSchema = z.object({
 });
 
 export const editWaterMeterSchema = z.object({
-  serialNumber: z.string()
+  serialNumber: z
+    .string()
     .min(1, "validation.serialNumber.min")
     .max(50, "validation.serialNumber.max"),
-  expectedDailyUsage: z.string().regex(/^$|\d+(\.\d{3})?$/, "validation.expectedDailyUsage"),
-  startingValue: z.string().regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
+  expectedMonthlyUsage: z
+    .string()
+    .regex(/^$|\d+(\.\d{3})?$/, "validation.expectedMonthlyUsage"),
+  startingValue: z
+    .string()
+    .regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
 });
 
 export const addWaterMeterSchema = z.object({
-  serialNumber: z.string()
+  serialNumber: z
+    .string()
     .min(1, "validation.serialNumber.min")
     .max(50, "validation.serialNumber.max"),
-  startingValue: z.string().regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
+  startingValue: z
+    .string()
+    .regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
 });
 
 export const changeOwnerSchemaType = z.object({
-  expectedUsage: z
-    .string()
-    .regex(/^\d+(\.\d{3})?$/, "gówno"),
+  expectedUsage: z.string().regex(/^\d+(\.\d{3})?$/, "gówno"),
 });
 
-export type ChangeOwnerSchema = z.infer<
-  typeof changeOwnerSchemaType
->;
+export type ChangeOwnerSchema = z.infer<typeof changeOwnerSchemaType>;
 
 export type ChangePasswordByAdminSchema = z.infer<
   typeof changePasswordByAdminSchema
@@ -323,7 +328,7 @@ export type AddTariffSchema = z.infer<typeof addTariffSchema>;
 export type AddInvoiceSchema = z.infer<typeof addInvoiceSchema>;
 
 export type AssignWaterMeterToApartmentSchema = z.infer<
-  typeof assignWaterMeterToApartmentSchema
+    typeof assignWaterMeterToApartmentSchema
 >;
 
 export type EditWaterMeterSchema = z.infer<typeof editWaterMeterSchema>;

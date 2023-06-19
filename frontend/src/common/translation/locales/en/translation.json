@@ -195,6 +195,7 @@
         "serialNumber": "Serial no.",
         "apartmentNo": "Apartm. no.",
         "expectedDailyUsage": "Exp. daily usage",
+        "expectedMonthlyUsage": "Exp. monthly usage",
         "expiryDate": "Expiry Date",
         "startingValue": "Starting Value",
         "type": "Type"
@@ -324,6 +325,7 @@
     "startingValue": "Starting value needs to be specified with three decimal places",
     "type": "Water meter types can be only either hot water or cold water",
     "expectedDailyUsage": "Expected Daily Usage needs to be specified with three decimal places",
+    "expectedMonthlyUsage": "Expected Monthly Usage needs to be specified with three decimal places",
     "expiryDateAlreadyExpired": "Expiry date needs to be after current date",
     "mainWaterMeterAlreadyExists": "Active main water meter already exists",
     "inactiveWaterMeter": "Inactive water meter cannot be replaced",
@@ -577,6 +579,7 @@
   "editWaterMeterDialog": {
     "editWaterMeter": "Edit Water Meter",
     "expectedDailyUsage": "Expected Daily Usage [m<sup>3</sup>] *",
+    "expectedMonthlyUsage": "Expected Monthly Usage [m<sup>3</sup>] *",
     "startingValue": "Starting Value *",
     "expiryDate": "Expiry Date",
     "serialNumber": "Serial no. *",
