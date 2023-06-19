@@ -19,13 +19,13 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedWaterMetersListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
@@ -35,6 +35,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterCheckEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.WaterMeterEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Order;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Page;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PageSize;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterMetersOrderBy;
 
 @Log
 @Path("/water-meters")
@@ -59,11 +63,16 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
         return Response.ok().entity(waterMeterDto).header("ETag", entityTag).build();
     }
 
-    @POST
-    @Path("/list")
-    @RolesAllowed({FACILITY_MANAGER})
-    public Response getWaterMeters(@NotNull @Valid final GetPagedWaterMetersListDto dto) {
-        PaginatedList<WaterMeterDto> waterMeters = retry(() -> waterMeterEndpoint.getWaterMetersList(dto), waterMeterEndpoint);
+    @GET
+    @RolesAllowed(FACILITY_MANAGER)
+    public Response getWaterMeters(@Page @QueryParam("page") final Integer page,
+                                @PageSize @QueryParam("pageSize") final Integer pageSize,
+                                @Order @QueryParam("order") final String order,
+                                @WaterMetersOrderBy @QueryParam("orderBy") final String orderBy,
+                                @QueryParam("pattern") final String pattern) {
+
+        PaginatedList<WaterMeterDto> waterMeters = retry(
+                () -> waterMeterEndpoint.getWaterMetersList(pattern, page, pageSize, order, orderBy), waterMeterEndpoint);
         return Response.ok().entity(waterMeters).build();
     }
 

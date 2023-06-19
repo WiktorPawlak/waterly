@@ -7,6 +7,8 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 import java.util.List;
 import java.util.Optional;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
@@ -84,16 +86,15 @@ public class WaterMeterService {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public List<WaterMeter> getWaterMeters(final int page, final int pageSize, final String order, final String orderBy) {
-        boolean ascOrder = "asc".equalsIgnoreCase(order);
-        return waterMeterFacade.findWaterMeters(page,
-                pageSize,
-                ascOrder,
-                orderBy);
-    }
+    public Tuple2<List<WaterMeter>, Long> getWaterMeters(final String pattern,
+                                                   final int page,
+                                                   final int pageSize,
+                                                   final boolean ascOrder,
+                                                   final String orderBy) {
 
-    @RolesAllowed({FACILITY_MANAGER})
-    public Long getWaterMetersCount() {
-        return waterMeterFacade.count();
+        return Tuple.of(
+                waterMeterFacade.findWaterMeters(pattern, page, pageSize, ascOrder, orderBy),
+                waterMeterFacade.countAll(pattern)
+        );
     }
 }

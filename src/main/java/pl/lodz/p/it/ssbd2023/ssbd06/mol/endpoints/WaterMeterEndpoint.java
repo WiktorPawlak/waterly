@@ -1,6 +1,5 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 
-import static pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService.FIRST_PAGE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType.MAIN;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
@@ -10,21 +9,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.vavr.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.config.PaginationConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedWaterMetersListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
@@ -33,7 +31,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.ApartmentService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
@@ -55,8 +52,7 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
     private TimeProvider timeProvider;
 
     @Inject
-    @Property("default.list.page.size")
-    private int defaultListPageSize;
+    private PaginationConfig paginationConfig;
 
     @RolesAllowed({FACILITY_MANAGER})
     public WaterMeterDto getWaterMeterById(final long id) {
@@ -163,21 +159,30 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public PaginatedList<WaterMeterDto> getWaterMetersList(final @NotNull @Valid GetPagedWaterMetersListDto dto) {
-        int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;
-        int pageSizeResolved = dto.getPageSize() != null ? dto.getPageSize() : defaultListPageSize;
-        String orderByResolved = dto.getOrderBy() != null ? dto.getOrderBy() : "expiryDate";
-        List<WaterMeterDto> waterMeters = waterMeterService.getWaterMeters(pageResolved,
-                        pageSizeResolved,
-                        dto.getOrder(),
-                        orderByResolved).stream()
-                .map(WaterMeterDto::new)
-                .toList();
+    public PaginatedList<WaterMeterDto> getWaterMetersList(final String pattern,
+                                                      final Integer page,
+                                                      final Integer pageSize,
+                                                      final String order,
+                                                      final String orderBy) {
 
-        return new PaginatedList<>(waterMeters,
-                pageResolved,
-                waterMeters.size(),
-                (long) Math.ceil(waterMeterService.getWaterMetersCount().doubleValue() / pageSizeResolved));
+        int preparedPage = paginationConfig.preparePage(page);
+        int preparedPageSize = paginationConfig.preparePageSize(pageSize);
+        String preparedOrderBy = orderBy != null ? orderBy : "serialNumber";
+        String preparedPattern = paginationConfig.preparePattern(pattern);
+        boolean ascOrder = paginationConfig.prepareAscOrder(order);
+
+        Tuple2<List<WaterMeter>, Long> paginatedWaterMeters =
+                waterMeterService.getWaterMeters(preparedPattern, preparedPage, preparedPageSize, ascOrder, preparedOrderBy);
+
+        List<WaterMeterDto> waterMetersDtos = paginatedWaterMeters._1
+                .stream().map(WaterMeterDto::new)
+                .toList();
+        return new PaginatedList<>(
+                waterMetersDtos,
+                preparedPage,
+                waterMetersDtos.size(),
+                (long) Math.ceil(paginatedWaterMeters._2.doubleValue() / preparedPageSize)
+        );
     }
 
     private WaterMeter prepareMainWaterMeter(final CreateMainWaterMeterDto dto) {

@@ -1,20 +1,7 @@
 import { ApiResponse, get, post, put } from "./api";
+import { GetPagedListDto, PaginatedList } from "./accountApi";
 
 const INVOICES_PATH = "/invoices";
-
-export interface GetPagedInvoicesListDto {
-  order: string;
-  page: number;
-  pageSize: number;
-  orderBy: string;
-}
-
-export interface PaginatedList<T> {
-  data: T[];
-  pageNumber: number;
-  itemsInPage: number;
-  totalPages: number;
-}
 
 export interface InvoiceDto {
   id: number;
@@ -33,9 +20,10 @@ export interface CreateInvoiceDto {
 }
 
 export async function getInvoicesList(
-  getPagedListDto: GetPagedInvoicesListDto
+  getPagedListDto: GetPagedListDto,
+  pattern: string
 ): Promise<ApiResponse<PaginatedList<InvoiceDto>>> {
-  return post(`${INVOICES_PATH}/list`, getPagedListDto);
+  return get(`${INVOICES_PATH}`, { ...getPagedListDto, pattern: pattern });
 }
 
 export async function getInvoiceById(

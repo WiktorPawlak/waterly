@@ -23,14 +23,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PaginatedList } from "../../api/accountApi";
+import { PaginatedList, GetPagedListDto } from "../../api/accountApi";
 import { MainLayout } from "../../layouts/MainLayout";
 import { enqueueSnackbar } from "notistack";
 import { resolveApiError } from "../../api/apiErrors";
 import {
   getInvoiceById,
   getInvoicesList,
-  GetPagedInvoicesListDto,
   InvoiceDto,
 } from "../../api/invoiceApi";
 import { useAccount } from "../../hooks/useAccount";
@@ -46,6 +45,7 @@ export const InvoicesListFMPage = () => {
   const [editInvoiceModalOpen, setEditInvoiceModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceDto>();
   const [selectedInvoiceEtag, setSelectedInvoiceEtag] = useState("");
+  const [pattern, setPattern] = useState("");
   const [addInvoiceDialogOpen, setAddInvoiceDialogOpen] = useState(false);
   const [pageState, setPageState] = useState<PaginatedList<InvoiceDto>>({
     data: [],
@@ -54,22 +54,22 @@ export const InvoicesListFMPage = () => {
     totalPages: 0,
   });
 
-  const [listRequest, setListRequest] = useState<GetPagedInvoicesListDto>({
+  const [listRequest, setListRequest] = useState<GetPagedListDto>({
     page: 1,
-    order: "asc",
     pageSize: 10,
-    orderBy: "invoiceNumber",
+    order: "asc",
+    orderBy: "totalCost",
   });
 
   useEffect(() => {
     if (listRequest) {
       fetchData();
     }
-  }, [listRequest, editInvoiceModalOpen, addInvoiceDialogOpen]);
+  }, [listRequest, pattern, editInvoiceModalOpen, addInvoiceDialogOpen]);
 
   const fetchData = () => {
     setIsLoading(true);
-    getInvoicesList(listRequest).then((response) => {
+    getInvoicesList(listRequest, pattern).then((response) => {
       if (response.status === 200) {
         setPageState(response.data!);
       } else {
@@ -115,7 +115,7 @@ export const InvoicesListFMPage = () => {
   };
 
   const handleOnColumnHeaderClick = (column: GridColumnHeaderParams) => {
-    if (column.field != "actions")
+    if (column.field === "totalCost" || column.field === "waterUsage")
       setListRequest((old) => ({ ...old, orderBy: column.field }));
   };
 
@@ -126,6 +126,7 @@ export const InvoicesListFMPage = () => {
   const columns: GridColDef[] = [
     {
       field: "invoiceNumber",
+      sortable: false,
       renderHeader: () => (
         <strong>
           {t("InvoicesListFMPage.dataGrid.headers.invoiceNumber")}
@@ -135,6 +136,7 @@ export const InvoicesListFMPage = () => {
     },
     {
       field: "date",
+      sortable: true,
       renderHeader: () => (
         <strong>{t("InvoicesListFMPage.dataGrid.headers.date")}</strong>
       ),
@@ -142,6 +144,7 @@ export const InvoicesListFMPage = () => {
     },
     {
       field: "totalCost",
+      sortable: true,
       renderHeader: () => (
         <strong>{t("InvoicesListFMPage.dataGrid.headers.totalCost")}</strong>
       ),
@@ -235,6 +238,9 @@ export const InvoicesListFMPage = () => {
             freeSolo
             options={[]}
             sx={{ width: "35vw" }}
+            onInputChange={(event, newInputValue) => {
+              setPattern(newInputValue);
+            }}
             renderInput={(params) => (
               <TextField
                 label={t("manageUsersPage.searchLabel")}

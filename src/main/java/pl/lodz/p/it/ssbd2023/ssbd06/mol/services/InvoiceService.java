@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
@@ -68,17 +70,16 @@ public class InvoiceService {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public List<Invoice> getInvoices(final int page, final int pageSize, final String order, final String orderBy) {
-        boolean ascOrder = "asc".equalsIgnoreCase(order);
-        return invoiceFacade.findInvoices(page,
-                pageSize,
-                ascOrder,
-                orderBy);
-    }
+    public Tuple2<List<Invoice>, Long> getInvoices(final String pattern,
+                                                   final int page,
+                                                   final int pageSize,
+                                                   final boolean ascOrder,
+                                                   final String orderBy) {
 
-    @RolesAllowed({FACILITY_MANAGER})
-    public Long getInvoicesCount() {
-        return invoiceFacade.count();
+        return Tuple.of(
+                invoiceFacade.findInvoices(pattern, page, pageSize, ascOrder, orderBy),
+                invoiceFacade.countAll(pattern)
+        );
     }
 
     @RolesAllowed({FACILITY_MANAGER})

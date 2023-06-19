@@ -17,8 +17,11 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.java.Log;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
@@ -73,28 +76,73 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public List<WaterMeter> findWaterMeters(final int page, final int pageSize, final boolean ascOrder, final String orderBy) {
+    public List<WaterMeter> findWaterMeters(final String pattern,
+                                      final int page,
+                                      final int pageSize,
+                                      final boolean ascOrder,
+                                      final String orderBy) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<WaterMeter> query = cb.createQuery(WaterMeter.class);
-        Root<WaterMeter> waterMeter = query.from(WaterMeter.class);
+        Root<WaterMeter> waterMeterRoot = query.from(WaterMeter.class);
+
         if (ascOrder) {
-            query.orderBy(cb.asc(waterMeter.get(orderBy)));
+            query.orderBy(cb.asc(resolveFieldClass(waterMeterRoot, orderBy).get(orderBy)));
         } else {
-            query.orderBy(cb.desc(waterMeter.get(orderBy)));
+            query.orderBy(cb.desc(resolveFieldClass(waterMeterRoot, orderBy).get(orderBy)));
         }
+
+        Predicate predicate = cb.conjunction();
+
+        if (pattern != null) {
+            predicate = cb.and(predicate, cb.or(getFilterByPatternPredicates(pattern, cb, waterMeterRoot)));
+        }
+
+        query.where(predicate);
+
         return getEntityManager().createQuery(query)
                 .setFirstResult(pageSize * (page - 1))
                 .setMaxResults(pageSize)
                 .getResultList();
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
-    public Long count() {
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+    private From<?, ?> resolveFieldClass(final Root<WaterMeter> root, final String fieldName) {
+        return switch (fieldName) {
+            case "expiryDate", "expectedDailyUsage", "startingValue", "type", "apartment" -> root;
+            default -> {
+                log.severe(() -> "Error, trying to query by invalid field");
+                throw ApplicationBaseException.generalErrorException();
+            }
+        };
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public Long countAll(final String pattern) {
+        return count(pattern);
+    }
+
+    private Long count(final String pattern) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<WaterMeter> waterMeter = query.from(WaterMeter.class);
+
+        Predicate predicate = cb.conjunction();
+
+        if (pattern != null) {
+            predicate = cb.and(predicate, cb.or(getFilterByPatternPredicates(pattern, cb, waterMeter)));
+        }
+
+        query.where(predicate);
         query.select(cb.count(waterMeter));
+
         return em.createQuery(query).getSingleResult();
+    }
+
+    private Predicate[] getFilterByPatternPredicates(final String pattern, final CriteriaBuilder cb, final Root<WaterMeter> waterMeter) {
+        String filterPattern = "%" + pattern.toUpperCase() + "%";
+
+        Predicate numberPredicate = cb.like(cb.upper(waterMeter.get("serialNumber")), filterPattern);
+
+        return new Predicate[]{numberPredicate};
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})

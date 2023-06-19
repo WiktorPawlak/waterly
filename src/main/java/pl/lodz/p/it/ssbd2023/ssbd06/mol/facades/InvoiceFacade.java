@@ -20,9 +20,11 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.java.Log;
+import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.FacadeExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.AbstractFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
@@ -55,28 +57,73 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public List<Invoice> findInvoices(final int page, final int pageSize, final boolean ascOrder, final String orderBy) {
+    public List<Invoice> findInvoices(final String pattern,
+                                      final int page,
+                                      final int pageSize,
+                                      final boolean ascOrder,
+                                      final String orderBy) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Invoice> query = cb.createQuery(Invoice.class);
-        Root<Invoice> invoice = query.from(Invoice.class);
+        Root<Invoice> invoiceRoot = query.from(Invoice.class);
+
         if (ascOrder) {
-            query.orderBy(cb.asc(invoice.get(orderBy)));
+            query.orderBy(cb.asc(resolveFieldClass(invoiceRoot, orderBy).get(orderBy)));
         } else {
-            query.orderBy(cb.desc(invoice.get(orderBy)));
+            query.orderBy(cb.desc(resolveFieldClass(invoiceRoot, orderBy).get(orderBy)));
         }
+
+        Predicate predicate = cb.conjunction();
+
+        if (pattern != null) {
+            predicate = cb.and(predicate, cb.or(getFilterByPatternPredicates(pattern, cb, invoiceRoot)));
+        }
+
+        query.where(predicate);
+
         return getEntityManager().createQuery(query)
                 .setFirstResult(pageSize * (page - 1))
                 .setMaxResults(pageSize)
                 .getResultList();
     }
 
-    @RolesAllowed({FACILITY_MANAGER})
-    public Long count() {
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+    private From<?, ?> resolveFieldClass(final Root<Invoice> root, final String fieldName) {
+        return switch (fieldName) {
+            case "waterUsage", "totalCost", "date" -> root;
+            default -> {
+                log.severe(() -> "Error, trying to query by invalid field");
+                throw ApplicationBaseException.generalErrorException();
+            }
+        };
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
+    public Long countAll(final String pattern) {
+        return count(pattern);
+    }
+
+    private Long count(final String pattern) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<Invoice> invoice = query.from(Invoice.class);
+
+        Predicate predicate = cb.conjunction();
+
+        if (pattern != null) {
+            predicate = cb.and(predicate, cb.or(getFilterByPatternPredicates(pattern, cb, invoice)));
+        }
+
+        query.where(predicate);
         query.select(cb.count(invoice));
+
         return em.createQuery(query).getSingleResult();
+    }
+
+    private Predicate[] getFilterByPatternPredicates(final String pattern, final CriteriaBuilder cb, final Root<Invoice> invoice) {
+        String filterPattern = "%" + pattern.toUpperCase() + "%";
+
+        Predicate numberPredicate = cb.like(cb.upper(invoice.get("invoiceNumber")), filterPattern);
+
+        return new Predicate[]{numberPredicate};
     }
 
     @Override

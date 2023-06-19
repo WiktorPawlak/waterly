@@ -200,6 +200,34 @@ export const Nav = ({
                         </NavEntry>
                       </>
                     )}
+                    <Button onClick={handleRefresh}>
+                      <CachedIcon />
+                    </Button>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Button
+                        sx={{ borderRadius: 0 }}
+                        onClick={() => handleLanguageChange("en")}
+                        variant={
+                          preferredLanguage === "en" ? "contained" : "text"
+                        }
+                      >
+                        EN
+                      </Button>
+                      <Button
+                        sx={{ borderRadius: 0 }}
+                        onClick={() => handleLanguageChange("pl")}
+                        variant={
+                          preferredLanguage === "pl" ? "contained" : "text"
+                        }
+                      >
+                        PL
+                      </Button>
+                    </Box>
                   </Toolbar>
                 </Box>
               </Drawer>

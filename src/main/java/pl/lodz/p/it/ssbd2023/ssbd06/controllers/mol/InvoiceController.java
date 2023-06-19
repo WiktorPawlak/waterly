@@ -13,14 +13,18 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedInvoicesListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.InvoiceEndpoint;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.InvoicesOrderBy;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Order;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Page;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PageSize;
 
 @Path("/invoices")
 @RequestScoped
@@ -32,11 +36,15 @@ public class InvoiceController extends RepeatableTransactionProcessor {
     @Inject
     private PayloadSigner payloadSigner;
 
-    @POST
-    @Path("/list")
-    @RolesAllowed({FACILITY_MANAGER})
-    public Response getInvoices(@NotNull @Valid final GetPagedInvoicesListDto dto) {
-        PaginatedList<InvoicesDto> invoices = retry(() -> invoiceEndpoint.getInvoicesList(dto), invoiceEndpoint);
+    @GET
+    @RolesAllowed(FACILITY_MANAGER)
+    public Response getInvoices(@Page @QueryParam("page") final Integer page,
+                                @PageSize @QueryParam("pageSize") final Integer pageSize,
+                                @Order @QueryParam("order") final String order,
+                                @InvoicesOrderBy @QueryParam("orderBy") final String orderBy,
+                                @QueryParam("pattern") final String pattern) {
+
+        PaginatedList<InvoicesDto> invoices = retry(() -> invoiceEndpoint.getInvoicesList(pattern, page, pageSize, order, orderBy), invoiceEndpoint);
         return Response.ok().entity(invoices).build();
     }
 
