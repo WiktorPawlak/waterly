@@ -1,23 +1,22 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 
-import static pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService.FIRST_PAGE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
 import java.util.List;
 
+import io.vavr.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.config.PaginationConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
-import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedInvoicesListDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.InvoiceCreatedEvent;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.InvoiceUpdatedEvent;
@@ -25,7 +24,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.InvoiceService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.GenerateBillsService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.UpdateBillsService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
@@ -41,15 +39,15 @@ public class InvoiceEndpoint extends TransactionBoundariesTracingBean {
     private InvoiceService invoiceService;
 
     @Inject
-    @Property("default.list.page.size")
-    private int defaultListPageSize;
-
-    @Inject
     private GenerateBillsService generateBillsService;
 
     @Inject
     private UpdateBillsService updateBillsService;
 
+    @Inject
+    private PaginationConfig paginationConfig;
+
+    @SneakyThrows
     @RolesAllowed({FACILITY_MANAGER})
     public void addInvoice(final CreateInvoiceDto dto) {
         invoiceService.createInvoice(dto);
@@ -70,21 +68,30 @@ public class InvoiceEndpoint extends TransactionBoundariesTracingBean {
     }
 
     @RolesAllowed({FACILITY_MANAGER})
-    public PaginatedList<InvoicesDto> getInvoicesList(final @NotNull @Valid GetPagedInvoicesListDto dto) {
-        int pageResolved = dto.getPage() != null ? dto.getPage() : FIRST_PAGE;
-        int pageSizeResolved = dto.getPageSize() != null ? dto.getPageSize() : defaultListPageSize;
-        String orderByResolved = dto.getOrderBy() != null ? dto.getOrderBy() : "date";
-        List<InvoicesDto> invoices = invoiceService.getInvoices(pageResolved,
-                        pageSizeResolved,
-                        dto.getOrder(),
-                        orderByResolved).stream()
-                .map(InvoicesDto::new)
-                .toList();
+    public PaginatedList<InvoicesDto> getInvoicesList(final String pattern,
+                                                      final Integer page,
+                                                      final Integer pageSize,
+                                                      final String order,
+                                                      final String orderBy) {
 
-        return new PaginatedList<>(invoices,
-                pageResolved,
-                invoices.size(),
-                (long) Math.ceil(invoiceService.getInvoicesCount().doubleValue() / pageSizeResolved));
+        int preparedPage = paginationConfig.preparePage(page);
+        int preparedPageSize = paginationConfig.preparePageSize(pageSize);
+        String preparedOrderBy = orderBy != null ? orderBy : "invoiceNumber";
+        String preparedPattern = paginationConfig.preparePattern(pattern);
+        boolean ascOrder = paginationConfig.prepareAscOrder(order);
+
+        Tuple2<List<Invoice>, Long> paginatedInvoices =
+                invoiceService.getInvoices(preparedPattern, preparedPage, preparedPageSize, ascOrder, preparedOrderBy);
+
+        List<InvoicesDto> invoicesDtos = paginatedInvoices._1
+                .stream().map(InvoicesDto::new)
+                .toList();
+        return new PaginatedList<>(
+                invoicesDtos,
+                preparedPage,
+                invoicesDtos.size(),
+                (long) Math.ceil(paginatedInvoices._2.doubleValue() / preparedPageSize)
+        );
     }
 
     @RolesAllowed({FACILITY_MANAGER})
