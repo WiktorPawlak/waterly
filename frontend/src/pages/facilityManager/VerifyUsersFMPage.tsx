@@ -33,10 +33,9 @@ import { resolveApiError } from "../../api/apiErrors";
 
 export const VerifyUsersFMPage = () => {
   const { t } = useTranslation();
-  const [fetchSearchPreferencesCompleted, setFetchSearchPreferencesCompleted] =
-    useState(false);
   const [pattern, setPattern] = useState("");
-
+  const [isLoadingSearchPreferences, setIsLoadingSearchPreferences] =
+    useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [shouldFetchData, setShouldFetchData] = useState(false);
   const [pageState, setPageState] = useState<PaginatedList<ListAccountDto>>({
@@ -53,41 +52,44 @@ export const VerifyUsersFMPage = () => {
     orderBy: "login",
   });
 
+  const fetchSelfPreferences = async () => {
+    setIsLoadingSearchPreferences(true);
+    const response = await getSelfSearchPreferences();
+    if (response.status === 200) {
+      setListRequest((prevState) => ({
+        ...prevState,
+        pageSize: response.data?.pageSize || prevState.pageSize,
+        order: response.data?.order || prevState.order,
+        orderBy: response.data?.orderBy || prevState.orderBy,
+      }));
+    } else {
+      console.log(response.error);
+      fetchData();
+    }
+    setIsLoadingSearchPreferences(false);
+  };
+
   useEffect(() => {
-    getSelfSearchPreferences().then((response) => {
-      if (response.status === 200) {
-        setListRequest((prevState) => ({
-          ...prevState,
-          pageSize: response.data?.pageSize || prevState.pageSize,
-          order: response.data?.order || prevState.order,
-          orderBy: response.data?.orderBy || prevState.orderBy,
-        }));
-      } else {
-        console.error(response.error);
-      }
-      setFetchSearchPreferencesCompleted(true);
-    });
-    fetchData();
+    fetchSelfPreferences();
   }, []);
 
   useEffect(() => {
-    if (listRequest) {
+    if (!isLoadingSearchPreferences) {
       fetchData();
     }
   }, [listRequest, pattern, shouldFetchData]);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setIsLoading(true);
-    getNotConfirmedAccoutsList(listRequest, pattern).then((response) => {
-      if (response.status === 200) {
-        setPageState(response.data!);
-      } else {
-        enqueueSnackbar(t(resolveApiError(response.error)), {
-          variant: "error",
-        });
-      }
-      setIsLoading(false);
-    });
+    const response = await getNotConfirmedAccoutsList(listRequest, pattern);
+    if (response.status === 200) {
+      setPageState(response.data!);
+    } else {
+      enqueueSnackbar(t(resolveApiError(response.error)), {
+        variant: "error",
+      });
+    }
+    setIsLoading(false);
   };
 
   const handlePageChange = (
@@ -226,7 +228,7 @@ export const VerifyUsersFMPage = () => {
             <DataGrid
               autoHeight
               hideFooter
-              loading={isLoading}
+              loading={isLoading || isLoadingSearchPreferences}
               rows={pageState?.data ?? []}
               columns={columns}
               onColumnHeaderClick={handleOnColumnHeaderClick}

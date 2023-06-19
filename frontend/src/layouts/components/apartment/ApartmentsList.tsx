@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
   DataGrid,
@@ -166,14 +166,19 @@ export const ApartmentsList = () => {
     {
       field: "area",
       renderHeader: () => (
-        <strong>{t("apartmentPage.dataGrid.header.area")}</strong>
+        <strong>
+          <Trans
+            i18nKey={"apartmentPage.dataGrid.header.area"}
+            components={{ sup: <sup /> }}
+          />
+        </strong>
       ),
       renderCell: (params) => (
         <span>
           {params.value.toFixed(2)} m<sup>2</sup>
         </span>
       ),
-      width: 130,
+      width: 160,
     },
     {
       field: "ownerName",
