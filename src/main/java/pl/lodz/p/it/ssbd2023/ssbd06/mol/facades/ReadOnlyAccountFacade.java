@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
+import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.Optional;
 
@@ -40,6 +41,7 @@ public class ReadOnlyAccountFacade extends AbstractFacade<Account> {
         return em;
     }
 
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Optional<Account> findByLogin(final String identity) {
         try {
             TypedQuery<Account> accountTypedQuery = em.createNamedQuery("Account.findByLogin", Account.class);

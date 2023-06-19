@@ -636,8 +636,9 @@
     "acceptButton": "Wprowadź",
     "modal": {
       "id": "ID wodomierza",
+      "serialNumber": "Numer seryjny",
       "type": "Typ",
-      "reading": "Pomiar *",
+      "reading": "Pomiar [m<sup>3</sup>] *",
       "HOT_WATER": "Ciepła Woda",
       "COLD_WATER": "Zimna Woda"
     },
