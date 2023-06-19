@@ -109,20 +109,24 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
   }, [yearMonthDate]);
 
   const headers = [
-    { label: t("bill.advancedUsage") },
-    { label: t("bill.realUsage") },
-    { label: t("bill.advancedCost") },
-    { label: t("bill.realCost") },
-    { label: t("bill.rowBalance") },
+    { id: 0,
+      label: (
+      <Trans i18nKey={"bill.advancedUsage"} components={{ sup: <sup /> }} />
+    )},
+    { id: 1,
+      label: (
+      <Trans i18nKey={"bill.realUsage"} components={{ sup: <sup /> }} />
+    )},
+    { id: 2, label: t("bill.advancedCost") },
+    { id: 3, label: t("bill.realCost") },
+    { id: 4, label: t("bill.rowBalance") },
   ];
 
   const tableData = useMemo(
     () => [
       {
         id: 0,
-        name: (
-          <Trans i18nKey={"bill.coldWater"} components={{ sup: <sup /> }} />
-        ),
+        name: t("bill.coldWater"),
         advancedUsage: billData.forecast.coldWaterUsage,
         realUsage: billData.realUsage.coldWaterUsage,
         advancedCost: billData.forecast.coldWaterCost,
@@ -131,7 +135,7 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
       },
       {
         id: 1,
-        name: <Trans i18nKey={"bill.hotWater"} components={{ sup: <sup /> }} />,
+        name: t("bill.hotWater"),
         advancedUsage: billData.forecast.hotWaterUsage,
         realUsage: billData.realUsage.hotWaterUsage,
         advancedCost: billData.forecast.hotWaterCost,
@@ -140,7 +144,7 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
       },
       {
         id: 2,
-        name: <Trans i18nKey={"bill.trash"} components={{ sup: <sup /> }} />,
+        name: t("bill.trash"),
         advancedUsage: "-",
         realUsage: "-",
         advancedCost: billData.forecast.garbageCost,
@@ -149,9 +153,7 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
       },
       {
         id: 3,
-        name: (
-          <Trans i18nKey={"bill.unbilledWater"} components={{ sup: <sup /> }} />
-        ),
+        name: t("bill.unbilledWater"),
         advancedUsage: "-",
         realUsage: billData.realUsage.unbilledWaterAmount,
         advancedCost: "-",
@@ -166,7 +168,7 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
         realCost: billData.realUsage.totalCost,
       },
     ],
-    [billData]
+    [billData, t]
   );
 
   if (isLoading && !found) {
@@ -198,7 +200,7 @@ export const ShowBillModal = ({ apartmentId, yearMonthDate }: Props) => {
             <TableCell></TableCell>
             {/* Empty cell for the top-left corner */}
             {headers.map((header) => (
-              <TableCell key={header.label}>{header.label}</TableCell>
+              <TableCell key={header.id}>{header.label}</TableCell>
             ))}
           </TableRow>
         </TableHead>

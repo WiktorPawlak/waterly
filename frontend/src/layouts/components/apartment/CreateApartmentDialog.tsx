@@ -1,20 +1,20 @@
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Tooltip, tooltipClasses, TooltipProps,} from "@mui/material";
-import {Box, styled} from "@mui/system";
-import {useTranslation} from "react-i18next";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Tooltip, tooltipClasses, TooltipProps, } from "@mui/material";
+import { Box, styled } from "@mui/system";
+import { Trans, useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
-import {createApartmentSchema, CreateApartmentSchemaType,} from "../../../validation/validationSchemas";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useForm} from "react-hook-form";
-import {resolveApiError} from "../../../api/apiErrors";
-import {enqueueSnackbar} from "notistack";
+import { createApartmentSchema, CreateApartmentSchemaType, } from "../../../validation/validationSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { resolveApiError } from "../../../api/apiErrors";
+import { enqueueSnackbar } from "notistack";
 import ErrorIcon from "@mui/icons-material/Error";
-import {createAprtment} from "../../../api/apartmentApi";
-import {useState} from "react";
-import {OwnerAccountsSelect} from "../account/OwnersAccountsSelect";
+import { createAprtment } from "../../../api/apartmentApi";
+import { useState } from "react";
+import { OwnerAccountsSelect } from "../account/OwnersAccountsSelect";
 
-const ErrorTooltip = styled(({className, ...props}: TooltipProps) => (
-    <Tooltip {...props} classes={{popper: className}}/>
-))(({theme}) => ({
+const ErrorTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
         backgroundColor: "#ff3333",
         color: "white",
@@ -28,14 +28,14 @@ interface Props {
     setIsOpen: (isOpen: boolean) => void;
 }
 
-export const CreateApartmentDialog = ({isOpen, setIsOpen}: Props) => {
-    const {t} = useTranslation();
+export const CreateApartmentDialog = ({ isOpen, setIsOpen }: Props) => {
+    const { t } = useTranslation();
     const [ownerId, setOwnerId] = useState<number>();
 
     const {
         register,
         handleSubmit,
-        formState: {errors},
+        formState: { errors },
         reset,
     } = useForm<CreateApartmentSchemaType>({
         resolver: zodResolver(createApartmentSchema),
@@ -57,7 +57,7 @@ export const CreateApartmentDialog = ({isOpen, setIsOpen}: Props) => {
         reset();
     };
 
-    const {number: numberError, area: areaError} = errors;
+    const { number: numberError, area: areaError } = errors;
 
     const numberErrorMessage = numberError?.message;
     const areaErrorMessage = areaError?.message;
@@ -93,11 +93,11 @@ export const CreateApartmentDialog = ({isOpen, setIsOpen}: Props) => {
         >
             <Box
                 sx={{
-                    mt: {xs: 40, md: 0},
+                    mt: { xs: 40, md: 0 },
                     display: "flex",
                     flexDirection: "column",
-                    alignItems: {xs: "center", md: "flex-start"},
-                    justifyContent: {xs: "center", md: "flex-start"},
+                    alignItems: { xs: "center", md: "flex-start" },
+                    justifyContent: { xs: "center", md: "flex-start" },
                 }}
             ></Box>
             <Box>
@@ -112,16 +112,16 @@ export const CreateApartmentDialog = ({isOpen, setIsOpen}: Props) => {
                         <DialogTitle id="role-modal-title">
                             {t("apartmentPage.createApartment")}
                         </DialogTitle>
-                        <Button sx={{width: "30px"}} onClick={handleClose}>
-                            <CloseIcon/>
+                        <Button sx={{ width: "30px" }} onClick={handleClose}>
+                            <CloseIcon />
                         </Button>
                     </Box>
-                    <DialogContent sx={{width: "400px"}}>
-                        <Box sx={{width: "100%"}}>
+                    <DialogContent sx={{ width: "400px" }}>
+                        <Box sx={{ width: "100%" }}>
                             <Box
                                 sx={{
                                     display: "flex",
-                                    flexDirection: {xs: "column", md: "row"},
+                                    flexDirection: { xs: "column", md: "row" },
                                 }}
                             >
                                 <TextField
@@ -133,7 +133,7 @@ export const CreateApartmentDialog = ({isOpen, setIsOpen}: Props) => {
                                     name="number"
                                     sx={{
                                         mb: 3,
-                                        mr: {xs: 0, md: 5},
+                                        mr: { xs: 0, md: 5 },
                                         "& label": {
                                             color: "text.secondary",
                                         },
@@ -143,17 +143,18 @@ export const CreateApartmentDialog = ({isOpen, setIsOpen}: Props) => {
                                     }}
                                 />
                                 <TextField
-                                    label={t("apartmentPage.dataGrid.header.area")}
+                                    label={<Trans i18nKey={"apartmentPage.dataGrid.header.area"} components={{ sup: <sup /> }} />}
                                     {...register("area")}
                                     error={!!areaErrorMessage}
                                     helperText={areaErrorMessage && t(areaErrorMessage)}
                                     InputProps={{
-                                        inputProps: {step: 0.5, min: 1.0, max: 999.99},
+                                        inputProps: { step: 0.5, min: 1.0, max: 999.99 },
                                     }}
                                     variant="standard"
                                     name="area"
                                     type="number"
                                     sx={{
+                                        width: "200px",
                                         mb: 3,
                                         "& label": {
                                             color: "text.secondary",
@@ -164,7 +165,7 @@ export const CreateApartmentDialog = ({isOpen, setIsOpen}: Props) => {
                                     }}
                                 />
                             </Box>
-                            <OwnerAccountsSelect setOwnerId={setOwnerId} ownerId={ownerId}/>
+                            <OwnerAccountsSelect setOwnerId={setOwnerId} ownerId={ownerId} />
                         </Box>
                     </DialogContent>
                     <DialogActions>
@@ -175,23 +176,23 @@ export const CreateApartmentDialog = ({isOpen, setIsOpen}: Props) => {
                             title={
                                 !ownerId ? (
                                     <>
-                                        <ErrorIcon/> {t("apartmentPage.validation.selectedOwner")}
+                                        <ErrorIcon /> {t("apartmentPage.validation.selectedOwner")}
                                     </>
                                 ) : (
                                     ""
                                 )
                             }
                         >
-              <span>
-                <Button
-                    disabled={!ownerId}
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSubmit(handleFormSubmit)}
-                >
-                  {t("common.confirm")}
-                </Button>
-              </span>
+                            <span>
+                                <Button
+                                    disabled={!ownerId}
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleSubmit(handleFormSubmit)}
+                                >
+                                    {t("common.confirm")}
+                                </Button>
+                            </span>
                         </ErrorTooltip>
                     </DialogActions>
                 </Dialog>

@@ -327,7 +327,7 @@
     "expiryDateAlreadyExpired": "Expiry date needs to be after current date",
     "mainWaterMeterAlreadyExists": "Active main water meter already exists",
     "inactiveWaterMeter": "Inactive water meter cannot be replaced",
-        "waterMeterCheckOnInactiveWaterMeter": "Cannot perform water meter check on inactive water meter",
+    "waterMeterCheckOnInactiveWaterMeter": "Cannot perform water meter check on inactive water meter",
     "readingValue": "Reading value needs to be specified with 5 digits before and 3 digits after decimal point",
     "serialNumber": {
       "min": "Serial number must be at least 1 character long",
@@ -435,9 +435,9 @@
     "success": "The password has been changed and the user has been informed by e-mail about the possibility of changing the password"
   },
   "editTariffDialog": {
-    "coldWaterPrice": "Cold water [PLN/m<sup>3</sup>]",
-    "hotWaterPrice": "Hot Water [PLN/m<sup>3</sup>]",
-    "trashPrice": "Trash [PLN/m<sup>3</sup>]",
+    "coldWaterPrice": "Cold water [PLN/m<sup>3</sup>] *",
+    "hotWaterPrice": "Hot Water [PLN/m<sup>3</sup>] *",
+    "trashPrice": "Trash [PLN/m<sup>3</sup>] *",
     "startDate": "Start date",
     "endDate": "End date",
     "editTariff": "Edit Tariff",
@@ -445,18 +445,18 @@
   },
   "editInvoiceModal": {
     "date": "Date",
-    "totalCost": "Total cost [PLN]",
-    "waterUsage": "Water Usage [m<sup>3</sup>]",
+    "totalCost": "Total cost [PLN] *",
+    "waterUsage": "Water Usage [m<sup>3</sup>] *",
     "editInvoice": "Edit invoice",
-    "invoiceNumber": "Invoice Number",
+    "invoiceNumber": "Invoice Number *",
     "invoiceEditedSuccessfully": "Invoice edited successfully"
   },
   "addInvoiceModal": {
     "date": "Date",
-    "totalCost": "Total cost [PLN]",
-    "waterUsage": "Water Usage [m<sup>3</sup>]",
+    "totalCost": "Total cost [PLN] *",
+    "waterUsage": "Water Usage [m<sup>3</sup>] *",
     "addInvoice": "Add invoice",
-    "invoiceNumber": "Invoice Number",
+    "invoiceNumber": "Invoice Number *",
     "invoiceAddedSuccessfully": "Invoice added successfully"
   },
   "changeApartmentOwnerModal": {
@@ -467,14 +467,14 @@
     "addTariff": "Add tariff"
   },
   "assignWaterMeterDialog": {
-    "startingValue": "Starting value",
-    "date": "Expiration date",
-    "type": "Select water meter type",
+    "startingValue": "Starting value *",
+    "date": "Expiration date *",
+    "type": "Select water meter type *",
     "waterMeterAssignedSuccessfully": "Water meter added successfully",
     "addWaterMeter": "Add water meter",
     "coldWater": "Cold water",
     "hotWater": "Hot water",
-    "serialNumber": "Serial no."
+    "serialNumber": "Serial no. *"
   },
   "waterMeterDetails": {
     "waterMeter": "Water meter",
@@ -519,7 +519,7 @@
   "apartmentPage": {
     "createApartment": "Create apartment",
     "editApartment": "Edit apartment",
-    "selectOwner": "Select owner",
+    "selectOwner": "Select owner *",
     "ownerId": "Owner id",
     "apartmentCreatedSuccessfully": "Apartment created successfully",
     "apartmentEditedSuccessfully": "Apartment edited successfully",
@@ -541,22 +541,22 @@
     },
     "dataGrid": {
       "header": {
-        "number": "Number",
-        "area": "Area"
+        "number": "Number *",
+        "area": "Area [m<sup>2</sup>] *"
       }
     }
   },
   "bill": {
-    "advancedUsage": "Advanced usage",
-    "realUsage": "Real usage",
-    "advancedCost": "Advanced cost",
-    "realCost": "Real cost",
-    "rowBalance": "Balance",
-    "coldWater": "Cold water [m<sup>3</sup>]",
-    "hotWater": "Hot water [m<sup>3</sup>]",
-    "trash": "Trash [PLN]",
-    "unbilledWater": "Unbilled Water [m<sup>3</sup>]",
-    "summary": "Summary [PLN]:"
+    "advancedUsage": "Advanced usage [m<sup>3</sup>]",
+    "realUsage": "Real usage [m<sup>3</sup>]",
+    "advancedCost": "Advanced cost [PLN]",
+    "realCost": "Real cost [PLN]",
+    "rowBalance": "Balance [PLN]",
+    "coldWater": "Cold water",
+    "hotWater": "Hot water",
+    "trash": "Trash",
+    "unbilledWater": "Unbilled Water",
+    "summary": "Summary:"
   },
   "apartmentDetailsPage": {
     "header": "Apartment details",
@@ -576,10 +576,10 @@
   },
   "editWaterMeterDialog": {
     "editWaterMeter": "Edit Water Meter",
-    "expectedDailyUsage": "Expected Daily Usage",
-    "startingValue": "Starting Value",
+    "expectedDailyUsage": "Expected Daily Usage [m<sup>3</sup>] *",
+    "startingValue": "Starting Value *",
     "expiryDate": "Expiry Date",
-    "serialNumber": "Serial no.",
+    "serialNumber": "Serial no. *",
     "waterMeterEditedSuccessfully": "Water Meter edited successfully"
   },
   "apartmentDropdown": {
@@ -590,20 +590,20 @@
     "waterMeterAddedSuccessfully": "Main water meter added successfully",
     "button": "Add main water meter",
     "addWaterMeter": "Add main water meter",
-    "startingValue": "Starting Value",
-    "expiryDate": "Expiry Date",
-    "serialNumber": "Serial no."
+    "startingValue": "Starting Value *",
+    "expiryDate": "Expiry Date *",
+    "serialNumber": "Serial no. *"
   },
   "replaceWaterMeterDialog": {
     "waterMeterReplacedSuccessfully": "Water meter replaced successfully",
     "replaceWaterMeter": "Replace water meter",
-    "startingValue": "Starting Value",
-    "expiryDate": "Expiry Date",
-    "serialNumber": "Serial no."
+    "startingValue": "Starting Value *",
+    "expiryDate": "Expiry Date *",
+    "serialNumber": "Serial no. *"
   },
   "waterMeterOwnerChange": {
     "waterMeterId": "Watermeter ID: ",
-    "waterMeterExpectedUsage": "Expected monthly usage",
+    "waterMeterExpectedUsage": "Expected monthly usage *",
     "waterMeterHeader": "Enter new expected usage",
     "waterMeterError": "The value must be a number with maximum lenght of 5 with accuracy to 3 decimal places"
   },
@@ -630,13 +630,13 @@
   },
   "WaterMeterListDialog": {
     "button": "Perform water meter checks",
-    "date": "Check date",
+    "date": "Check date *",
     "header": "Water Meter Checks",
     "acceptButton": "Perform",
     "modal": {
       "id": "Water Meter Id",
       "type": "Type",
-      "reading": "Reading",
+      "reading": "Reading *",
       "HOT_WATER": "Hot Water",
       "COLD_WATER": "Cold Water"
     },
