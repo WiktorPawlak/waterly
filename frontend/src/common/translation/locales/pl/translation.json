@@ -436,9 +436,9 @@
     "success": "Hasło zostało zmienione a użytkownik został mailowo poinformowany o możliwości zmiany hasła"
   },
   "editTariffDialog": {
-    "coldWaterPrice": "Woda zimna [zł/m<sup>3</sup>]",
-    "hotWaterPrice": "Woda ciepła [zł/m<sup>3</sup>]",
-    "trashPrice": "Odpady [zł/m<sup>3</sup>]",
+    "coldWaterPrice": "Woda zimna [zł/m<sup>3</sup>] *",
+    "hotWaterPrice": "Woda ciepła [zł/m<sup>3</sup>] *",
+    "trashPrice": "Odpady [zł/m<sup>3</sup>] *",
     "startDate": "Rozpoczęcie",
     "endDate": "Zakończenie",
     "editTariff": "Edytuj taryfę",
@@ -446,10 +446,10 @@
   },
   "editInvoiceModal": {
     "date": "Data",
-    "totalCost": "Koszt [zł]",
-    "waterUsage": "Zużycie wody [m<sup>3</sup>]",
+    "totalCost": "Koszt [zł] *",
+    "waterUsage": "Zużycie wody [m<sup>3</sup>] *",
     "editInvoice": "Edytuj fakturę",
-    "invoiceNumber": "Numer Faktury",
+    "invoiceNumber": "Numer Faktury *",
     "invoiceEditedSuccessfully": "Pomyślnie edytowano fakturę"
   },
   "changeApartmentOwnerModal": {
@@ -460,14 +460,14 @@
     "addTariff": "Dodaj taryfę"
   },
   "assignWaterMeterDialog": {
-    "startingValue": "Stan początkowy",
-    "date": "Homologacja",
-    "type": "Wybierz typ wodomierza",
+    "startingValue": "Stan początkowy *",
+    "date": "Homologacja *",
+    "type": "Wybierz typ wodomierza *",
     "waterMeterAssignedSuccessfully": "Wodomierz dodany pomyślnie",
     "addWaterMeter": "Dodaj wodomierz",
     "coldWater": "Zimna woda",
     "hotWater": "Ciepła woda",
-    "serialNumber": "Nr seryjny"
+    "serialNumber": "Nr seryjny *"
   },
   "waterMeterDetails": {
     "waterMeter": "Wodomierz",
@@ -479,10 +479,10 @@
   },
   "addInvoiceModal": {
     "date": "Data",
-    "totalCost": "Całkowity koszt [zł]",
-    "waterUsage": "Zużycie wody [m<sup>3</sup>]",
+    "totalCost": "Całkowity koszt [zł] *",
+    "waterUsage": "Zużycie wody [m<sup>3</sup>] *",
     "addInvoice": "Dodaj fakturę",
-    "invoiceNumber": "Numer Faktury",
+    "invoiceNumber": "Numer Faktury *",
     "invoiceAddedSuccessfully": "Faktura dodana pomyślnie"
   },
   "twoFactor": {
@@ -520,7 +520,7 @@
   "apartmentPage": {
     "createApartment": "Dodaj lokal",
     "editApartment": "Edytuj lokal",
-    "selectOwner": "Wybierz właściciela",
+    "selectOwner": "Wybierz właściciela *",
     "ownerId": "Id właściciela",
     "apartmentCreatedSuccessfully": "Lokal dodany pomyślnie",
     "apartmentEditedSuccessfully": "Pomyślnie edytowano lokal",
@@ -542,22 +542,22 @@
     },
     "dataGrid": {
       "header": {
-        "number": "Numer",
-        "area": "Powierzchnia"
+        "number": "Numer *",
+        "area": "Powierzchnia [m<sup>2</sup>] *"
       }
     }
   },
   "bill": {
-    "advancedUsage": "Przewidywane zużycie",
-    "realUsage": "Faktyczne zużycie",
-    "advancedCost": "Przewidywany koszt",
-    "realCost": "Faktyczny koszt",
-    "rowBalance": "Bilans",
-    "coldWater": "Woda zimna [m<sup>3</sup>]",
-    "hotWater": "Woda ciepła [m<sup>3</sup>]",
-    "trash": "Śmieci [zł]",
-    "unbilledWater": "Woda niezbilansowana [m<sup>3</sup>]",
-    "summary": "Razem [zł]:"
+    "advancedUsage": "Przewidywane zużycie [m<sup>3</sup>]",
+    "realUsage": "Faktyczne zużycie [m<sup>3</sup>]",
+    "advancedCost": "Przewidywany koszt [zł]",
+    "realCost": "Faktyczny koszt [zł]",
+    "rowBalance": "Bilans [zł]",
+    "coldWater": "Woda zimna",
+    "hotWater": "Woda ciepła",
+    "trash": "Śmieci",
+    "unbilledWater": "Woda niezbilansowana",
+    "summary": "Razem:"
   },
   "apartmentDetailsPage": {
     "header": "Szczegóły lokalu",
@@ -576,11 +576,11 @@
     "checkButton": "Sprawdź"
   },
   "editWaterMeterDialog": {
-    "editWaterMeter": "Edytuj Wodomierz",
-    "expectedDailyUsage": "Przewidywane zużycie dzienne",
-    "startingValue": "Wartość początkowa",
+    "editWaterMeter": "Edytuj wodomierz",
+    "expectedDailyUsage": "Przewidywane zużycie dzienne [m<sup>3</sup>] *",
+    "startingValue": "Wartość początkowa *",
     "expiryDate": "Data ważności",
-    "serialNumber": "Nr seryjny",
+    "serialNumber": "Nr seryjny *",
     "waterMeterEditedSuccessfully": "Pomyślnie edytowano wodomierz"
   },
   "apartmentDropdown": {
@@ -591,20 +591,20 @@
     "waterMeterAddedSuccessfully": "Pomyślnie dodano wodomierz główny",
     "button": "Dodaj wodomierz główny",
     "addWaterMeter": "Dodaj wodomierz główny",
-    "startingValue": "Wartość początkowa",
-    "expiryDate": "Data ważności",
-    "serialNumber": "Nr seryjny"
+    "startingValue": "Wartość początkowa *",
+    "expiryDate": "Data ważności *",
+    "serialNumber": "Nr seryjny *"
   },
   "replaceWaterMeterDialog": {
     "waterMeterReplacedSuccessfully": "Pomyślnie wymieniono wodomierz",
     "replaceWaterMeter": "Wymień wodomierz",
-    "startingValue": "Wartość początkowa",
-    "expiryDate": "Data ważności",
-    "serialNumber": "Nr seryjny"
+    "startingValue": "Wartość początkowa *",
+    "expiryDate": "Data ważności *",
+    "serialNumber": "Nr seryjny *"
   },
   "waterMeterOwnerChange": {
     "waterMeterId": "ID wodomierza: ",
-    "waterMeterExpectedUsage": "Przewidywane miesięczne zużycie",
+    "waterMeterExpectedUsage": "Przewidywane miesięczne zużycie *",
     "waterMeterHeader": "Wprowadź nowe przewidywane zużycie",
     "waterMeterError": "Podana wartość musi być liczbą maksymalnie 5 cyfrową z dokładnością do 3 miejsc po przecinku"
   },
@@ -631,13 +631,13 @@
   },
   "WaterMeterListDialog": {
     "button": "Wprowadź stan wodomierzy",
-    "date": "Data pomiaru",
+    "date": "Data pomiaru *",
     "header": "Pomiary wodomierzy",
     "acceptButton": "Wprowadź",
     "modal": {
       "id": "ID wodomierza",
       "type": "Typ",
-      "reading": "Pomiar",
+      "reading": "Pomiar *",
       "HOT_WATER": "Ciepła Woda",
       "COLD_WATER": "Zimna Woda"
     },

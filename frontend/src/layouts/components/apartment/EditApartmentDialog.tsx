@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   editApartmentSchema,
@@ -166,7 +166,8 @@ export const EditApartmentDialog = ({
                     }}
                   />
                   <TextField
-                    label={t("apartmentPage.dataGrid.header.area")}
+                    // label={t("apartmentPage.dataGrid.header.area")}
+                    label={<Trans i18nKey={"apartmentPage.dataGrid.header.area"} components={{ sup: <sup /> }} />}
                     {...register("area")}
                     error={!!areaErrorMessage}
                     helperText={areaErrorMessage && t(areaErrorMessage)}
@@ -177,6 +178,7 @@ export const EditApartmentDialog = ({
                     name="area"
                     type="number"
                     sx={{
+                      width: "200px",
                       mb: 3,
                       "& label": {
                         color: "text.secondary",
