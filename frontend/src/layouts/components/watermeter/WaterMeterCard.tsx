@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Box, Typography } from "@mui/material";
 import { WaterMeterDto } from "../../../api/waterMeterApi";
 import { ThreeDotWaterMeterMenu } from "./ThreeDotWaterMeterMenu";
@@ -11,10 +11,10 @@ interface Props {
   handleEditButtonClick: (id: number) => void;
 }
 
-export const WaterMeterCard = ({ 
-  waterMeter, 
-  handleEditButtonClick, 
-  handleReplaceButtonClick 
+export const WaterMeterCard = ({
+  waterMeter,
+  handleEditButtonClick,
+  handleReplaceButtonClick
 }: Props) => {
   const { t } = useTranslation();
   const { account } = useAccount();
@@ -117,6 +117,10 @@ export const WaterMeterCard = ({
           }}
         >
           {waterMeter.expectedDailyUsage}
+          <Trans
+            i18nKey={" [m<sup>3</sup>]"}
+            components={{ sup: <sup /> }}
+          />
         </Typography>
         <Typography
           variant="h5"
@@ -136,22 +140,26 @@ export const WaterMeterCard = ({
           }}
         >
           {waterMeter.startingValue}
+          <Trans
+            i18nKey={" [m<sup>3</sup>]"}
+            components={{ sup: <sup /> }}
+          />
         </Typography>
       </Box>
       {account?.currentRole === roles.facilityManager &&
-      <Box
-        sx={{
-          color: "text.secondary",
-          marginLeft: '10px'
-        }}
-      >
-        <ThreeDotWaterMeterMenu 
-          waterMeterId={waterMeter.id}
-          handleReplaceButtonClick={handleReplaceButtonClick} 
-          handleEditButtonClick={handleEditButtonClick}
-        />
-      </Box>
-    }
+        <Box
+          sx={{
+            color: "text.secondary",
+            marginLeft: '10px'
+          }}
+        >
+          <ThreeDotWaterMeterMenu
+            waterMeterId={waterMeter.id}
+            handleReplaceButtonClick={handleReplaceButtonClick}
+            handleEditButtonClick={handleEditButtonClick}
+          />
+        </Box>
+      }
     </Box>
   );
 };

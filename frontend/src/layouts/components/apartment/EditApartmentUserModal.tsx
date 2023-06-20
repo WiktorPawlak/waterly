@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Box, Stack, styled } from "@mui/system";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 import { enqueueSnackbar } from "notistack";
 import ErrorIcon from "@mui/icons-material/Error";
@@ -240,7 +240,7 @@ export const EditApartmentUserModal = ({
                   variant="h4"
                   sx={{ fontSize: "16px", fontWeight: "700", mb: 2 }}
                 >
-                  {t("waterMeterOwnerChange.waterMeterHeader")}
+                  {<Trans i18nKey={"waterMeterOwnerChange.waterMeterHeader"} components={{ sup: <sup /> }} />}
                 </Typography>
                 {waterMeters.map((meter, index) => (
                   <Box

@@ -469,7 +469,7 @@
     "addTariff": "Add tariff"
   },
   "assignWaterMeterDialog": {
-    "startingValue": "Starting value *",
+    "startingValue": "Starting value [m<sup>3</sup>] *",
     "date": "Expiration date *",
     "type": "Select water meter type *",
     "waterMeterAssignedSuccessfully": "Water meter added successfully",
@@ -545,6 +545,10 @@
       "header": {
         "number": "Number *",
         "area": "Area [m<sup>2</sup>] *"
+      },
+      "table": {
+        "number": "Number",
+        "area": "area [m<sup>2</sup>]"
       }
     }
   },
@@ -607,7 +611,7 @@
   "waterMeterOwnerChange": {
     "waterMeterId": "Watermeter ID: ",
     "waterMeterExpectedUsage": "Expected monthly usage *",
-    "waterMeterHeader": "Enter new expected usage",
+    "waterMeterHeader": "Enter new expected usage [m<sup>3</sup>]",
     "waterMeterError": "The value must be a number with maximum lenght of 5 with accuracy to 3 decimal places"
   },
   "billPage": {

@@ -56,18 +56,18 @@ export const AssignWaterMeterToApartmentDialog = ({
     formState: { errors },
     reset
   } = useForm<AssignWaterMeterToApartmentSchema>({
-      resolver: zodResolver(assignWaterMeterToApartmentSchema),
-      mode: "onChange",
-      reValidateMode: "onChange",
-      defaultValues: {
-          serialNumber: "",
-          startingValue: ""
-      },
+    resolver: zodResolver(assignWaterMeterToApartmentSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
+    defaultValues: {
+      serialNumber: "",
+      startingValue: ""
+    },
   });
 
   const {
-      serialNumber: serialNumberError,
-      startingValue: startingValueError
+    serialNumber: serialNumberError,
+    startingValue: startingValueError
   } = errors;
   const serialNumberErrorMessage = serialNumberError?.message;
   const startingValueErrorMessage = startingValueError?.message;
