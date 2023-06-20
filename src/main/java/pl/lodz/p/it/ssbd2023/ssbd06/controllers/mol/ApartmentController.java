@@ -92,6 +92,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
 
     @PUT
     @Path("/{id}")
+    @EtagValidationFilter
     @RolesAllowed(FACILITY_MANAGER)
     public Response updateApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final EditApartmentDetailsDto dto) {
         retry(() -> apartmentEndpoint.updateApartment(apartmentId, dto), apartmentEndpoint);

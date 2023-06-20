@@ -173,11 +173,7 @@ export const ApartmentsList = () => {
           />
         </strong>
       ),
-      renderCell: (params) => (
-        <span>
-          {params.value.toFixed(2)} m<sup>2</sup>
-        </span>
-      ),
+      renderCell: (params) => <span>{params.value.toFixed(2)}</span>,
       width: 160,
     },
     {

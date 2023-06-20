@@ -5,6 +5,9 @@ import jwt_decode from "jwt-decode";
 import { useAccountState } from "../context/AccountContext";
 import { PATHS } from "../routing/paths";
 import { RolesEnum, roles } from "../types";
+import { enqueueSnackbar } from "notistack";
+import { resolveApiError } from "../api/apiErrors";
+import { useTranslation } from "react-i18next";
 
 export interface AuthAccount {
   username: string;
@@ -31,6 +34,7 @@ interface NewUser {
 export const useAccount = () => {
   const { account, setAccount, isLoading, setIsLoading } = useAccountState();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const anonmousRole = roles.anonymous;
   const prevRoleTimeout = 500;
@@ -43,18 +47,18 @@ export const useAccount = () => {
 
   const clearPrevRole = (updatedAccount: AuthAccount) => {
     if (account) {
-      updatedAccount.prevRole = '';
+      updatedAccount.prevRole = "";
       setAccount(updatedAccount);
       console.log(account);
     }
-  }
+  };
 
   const setCurrentRole = (role: string) => {
     if (account) {
       const updatedAccount = {
         ...account,
         currentRole: role,
-        prevRole: account.currentRole
+        prevRole: account.currentRole,
       };
       localStorage.setItem(StorageName.USER, JSON.stringify(updatedAccount));
       setAccount(updatedAccount);
@@ -96,7 +100,7 @@ export const useAccount = () => {
         username,
         roles,
         currentRole,
-        prevRole
+        prevRole,
       };
 
       localStorage.setItem(StorageName.TOKEN, token);
@@ -116,17 +120,17 @@ export const useAccount = () => {
       username,
       roles,
       currentRole,
-      prevRole
+      prevRole,
     };
     setAccount(userData);
-  }
+  };
 
   const logout = () => {
     setIsLoading(true);
     setAnonymousPrevRole();
     localStorage.removeItem(StorageName.TOKEN);
     localStorage.removeItem(StorageName.USER);
-    navigate(PATHS.LOGIN)
+    navigate(PATHS.LOGIN);
     setTimeout(() => setAccount(null), prevRoleTimeout);
     setIsLoading(false);
   };
@@ -140,6 +144,10 @@ export const useAccount = () => {
 
       if (response.status === 201) {
         navigate(PATHS.WAIT_FOR_VERIFY, { state: response.data });
+      } else {
+        enqueueSnackbar(t(resolveApiError(response.error)), {
+          variant: "error",
+        });
       }
     } catch (error) {
       return error;
