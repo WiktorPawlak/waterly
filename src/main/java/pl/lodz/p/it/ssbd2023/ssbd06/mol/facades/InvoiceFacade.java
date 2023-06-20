@@ -174,7 +174,7 @@ public class InvoiceFacade extends AbstractFacade<Invoice> {
         TypedQuery<Double> query = em.createNamedQuery("Invoice.findAverageWaterUsage", Double.class);
         try {
             return Optional.of(BigDecimal.valueOf(query.getSingleResult()));
-        } catch (NoResultException e) {
+        } catch (final NoResultException e) {
             return Optional.empty();
         }
     }

@@ -462,7 +462,7 @@
     "addTariff": "Dodaj taryfę"
   },
   "assignWaterMeterDialog": {
-    "startingValue": "Stan początkowy *",
+    "startingValue": "Stan początkowy [m<sup>3</sup>] *",
     "date": "Homologacja *",
     "type": "Wybierz typ wodomierza *",
     "waterMeterAssignedSuccessfully": "Wodomierz dodany pomyślnie",
@@ -546,6 +546,10 @@
       "header": {
         "number": "Numer *",
         "area": "Powierzchnia [m<sup>2</sup>] *"
+      },
+      "table": {
+        "number": "Numer",
+        "area": "Powierzchnia [m<sup>2</sup>]"
       }
     }
   },
@@ -608,7 +612,7 @@
   "waterMeterOwnerChange": {
     "waterMeterId": "ID wodomierza: ",
     "waterMeterExpectedUsage": "Przewidywane miesięczne zużycie *",
-    "waterMeterHeader": "Wprowadź nowe przewidywane zużycie",
+    "waterMeterHeader": "Wprowadź nowe przewidywane zużycie [m<sup>3</sup>]",
     "waterMeterError": "Podana wartość musi być liczbą maksymalnie 5 cyfrową z dokładnością do 3 miejsc po przecinku"
   },
   "billPage": {

@@ -141,7 +141,10 @@ public class InvoiceService {
         return invoiceFacade.findById(id);
     }
 
-    private void updateMainWaterMeterCheck(final Invoice invoice, final WaterMeterCheck check, final WaterMeterCheck previousCheck, WaterMeter mainWaterMeter) {
+    private void updateMainWaterMeterCheck(final Invoice invoice,
+                                           final WaterMeterCheck check,
+                                           final WaterMeterCheck previousCheck,
+                                           final WaterMeter mainWaterMeter) {
         check.setMeterReading(invoice.getWaterUsage().add(previousCheck.getMeterReading()));
         waterMeterCheckFacade.update(check);
         updateMainWaterMeterDailyUsage(mainWaterMeter);

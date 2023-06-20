@@ -159,7 +159,7 @@ export const ApartmentsList = () => {
     {
       field: "number",
       renderHeader: () => (
-        <strong>{t("apartmentPage.dataGrid.header.number")}</strong>
+        <strong>{t("apartmentPage.dataGrid.table.number")}</strong>
       ),
       width: 130,
     },
@@ -168,7 +168,7 @@ export const ApartmentsList = () => {
       renderHeader: () => (
         <strong>
           <Trans
-            i18nKey={"apartmentPage.dataGrid.header.area"}
+            i18nKey={"apartmentPage.dataGrid.table.area"}
             components={{ sup: <sup /> }}
           />
         </strong>

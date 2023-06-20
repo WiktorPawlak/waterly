@@ -72,7 +72,7 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
                     .setFlushMode(FlushModeType.COMMIT)
                     .setParameter("type", type)
                     .getSingleResult());
-        } catch (NoResultException e) {
+        } catch (final NoResultException e) {
             return Optional.empty();
         }
     }
@@ -91,10 +91,10 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
 
     @RolesAllowed({FACILITY_MANAGER})
     public List<WaterMeter> findWaterMeters(final String pattern,
-                                      final int page,
-                                      final int pageSize,
-                                      final boolean ascOrder,
-                                      final String orderBy) {
+                                            final int page,
+                                            final int pageSize,
+                                            final boolean ascOrder,
+                                            final String orderBy) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<WaterMeter> query = cb.createQuery(WaterMeter.class);
         Root<WaterMeter> waterMeterRoot = query.from(WaterMeter.class);

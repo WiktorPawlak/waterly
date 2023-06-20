@@ -91,7 +91,7 @@ public class WaterMeterCheckFacade extends AbstractFacade<WaterMeterCheck> {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public Optional<WaterMeterCheck> findChecksForDateAndWaterMeterType(final WaterMeterType type, LocalDate date) {
+    public Optional<WaterMeterCheck> findChecksForDateAndWaterMeterType(final WaterMeterType type, final LocalDate date) {
         try {
             return Optional.of(em.createNamedQuery("WaterMeterCheck.findCheckByDateAndWaterMeterType", WaterMeterCheck.class)
                     .setFlushMode(FlushModeType.COMMIT)
