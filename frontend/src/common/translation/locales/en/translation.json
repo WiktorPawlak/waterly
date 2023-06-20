@@ -194,10 +194,10 @@
         "active": "Active",
         "serialNumber": "Serial no.",
         "apartmentNo": "Apartm. no.",
-        "expectedDailyUsage": "Exp. daily usage",
-        "expectedMonthlyUsage": "Exp. monthly usage",
+        "expectedDailyUsage": "Exp. daily usage [m<sup>3</sup>]",
+        "expectedMonthlyUsage": "Exp. monthly usage [m<sup>3</sup>]",
         "expiryDate": "Expiry Date",
-        "startingValue": "Starting Value",
+        "startingValue": "Starting Value [m<sup>3</sup>]",
         "type": "Type"
       },
       "cells": {
