@@ -89,12 +89,12 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
     private void updateWaterMeterEntity(final WaterMeter waterMeter, final UpdateWaterMeterDto dto) {
         waterMeter.setSerialNumber(dto.getSerialNumber());
         waterMeter.setExpiryDate(DateConverter.convert(dto.getExpiryDate()));
+        waterMeter.setStartingValue(
+                dto.getStartingValue() == null ? waterMeter.getStartingValue() : dto.getStartingValue()
+        );
 
         switch (waterMeter.getType()) {
             case COLD_WATER, HOT_WATER -> {
-                waterMeter.setStartingValue(
-                        dto.getStartingValue() == null ? waterMeter.getStartingValue() : dto.getStartingValue()
-                );
                 waterMeter.setExpectedDailyUsage(
                         dto.getExpectedDailyUsage() == null || dto.getExpectedDailyUsage().isBlank() ?
                                 null : new BigDecimal(dto.getExpectedDailyUsage())
