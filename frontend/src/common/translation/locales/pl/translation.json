@@ -200,10 +200,10 @@
         "active": "Aktywny",
         "serialNumber": "Nr seryjny",
         "apartmentNo": "Nr lokalu",
-        "expectedDailyUsage": "Przew. dzienne zużycie",
-        "expectedMonthlyUsage": "Przew. miesięczne zużycie",
+        "expectedDailyUsage": "Przew. dzienne zużycie [m<sup>3</sup>]",
+        "expectedMonthlyUsage": "Przew. miesięczne zużycie [m<sup>3</sup>]",
         "expiryDate": "Data ważności",
-        "startingValue": "Wartość startowa",
+        "startingValue": "Wartość startowa [m<sup>3</sup>]",
         "type": "Typ"
       },
       "cells": {

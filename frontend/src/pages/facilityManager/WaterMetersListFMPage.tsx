@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   DataGrid,
   GridColDef,
@@ -247,7 +247,12 @@ export const WaterMetersListFMPage = () => {
       sortable: true,
       renderHeader: () => (
         <strong>
-          {t("WaterMetersListFMPage.dataGrid.headers.expectedDailyUsage")}
+          {
+            <Trans
+              i18nKey={"WaterMetersListFMPage.dataGrid.headers.expectedDailyUsage"}
+              components={{ sup: <sup /> }}
+            />
+          }
         </strong>
       ),
       renderCell: (params) => (
@@ -255,7 +260,7 @@ export const WaterMetersListFMPage = () => {
           {params.row.expectedDailyUsage}
         </span>
       ),
-      width: 145,
+      width: 220,
     },
     {
       field: "expiryDate",
@@ -272,10 +277,15 @@ export const WaterMetersListFMPage = () => {
       sortable: true,
       renderHeader: () => (
         <strong>
-          {t("WaterMetersListFMPage.dataGrid.headers.startingValue")}
+          {
+            <Trans
+              i18nKey={"WaterMetersListFMPage.dataGrid.headers.startingValue"}
+              components={{ sup: <sup /> }}
+            />
+          }
         </strong>
       ),
-      width: 150,
+      width: 175,
     },
     {
       field: "type",
@@ -383,7 +393,7 @@ export const WaterMetersListFMPage = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            minWidth: "1000px",
+            minWidth: "100%",
           }}
         >
           {account?.currentRole === roles.facilityManager && (
@@ -420,7 +430,7 @@ export const WaterMetersListFMPage = () => {
               />
             )}
           />
-          <Box sx={{ height: 600, width: "100%" }}>
+          <Box sx={{ height: 600, width: "1100px" }}>
             <DataGrid
               autoHeight
               hideFooter
