@@ -14,7 +14,7 @@ interface Props {
 export const WaterMeterCard = ({
   waterMeter,
   handleEditButtonClick,
-  handleReplaceButtonClick
+  handleReplaceButtonClick,
 }: Props) => {
   const { t } = useTranslation();
   const { account } = useAccount();
@@ -32,6 +32,7 @@ export const WaterMeterCard = ({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
+        columnGap: "25px",
         width: "fit-content",
         height: "fit-content",
         bgcolor: "background.paper",
@@ -117,10 +118,7 @@ export const WaterMeterCard = ({
           }}
         >
           {waterMeter.expectedDailyUsage}
-          <Trans
-            i18nKey={" [m<sup>3</sup>]"}
-            components={{ sup: <sup /> }}
-          />
+          <Trans i18nKey={" m<sup>3</sup>"} components={{ sup: <sup /> }} />
         </Typography>
         <Typography
           variant="h5"
@@ -140,17 +138,14 @@ export const WaterMeterCard = ({
           }}
         >
           {waterMeter.startingValue}
-          <Trans
-            i18nKey={" [m<sup>3</sup>]"}
-            components={{ sup: <sup /> }}
-          />
+          <Trans i18nKey={" m<sup>3</sup>"} components={{ sup: <sup /> }} />
         </Typography>
       </Box>
-      {account?.currentRole === roles.facilityManager &&
+      {account?.currentRole === roles.facilityManager && (
         <Box
           sx={{
             color: "text.secondary",
-            marginLeft: '10px'
+            marginLeft: "10px",
           }}
         >
           <ThreeDotWaterMeterMenu
@@ -159,7 +154,7 @@ export const WaterMeterCard = ({
             handleEditButtonClick={handleEditButtonClick}
           />
         </Box>
-      }
+      )}
     </Box>
   );
 };
