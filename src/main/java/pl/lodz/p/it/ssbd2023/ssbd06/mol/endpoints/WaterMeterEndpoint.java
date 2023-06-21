@@ -5,6 +5,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -96,8 +97,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         switch (waterMeter.getType()) {
             case COLD_WATER, HOT_WATER -> {
                 waterMeter.setExpectedDailyUsage(
-                        dto.getExpectedDailyUsage() == null || dto.getExpectedDailyUsage().isBlank() ?
-                                null : new BigDecimal(dto.getExpectedDailyUsage())
+                        dto.getExpectedMonthlyUsage() == null || dto.getExpectedMonthlyUsage().isBlank() ?
+                                waterMeter.getExpectedDailyUsage() : calculateExpectedDailyUsage(dto.getExpectedMonthlyUsage())
                 );
                 if (dto.getApartmentId() != null && dto.getApartmentId() != waterMeter.getApartment().getId()) {
                     if (!waterMeter.getWaterMeterChecks().isEmpty()) {
@@ -107,7 +108,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
                     waterMeter.setApartment(apartment);
                 }
             }
-            default -> {}
+            default -> {
+            }
         }
     }
 
@@ -129,7 +131,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
                 .startingValue(dto.getStartingValue())
                 .type(oldWaterMeter.getType())
                 .apartment(oldWaterMeter.getApartment())
-                .expectedDailyUsage(oldWaterMeter.getExpectedDailyUsage())
+                .expectedDailyUsage(dto.getExpectedMonthlyUsage() == null || dto.getExpectedMonthlyUsage().isBlank() ? oldWaterMeter.getExpectedDailyUsage() :
+                        calculateExpectedDailyUsage(dto.getExpectedMonthlyUsage()))
                 .active(true)
                 .build();
     }
@@ -139,7 +142,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         if (DateConverter.convert(dto.getExpiryDate()).before(timeProvider.currentDate())) {
             throw ApplicationBaseException.expiryDateAlreadyExpiredException();
         }
-        waterMeterService.assignWaterMeter(apartmentService.getApartmentById(apartmentId), dto);
+        waterMeterService.assignWaterMeter(apartmentService.getApartmentById(apartmentId), dto,
+                calculateExpectedDailyUsage(dto.getExpectedMonthlyUsage()));
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -160,10 +164,10 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
 
     @RolesAllowed({FACILITY_MANAGER})
     public PaginatedList<WaterMeterDto> getWaterMetersList(final String pattern,
-                                                      final Integer page,
-                                                      final Integer pageSize,
-                                                      final String order,
-                                                      final String orderBy) {
+                                                           final Integer page,
+                                                           final Integer pageSize,
+                                                           final String order,
+                                                           final String orderBy) {
 
         int preparedPage = paginationConfig.preparePage(page);
         int preparedPageSize = paginationConfig.preparePageSize(pageSize);
@@ -200,6 +204,12 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         if (DateConverter.convert(expiryDate).before(timeProvider.currentDate())) {
             throw ApplicationBaseException.expiryDateAlreadyExpiredException();
         }
+    }
+
+    private BigDecimal calculateExpectedDailyUsage(final String expectedMonthlyUsage) {
+        return expectedMonthlyUsage == null || expectedMonthlyUsage.isBlank() ?
+                null : new BigDecimal(expectedMonthlyUsage).divide(BigDecimal.valueOf(timeProvider.getDaysNumberInCurrentMonth()), 1,
+                RoundingMode.HALF_UP);
     }
 
 }

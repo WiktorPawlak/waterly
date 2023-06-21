@@ -301,7 +301,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     "SELECT * FROM water_meter WHERE id = " + NEW_WATER_METER_ID
             );
             assertEquals("10.000", resultSet.getString("starting_value"));
-            assertEquals("12.000", resultSet.getString("expected_daily_usage"));
+            assertEquals("0.400", resultSet.getString("expected_daily_usage"));
             assertEquals(String.valueOf(SECOND_APARTMENT_ID), resultSet.getString("apartment_id"));
         }
 
@@ -552,7 +552,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                                 .serialNumber(SERIAL_NUMBER)
                                 .startingValue(BigDecimal.ONE)
                                 .expiryDate(TEST_DATE)
-                                .expectedDailyUsage("1")
+                                .expectedMonthlyUsage("1")
                                 .version(0)
                                 .build())),
                 Arguments.of(Named.of("No startingValue",
@@ -560,7 +560,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                                 .id(COLD_WATER_METER_ID)
                                 .serialNumber(SERIAL_NUMBER)
                                 .expiryDate(TEST_DATE)
-                                .expectedDailyUsage("1")
+                                .expectedMonthlyUsage("1")
                                 .apartmentId(1L)
                                 .version(0)
                                 .build())),

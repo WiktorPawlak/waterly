@@ -2,6 +2,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.time;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
@@ -60,6 +61,11 @@ public class TimeProviderImpl implements TimeProvider {
     @Override
     public boolean checkDateIsBeforeOtherDate(final Instant date, final Instant otherDate) {
         return date.isBefore(otherDate);
+    }
+
+    @Override
+    public long getDaysNumberInCurrentMonth() {
+        return YearMonth.now().lengthOfMonth();
     }
 
     private Date prepareDate(final double timeDifferenceInMinutes, final Date beginTime) {

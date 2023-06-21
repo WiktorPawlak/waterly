@@ -82,11 +82,8 @@ export const EditWaterMeterModal = ({
 
   useEffect(() => {
     if (waterMeter) {
-      const edu = waterMeter?.expectedDailyUsage
-        ? waterMeter?.expectedDailyUsage.toString()
-        : "";
       setExpiryDate(dayjs(waterMeter!.expiryDate));
-      setValue("expectedMonthlyUsage", edu);
+      setValue("expectedMonthlyUsage", "");
       setValue("serialNumber", waterMeter.serialNumber.toString());
       setValue("startingValue", waterMeter!.startingValue.toString());
       setApartmentId(waterMeter!.apartmentId);

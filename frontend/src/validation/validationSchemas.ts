@@ -256,6 +256,9 @@ export const assignWaterMeterToApartmentSchema = z.object({
     .string()
     .regex(/^\d+(\.\d{3})?$/, "validation.startingValue"),
   type: z.string().regex(/^(HOT_WATER|COLD_WATER)$/, "validation.type"),
+  expectedMonthlyUsage: z
+    .string()
+    .regex(/^\d+(\.\d{3})?$/, "validation.expectedMonthlyUsage"),
 });
 
 export const editWaterMeterSchema = z.object({
@@ -328,7 +331,7 @@ export type AddTariffSchema = z.infer<typeof addTariffSchema>;
 export type AddInvoiceSchema = z.infer<typeof addInvoiceSchema>;
 
 export type AssignWaterMeterToApartmentSchema = z.infer<
-    typeof assignWaterMeterToApartmentSchema
+  typeof assignWaterMeterToApartmentSchema
 >;
 
 export type EditWaterMeterSchema = z.infer<typeof editWaterMeterSchema>;

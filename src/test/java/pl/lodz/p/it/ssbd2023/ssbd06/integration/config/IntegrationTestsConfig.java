@@ -71,13 +71,14 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static final BigDecimal STARTING_VALUE = BigDecimal.valueOf(100.000);
     protected static final String SERIAL_NUMBER = "123456789 D";
     protected static final String TEST_DATE = "2024-06-10";
+    protected static final String TEST_EXPECTED_MONTHLY_USAGE = "100";
     protected static final CreateMainWaterMeterDto CREATE_MAIN_WATER_METER_DTO = CreateMainWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE, TEST_DATE);
     protected static final AssignWaterMeterDto CORRECT_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE,
-            TEST_DATE, "HOT_WATER");
+            TEST_DATE, "HOT_WATER", TEST_EXPECTED_MONTHLY_USAGE);
     protected static final AssignWaterMeterDto WRONG_DATE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE,
-            "2020-06-10", "HOT_WATER");
+            "2020-06-10", "HOT_WATER", TEST_EXPECTED_MONTHLY_USAGE);
     protected static final AssignWaterMeterDto WRONG_TYPE_ASSIGN_WATER_METER_DTO = AssignWaterMeterDto.of(SERIAL_NUMBER, STARTING_VALUE,
-            TEST_DATE, "WRONG_TYPE");
+            TEST_DATE, "WRONG_TYPE", TEST_EXPECTED_MONTHLY_USAGE);
     protected static final UpdateWaterMeterDto UPDATE_WATER_METER_DTO = UpdateWaterMeterDto.of(
             NEW_WATER_METER_ID,
             SERIAL_NUMBER,

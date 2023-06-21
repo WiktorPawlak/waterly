@@ -79,12 +79,13 @@ public class WaterMeter extends AbstractEntity {
     @JoinColumn(name = "apartment_id", foreignKey = @ForeignKey(name = "water_meter_apartment_fk"))
     private Apartment apartment;
 
-    public WaterMeter(@NotNull final AssignWaterMeterDto assignWaterMeterDto, final Apartment apartment) {
+    public WaterMeter(@NotNull final AssignWaterMeterDto assignWaterMeterDto, final Apartment apartment, final BigDecimal expectedDailyUsage) {
         this.serialNumber = assignWaterMeterDto.getSerialNumber();
         this.startingValue = assignWaterMeterDto.getStartingValue();
         this.expiryDate = DateConverter.convert(assignWaterMeterDto.getExpiryDate());
         this.active = true;
         this.type = WaterMeterType.valueOf(assignWaterMeterDto.getType());
+        this.expectedDailyUsage = expectedDailyUsage;
         this.apartment = apartment;
     }
 
