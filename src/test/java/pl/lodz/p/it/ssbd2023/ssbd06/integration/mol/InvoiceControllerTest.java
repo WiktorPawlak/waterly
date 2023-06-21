@@ -61,16 +61,12 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             String date = databaseConnector.executeQuery(
                     "SELECT date FROM invoice WHERE id = 1"
             ).getString("date");
-            String totalCost = databaseConnector.executeQuery(
-                    "SELECT total_cost FROM invoice WHERE id = 1"
-            ).getString("total_cost");
             String waterUsage = databaseConnector.executeQuery(
                     "SELECT water_usage FROM invoice WHERE id = 1"
             ).getString("water_usage");
 
             assertEquals(TEST_INVOICE_NUMBER, invoiceNumber);
             assertEquals(TEST_INVOICE_DATE + "-01", date);
-            assertEquals("100.00", totalCost);
             assertEquals("200.000", waterUsage);
         }
 
@@ -210,14 +206,10 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
             String date = databaseConnector.executeQuery(
                     "SELECT date FROM invoice WHERE id = 1"
             ).getString("date");
-            String totalCost = databaseConnector.executeQuery(
-                    "SELECT total_cost FROM invoice WHERE id = 1"
-            ).getString("total_cost");
             String waterUsage = databaseConnector.executeQuery(
                     "SELECT water_usage FROM invoice WHERE id = 1"
             ).getString("water_usage");
 
-            assertEquals("700.00", totalCost);
             assertEquals("200.000", waterUsage);
         }
 
@@ -239,17 +231,13 @@ public class InvoiceControllerTest extends IntegrationTestsConfig {
                     .statusCode(CONFLICT.getStatusCode());
         }
 
-        @ParameterizedTest(name = "date: {0}, totalCost: {1}")
-        @CsvSource({
-                " , 100.00",
-                "2043-10-10, "
-        })
-        void shouldForbidInvoiceUpdateWhenDataIsInvalid(LocalDate date, BigDecimal totalCost) {
+        @Test
+        void shouldForbidInvoiceUpdateWhenDataIsInvalid() {
             initInvoice();
 
             Tuple2<InvoicesDto, String> invoiceWithEtag = getInvoiceWithEtag(1);
             InvoicesDto updateInvoiceDto = invoiceWithEtag._1;
-            updateInvoiceDto.setDate(date);
+            updateInvoiceDto.setDate(null);
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)

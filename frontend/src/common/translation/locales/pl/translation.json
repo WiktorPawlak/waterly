@@ -469,7 +469,8 @@
     "addWaterMeter": "Dodaj wodomierz",
     "coldWater": "Zimna woda",
     "hotWater": "Ciepła woda",
-    "serialNumber": "Nr seryjny *"
+    "serialNumber": "Nr seryjny *",
+    "expectedMonthlyUsage": "Przewidywane miesięczne zużycie [m<sup>3</sup>] *"
   },
   "waterMeterDetails": {
     "waterMeter": "Wodomierz",
@@ -607,7 +608,8 @@
     "replaceWaterMeter": "Wymień wodomierz",
     "startingValue": "Wartość początkowa *",
     "expiryDate": "Data ważności *",
-    "serialNumber": "Nr seryjny *"
+    "serialNumber": "Nr seryjny *",
+    "expectedMonthlyUsage": "Przewidywane miesięczne zużycie [m<sup>3</sup>]"
   },
   "waterMeterOwnerChange": {
     "waterMeterId": "ID wodomierza: ",

@@ -476,7 +476,8 @@
     "addWaterMeter": "Add water meter",
     "coldWater": "Cold water",
     "hotWater": "Hot water",
-    "serialNumber": "Serial no. *"
+    "serialNumber": "Serial no. *",
+    "expectedMonthlyUsage": "Expected Monthly Usage [m<sup>3</sup>] *"
   },
   "waterMeterDetails": {
     "waterMeter": "Water meter",
@@ -606,7 +607,8 @@
     "replaceWaterMeter": "Replace water meter",
     "startingValue": "Starting Value *",
     "expiryDate": "Expiry Date *",
-    "serialNumber": "Serial no. *"
+    "serialNumber": "Serial no. *",
+    "expectedMonthlyUsage": "Expected Monthly Usage [m<sup>3</sup>]"
   },
   "waterMeterOwnerChange": {
     "waterMeterId": "Watermeter ID: ",

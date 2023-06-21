@@ -54,23 +54,26 @@ export const AssignWaterMeterToApartmentDialog = ({
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm<AssignWaterMeterToApartmentSchema>({
     resolver: zodResolver(assignWaterMeterToApartmentSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
       serialNumber: "",
-      startingValue: ""
+      startingValue: "",
+      expectedMonthlyUsage: "",
     },
   });
 
   const {
     serialNumber: serialNumberError,
-    startingValue: startingValueError
+    startingValue: startingValueError,
+    expectedMonthlyUsage: expectedMonthlyUsageError,
   } = errors;
   const serialNumberErrorMessage = serialNumberError?.message;
   const startingValueErrorMessage = startingValueError?.message;
+  const expectedMonthlyUsageErrorMessage = expectedMonthlyUsageError?.message;
 
   const handleFormSubmit = async (formData: any) => {
     const response = await assignWaterMeterToApartment(apartmentId, {
@@ -117,10 +120,34 @@ export const AssignWaterMeterToApartmentDialog = ({
               <StyledTextField
                 variant="standard"
                 sx={{ width: "100% !important" }}
-                label={<Trans i18nKey={"assignWaterMeterDialog.serialNumber"} components={{ sup: <sup /> }} />}
+                label={
+                  <Trans
+                    i18nKey={"assignWaterMeterDialog.serialNumber"}
+                    components={{ sup: <sup /> }}
+                  />
+                }
                 {...register("serialNumber")}
                 error={!!serialNumberError}
-                helperText={serialNumberErrorMessage && t(serialNumberErrorMessage)}
+                helperText={
+                  serialNumberErrorMessage && t(serialNumberErrorMessage)
+                }
+              />
+              <StyledTextField
+                autoFocus
+                label={
+                  <Trans
+                    i18nKey={"assignWaterMeterDialog.expectedMonthlyUsage"}
+                    components={{ sup: <sup /> }}
+                  />
+                }
+                variant="standard"
+                sx={{ width: "100% !important" }}
+                {...register("expectedMonthlyUsage")}
+                error={!!expectedMonthlyUsageError}
+                helperText={
+                  expectedMonthlyUsageErrorMessage &&
+                  t(expectedMonthlyUsageErrorMessage)
+                }
               />
               <StyledTextField
                 autoFocus

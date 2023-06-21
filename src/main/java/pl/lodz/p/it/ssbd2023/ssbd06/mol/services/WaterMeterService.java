@@ -4,6 +4,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType.M
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,8 +68,8 @@ public class WaterMeterService {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public void assignWaterMeter(final Apartment apartment, final AssignWaterMeterDto dto) {
-        WaterMeter waterMeter = new WaterMeter(dto, apartment);
+    public void assignWaterMeter(final Apartment apartment, final AssignWaterMeterDto dto, final BigDecimal expectedDailyUsage) {
+        WaterMeter waterMeter = new WaterMeter(dto, apartment, expectedDailyUsage);
         waterMeterFacade.create(waterMeter);
         List<WaterMeter> waterMeters = apartment.getWaterMeters();
         waterMeters.add(waterMeter);
@@ -87,10 +88,10 @@ public class WaterMeterService {
 
     @RolesAllowed({FACILITY_MANAGER})
     public Tuple2<List<WaterMeter>, Long> getWaterMeters(final String pattern,
-                                                   final int page,
-                                                   final int pageSize,
-                                                   final boolean ascOrder,
-                                                   final String orderBy) {
+                                                         final int page,
+                                                         final int pageSize,
+                                                         final boolean ascOrder,
+                                                         final String orderBy) {
 
         return Tuple.of(
                 waterMeterFacade.findWaterMeters(pattern, page, pageSize, ascOrder, orderBy),

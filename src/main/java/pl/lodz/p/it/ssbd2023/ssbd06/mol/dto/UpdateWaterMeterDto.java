@@ -28,7 +28,7 @@ public class UpdateWaterMeterDto implements Signable {
     @ExpiryDate
     private String expiryDate;
     @WaterUsageNullable
-    private String expectedDailyUsage;
+    private String expectedMonthlyUsage;
     @Nonnegative
     private Long apartmentId;
     @Nonnegative

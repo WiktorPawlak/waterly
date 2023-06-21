@@ -10,6 +10,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.ExpiryDate;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.SerialNumber;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.StartingValue;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterMeterType;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterUsageNullable;
 
 @Data
 @Builder
@@ -25,4 +26,6 @@ public class AssignWaterMeterDto {
     private String expiryDate;
     @WaterMeterType
     private String type;
+    @WaterUsageNullable
+    private String expectedMonthlyUsage;
 }

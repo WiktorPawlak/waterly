@@ -21,4 +21,6 @@ public interface TimeProvider {
     long getDaysRemainingInMonth(LocalDate date);
 
     boolean checkDateIsBeforeOtherDate(Instant date, Instant otherDate);
+
+    long getDaysNumberInCurrentMonth();
 }
