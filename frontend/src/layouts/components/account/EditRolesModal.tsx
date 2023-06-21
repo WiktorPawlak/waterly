@@ -66,8 +66,8 @@ export const EditRolesModal = ({
     if (response.status === 200) {
       enqueueSnackbar(
         isGrant
-          ? t("rolesModal.roleAddedSuccesfully")
-          : t("rolesModal.roleRemovedSuccesfully"),
+          ? t("rolesModal.roleAddedSuccessfully")
+          : t("rolesModal.roleRemovedSuccessfully"),
         {
           variant: "success",
         }
