@@ -353,7 +353,7 @@
       "submitPasswordReset": "Reset password"
     },
     "alert": {
-      "passwordReseted": "Password reseted successfully. You will be redirected to the login page in a moment.",
+      "passwordReseted": "Password reseted successfully. You will be redirected to the home page in a moment.",
       "passwordNotReseted": "Password not reseted successfully."
     },
     "passwordsValidation": {

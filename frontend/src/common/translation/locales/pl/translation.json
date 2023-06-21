@@ -358,7 +358,7 @@
       "submitPasswordReset": "Zresetuj hasło"
     },
     "alert": {
-      "passwordReseted": "Hasło zostało zresetowane pomyślnie. Za chwilę zostaniesz przeniesiony na stronę logowania.",
+      "passwordReseted": "Hasło zostało zresetowane pomyślnie. Za chwilę zostaniesz przeniesiony na stronę główną.",
       "passwordNotReseted": "Hasło nie zostało zresetowane."
     },
     "passwordsValidation": {
