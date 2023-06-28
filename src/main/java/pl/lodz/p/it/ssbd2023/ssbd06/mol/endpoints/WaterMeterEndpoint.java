@@ -1,5 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ConsistencyAssuranceTopic.WATER_METER_PERSISTENCE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType.MAIN;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
@@ -29,8 +30,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.ApartmentService;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.EntityConsistenceAssuranceService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.EntityConsistenceAssurance;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
@@ -50,6 +53,8 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
     @Inject
     private ApartmentService apartmentService;
     @Inject
+    private EntityConsistenceAssuranceService entityConsistenceAssuranceService;
+    @Inject
     private TimeProvider timeProvider;
 
     @Inject
@@ -66,6 +71,9 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         if (Objects.equals(waterMeter.getType(), MAIN)) {
             checkIfMainWaterMeterActive(waterMeter.getId());
         }
+        if (dto.isActive()) {
+            checkIfActiveWaterMeterWithSerialNumber(waterMeter.getSerialNumber());
+        }
         waterMeterService.changeActiveStatus(waterMeter, dto.isActive());
     }
 
@@ -76,12 +84,22 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         }
     }
 
+    private void checkIfActiveWaterMeterWithSerialNumber(final String serialNumber) {
+        Optional<WaterMeter> activeWaterMeter = waterMeterService.findActiveBySerialNumber(serialNumber);
+        if (activeWaterMeter.isPresent() && Objects.equals(activeWaterMeter.get().getSerialNumber(), serialNumber)) {
+            throw ApplicationBaseException.activeWaterMeterWithSameSerialNumberException();
+        }
+    }
+
     @RolesAllowed(FACILITY_MANAGER)
     public void updateWaterMeter(final long id, final UpdateWaterMeterDto dto) {
         validateExpiryDate(dto.getExpiryDate());
         WaterMeter waterMeter = waterMeterService.findById(id);
         if (waterMeter.getVersion() != dto.getVersion()) {
             throw ApplicationBaseException.optimisticLockException();
+        }
+        if (!Objects.equals(waterMeter.getSerialNumber(), dto.getSerialNumber())) {
+            checkIfActiveWaterMeterWithSerialNumber(dto.getSerialNumber());
         }
         updateWaterMeterEntity(waterMeter, dto);
         waterMeterService.updateWaterMeter(waterMeter);
@@ -121,10 +139,14 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         }
         waterMeterService.changeActiveStatus(waterMeter, false);
         WaterMeter newWaterMeter = prepareNewWaterMeter(waterMeter, dto);
+        checkIfActiveWaterMeterWithSerialNumber(newWaterMeter.getSerialNumber());
         waterMeterService.addWaterMeter(newWaterMeter);
     }
 
     private WaterMeter prepareNewWaterMeter(final WaterMeter oldWaterMeter, final ReplaceWaterMeterDto dto) {
+        EntityConsistenceAssurance entityConsistenceAssurance =
+                findOrCreateWaterMeterConsistenceAssurance(dto.getSerialNumber());
+
         return WaterMeter.builder()
                 .serialNumber(dto.getSerialNumber())
                 .expiryDate(DateConverter.convert(dto.getExpiryDate()))
@@ -133,8 +155,23 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
                 .apartment(oldWaterMeter.getApartment())
                 .expectedDailyUsage(dto.getExpectedMonthlyUsage() == null || dto.getExpectedMonthlyUsage().isBlank() ? oldWaterMeter.getExpectedDailyUsage() :
                         calculateExpectedDailyUsage(dto.getExpectedMonthlyUsage()))
+                .entityConsistenceAssurance(entityConsistenceAssurance)
                 .active(true)
                 .build();
+    }
+
+    private EntityConsistenceAssurance findOrCreateWaterMeterConsistenceAssurance(final String serialNumber) {
+        Optional<EntityConsistenceAssurance> waterMeterConsistencyAssurance =
+                entityConsistenceAssuranceService.findWaterMeterConsistencyAssurance(serialNumber);
+        EntityConsistenceAssurance entityConsistenceAssurance;
+        if (waterMeterConsistencyAssurance.isEmpty()) {
+            entityConsistenceAssurance =
+                    new EntityConsistenceAssurance(WATER_METER_PERSISTENCE, serialNumber);
+            entityConsistenceAssuranceService.create(entityConsistenceAssurance);
+        } else {
+            entityConsistenceAssurance = waterMeterConsistencyAssurance.get();
+        }
+        return entityConsistenceAssurance;
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -142,8 +179,11 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         if (DateConverter.convert(dto.getExpiryDate()).before(timeProvider.currentDate())) {
             throw ApplicationBaseException.expiryDateAlreadyExpiredException();
         }
+        checkIfActiveWaterMeterWithSerialNumber(dto.getSerialNumber());
+        EntityConsistenceAssurance entityConsistenceAssurance =
+                findOrCreateWaterMeterConsistenceAssurance(dto.getSerialNumber());
         waterMeterService.assignWaterMeter(apartmentService.getApartmentById(apartmentId), dto,
-                calculateExpectedDailyUsage(dto.getExpectedMonthlyUsage()));
+                calculateExpectedDailyUsage(dto.getExpectedMonthlyUsage()), entityConsistenceAssurance);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -153,6 +193,7 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
         if (mainWaterMeter.isPresent()) {
             throw ApplicationBaseException.mainWaterMeterAlreadyExistsException();
         }
+        checkIfActiveWaterMeterWithSerialNumber(dto.getSerialNumber());
         waterMeterService.createMainWaterMeter(prepareMainWaterMeter(dto));
     }
 
@@ -190,6 +231,9 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
     }
 
     private WaterMeter prepareMainWaterMeter(final CreateMainWaterMeterDto dto) {
+        Optional<EntityConsistenceAssurance> mainWaterMeterConsistencyAssurance =
+                entityConsistenceAssuranceService.findMainWaterMeterConsistencyAssurance();
+
         return WaterMeter.builder()
                 .active(true)
                 .type(MAIN)
@@ -197,6 +241,7 @@ public class WaterMeterEndpoint extends TransactionBoundariesTracingBean {
                 .expectedDailyUsage(BigDecimal.ZERO)
                 .startingValue(dto.getStartingValue())
                 .expiryDate(DateConverter.convert(dto.getExpiryDate()))
+                .entityConsistenceAssurance(mainWaterMeterConsistencyAssurance.orElse(null))
                 .build();
     }
 

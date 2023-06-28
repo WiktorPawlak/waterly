@@ -283,7 +283,8 @@
     "waterMeterExpired": "Water meter expired",
     "previousMeterReadingGreaterThenNewOne": "Water meter reading cannot be lesser then previous one",
     "newMeterReadingLesserThenStartingValue": "Water meter reading cannot be lesser then water meter starting value",
-    "waterMeterHasWaterMeterChecks": "Water meter with water meter checks cannot be moved between apartments"
+    "waterMeterHasWaterMeterChecks": "Water meter with water meter checks cannot be moved between apartments",
+    "sameSerialNumberWaterMeterColliding": "There is existing active water meter with given serial number"
   },
   "validation": {
     "unknownValidationError": "Unknown validation error",
@@ -333,7 +334,8 @@
     "readingValue": "Reading value needs to be specified with 5 digits before and 3 digits after decimal point",
     "serialNumber": {
       "min": "Serial number must be at least 1 character long",
-      "max": "Serial number must be at most 50 characters long"
+      "max": "Serial number must be at most 50 characters long",
+      "syntax": "Number can contain only letters, numbers, white spaces and characters: -, ., _"
     }
   },
   "resetEmailSuccess": {

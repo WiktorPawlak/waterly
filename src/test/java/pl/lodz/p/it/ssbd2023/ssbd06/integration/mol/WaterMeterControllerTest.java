@@ -189,7 +189,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
 
         @Test
         @SneakyThrows
-        void shouldCreateMainWaterMeterWhenNoActiveOneAlready() {
+        void shouldCreateMainWaterMeterWhenNoActiveOneAlready() { // TODO: repair
             // given
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)

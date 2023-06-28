@@ -25,6 +25,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.OperationUnsupportedException
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TwoFARequestedException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.UnmatchedPasswordsException;
+import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.ActiveWaterMeterWithSameSerialNumberException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.DateParseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.ExpiryDateAlreadyExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.exceptions.IllegalMainWaterMeterCheckException;
@@ -89,6 +90,7 @@ public class ApplicationBaseException extends WebApplicationException {
     public static final String ERROR_INVALID_DATE = "ERROR_INVALID_DATE";
     public static final String ERROR_NO_SUCH_BILL = "ERROR_NO_SUCH_BILL";
     public static final String ERROR_MAIN_WATER_METER_ALREADY_EXISTS = "ERROR.MAIN_WATER_METER_ALREADY_EXISTS";
+    public static final String ERROR_ACTIVE_WATER_METER_WITH_SAME_SERIAL_NUMBER = "ERROR.ACTIVE_WATER_METER_WITH_SAME_SERIAL_NUMBER";
     public static final String ERROR_EXPIRY_DATE_ALREADY_EXPIRED = "ERROR.EXPIRY_DATE_ALREADY_EXPIRED";
     public static final String ERROR_WATER_METER_HAS_WATER_METER_CHECKS = "ERROR.WATER_METER_HAS_WATER_METER_CHECKS";
     public static final String ERROR_DATE_PARSE = "ERROR.DATE_PARSE";
@@ -278,6 +280,10 @@ public class ApplicationBaseException extends WebApplicationException {
 
     public static MainWaterMeterAlreadyExistsException mainWaterMeterAlreadyExistsException() {
         return new MainWaterMeterAlreadyExistsException();
+    }
+
+    public static ActiveWaterMeterWithSameSerialNumberException activeWaterMeterWithSameSerialNumberException() {
+        return new ActiveWaterMeterWithSameSerialNumberException();
     }
 
     public static ExpiryDateAlreadyExpiredException expiryDateAlreadyExpiredException() {

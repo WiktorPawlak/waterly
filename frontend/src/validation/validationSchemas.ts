@@ -265,7 +265,8 @@ export const editWaterMeterSchema = z.object({
   serialNumber: z
     .string()
     .min(1, "validation.serialNumber.min")
-    .max(50, "validation.serialNumber.max"),
+    .max(50, "validation.serialNumber.max")
+    .regex(/^[\p{L}0-9._ -]+$/u, "validation.serialNumber.syntax"),
   expectedMonthlyUsage: z
     .string()
     .regex(/^$|\d+(\.\d{3})?$/, "validation.expectedMonthlyUsage"),
