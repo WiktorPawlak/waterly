@@ -30,6 +30,9 @@ public class TariffService {
     @Inject
     TariffFacade tariffFacade;
 
+    @Inject
+    EntityConsistenceAssuranceService entityConsistenceAssuranceService;
+
 
     @PermitAll
     public List<Tariff> getAllTariffs() {
@@ -47,6 +50,7 @@ public class TariffService {
                 .trashPrice(createTariffDto.getTrashPrice())
                 .startDate(startYearMonth.atDay(1))
                 .endDate(endYearMonth.atEndOfMonth())
+                .entityConsistenceAssurance(entityConsistenceAssuranceService.findTariffConsistencyAssurance().orElse(null))
                 .build();
 
         boolean tariffsCollidingFlag = !findTariffsContainingPeriod(tariff.getStartDate(), tariff.getEndDate())

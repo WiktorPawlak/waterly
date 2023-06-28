@@ -18,6 +18,11 @@ import static jakarta.ws.rs.core.Response.Status.OK;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Named;
@@ -29,6 +34,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.restassured.response.Response;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
@@ -267,6 +273,54 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
         }
 
+        @SneakyThrows
+        @Test
+        void shouldCreateOnlyOneMainWaterMeterWithConcurrentRequests() {
+            // given
+            given()
+                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .body(DEACTIVATE_WATER_METER)
+                    .when()
+                    .put(WATERMETER_PATH + "/" + MAIN_WATER_METER_ID + "/active")
+                    .then()
+                    .extract().response();
+
+
+            int threadNumber = 50;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            AtomicInteger numberFinished = new AtomicInteger();
+            List<Integer> responseCodes = new ArrayList<>();
+
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Response response = given()
+                            .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                            .body(CREATE_MAIN_WATER_METER_DTO)
+                            .when()
+                            .post(WATERMETER_PATH + "/main-water-meter")
+                            .then()
+                            .extract().response();
+
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    numberFinished.getAndIncrement();
+                }));
+            }
+
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (numberFinished.get() != threadNumber) {
+
+            }
+
+            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == CREATED.getStatusCode()).toList().size());
+        }
     }
 
     @Nested
@@ -534,6 +588,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(CONFLICT.getStatusCode());
         }
+
     }
 
     private static Stream<Arguments> provideTokensForParameterizedTests() {

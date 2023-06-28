@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.services;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ConsistencyAssuranceTopic.MAIN_WATER_METER_PERSISTENCE;
+import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ConsistencyAssuranceTopic.TARIFF_PERSISTENCE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.ConsistencyAssuranceTopic.WATER_METER_PERSISTENCE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
@@ -33,6 +34,11 @@ public class EntityConsistenceAssuranceService {
     @RolesAllowed({FACILITY_MANAGER})
     public Optional<EntityConsistenceAssurance> findMainWaterMeterConsistencyAssurance() {
         return entityConsistenceAssuranceFacade.findConsistencyAssuranceByTopic(MAIN_WATER_METER_PERSISTENCE);
+    }
+
+    @RolesAllowed({FACILITY_MANAGER})
+    public Optional<EntityConsistenceAssurance> findTariffConsistencyAssurance() {
+        return entityConsistenceAssuranceFacade.findConsistencyAssuranceByTopic(TARIFF_PERSISTENCE);
     }
 
     @RolesAllowed({FACILITY_MANAGER})
