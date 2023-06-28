@@ -68,6 +68,10 @@ const apiErrors = new Map<string, string>([
     "ERROR.WATER_METER_HAS_WATER_METER_CHECKS",
     "apiError.waterMeterHasWaterMeterChecks",
   ],
+  [
+    "ERROR.ACTIVE_WATER_METER_WITH_SAME_SERIAL_NUMBER",
+    "apiError.sameSerialNumberWaterMeterColliding",
+  ],
   ["VALIDATION.ACCOUNT_INVALID_ORDERBY", "validation.accountInvalidOrderBy"],
   ["VALIDATION.EMAIL", "validation.emailInvalid"],
   ["VALIDATION.EMAIL_SIZE", "validation.emailInvalidSize"],

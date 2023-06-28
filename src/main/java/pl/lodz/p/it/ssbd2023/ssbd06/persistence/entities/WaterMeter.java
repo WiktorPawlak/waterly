@@ -36,7 +36,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 @Table(
         name = "water_meter",
         indexes = {
-                @Index(name = "water_meter_apartment_idx", columnList = "apartment_id")
+                @Index(name = "water_meter_apartment_idx", columnList = "apartment_id"),
+                @Index(
+                        name = "entity_consistence_assurance_idx",
+                        columnList = "entity_consistence_assurance_id"
+                )
         }
 )
 @NamedQuery(name = "WaterMeter.findAllActiveByType", query = "select w from WaterMeter w where w.type = :type and w.active = true")
@@ -46,6 +50,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
                 "WHERE wm.apartment.id = :apartmentId " +
                 "AND wm.active = true " +
                 "AND wm.expiryDate > :currentDate")
+@NamedQuery(name = "WaterMeter.findAllActiveBySerialNumber", query = "SELECT w from WaterMeter w where w.serialNumber = :serialNumber and w.active = true")
 @Getter
 @Setter
 @Builder
@@ -78,8 +83,20 @@ public class WaterMeter extends AbstractEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "apartment_id", foreignKey = @ForeignKey(name = "water_meter_apartment_fk"))
     private Apartment apartment;
+    @ToString.Exclude
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(
+            name = "entity_consistence_assurance_id",
+            foreignKey = @ForeignKey(name = "entity_consistence_assurance_fk")
+    )
+    private EntityConsistenceAssurance entityConsistenceAssurance;
 
-    public WaterMeter(@NotNull final AssignWaterMeterDto assignWaterMeterDto, final Apartment apartment, final BigDecimal expectedDailyUsage) {
+    public WaterMeter(
+            @NotNull final AssignWaterMeterDto assignWaterMeterDto,
+            final Apartment apartment,
+            final BigDecimal expectedDailyUsage,
+            final EntityConsistenceAssurance entityConsistenceAssurance
+    ) {
         this.serialNumber = assignWaterMeterDto.getSerialNumber();
         this.startingValue = assignWaterMeterDto.getStartingValue();
         this.expiryDate = DateConverter.convert(assignWaterMeterDto.getExpiryDate());
@@ -87,6 +104,7 @@ public class WaterMeter extends AbstractEntity {
         this.type = WaterMeterType.valueOf(assignWaterMeterDto.getType());
         this.expectedDailyUsage = expectedDailyUsage;
         this.apartment = apartment;
+        this.entityConsistenceAssurance = entityConsistenceAssurance;
     }
 
     public long getApartmentOwnerId() {

@@ -14,6 +14,7 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -66,6 +67,14 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
+    public List<WaterMeter> findAllActiveBySerialNumber(final String serialNumber) {
+        return em.createNamedQuery("WaterMeter.findAllActiveBySerialNumber", WaterMeter.class)
+                .setFlushMode(FlushModeType.COMMIT)
+                .setParameter("serialNumber", serialNumber)
+                .getResultList();
+    }
+
+    @RolesAllowed(FACILITY_MANAGER)
     public Optional<WaterMeter> findOneActiveByType(final WaterMeterType type) {
         try {
             return Optional.of(em.createNamedQuery("WaterMeter.findAllActiveByType", WaterMeter.class)
@@ -78,9 +87,9 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    @Override
-    public WaterMeter create(final WaterMeter entity) {
-        return super.create(entity);
+    public void createWaterMeter(final WaterMeter entity) {
+        super.create(entity);
+        getEntityManager().lock(entity.getEntityConsistenceAssurance(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
@@ -161,17 +170,6 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public List<WaterMeter> findAllByApartmentId(final long apartmentId, final Date currentDate) {
-//        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-//        CriteriaQuery<WaterMeter> criteriaQuery = cb.createQuery(WaterMeter.class);
-//        Root<WaterMeter> waterMeter = criteriaQuery.from(WaterMeter.class);
-//        Predicate predicate = cb.equal(waterMeter.get("apartment").get("id"), apartmentId);
-//        Predicate predicateActiveWaterMeter = cb.equal(waterMeter.get("active"), true);
-//        Predicate predicateExpiryDate = cb.greaterThan(waterMeter.get("expiryDate"), currentDate);
-//        Predicate finalPredicate = cb.and(predicateActiveWaterMeter, predicate, predicateExpiryDate);
-//        criteriaQuery.where(finalPredicate);
-//
-//        return getEntityManager().createQuery(criteriaQuery)
-//                .getResultList();
         TypedQuery<WaterMeter> query = em.createNamedQuery(
                 "WaterMeter.findAllActiveByApartmentIdAndDate", WaterMeter.class);
         query.setParameter("apartmentId", apartmentId);

@@ -1,5 +1,5 @@
-TRUNCATE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication CASCADE;
-TRUNCATE TABLE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication RESTART IDENTITY;
+TRUNCATE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication,entity_consistence_assurance CASCADE;
+TRUNCATE TABLE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication,entity_consistence_assurance RESTART IDENTITY;
 
 GRANT ALL ON SCHEMA public TO ssbd06admin;
 
@@ -17,6 +17,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE verification_token TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE auth_info TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE list_search_preferences TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE two_factor_authentication TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE entity_consistence_assurance TO ssbd06mol;
 
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_details_id_seq TO ssbd06mok;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_id_seq TO ssbd06mok;
@@ -25,6 +26,7 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE role_id_seq TO ssbd06mok;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE verification_token_id_seq TO ssbd06mok;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE list_search_preferences_id_seq TO ssbd06mok;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE two_factor_authentication_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE entity_consistence_assurance_id_seq TO ssbd06mol;
 
 GRANT SELECT ON TABLE account TO ssbd06mol;
 GRANT SELECT ON TABLE role TO ssbd06mol;
@@ -133,9 +135,10 @@ VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 5);
 
 INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '12a', now(), now(), 40.00, 2);
 INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id) VALUES (nextval('apartment_id_seq'), 0, '12b', now(), now(), 40.00, 2);
+INSERT INTO public.entity_consistence_assurance (id, topic, version, created_on, updated_on) VALUES (nextval('entity_consistence_assurance_id_seq'), 'MAIN_WATER_METER_PERSISTENCE', 0, now(), now());
 INSERT INTO public.water_meter (id, version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, '1234567 A', now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());
 INSERT INTO public.water_meter (id, version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, '1234567 B', now() + INTERVAL '360 days', 100.000, 50.000, 'COLD_WATER', 1, now(), now());
-INSERT INTO public.water_meter (id, version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, '1234567 C', now() + INTERVAL '360 days', 0.000, 0.000, 'MAIN', null, now(), now());
+INSERT INTO public.water_meter (id, version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id, entity_consistence_assurance_id, created_on, updated_on) VALUES (nextval('water_meter_id_seq'), 0, true, '123456789 C', now() + INTERVAL '360 days', 0.000, 0.000, 'MAIN', null, (SELECT id FROM public.entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'), now(), now());
 INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage, unbilled_water_amount, unbilled_water_cost) VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
 INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage, unbilled_water_amount, unbilled_water_cost) VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 11, 12, 13, 14, 15, 16, 17);
 INSERT INTO public.bill (id, version, created_on, updated_on, balance, date, advance_usage, apartment_id, owner_id, real_usage) VALUES (nextval('bill_id_seq'), 0, now(), now(), 9.02, now(), 1, 1, 2, 2);

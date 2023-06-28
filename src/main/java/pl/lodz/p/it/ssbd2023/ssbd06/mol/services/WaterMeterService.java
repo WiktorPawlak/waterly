@@ -19,6 +19,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHand
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.facades.WaterMeterFacade;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
+import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.EntityConsistenceAssurance;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
@@ -46,6 +47,12 @@ public class WaterMeterService {
                 .findFirst();
     }
 
+    @RolesAllowed(FACILITY_MANAGER)
+    public Optional<WaterMeter> findActiveBySerialNumber(final String serialNumber) {
+        return waterMeterFacade.findAllActiveBySerialNumber(serialNumber).stream()
+                .findFirst();
+    }
+
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public WaterMeter findWaterMeterById(final long id) {
         return waterMeterFacade.findById(id);
@@ -64,13 +71,18 @@ public class WaterMeterService {
 
     @RolesAllowed(FACILITY_MANAGER)
     public void addWaterMeter(final WaterMeter waterMeter) {
-        waterMeterFacade.create(waterMeter);
+        waterMeterFacade.createWaterMeter(waterMeter);
     }
 
     @RolesAllowed(FACILITY_MANAGER)
-    public void assignWaterMeter(final Apartment apartment, final AssignWaterMeterDto dto, final BigDecimal expectedDailyUsage) {
-        WaterMeter waterMeter = new WaterMeter(dto, apartment, expectedDailyUsage);
-        waterMeterFacade.create(waterMeter);
+    public void assignWaterMeter(
+            final Apartment apartment,
+            final AssignWaterMeterDto dto,
+            final BigDecimal expectedDailyUsage,
+            final EntityConsistenceAssurance entityConsistenceAssurance
+    ) {
+        WaterMeter waterMeter = new WaterMeter(dto, apartment, expectedDailyUsage, entityConsistenceAssurance);
+        waterMeterFacade.createWaterMeter(waterMeter);
         List<WaterMeter> waterMeters = apartment.getWaterMeters();
         waterMeters.add(waterMeter);
         apartment.setWaterMeters(waterMeters);
@@ -78,7 +90,7 @@ public class WaterMeterService {
 
     @RolesAllowed(FACILITY_MANAGER)
     public void createMainWaterMeter(final WaterMeter waterMeter) {
-        waterMeterFacade.create(waterMeter);
+        waterMeterFacade.createWaterMeter(waterMeter);
     }
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})

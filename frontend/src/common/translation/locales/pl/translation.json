@@ -289,7 +289,8 @@
     "waterMeterExpired": "Homologacja wodomierza wygasła",
     "previousMeterReadingGreaterThenNewOne": "Pomiar wodomierza nie może być mniejszy niż poprzedni",
     "newMeterReadingLesserThenStartingValue": "Pomiar wodomierza nie może być mniejszy niż wartość startowa wodomierza",
-    "waterMeterHasWaterMeterChecks": "Wodomierz z pomiarami nie może zostać przenoszony pomiędzy lokalami"
+    "waterMeterHasWaterMeterChecks": "Wodomierz z pomiarami nie może zostać przenoszony pomiędzy lokalami",
+    "sameSerialNumberWaterMeterColliding": "Istnieje już aktywny wodomierz o podanym numerze seryjnym"
   },
   "validation": {
     "accountInvalidOrderBy": "nieprawidłowa właściwość sortowania",
@@ -338,7 +339,8 @@
     "readingValue": "Wartość odczytu musi być określona z 5 cyframi przed i 3 cyframi po przecinku",
     "serialNumber": {
       "min": "Numer seryjny musi mieć przynajmniej 1 znak",
-      "max": "Numer seryjny nie może być dłuższy niż 50 znaków"
+      "max": "Numer seryjny nie może być dłuższy niż 50 znaków",
+      "syntax": "Numer seryjny moze zawierać tylko litery, liczby, znaki białe oraz znaki: -, ., _"
     }
   },
   "resetEmailSuccess": {
