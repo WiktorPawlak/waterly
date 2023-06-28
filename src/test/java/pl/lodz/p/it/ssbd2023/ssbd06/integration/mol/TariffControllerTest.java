@@ -12,6 +12,11 @@ import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -29,6 +34,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
+import io.restassured.response.Response;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
@@ -180,6 +186,53 @@ public class TariffControllerTest extends IntegrationTestsConfig {
                     .post(TARIFF_PATH)
                     .then()
                     .statusCode(BAD_REQUEST.getStatusCode());
+        }
+
+        @SneakyThrows
+        @Test
+        void shouldCreateOnlyOneTariffWithConcurrentRequests() {
+            int threadNumber = 50;
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
+            List<Thread> threads = new ArrayList<>(threadNumber);
+            AtomicInteger numberFinished = new AtomicInteger();
+            List<Integer> responseCodes = new ArrayList<>();
+
+            CreateTariffDto createTariffDto = CreateTariffDto.builder()
+                    .coldWaterPrice(STARTING_VALUE)
+                    .hotWaterPrice(STARTING_VALUE)
+                    .trashPrice(STARTING_VALUE)
+                    .startDate(TEST_DATE)
+                    .endDate(TEST_DATE)
+                    .build();
+
+            for (int i = 0; i < threadNumber; i++) {
+                threads.add(new Thread(() -> {
+                    try {
+                        cyclicBarrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Response response = given()
+                            .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                            .body(createTariffDto)
+                            .when()
+                            .post(TARIFF_PATH)
+                            .then()
+                            .extract().response();
+
+                    int responseCode = response.getStatusCode();
+                    responseCodes.add(responseCode);
+                    numberFinished.getAndIncrement();
+                }));
+            }
+
+            threads.forEach(Thread::start);
+            cyclicBarrier.await();
+            while (numberFinished.get() != threadNumber) {
+
+            }
+
+            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == CREATED.getStatusCode()).toList().size());
         }
     }
 

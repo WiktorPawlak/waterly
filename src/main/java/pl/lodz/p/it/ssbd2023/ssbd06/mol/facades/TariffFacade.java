@@ -12,6 +12,7 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -53,7 +54,9 @@ public class TariffFacade extends AbstractFacade<Tariff> {
     @Override
     @RolesAllowed({FACILITY_MANAGER})
     public Tariff create(final Tariff entity) {
-        return super.create(entity);
+        var tariff = super.create(entity);
+        getEntityManager().lock(entity.getEntityConsistenceAssurance(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        return tariff;
     }
 
     @Override
