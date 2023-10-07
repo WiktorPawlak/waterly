@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="quarkus-run" type="QuarkusRunConfigurationType" factoryName="Quarkus">
     <module name="ssbd06" />
-    <QsMavenRunConfiguration>
+    <quarkus-run>
       <MavenSettings>
         <option name="myGeneralSettings" />
         <option name="myRunnerSettings" />
@@ -26,7 +26,7 @@
       </MavenSettings>
       <targetMavenLocalRepo />
       <emulateTerminal>false</emulateTerminal>
-    </QsMavenRunConfiguration>
+    </quarkus-run>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

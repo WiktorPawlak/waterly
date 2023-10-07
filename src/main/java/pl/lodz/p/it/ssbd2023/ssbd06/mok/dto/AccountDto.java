@@ -33,7 +33,7 @@ public class AccountDto implements Signable {
     private String lastName;
     @PhoneNumber
     private String phoneNumber;
-    private List<String> roles = new ArrayList();
+    private List<String> roles = new ArrayList<>();
     @LanguageTag
     private String languageTag;
     private long version;

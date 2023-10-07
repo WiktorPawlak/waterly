@@ -8,6 +8,7 @@ import java.util.List;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -20,6 +21,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.BillEndpoint;
 
 @Path("/bills")
 @RequestScoped
+@Transactional
 public class BillController {
 
     @Inject

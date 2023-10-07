@@ -6,6 +6,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
@@ -27,6 +28,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PageSize;
 
 @Path("/invoices")
 @RequestScoped
+@Transactional
 public class InvoiceController {
 
     @Inject

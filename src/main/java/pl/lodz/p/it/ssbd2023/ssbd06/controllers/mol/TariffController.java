@@ -7,6 +7,7 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
@@ -25,6 +26,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 
 @Path("/tariffs")
 @RequestScoped
+@Transactional
 public class TariffController {
 
     @Inject
