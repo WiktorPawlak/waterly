@@ -36,11 +36,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import io.vavr.Tuple2;
 import jakarta.ws.rs.core.MediaType;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.PostgresDBTestResource;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
@@ -54,6 +57,9 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
+
+@QuarkusTest
+@QuarkusTestResource(value = PostgresDBTestResource.class, restrictToAnnotatedClass = true)
 @Order(4)
 class AccountControllerTest extends IntegrationTestsConfig {
 

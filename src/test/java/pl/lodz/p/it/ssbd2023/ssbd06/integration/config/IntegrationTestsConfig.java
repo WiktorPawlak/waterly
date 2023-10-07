@@ -11,8 +11,11 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Scanner;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
@@ -31,7 +34,19 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProviderImpl;
 
-public class IntegrationTestsConfig extends PayaraContainerInitializer {
+
+@Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class IntegrationTestsConfig {
+
+    @ConfigProperty(name = "quarkus.datasource.jdbc.url")
+    String jdbcUrl;
+    @ConfigProperty(name = "quarkus.datasource.jdbc.first-port")
+    String firstMapperPort;
+    @ConfigProperty(name = "quarkus.datasource.username")
+    String dbUsername;
+    @ConfigProperty(name = "quarkus.datasource.password")
+    String dbPassword;
 
     protected static final String AUTH_PATH = "/auth";
     protected static final String ACCOUNT_PATH = "/accounts";
@@ -93,8 +108,6 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     protected static String OWNER_TOKEN;
     protected static String FACILITY_MANAGER_TOKEN;
 
-    protected static String POSTGRES_PORT;
-
     protected DatabaseConnector databaseConnector;
 
     @BeforeAll
@@ -102,11 +115,6 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
         ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
         FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
         OWNER_TOKEN = getToken(OWNER_CREDENTIALS);
-    }
-
-    @BeforeAll
-    protected void postgresPortSetup() {
-        POSTGRES_PORT = String.valueOf(postgres.getFirstMappedPort());
     }
 
     protected String getToken(final Credentials credentials) {
@@ -183,12 +191,10 @@ public class IntegrationTestsConfig extends PayaraContainerInitializer {
     @BeforeEach
     @SneakyThrows
     void reinitializeDbAfterEachTest() {
-        String url = "jdbc:postgresql://localhost:" + postgres.getFirstMappedPort() + "/ssbd06?loggerLevel=OFF";
-        String username = postgres.getUsername();
-        String password = postgres.getPassword();
-        databaseConnector = new DatabaseConnector(POSTGRES_PORT);
+        String url = "jdbc:postgresql://localhost:" + firstMapperPort + "/ssbd06?loggerLevel=OFF";
+        databaseConnector = new DatabaseConnector(firstMapperPort);
 
-        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+        try (Connection conn = DriverManager.getConnection(url, dbUsername, dbPassword)) {
             InputStream inputStream = getClass().getResourceAsStream("/test-init.sql");
             assert inputStream != null;
             String sqlQuery = new Scanner(inputStream, StandardCharsets.UTF_8).useDelimiter("\\A").next();

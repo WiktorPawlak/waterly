@@ -32,15 +32,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.response.Response;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.PostgresDBTestResource;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 
+@QuarkusTest
+@QuarkusTestResource(value = PostgresDBTestResource.class, restrictToAnnotatedClass = true)
 @Order(7)
 public class TariffControllerTest extends IntegrationTestsConfig {
     @Nested
