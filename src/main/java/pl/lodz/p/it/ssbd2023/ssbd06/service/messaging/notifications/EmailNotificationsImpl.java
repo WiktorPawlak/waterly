@@ -23,16 +23,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.EmailSenderProvider;
 
-@Stateless
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@RequestScoped
 public class EmailNotificationsImpl implements NotificationsProvider {
 
     @Inject

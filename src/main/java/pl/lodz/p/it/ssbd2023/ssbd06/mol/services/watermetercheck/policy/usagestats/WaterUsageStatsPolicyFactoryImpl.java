@@ -8,9 +8,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
@@ -21,8 +19,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
 @ServiceExceptionHandler
-@Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@RequestScoped
 @RolesAllowed({FACILITY_MANAGER, OWNER})
 public class WaterUsageStatsPolicyFactoryImpl implements WaterUsageStatsPolicyFactory {
 

@@ -2,10 +2,10 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender;
 
 import java.util.logging.Logger;
 
-import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Alternative;
 
-@Stateless
+@RequestScoped
 @Alternative
 public class EmailSenderProviderMock implements EmailSenderProvider {
 

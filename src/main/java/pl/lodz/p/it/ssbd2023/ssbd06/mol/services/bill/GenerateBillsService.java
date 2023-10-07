@@ -7,9 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateful;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.InvoiceCreatedEvent;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.WaterMeterCheckAddedEvent;
@@ -20,8 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
 @ServiceExceptionHandler
-@Stateful
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@RequestScoped
 public class GenerateBillsService extends AbstractBillService {
 
     public static final int ONE_MONTH = 1;

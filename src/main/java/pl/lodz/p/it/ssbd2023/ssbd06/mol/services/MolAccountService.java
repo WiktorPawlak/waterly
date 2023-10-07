@@ -5,10 +5,9 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.Optional;
 
+import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.SecurityContext;
 import lombok.extern.java.Log;
@@ -22,13 +21,12 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @Log
 @Monitored
 @ServiceExceptionHandler
-@Stateless
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@RequestScoped
 public class MolAccountService {
 
     @Inject
     private ReadOnlyAccountFacade readOnlyAccountFacade;
-    @Inject
+    @Resource
     private SecurityContext securityContext;
 
     @RolesAllowed(FACILITY_MANAGER)

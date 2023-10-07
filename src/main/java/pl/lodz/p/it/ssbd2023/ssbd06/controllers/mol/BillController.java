@@ -13,7 +13,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.OwnerBillDto;
@@ -21,7 +20,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints.BillEndpoint;
 
 @Path("/bills")
 @RequestScoped
-public class BillController extends RepeatableTransactionProcessor {
+public class BillController {
 
     @Inject
     private BillEndpoint billEndpoint;
@@ -31,7 +30,7 @@ public class BillController extends RepeatableTransactionProcessor {
     @RolesAllowed({FACILITY_MANAGER})
     public Response getBillDetails(@QueryParam("date") final String date,
                                    @QueryParam("apartmentId") final long apartmentId) {
-        BillDto billDto = retry(() -> billEndpoint.getBillDetail(date, apartmentId), billEndpoint);
+        BillDto billDto = billEndpoint.getBillDetail(date, apartmentId);
         return Response.ok().entity(billDto).build();
     }
 
@@ -40,7 +39,7 @@ public class BillController extends RepeatableTransactionProcessor {
     @RolesAllowed({OWNER})
     public Response getBillDetailsByOwner(@QueryParam("date") final String date,
                                           @QueryParam("apartmentId") final long apartmentId) {
-        BillDto billDto = retry(() -> billEndpoint.getBillDetailByOwner(date, apartmentId), billEndpoint);
+        BillDto billDto = billEndpoint.getBillDetailByOwner(date, apartmentId);
         return Response.ok().entity(billDto).build();
     }
 

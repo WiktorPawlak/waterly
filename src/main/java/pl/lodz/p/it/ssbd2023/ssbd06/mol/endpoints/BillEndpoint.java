@@ -3,6 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -11,13 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.LocalBean;
-import jakarta.ejb.Stateful;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentBillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.BillDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.OwnerBillDto;
@@ -25,14 +22,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.MolAccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.ReadOnlyBillService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 
-@TransactionRollbackInterceptor
 @Monitored
-@LocalBean
-@Stateful
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class BillEndpoint extends TransactionBoundariesTracingBean {
+@RequestScoped
+public class BillEndpoint implements Serializable {
 
     @Inject
     private ReadOnlyBillService readOnlyBillService;

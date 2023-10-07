@@ -15,7 +15,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
@@ -28,7 +27,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PageSize;
 
 @Path("/invoices")
 @RequestScoped
-public class InvoiceController extends RepeatableTransactionProcessor {
+public class InvoiceController {
 
     @Inject
     private InvoiceEndpoint invoiceEndpoint;
@@ -44,7 +43,7 @@ public class InvoiceController extends RepeatableTransactionProcessor {
                                 @InvoicesOrderBy @QueryParam("orderBy") final String orderBy,
                                 @QueryParam("pattern") final String pattern) {
 
-        PaginatedList<InvoicesDto> invoices = retry(() -> invoiceEndpoint.getInvoicesList(pattern, page, pageSize, order, orderBy), invoiceEndpoint);
+        PaginatedList<InvoicesDto> invoices = invoiceEndpoint.getInvoicesList(pattern, page, pageSize, order, orderBy);
         return Response.ok().entity(invoices).build();
     }
 
@@ -52,7 +51,7 @@ public class InvoiceController extends RepeatableTransactionProcessor {
     @Path("/{id}")
     @RolesAllowed({FACILITY_MANAGER})
     public Response getInvoiceById(@PathParam("id") final long id) {
-        InvoicesDto invoice = retry(() -> invoiceEndpoint.getInvoiceById(id), invoiceEndpoint);
+        InvoicesDto invoice = invoiceEndpoint.getInvoiceById(id);
         return Response.ok().entity(invoice).header("ETag", payloadSigner.sign(invoice)).build();
     }
 
@@ -60,7 +59,7 @@ public class InvoiceController extends RepeatableTransactionProcessor {
     @Path("/{id}")
     @RolesAllowed({FACILITY_MANAGER})
     public Response updateInvoice(@PathParam("id") final long id, @NotNull @Valid final InvoicesDto dto) {
-        retry(() -> invoiceEndpoint.updateInvoice(id, dto), invoiceEndpoint);
+        invoiceEndpoint.updateInvoice(id, dto);
         return Response.ok().build();
     }
 

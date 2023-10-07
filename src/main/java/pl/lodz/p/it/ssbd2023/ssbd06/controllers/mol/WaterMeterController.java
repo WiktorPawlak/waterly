@@ -23,7 +23,6 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
@@ -43,7 +42,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.WaterMetersOrderBy;
 @Log
 @Path("/water-meters")
 @RequestScoped
-public class WaterMeterController extends RepeatableTransactionProcessor {
+public class WaterMeterController {
 
     @Inject
     private WaterMeterEndpoint waterMeterEndpoint;
@@ -58,7 +57,7 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWaterMeterById(@PathParam("id") final long id) {
-        WaterMeterDto waterMeterDto = retry(() -> waterMeterEndpoint.getWaterMeterById(id), waterMeterEndpoint);
+        WaterMeterDto waterMeterDto = waterMeterEndpoint.getWaterMeterById(id);
         String entityTag = payloadSigner.sign(waterMeterDto);
         return Response.ok().entity(waterMeterDto).header("ETag", entityTag).build();
     }
@@ -66,13 +65,12 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @GET
     @RolesAllowed(FACILITY_MANAGER)
     public Response getWaterMeters(@Page @QueryParam("page") final Integer page,
-                                @PageSize @QueryParam("pageSize") final Integer pageSize,
-                                @Order @QueryParam("order") final String order,
-                                @WaterMetersOrderBy @QueryParam("orderBy") final String orderBy,
-                                @QueryParam("pattern") final String pattern) {
+                                   @PageSize @QueryParam("pageSize") final Integer pageSize,
+                                   @Order @QueryParam("order") final String order,
+                                   @WaterMetersOrderBy @QueryParam("orderBy") final String orderBy,
+                                   @QueryParam("pattern") final String pattern) {
 
-        PaginatedList<WaterMeterDto> waterMeters = retry(
-                () -> waterMeterEndpoint.getWaterMetersList(pattern, page, pageSize, order, orderBy), waterMeterEndpoint);
+        PaginatedList<WaterMeterDto> waterMeters = waterMeterEndpoint.getWaterMetersList(pattern, page, pageSize, order, orderBy);
         return Response.ok().entity(waterMeters).build();
     }
 
@@ -80,7 +78,7 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @Path("/apartment/{apartmentId}")
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Response getWaterMatersByApartmentId(@PathParam("apartmentId") final long apartmentId) {
-        List<WaterMeterDto> waterMeters = retry(() -> (waterMeterEndpoint.getWaterMetersByApartmentId(apartmentId)), waterMeterEndpoint);
+        List<WaterMeterDto> waterMeters = (waterMeterEndpoint.getWaterMetersByApartmentId(apartmentId));
         return Response.ok().entity(waterMeters).build();
     }
 
@@ -88,7 +86,7 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @Path("/main-water-meter")
     @RolesAllowed(FACILITY_MANAGER)
     public Response createMainWaterMeter(@NotNull @Valid final CreateMainWaterMeterDto dto) {
-        retry(() -> waterMeterEndpoint.createMainWaterMeter(dto), waterMeterEndpoint);
+        waterMeterEndpoint.createMainWaterMeter(dto);
         return Response.status(CREATED).build();
     }
 
@@ -97,9 +95,9 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public Response performWaterMeterChecks(@NotNull @Valid final WaterMeterChecksDto dto) {
         if (dto.isManagerAuthored()) {
-            retry(() -> waterMeterCheckEndpoint.initializePerformWaterMeterChecksByFM(dto), waterMeterEndpoint);
+            waterMeterCheckEndpoint.initializePerformWaterMeterChecksByFM(dto);
         } else {
-            retry(() -> waterMeterCheckEndpoint.initializePerformWaterMeterChecksByOwner(dto), waterMeterEndpoint);
+            waterMeterCheckEndpoint.initializePerformWaterMeterChecksByOwner(dto);
         }
         return Response.status(NO_CONTENT).build();
     }
@@ -108,7 +106,7 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @Path("/{id}/replace")
     @RolesAllowed(FACILITY_MANAGER)
     public Response replaceWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final ReplaceWaterMeterDto dto) {
-        retry(() -> waterMeterEndpoint.replaceWaterMeter(waterMeterId, dto), waterMeterEndpoint);
+        waterMeterEndpoint.replaceWaterMeter(waterMeterId, dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -117,7 +115,7 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @RolesAllowed(FACILITY_MANAGER)
     @EtagValidationFilter
     public Response updateWaterMeter(@PathParam("id") final long waterMeterId, @NotNull @Valid final UpdateWaterMeterDto dto) {
-        retry(() -> waterMeterEndpoint.updateWaterMeter(waterMeterId, dto), waterMeterEndpoint);
+        waterMeterEndpoint.updateWaterMeter(waterMeterId, dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -126,7 +124,7 @@ public class WaterMeterController extends RepeatableTransactionProcessor {
     @Path("/{id}/active")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeWaterMeterActiveStatus(@PathParam("id") final long waterMeterId, @NotNull @Valid final WaterMeterActiveStatusDto dto) {
-        retry(() -> waterMeterEndpoint.changeWaterMeterActiveStatus(waterMeterId, dto), waterMeterEndpoint);
+        waterMeterEndpoint.changeWaterMeterActiveStatus(waterMeterId, dto);
         return Response.ok().build();
     }
 }

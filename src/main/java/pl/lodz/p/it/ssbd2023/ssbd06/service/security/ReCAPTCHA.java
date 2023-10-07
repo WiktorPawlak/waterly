@@ -9,18 +9,16 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-import jakarta.ejb.Stateless;
-import jakarta.inject.Inject;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-@Stateless
+import jakarta.enterprise.context.RequestScoped;
+
+@RequestScoped
 public class ReCAPTCHA {
 
-    @Inject
-    @Property("recaptcha.secret.key")
+    @ConfigProperty(name = "recaptcha.secret.key")
     private String recaptchaSecretKey;
-    @Inject
-    @Property("recaptcha.site.verify")
+    @ConfigProperty(name = "recaptcha.site.verify")
     private String recaptchaSiteVerify;
 
     public boolean verifyRecaptcha(final String recaptchaResponse) {

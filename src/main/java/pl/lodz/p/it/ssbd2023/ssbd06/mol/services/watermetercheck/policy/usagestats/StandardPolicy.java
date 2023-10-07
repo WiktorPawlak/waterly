@@ -8,9 +8,9 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.WaterMeterService;
@@ -19,8 +19,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterCheck;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @Named("standard")
-@Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@RequestScoped
 @RolesAllowed({FACILITY_MANAGER, OWNER})
 public class StandardPolicy implements WaterUsageStatsPolicy {
 

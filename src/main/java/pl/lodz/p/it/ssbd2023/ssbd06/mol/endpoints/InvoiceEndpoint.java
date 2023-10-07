@@ -2,18 +2,15 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
+import java.io.Serializable;
 import java.util.List;
 
 import io.vavr.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.LocalBean;
-import jakarta.ejb.Stateful;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.config.PaginationConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
@@ -26,14 +23,10 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.UpdateBillsService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Invoice;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 
-@TransactionRollbackInterceptor
 @Monitored
-@LocalBean
-@Stateful
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class InvoiceEndpoint extends TransactionBoundariesTracingBean {
+@RequestScoped
+public class InvoiceEndpoint implements Serializable {
 
     @Inject
     private InvoiceService invoiceService;

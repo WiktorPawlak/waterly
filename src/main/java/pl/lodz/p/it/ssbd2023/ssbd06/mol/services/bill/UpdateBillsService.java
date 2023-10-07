@@ -7,9 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateful;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.InvoiceUpdatedEvent;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Apartment;
@@ -20,8 +18,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
 @ServiceExceptionHandler
-@Stateful
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@RequestScoped
 public class UpdateBillsService extends AbstractBillService {
 
     @RolesAllowed(FACILITY_MANAGER)

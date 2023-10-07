@@ -3,17 +3,16 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService.FIRST_PAGE;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 
+import java.io.Serializable;
 import java.util.List;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.LocalBean;
-import jakarta.ejb.Stateful;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedTariffsListDto;
@@ -21,22 +20,16 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.TariffService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.UpdateBillsService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Tariff;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 
-@TransactionRollbackInterceptor
 @Monitored
-@LocalBean
-@Stateful
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class TariffEndpoint extends TransactionBoundariesTracingBean {
+@RequestScoped
+public class TariffEndpoint implements Serializable {
 
     @Inject
     private TariffService tariffService;
 
-    @Inject
-    @Property("default.list.page.size")
+    @ConfigProperty(name = "default.list.page.size")
     private int defaultListPageSize;
 
     @Inject

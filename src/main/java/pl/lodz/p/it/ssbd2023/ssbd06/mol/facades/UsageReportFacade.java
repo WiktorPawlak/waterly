@@ -1,9 +1,9 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
 import jakarta.annotation.security.PermitAll;
-import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.java.Log;
@@ -15,8 +15,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @Log
 @Monitored
 @FacadeExceptionHandler
-@Stateless
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@RequestScoped
 public class UsageReportFacade extends AbstractFacade<UsageReport> {
 
     @PersistenceContext(unitName = "molPU")

@@ -13,9 +13,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProviderImpl.VERIFIC
 
 import java.util.Locale;
 
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
@@ -23,8 +21,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.i18n.I18nProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.config.EmailConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.EmailSenderProvider;
 
-@Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@RequestScoped
 public class EmailTokenSenderImpl implements TokenSender {
 
     @Inject

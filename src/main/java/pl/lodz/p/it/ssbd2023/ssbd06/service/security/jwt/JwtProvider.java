@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -11,24 +13,19 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import lombok.RequiredArgsConstructor;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
 @RequestScoped
 @RequiredArgsConstructor
 public class JwtProvider {
 
     private static final String ROLES_CLAIM_NAME = "roles";
-    @Inject
-    @Property("jwt.issuer")
+    @ConfigProperty(name = "jwt.issuer")
     private String issuer;
-    @Inject
-    @Property("jwt.expiration.time")
+    @ConfigProperty(name = "jwt.expiration.time")
     private int expirationTime;
-    @Inject
-    @Property("jwt.key")
+    @ConfigProperty(name = "jwt.key")
     private String jwtKey;
 
     public String createToken(final CredentialValidationResult validationResult) {

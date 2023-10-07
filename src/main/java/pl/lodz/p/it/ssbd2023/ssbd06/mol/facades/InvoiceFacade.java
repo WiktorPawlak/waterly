@@ -13,9 +13,9 @@ import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -35,8 +35,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 @Log
 @Monitored
 @FacadeExceptionHandler
-@Stateless
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@RequestScoped
 public class InvoiceFacade extends AbstractFacade<Invoice> {
 
     @PersistenceContext(unitName = "molPU")

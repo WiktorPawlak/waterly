@@ -11,9 +11,7 @@ import java.util.Optional;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
@@ -26,8 +24,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @Monitored
 @ServiceExceptionHandler
-@Stateless
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@RequestScoped
 public class WaterMeterService {
 
     @Inject

@@ -5,21 +5,19 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.ADMINISTR
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.LocalBean;
-import jakarta.ejb.Stateful;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.identitystore.PasswordHash;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountPasswordDto;
@@ -38,32 +36,25 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExceededHalfTimeExceptio
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenNotFoundException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.ReCAPTCHA;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptPasswordHashImpl;
 
-@TransactionRollbackInterceptor
 @Monitored
-@LocalBean
-@Stateful
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class AccountEndpoint extends TransactionBoundariesTracingBean {
+@RequestScoped
+public class AccountEndpoint implements Serializable {
 
     @Inject
     private AuthenticatedAccount authenticatedAccount;
     @Inject
     private AccountService accountService;
     @Inject
-    @BCryptHash
-    private PasswordHash hashProvider;
+    private BCryptPasswordHashImpl hashProvider;
     @Inject
     private ReCAPTCHA recaptchaVerifier;
-    @Inject
-    @Property("default.list.page.size")
+    @ConfigProperty(name = "default.list.page.size")
     private int defaultListPageSize;
 
     @RolesAllowed(ADMINISTRATOR)

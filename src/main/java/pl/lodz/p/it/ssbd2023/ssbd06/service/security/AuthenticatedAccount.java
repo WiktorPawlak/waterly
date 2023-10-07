@@ -1,13 +1,13 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 
-import jakarta.ejb.Stateless;
-import jakarta.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.security.enterprise.SecurityContext;
 
-@Stateless
+@RequestScoped
 public class AuthenticatedAccount {
 
-    @Inject
+    @Resource
     private SecurityContext securityContext;
 
     public String getLogin() {

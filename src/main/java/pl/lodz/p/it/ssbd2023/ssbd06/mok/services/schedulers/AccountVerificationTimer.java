@@ -7,11 +7,11 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 import jakarta.annotation.Resource;
-import jakarta.ejb.Stateless;
 import jakarta.ejb.Timeout;
 import jakarta.ejb.Timer;
 import jakarta.ejb.TimerConfig;
 import jakarta.ejb.TimerService;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
@@ -21,7 +21,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
 @ServiceExceptionHandler
-@Stateless
+@RequestScoped
 public class AccountVerificationTimer {
 
     private static final String TIMER_NAME_PREFIX = "VERIFICATION_";

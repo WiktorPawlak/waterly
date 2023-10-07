@@ -19,7 +19,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.AssignWaterMeterDto;
@@ -37,7 +36,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.PageSize;
 
 @Path("/apartments")
 @RequestScoped
-public class ApartmentController extends RepeatableTransactionProcessor {
+public class ApartmentController {
 
     @Inject
     private ApartmentEndpoint apartmentEndpoint;
@@ -57,7 +56,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
             @ApartmentOrderBy @QueryParam("orderBy") final String orderBy,
             @QueryParam("pattern") final String pattern
     ) {
-        PaginatedList<ApartmentDto> apartments = retry(() -> apartmentEndpoint.getAllApartments(pattern, page, pageSize, order, orderBy), apartmentEndpoint);
+        PaginatedList<ApartmentDto> apartments = apartmentEndpoint.getAllApartments(pattern, page, pageSize, order, orderBy);
         return Response.ok().entity(apartments).build();
     }
 
@@ -71,7 +70,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
             @ApartmentOrderBy @QueryParam("orderBy") final String orderBy,
             @QueryParam("pattern") final String pattern
     ) {
-        PaginatedList<ApartmentDto> apartments = retry(() -> apartmentEndpoint.getSelfApartments(pattern, page, pageSize, order, orderBy), apartmentEndpoint);
+        PaginatedList<ApartmentDto> apartments = apartmentEndpoint.getSelfApartments(pattern, page, pageSize, order, orderBy);
         return Response.ok().entity(apartments).build();
     }
 
@@ -86,7 +85,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
     @POST
     @RolesAllowed(FACILITY_MANAGER)
     public Response createApartment(@NotNull @Valid final CreateApartmentDto dto) {
-        retry(() -> apartmentEndpoint.createApartment(dto), apartmentEndpoint);
+        apartmentEndpoint.createApartment(dto);
         return Response.status(CREATED).build();
     }
 
@@ -95,7 +94,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
     @EtagValidationFilter
     @RolesAllowed(FACILITY_MANAGER)
     public Response updateApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final EditApartmentDetailsDto dto) {
-        retry(() -> apartmentEndpoint.updateApartment(apartmentId, dto), apartmentEndpoint);
+        apartmentEndpoint.updateApartment(apartmentId, dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -105,7 +104,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
     @RolesAllowed(FACILITY_MANAGER)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeApartmentOwner(@PathParam("id") final long apartmentId, @NotNull @Valid final ChangeApartmentOwnerDto dto) {
-        retry(() -> apartmentEndpoint.changeApartmentOwner(apartmentId, dto), apartmentEndpoint);
+        apartmentEndpoint.changeApartmentOwner(apartmentId, dto);
         return Response.ok().build();
     }
 
@@ -113,7 +112,7 @@ public class ApartmentController extends RepeatableTransactionProcessor {
     @Path("/{id}/water-meter")
     @RolesAllowed(FACILITY_MANAGER)
     public Response assignWaterMeterToApartment(@PathParam("id") final long apartmentId, @NotNull @Valid final AssignWaterMeterDto dto) {
-        retry(() -> waterMeterEndpoint.addWaterMeter(apartmentId, dto), waterMeterEndpoint);
+        waterMeterEndpoint.addWaterMeter(apartmentId, dto);
         return Response.status(CREATED).build();
     }
 

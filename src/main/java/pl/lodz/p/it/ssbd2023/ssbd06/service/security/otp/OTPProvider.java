@@ -2,32 +2,30 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security.otp;
 
 import java.time.LocalDateTime;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.bastiaanjansen.otp.HMACAlgorithm;
 import com.bastiaanjansen.otp.SecretGenerator;
 import com.bastiaanjansen.otp.TOTPGenerator;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.identitystore.PasswordHash;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TwoFactorAuthentication;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptPasswordHashImpl;
 
-@RequestScoped
+@ApplicationScoped
 public class OTPProvider {
     private static final int PASSWORD_LENGTH = 8;
 
-    @Inject
-    @Property("otp.duration.seconds")
+    @ConfigProperty(name = "otp.duration.seconds")
     private int otpDuration;
 
     @Inject
-    @BCryptHash
-    private PasswordHash hashProvider;
+    private BCryptPasswordHashImpl hashProvider;
 
 
     public TOTPGenerator createTOTGenerator(final String secret) {

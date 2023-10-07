@@ -2,18 +2,17 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 
 import java.io.IOException;
 
-import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.ext.Provider;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
 @Provider
 public class CorsFilter implements ContainerResponseFilter {
 
-    @Inject
-    @Property("cors.allow-origin")
+    @ConfigProperty(name = "cors.allow-origin")
     private String allowOrigin;
 
     @Override

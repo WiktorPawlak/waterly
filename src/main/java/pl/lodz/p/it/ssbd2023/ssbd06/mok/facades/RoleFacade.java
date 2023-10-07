@@ -6,9 +6,7 @@ import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
@@ -20,9 +18,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Monitored
-@Stateless
+@RequestScoped
 @FacadeExceptionHandler
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class RoleFacade extends AbstractFacade<Role> {
 
     @PersistenceContext(unitName = "mokPU")

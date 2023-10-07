@@ -5,29 +5,24 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState.CON
 
 import java.util.stream.Collectors;
 
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
-import jakarta.security.enterprise.identitystore.PasswordHash;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthFacade;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptPasswordHashImpl;
 
 @Log
 @Monitored
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+@RequestScoped
 public class AccountIdentityStore {
 
     @Inject
-    @BCryptHash
-    private PasswordHash hashProvider;
+    private BCryptPasswordHashImpl hashProvider;
 
     @Inject
     private AuthFacade authFacade;

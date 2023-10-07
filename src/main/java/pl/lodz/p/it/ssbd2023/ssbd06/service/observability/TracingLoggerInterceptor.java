@@ -4,16 +4,16 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.Priority;
-import jakarta.annotation.Resource;
-import jakarta.ejb.SessionContext;
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
 @Log
 @Monitored
@@ -21,14 +21,13 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 @Priority(Interceptor.Priority.APPLICATION + 20)
 public class TracingLoggerInterceptor {
 
-    @Inject
-    @Property("system.log.stackTraces")
+    @ConfigProperty(name = "system.log.stackTraces")
     private boolean shouldLogStackTraces;
 
     private final StringBuilder sb = new StringBuilder();
 
-    @Resource
-    private SessionContext sessionContext;
+    @Inject
+    private SecurityIdentity sessionContext;
 
     @AroundInvoke
     public Object intercept(final InvocationContext context) throws Exception {
@@ -56,7 +55,7 @@ public class TracingLoggerInterceptor {
     }
 
     private void prepareLogPrincipal() {
-        var principal = sessionContext.getCallerPrincipal();
+        var principal = sessionContext.getPrincipal().getName();
         sb.append("(Principal: ")
                 .append(principal == null ? "UNAUTHORIZED" : principal)
                 .append(") ");

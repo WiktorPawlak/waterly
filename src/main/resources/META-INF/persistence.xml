@@ -6,7 +6,7 @@
 
     <persistence-unit name="adminPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/ssbd06admin</jta-data-source>
+        <jta-data-source>ssbd06admin</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <properties>
@@ -20,7 +20,7 @@
 
     <persistence-unit name="mokPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/ssbd06mok</jta-data-source>
+        <jta-data-source>ssbd06mok</jta-data-source>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
@@ -43,7 +43,7 @@
 
     <persistence-unit name="authPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/ssbd06auth</jta-data-source>
+        <jta-data-source>ssbd06auh</jta-data-source>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Account</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountDetails</class>
         <class>pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role</class>
@@ -63,7 +63,7 @@
 
     <persistence-unit name="molPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/ssbd06mol</jta-data-source>
+        <jta-data-source>ssbd06mol</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <properties>

@@ -6,6 +6,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType.H
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -39,7 +40,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 
 @RolesAllowed({FACILITY_MANAGER, OWNER})
-public abstract class AbstractBillService extends TransactionBoundariesTracingBean {
+public abstract class AbstractBillService extends TransactionBoundariesTracingBean implements Serializable {
     public static final int ROUNDING_MODE = 2;
     @Inject
     protected BillFacade billFacade;

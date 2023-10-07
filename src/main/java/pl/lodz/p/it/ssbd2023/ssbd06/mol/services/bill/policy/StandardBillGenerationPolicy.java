@@ -3,9 +3,9 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.policy;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 
-import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.AbstractBillService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Bill;
@@ -14,8 +14,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.UsageReport;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats;
 
 @Named("standardBillGeneration")
-@Stateless
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@RequestScoped
 public class StandardBillGenerationPolicy extends AbstractBillService implements BillGenerationPolicy {
     @Override
     public void performBillOperations(final Bill bill, final BigDecimal totalApartmentsArea, final BigDecimal unbilledWaterAmount, final Tariff tariffForBill) {

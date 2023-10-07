@@ -2,6 +2,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.controllers;
 
 import java.util.logging.Level;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import jakarta.inject.Inject;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
@@ -13,35 +15,35 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionAware;
 @Log
 public abstract class RepeatableTransactionProcessor {
 
-    @Inject
-    @Property("transactions.retry-count")
+    @ConfigProperty(name = "transactions.retry-count")
     private int transactionRetryCount;
 
     @SuppressWarnings("checkstyle:NeedBraces")
     protected <T> T retry(final ContextMethod<T> method, final TransactionAware transactionalBean) {
-        int retryCounter = 0;
-        boolean markedForRollback;
-        T result = null;
-
-        do try {
-            result = method.execute();
-            markedForRollback = transactionalBean.isLastTransactionRollback();
-            if (markedForRollback) {
-                logMarkedForRollback(transactionalBean, retryCounter);
-            }
-        } catch (final TransactionRollbackException | ApplicationOptimisticLockException e) {
-            markedForRollback = true;
-            logMarkedForRollback(transactionalBean, retryCounter);
-            if (retryCounter > 2) {
-                throw e;
-            }
-        } while (markedForRollback && ++retryCounter <= transactionRetryCount);
-
-        if (markedForRollback) {
-            throw ApplicationBaseException.transactionRollbackException();
-        }
-
-        return result;
+//        int retryCounter = 0;
+//        boolean markedForRollback;
+//        T result = null;
+//
+//        do try {
+//            result = method.execute();
+//            markedForRollback = transactionalBean.isLastTransactionRollback();
+//            if (markedForRollback) {
+//                logMarkedForRollback(transactionalBean, retryCounter);
+//            }
+//        } catch (final TransactionRollbackException | ApplicationOptimisticLockException e) {
+//            markedForRollback = true;
+//            logMarkedForRollback(transactionalBean, retryCounter);
+//            if (retryCounter > 2) {
+//                throw e;
+//            }
+//        } while (markedForRollback && ++retryCounter <= transactionRetryCount);
+//
+//        if (markedForRollback) {
+//            throw ApplicationBaseException.transactionRollbackException();
+//        }
+//
+//        return result;
+        return null;
     }
 
     @SuppressWarnings("checkstyle:NeedBraces")

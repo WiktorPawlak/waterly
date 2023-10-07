@@ -2,6 +2,8 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag;
 
 import java.text.ParseException;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
@@ -18,8 +20,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 @ApplicationScoped
 public class PayloadVerifier {
 
-    @Inject
-    @Property("etag.key")
+    @ConfigProperty(name = "etag.key")
     private String key;
 
     private JWSVerifier verifier;

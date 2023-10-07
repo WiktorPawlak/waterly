@@ -3,7 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security;
 import static jakarta.ws.rs.Priorities.AUTHENTICATION;
 
 import jakarta.annotation.Priority;
-import jakarta.inject.Inject;
+import jakarta.annotation.Resource;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
@@ -15,7 +15,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 @Priority(AUTHENTICATION)
 public class OnlyGuestInterceptor {
 
-    @Inject
+    @Resource
     private SecurityContext securityContext;
 
     @AroundInvoke

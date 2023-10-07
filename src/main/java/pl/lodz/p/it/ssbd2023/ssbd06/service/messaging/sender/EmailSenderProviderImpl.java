@@ -5,9 +5,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import jakarta.ejb.Asynchronous;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
@@ -20,8 +18,7 @@ import jakarta.mail.internet.MimeMessage;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.config.EmailConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.exceptions.EmailSenderException;
 
-@Stateless
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@RequestScoped
 public class EmailSenderProviderImpl implements EmailSenderProvider {
 
     private final Logger log = Logger.getLogger(EmailSenderProviderImpl.class.getName());
@@ -43,6 +40,7 @@ public class EmailSenderProviderImpl implements EmailSenderProvider {
             throw new EmailSenderException(errorMsg, e);
         }
     }
+
 
     private Message prepareMail(final String to, final String subject, final String body) throws MessagingException, UnsupportedEncodingException {
         Message message = new MimeMessage(prepareSession());

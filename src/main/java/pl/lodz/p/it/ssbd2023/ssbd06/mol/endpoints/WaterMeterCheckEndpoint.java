@@ -3,6 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.endpoints;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_MANAGER;
 import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -10,13 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.LocalBean;
-import jakarta.ejb.Stateful;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.TransactionRollbackInterceptor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.events.WaterMeterCheckAddedEvent;
@@ -33,15 +30,11 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterUsageStats;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.converters.DateConverter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.TransactionBoundariesTracingBean;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 
-@TransactionRollbackInterceptor
 @Monitored
-@LocalBean
-@Stateful
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class WaterMeterCheckEndpoint extends TransactionBoundariesTracingBean {
+@RequestScoped
+public class WaterMeterCheckEndpoint implements Serializable {
 
     @Inject
     private WaterMeterCheckService waterMeterCheckService;

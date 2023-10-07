@@ -9,9 +9,9 @@ import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.NoResultException;
@@ -23,9 +23,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 
-@Stateless
+@RequestScoped
 @FacadeExceptionHandler
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class VerificationTokenFacade extends AbstractFacade<VerificationToken> {
 
     @PersistenceContext(unitName = "mokPU")

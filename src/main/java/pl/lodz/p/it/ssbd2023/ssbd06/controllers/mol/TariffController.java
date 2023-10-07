@@ -15,7 +15,6 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PaginatedList;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.GetPagedTariffsListDto;
@@ -26,7 +25,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
 
 @Path("/tariffs")
 @RequestScoped
-public class TariffController extends RepeatableTransactionProcessor {
+public class TariffController {
 
     @Inject
     private TariffEndpoint tariffEndpoint;
@@ -38,7 +37,7 @@ public class TariffController extends RepeatableTransactionProcessor {
     @Path("/list")
     @PermitAll
     public Response getTariffs(@NotNull @Valid final GetPagedTariffsListDto dto) {
-        PaginatedList<TariffsDto> tariffs = retry(() -> tariffEndpoint.getTariffsList(dto), tariffEndpoint);
+        PaginatedList<TariffsDto> tariffs = tariffEndpoint.getTariffsList(dto);
         return Response.ok().entity(tariffs).build();
     }
 
@@ -54,7 +53,7 @@ public class TariffController extends RepeatableTransactionProcessor {
     @POST
     @RolesAllowed({FACILITY_MANAGER})
     public Response addTariff(@NotNull @Valid final CreateTariffDto dto) {
-        retry(() -> tariffEndpoint.addTariff(dto), tariffEndpoint);
+        tariffEndpoint.addTariff(dto);
         return Response.status(CREATED).build();
     }
 
@@ -63,7 +62,7 @@ public class TariffController extends RepeatableTransactionProcessor {
     @EtagValidationFilter
     @RolesAllowed({FACILITY_MANAGER})
     public Response updateTariff(@PathParam("id") final long id, @NotNull @Valid final TariffsDto dto) {
-        retry(() -> tariffEndpoint.updateTariff(id, dto), tariffEndpoint);
+        tariffEndpoint.updateTariff(id, dto);
         return Response.ok().build();
     }
 

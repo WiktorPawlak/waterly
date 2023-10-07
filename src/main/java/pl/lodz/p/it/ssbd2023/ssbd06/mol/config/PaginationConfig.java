@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.config;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
@@ -8,8 +10,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 public class PaginationConfig {
 
     public static final int FIRST_PAGE = 1;
-    @Inject
-    @Property("default.list.page.size")
+    @ConfigProperty(name = "default.list.page.size")
     private int defaultListPageSize;
 
     public int preparePage(final Integer page) {

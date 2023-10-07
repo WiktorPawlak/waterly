@@ -11,7 +11,6 @@ import java.util.List;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +26,6 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
-import pl.lodz.p.it.ssbd2023.ssbd06.controllers.RepeatableTransactionProcessor;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountActiveStatusDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
@@ -53,8 +51,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.validators.Email;
 
 @Log
 @Path("/accounts")
-@RequestScoped
-public class AccountController extends RepeatableTransactionProcessor {
+public class AccountController {
 
     @Inject
     private AccountEndpoint accountEndpoint;
@@ -70,7 +67,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/{id}/active")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeAccountActiveStatus(@PathParam("id") final long id, @NotNull @Valid final AccountActiveStatusDto dto) {
-        retry(() -> accountEndpoint.changeAccountActiveStatus(id, dto), accountEndpoint);
+        accountEndpoint.changeAccountActiveStatus(id, dto);
         return Response.ok().build();
     }
 
@@ -80,7 +77,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Consumes(MediaType.APPLICATION_JSON)
     @EtagValidationFilter
     public Response editOwnAccountDetails(@NotNull @Valid final EditAccountDetailsDto dto) throws ApplicationBaseException {
-        retry(() -> accountEndpoint.editOwnAccountDetails(dto), accountEndpoint);
+        accountEndpoint.editOwnAccountDetails(dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -91,7 +88,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @EtagValidationFilter
     public Response editAccountDetails(@PathParam("id") final long id, @NotNull @Valid final EditAccountDetailsDto dto)
             throws ApplicationBaseException {
-        retry(() -> accountEndpoint.editAccountDetails(id, dto), accountEndpoint);
+        accountEndpoint.editAccountDetails(id, dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -101,7 +98,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Consumes(MediaType.APPLICATION_JSON)
     @EtagValidationFilter
     public Response editEmail(@PathParam("id") final long id, @NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
-        retry(() -> accountEndpoint.editEmail(id, dto), accountEndpoint);
+        accountEndpoint.editEmail(id, dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -111,7 +108,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Consumes(MediaType.APPLICATION_JSON)
     @EtagValidationFilter
     public Response editOwnEmail(@NotNull @Valid final EditEmailDto dto) throws ApplicationBaseException {
-        retry(() -> accountEndpoint.editOwnEmail(dto), accountEndpoint);
+        accountEndpoint.editOwnEmail(dto);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -119,7 +116,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @POST
     @Path("/email/accept")
     public Response acceptEmailUpdate(@NotNull @QueryParam("token") final String token) {
-        retry(() -> accountEndpoint.acceptEmailUpdate(token), accountEndpoint);
+        accountEndpoint.acceptEmailUpdate(token);
         return Response.status(NO_CONTENT).build();
     }
 
@@ -127,7 +124,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @POST
     @Path("self/email/resend-accept-email")
     public Response resendEmailToAcceptAccountDetailsUpdate() {
-        retry(() -> accountEndpoint.resendEmailToAcceptAccountDetailsUpdate(), accountEndpoint);
+        accountEndpoint.resendEmailToAcceptAccountDetailsUpdate();
         return Response.status(OK).build();
     }
 
@@ -137,7 +134,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editAccountRoles(@PathParam("id") final long id, @NotNull @Valid final EditAccountRolesDto dto)
             throws ApplicationBaseException {
-        retry(() -> accountEndpoint.editAccountRoles(id, dto), accountEndpoint);
+        accountEndpoint.editAccountRoles(id, dto);
         return Response.ok().build();
     }
 
@@ -156,7 +153,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createAccount(@NotNull @Valid final CreateAccountDto account) {
-        retry(() -> accountEndpoint.createAccount(account), accountEndpoint);
+        accountEndpoint.createAccount(account);
         log.info(() -> "Creating account: " + account);
         return Response.status(CREATED).build();
     }
@@ -165,7 +162,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @POST
     @Path("/{id}/resend-verification-token")
     public Response resendVerificationToken(@PathParam("id") final long id) throws ApplicationBaseException {
-        retry(() -> accountEndpoint.resendVerificationToken(id), accountEndpoint);
+        accountEndpoint.resendVerificationToken(id);
         log.info(() -> "Resending verification token for account with id: " + id);
         return Response.ok().build();
     }
@@ -174,7 +171,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @PUT
     @Path("/confirm-registration")
     public Response confirmRegistration(@NotNull @QueryParam("token") final String token) throws ApplicationBaseException {
-        retry(() -> accountEndpoint.confirmRegistration(token), accountEndpoint);
+        accountEndpoint.confirmRegistration(token);
         log.info(() -> "Confirming account with token: " + token);
         return Response.ok().build();
     }
@@ -183,7 +180,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @GET
     @Path("/self/preferences")
     public Response getAccountSearchPreferences() throws ApplicationBaseException {
-        AccountSearchPreferencesDto dto = retry(() -> accountEndpoint.getAccountsSearchPreferences(), accountEndpoint);
+        AccountSearchPreferencesDto dto = accountEndpoint.getAccountsSearchPreferences();
         return Response.ok().entity(dto).build();
     }
 
@@ -193,7 +190,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeOwnPassword(@NotNull @Valid final AccountPasswordDto dto)
             throws ApplicationBaseException {
-        retry(() -> accountEndpoint.changeOwnAccountPassword(dto), accountEndpoint);
+        accountEndpoint.changeOwnAccountPassword(dto);
         return Response.ok().build();
     }
 
@@ -202,7 +199,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/password/request-change")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response requestPasswordChange(@Valid @Email @QueryParam("email") final String email, final PasswordChangeByAdminDto dto) {
-        retry(() -> accountEndpoint.sendChangePasswordToken(email, dto), accountEndpoint);
+        accountEndpoint.sendChangePasswordToken(email, dto);
         log.info(() -> "Requested password change for user with email: " + email);
         return Response.ok().build();
     }
@@ -211,7 +208,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @POST
     @Path("/password/request-reset")
     public Response requestPasswordReset(@Valid @Email @QueryParam("email") final String email) {
-        retry(() -> accountEndpoint.sendResetPasswordToken(email), accountEndpoint);
+        accountEndpoint.sendResetPasswordToken(email);
         log.info(() -> "Requested password reset by email: " + email);
         return Response.ok().build();
     }
@@ -221,7 +218,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/password/reset")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response resetPassword(@NotNull @Valid final PasswordResetDto dto) throws TokenNotFoundException {
-        retry(() -> accountEndpoint.resetPassword(dto), accountEndpoint);
+        accountEndpoint.resetPassword(dto);
         return Response.ok().build();
     }
 
@@ -229,7 +226,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @DELETE
     @Path("/{id}/reject")
     public Response rejectOwnerAccount(@PathParam("id") final long id) {
-        retry(() -> accountEndpoint.rejectOwnerAccount(id), accountEndpoint);
+        accountEndpoint.rejectOwnerAccount(id);
         return Response.ok().build();
     }
 
@@ -237,7 +234,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @POST
     @Path("/{id}/accept")
     public Response acceptOwnerAccount(@PathParam("id") final long id) {
-        retry(() -> accountEndpoint.acceptOwnerAccount(id), accountEndpoint);
+        accountEndpoint.acceptOwnerAccount(id);
         return Response.ok().build();
     }
 
@@ -246,7 +243,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/self")
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveOwnAccountDetails() {
-        AccountDto accountDto = retry(() -> accountEndpoint.retrieveOwnAccountDetails(), accountEndpoint);
+        AccountDto accountDto = accountEndpoint.retrieveOwnAccountDetails();
         String entityTag = payloadSigner.sign(accountDto);
         return Response.ok().entity(accountDto).header("ETag", entityTag).build();
     }
@@ -256,7 +253,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountById(@PathParam("id") final long id) {
-        AccountDto accountDto = retry(() -> accountEndpoint.getUserById(id), accountEndpoint);
+        AccountDto accountDto = accountEndpoint.getUserById(id);
         String entityTag = payloadSigner.sign(accountDto);
         return Response.ok().entity(accountDto).header("ETag", entityTag).build();
     }
@@ -266,7 +263,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/to-verify")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getNotConfirmedAccounts(@NotNull @Valid final GetPagedAccountListDto dto, @QueryParam("pattern") final String pattern) {
-        PaginatedList<ListAccountDto> accounts = retry(() -> accountEndpoint.getNotConfirmedAccounts(pattern, dto), accountEndpoint);
+        PaginatedList<ListAccountDto> accounts = accountEndpoint.getNotConfirmedAccounts(pattern, dto);
         return Response.ok().entity(accounts).build();
     }
 
@@ -275,7 +272,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/owners")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOwnersAccounts() {
-        List<ListAccountDto> accounts = retry(() -> accountEndpoint.getOwnersAccounts(), accountEndpoint);
+        List<ListAccountDto> accounts = accountEndpoint.getOwnersAccounts();
         return Response.ok().entity(accounts).build();
     }
 
@@ -284,7 +281,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/list")
     public Response getAccountsWithPagination(@NotNull @Valid final GetPagedAccountListDto dto, @QueryParam("pattern") final String pattern)
             throws ApplicationBaseException {
-        PaginatedList<ListAccountDto> accounts = retry(() -> accountEndpoint.getAccountsList(pattern, dto), accountEndpoint);
+        PaginatedList<ListAccountDto> accounts = accountEndpoint.getAccountsList(pattern, dto);
         return Response.ok().entity(accounts).build();
     }
 
@@ -293,7 +290,7 @@ public class AccountController extends RepeatableTransactionProcessor {
     @Path("/list/name-suggestions")
     public Response getNameSuggestions(@QueryParam("pattern") final String pattern)
             throws ApplicationBaseException {
-        List<String> names = retry(() -> accountEndpoint.getNameSuggestions(pattern), accountEndpoint);
+        List<String> names = accountEndpoint.getNameSuggestions(pattern);
         return Response.ok().entity(names).build();
     }
 }

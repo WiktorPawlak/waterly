@@ -1,9 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 
 import jakarta.annotation.security.PermitAll;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.java.Log;
@@ -14,9 +12,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 
 @Log
 @Monitored
-@Stateless
+@RequestScoped
 @FacadeExceptionHandler
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AccountDetailsFacade extends AbstractFacade<AccountDetails> {
 
     @PersistenceContext(unitName = "mokPU")

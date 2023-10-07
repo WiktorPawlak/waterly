@@ -17,14 +17,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import io.vavr.Tuple2;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.identitystore.PasswordHash;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
@@ -53,20 +52,18 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Owner;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.Role;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TwoFactorAuthentication;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.notifications.NotificationsProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.verifications.TokenSender;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.observability.Monitored;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.AuthenticatedAccount;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.otp.OTPProvider;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptHash;
+import pl.lodz.p.it.ssbd2023.ssbd06.service.security.password.BCryptPasswordHashImpl;
 
 @Log
 @Monitored
 @ServiceExceptionHandler
-@Stateless
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@RequestScoped
 public class AccountService {
 
     public static final int FIRST_PAGE = 1;
@@ -90,15 +87,13 @@ public class AccountService {
     @Inject
     private AuthenticatedAccount authenticatedAccount;
     @Inject
-    @BCryptHash
-    private PasswordHash hashProvider;
+    private BCryptPasswordHashImpl hashProvider;
     @Inject
     private OTPProvider otpProvider;
     @Inject
     private TwoFactorAuthenticationFacade twoFactorAuthenticationFacade;
 
-    @Inject
-    @Property("auth.attempts")
+    @ConfigProperty(name = "auth.attempts")
     private int authAttempts;
 
     @PermitAll

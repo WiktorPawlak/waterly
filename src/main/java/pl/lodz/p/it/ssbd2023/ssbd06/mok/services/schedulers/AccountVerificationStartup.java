@@ -5,17 +5,17 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.TokenType.REGIST
 import java.util.List;
 import java.util.logging.Logger;
 
+import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.Singleton;
-import jakarta.ejb.Startup;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.exceptions.TokenExpiredException;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.VerificationTokenService;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.VerificationToken;
 
-@Startup
 @Singleton
+@Startup
 public class AccountVerificationStartup {
 
     private final Logger log = Logger.getLogger(AccountVerificationStartup.class.getName());

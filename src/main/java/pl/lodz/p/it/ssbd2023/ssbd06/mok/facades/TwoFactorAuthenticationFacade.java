@@ -3,9 +3,7 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.facades;
 import java.util.List;
 
 import jakarta.annotation.security.PermitAll;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
@@ -19,9 +17,8 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.OnlyGuest;
 
 @Log
 @Monitored
-@Stateless
+@RequestScoped
 @FacadeExceptionHandler
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class TwoFactorAuthenticationFacade extends AbstractFacade<TwoFactorAuthentication> {
     @PersistenceContext(unitName = "mokPU")
     private EntityManager em;

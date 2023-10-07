@@ -3,22 +3,20 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mok.services.schedulers;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import jakarta.annotation.Resource;
-import jakarta.ejb.Stateless;
 import jakarta.ejb.Timeout;
 import jakarta.ejb.Timer;
 import jakarta.ejb.TimerConfig;
 import jakarta.ejb.TimerService;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.services.AccountService;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
 @ServiceExceptionHandler
-@Stateless
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@RequestScoped
 public class AccountActivationTimer {
 
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -28,8 +26,7 @@ public class AccountActivationTimer {
     @Inject
     private AccountService accountService;
 
-    @Inject
-    @Property("auth.ban.period")
+    @ConfigProperty(name = "auth.ban.period")
     private int authBanPeriod;
 
     @Timeout

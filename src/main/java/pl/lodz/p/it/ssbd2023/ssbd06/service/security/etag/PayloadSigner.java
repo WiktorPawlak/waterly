@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -10,22 +12,18 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.MACSigner;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.config.Property;
 
-@ApplicationScoped
 @Log
+@Singleton
 public class PayloadSigner {
 
-    @Inject
-    @Property("etag.key")
+    @ConfigProperty(name = "etag.key")
     private String key;
 
-    @Inject
-    @Property("etag.algorithm")
+    @ConfigProperty(name = "etag.algorithm")
     private String algorithm;
 
     private JWSSigner signer;
