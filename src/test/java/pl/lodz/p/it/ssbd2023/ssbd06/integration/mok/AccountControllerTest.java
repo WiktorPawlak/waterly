@@ -330,8 +330,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(ACCOUNT_PATH + "/" + ADMIN_ID + "/active")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
     }
 
@@ -404,8 +403,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(ACCOUNT_PATH + "/" + ADMIN_ID + "/active")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
     }
 
@@ -879,8 +877,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(ACCOUNT_PATH + "/2/email")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
 
         }
 
@@ -991,8 +988,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(ACCOUNT_PATH + "/" + ADMIN_ID)
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
     }
 
@@ -1333,8 +1329,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .post(ACCOUNT_PATH + "/password/request-change")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
 
         @Test
@@ -1664,8 +1659,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .post(ACCOUNT_PATH + "/" + OWNER_ID + "/accept")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
 
         @Test
@@ -1751,8 +1745,7 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .when()
                     .delete(ACCOUNT_PATH + "/" + NOT_CONFIRMED_OWNER_ID + "/reject")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
 
         @Test

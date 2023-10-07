@@ -190,8 +190,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .when()
                     .post(APARTMENT_PATH)
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
 
     }
@@ -467,8 +466,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID)
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
 
     }

@@ -30,6 +30,7 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE entity_consistence_assurance_id_seq TO s
 
 GRANT SELECT ON TABLE account TO ssbd06mol;
 GRANT SELECT ON TABLE role TO ssbd06mol;
+GRANT SELECT ON TABLE account_details TO ssbd06mol;
 GRANT SELECT ON TABLE auth_info to ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE apartment TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bill TO ssbd06mol;
@@ -212,7 +213,22 @@ INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updat
                           entity_consistence_assurance_id)
 values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2031-04-01', '2031-06-30',
         (SELECT id FROM public.entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
+INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                                 unbilled_water_amount, unbilled_water_cost)
+VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
+
+INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                                 unbilled_water_amount, unbilled_water_cost)
+VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
+INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                                 unbilled_water_amount, unbilled_water_cost)
+VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
+
+INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                                 unbilled_water_amount, unbilled_water_cost)
+VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
+
 INSERT INTO public.bill(id, created_on, updated_on, version, date, balance, apartment_id, owner_id, advance_usage, real_usage)
-VALUES (nextval('bill_id_seq'), now(), now(), 0, '2023-09-01', 1000.00, 1, 2, 1, 2);
+VALUES (nextval('bill_id_seq'), now(), now(), 0, '2023-09-01', 1000.00, 1, 2, 2, 3);
 INSERT INTO public.bill(id, created_on, updated_on, version, date, balance, apartment_id, owner_id, advance_usage, real_usage)
-VALUES (nextval('bill_id_seq'), now(), now(), 0, '2023-09-01', 1000.00, 2, 2, 1, 2);
+VALUES (nextval('bill_id_seq'), now(), now(), 0, '2023-09-01', 1000.00, 2, 2, 4, 5);

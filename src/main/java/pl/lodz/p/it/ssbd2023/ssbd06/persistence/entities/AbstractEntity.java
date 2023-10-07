@@ -11,8 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,23 +34,23 @@ public abstract class AbstractEntity implements Serializable {
     private long version;
 
     @CreationTimestamp
-    @Column(name = "created_on", updatable = false, nullable = false)
+    @Column(name = "created_on", updatable = false, nullable = false, unique = false)
     private LocalDateTime createdOn;
 
     @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "created_by", updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "created_by", updatable = false, unique = false)
     @Setter
     private Account createdBy;
 
     @UpdateTimestamp
-    @Column(name = "updated_on")
+    @Column(name = "updated_on", unique = false)
     @Setter
     private LocalDateTime updatedOn;
 
     @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "updated_by")
+    @ManyToOne
+    @JoinColumn(name = "updated_by", unique = false)
     @Setter
     private Account updatedBy;
 }

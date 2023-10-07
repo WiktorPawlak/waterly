@@ -1,6 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.config;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 import java.io.InputStream;
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
@@ -111,14 +114,18 @@ public class IntegrationTestsConfig {
     protected DatabaseConnector databaseConnector;
 
     @BeforeAll
-    protected static void tokensSetup() {
+    protected void tokensSetup() {
+        RestAssured.requestSpecification = new RequestSpecBuilder()
+                .setBasePath("/api")
+                .setPort(8082)
+                .setContentType(JSON)
+                .build();
         ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
         FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
         OWNER_TOKEN = getToken(OWNER_CREDENTIALS);
     }
 
-
-    protected static String getToken(final Credentials credentials) {
+    protected String getToken(final Credentials credentials) {
         return "Bearer " + given().body(credentials).post("/auth/login").asString();
     }
 

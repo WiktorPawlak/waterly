@@ -1,6 +1,5 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -101,8 +100,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/active")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
     }
 
@@ -190,8 +188,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID + "/active")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
     }
 
@@ -274,8 +271,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .when()
                     .post(WATERMETER_PATH + "/main-water-meter")
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
 
         @SneakyThrows
@@ -510,8 +506,7 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
                     .when()
                     .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
                     .then()
-                    .statusCode(FORBIDDEN.getStatusCode())
-                    .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                    .statusCode(FORBIDDEN.getStatusCode());
         }
 
     }

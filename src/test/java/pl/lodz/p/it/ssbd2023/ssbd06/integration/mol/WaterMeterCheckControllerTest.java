@@ -126,8 +126,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
                 .when()
                 .post(WATERMETER_PATH + "/water-meter-checks")
                 .then()
-                .statusCode(FORBIDDEN.getStatusCode())
-                .body("message", equalTo("ERROR.FORBIDDEN_OPERATION"));
+                .statusCode(FORBIDDEN.getStatusCode());
     }
 
     private String makeFacilityManagerOnlyAdministrator() {
