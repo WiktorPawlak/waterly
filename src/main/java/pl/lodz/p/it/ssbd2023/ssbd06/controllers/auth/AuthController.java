@@ -55,7 +55,7 @@ public class AuthController {
     @OnlyGuest
     @POST
     @Path("/login")
-    public Response login(@NotNull @Valid final Credentials credentials) {
+    public Response login(@NotNull @Valid final Credentials credentials) throws Exception {
         CredentialValidationResult validationResult = accountIdentityStore.validate(credentials);
 
         if (validationResult.getStatus() != VALID) {

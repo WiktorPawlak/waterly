@@ -5,21 +5,17 @@ import static io.restassured.http.ContentType.JSON;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 
-@Testcontainers
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PayaraContainerInitializer {
 
     private static final String APP_NAME = "ssbd06";
@@ -66,17 +62,17 @@ public class PayaraContainerInitializer {
             .waitingFor(Wait.forHttp("/api/health").forPort(PORT).forStatusCode(200));
 
     @BeforeAll
-    protected void setup() {
-        if (!postgres.isRunning()) {
-            postgres.start();
-        }
-        if (!payaraServer.isRunning()) {
-            payaraServer.start();
-        }
+    protected static void setup() {
+//        if (!postgres.isRunning()) {
+//            postgres.start();
+//        }
+//        if (!payaraServer.isRunning()) {
+//            payaraServer.start();
+//        }
 
         RestAssured.requestSpecification = new RequestSpecBuilder()
-                .setBasePath("/api")
-                .setPort(payaraServer.getMappedPort(PORT))
+                .setBaseUri("http://localhost:8080/api")
+                .setPort(8080)
                 .setContentType(JSON)
                 .build();
     }

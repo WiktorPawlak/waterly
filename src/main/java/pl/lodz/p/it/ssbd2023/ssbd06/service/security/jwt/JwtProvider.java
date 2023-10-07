@@ -1,17 +1,15 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.InputStream;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
-
+import io.smallrye.jwt.build.Jwt;
+import io.smallrye.jwt.build.JwtClaimsBuilder;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import lombok.RequiredArgsConstructor;
@@ -27,29 +25,57 @@ public class JwtProvider {
     private int expirationTime;
     @ConfigProperty(name = "jwt.key")
     private String jwtKey;
+    @ConfigProperty(name = "jwt.private.key.location")
+    private String privateKeyLocation;
 
-    public String createToken(final CredentialValidationResult validationResult) {
-        Instant now = Instant.now();
-        return JWT.create()
-                .withIssuedAt(now)
-                .withIssuer(issuer)
-                .withJWTId(validationResult.getCallerPrincipal().getName())
-                .withClaim(ROLES_CLAIM_NAME, new ArrayList<>(validationResult.getCallerGroups()))
-                .withExpiresAt(now.plusSeconds(expirationTime))
-                .sign(signingAlgorithm());
+    public String createToken(final CredentialValidationResult validationResult) throws Exception {
+        PrivateKey privateKey = readPrivateKey(privateKeyLocation);
+
+        JwtClaimsBuilder claimsBuilder = Jwt.claims();
+        long currentTimeInSecs = currentTimeInSecs();
+
+        claimsBuilder.issuer(issuer);
+        claimsBuilder.subject(validationResult.getCallerPrincipal().getName());
+        claimsBuilder.issuedAt(currentTimeInSecs);
+        claimsBuilder.expiresAt(currentTimeInSecs + expirationTime);
+        claimsBuilder.groups(validationResult.getCallerGroups());
+
+        return claimsBuilder.jws().signatureKeyId(privateKeyLocation).sign(privateKey);
     }
 
-    public SimpleJWT parse(final String jwtText) {
-
-        JWTVerifier verifier = JWT.require(signingAlgorithm()).withIssuer(issuer).build();
-        final DecodedJWT jwt = verifier.verify(jwtText);
-        final Claim roles = jwt.getClaim(ROLES_CLAIM_NAME);
-
-        return new SimpleJWT(jwt.getId(), new HashSet<>(roles.asList(String.class)));
+    public static PrivateKey readPrivateKey(final String pemResName) throws Exception {
+        try (InputStream contentIS = JwtProvider.class.getResourceAsStream(pemResName)) {
+            byte[] tmp = new byte[4096];
+            int length = contentIS.read(tmp);
+            return decodePrivateKey(new String(tmp, 0, length, "UTF-8"));
+        }
     }
 
-    private Algorithm signingAlgorithm() {
-        return Algorithm.HMAC256(jwtKey);
+    public static PrivateKey decodePrivateKey(final String pemEncoded) throws Exception {
+        byte[] encodedBytes = toEncodedBytes(pemEncoded);
+
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encodedBytes);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePrivate(keySpec);
     }
+
+    public static byte[] toEncodedBytes(final String pemEncoded) {
+        final String normalizedPem = removeBeginEnd(pemEncoded);
+        return Base64.getDecoder().decode(normalizedPem);
+    }
+
+    public static String removeBeginEnd(String pem) {
+        pem = pem.replaceAll("-----BEGIN (.*)-----", "");
+        pem = pem.replaceAll("-----END (.*)----", "");
+        pem = pem.replaceAll("\r\n", "");
+        pem = pem.replaceAll("\n", "");
+        return pem.trim();
+    }
+
+    public static int currentTimeInSecs() {
+        long currentTimeMS = System.currentTimeMillis();
+        return (int) (currentTimeMS / 1000);
+    }
+
 }
 

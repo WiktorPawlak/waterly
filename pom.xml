@@ -271,6 +271,11 @@
             <artifactId>quarkus-microprofile</artifactId>
             <version>3.0.0.Final</version>
         </dependency>
+        <dependency>
+            <groupId>io.smallrye</groupId>
+            <artifactId>smallrye-jwt</artifactId>
+            <version>4.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>

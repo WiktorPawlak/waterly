@@ -3,13 +3,13 @@ package pl.lodz.p.it.ssbd2023.ssbd06.service.security.filter;
 import java.util.Arrays;
 import java.util.Optional;
 
+import io.quarkus.arc.Arc;
+import io.quarkus.vertx.http.runtime.CurrentVertxRequest;
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.HttpHeaders;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.EtagValidationFilter;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.PayloadSigner;
@@ -20,23 +20,33 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.etag.exceptions.NoPayloadEx
 
 @EtagValidationFilter
 @Interceptor
-@Priority(Interceptor.Priority.APPLICATION)
+@Priority(Interceptor.Priority.PLATFORM_BEFORE)
 public class EtagFilter {
 
     private static final String IF_MATCH_HEADER_NAME = "If-Match";
 
-    @Context
-    HttpHeaders requestHeaders;
+    @Inject
+    PayloadVerifier payloadVerifier;
 
     @Inject
-    private PayloadVerifier payloadVerifier;
-
-    @Inject
-    private PayloadSigner payloadSigner;
+    PayloadSigner payloadSigner;
 
     @AroundInvoke
     public Object intercept(final InvocationContext context) throws Exception {
-        Optional<String> header = Optional.ofNullable(requestHeaders.getHeaderString(IF_MATCH_HEADER_NAME));
+        Optional<String> header = Optional.ofNullable(Arc.container()
+                .requestContext()
+                .getState()
+                .getContextualInstances()
+                .values()
+                .stream()
+                .filter(CurrentVertxRequest.class::isInstance)
+                .map(CurrentVertxRequest.class::cast)
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new)
+                .getCurrent()
+                .request()
+                .headers()
+                .get(IF_MATCH_HEADER_NAME));
         header.ifPresentOrElse(optHeader -> {
             if (!payloadVerifier.verify(optHeader)) {
                 throw ApplicationBaseException.jwsException();
@@ -47,7 +57,7 @@ public class EtagFilter {
                     .findFirst()
                     .orElseThrow(NoPayloadException::new);
 
-            if (!verifyEntityIntegrity(payload)) {
+            if (!verifyEntityIntegrity(payload, optHeader)) {
                 throw ApplicationBaseException.entityIntegrityViolatedException();
             }
 
@@ -57,8 +67,8 @@ public class EtagFilter {
         return context.proceed();
     }
 
-    private boolean verifyEntityIntegrity(final Signable payload) {
-        return payloadSigner.sign(payload).equals(requestHeaders.getHeaderString(IF_MATCH_HEADER_NAME));
+    private boolean verifyEntityIntegrity(final Signable payload, final String headerValue) {
+        return payloadSigner.sign(payload).equals(headerValue);
     }
 
 }

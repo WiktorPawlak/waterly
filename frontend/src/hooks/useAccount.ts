@@ -84,14 +84,14 @@ export const useAccount = () => {
   const addUserToStorage = async (token: string) => {
     const decodedToken: any = jwt_decode(token);
     if (decodedToken) {
-      const roles = decodedToken.roles;
+      const roles = decodedToken.groups;
 
       const sortedRoles = roles.sort(
         (a: string, b: string) =>
           RolesEnum[a as keyof typeof RolesEnum] -
           RolesEnum[b as keyof typeof RolesEnum]
       );
-      const username = decodedToken.jti;
+      const username = decodedToken.sub;
 
       const currentRole = sortedRoles[0];
       const prevRole = anonmousRole;
@@ -106,6 +106,7 @@ export const useAccount = () => {
       localStorage.setItem(StorageName.TOKEN, token);
       localStorage.setItem(StorageName.USER, JSON.stringify(userData));
       setAccount(userData);
+      console.log("czemu nie nawigujesz");
       navigate(PATHS.EDIT_PROFILE);
       setTimeout(() => clearPrevRole(userData), prevRoleTimeout);
     }

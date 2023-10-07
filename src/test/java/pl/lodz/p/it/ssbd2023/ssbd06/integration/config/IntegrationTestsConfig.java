@@ -111,13 +111,14 @@ public class IntegrationTestsConfig {
     protected DatabaseConnector databaseConnector;
 
     @BeforeAll
-    protected void tokensSetup() {
+    protected static void tokensSetup() {
         ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
         FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
         OWNER_TOKEN = getToken(OWNER_CREDENTIALS);
     }
 
-    protected String getToken(final Credentials credentials) {
+
+    protected static String getToken(final Credentials credentials) {
         return "Bearer " + given().body(credentials).post("/auth/login").asString();
     }
 

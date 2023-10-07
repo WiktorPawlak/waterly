@@ -1,5 +1,5 @@
-TRUNCATE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication,entity_consistence_assurance CASCADE;
-TRUNCATE TABLE account, apartment, verification_token, bill, invoice, tariff, usage_report, water_meter, water_meter_check, water_usage_stats,account_details,owner,administrator,facility_manager,role,auth_info,list_search_preferences,two_factor_authentication,entity_consistence_assurance RESTART IDENTITY;
+TRUNCATE public.account, public.apartment, public.verification_token, public.bill, public.invoice, public.tariff, public.usage_report, public.water_meter, public.water_meter_check, public.water_usage_stats,public.account_details,public.owner,public.administrator,public.facility_manager,public.role,public.auth_info,public.list_search_preferences,public.two_factor_authentication,public.entity_consistence_assurance CASCADE;
+TRUNCATE TABLE public.account, public.apartment, public.verification_token, public.bill, public.invoice, public.tariff, public.usage_report, public.water_meter, public.water_meter_check, public.water_usage_stats,public.account_details,public.owner,public.administrator,public.facility_manager,public.role,public.auth_info,public.list_search_preferences,public.two_factor_authentication,public.entity_consistence_assurance RESTART IDENTITY;
 
 GRANT ALL ON SCHEMA public TO ssbd06admin;
 
@@ -188,8 +188,10 @@ INSERT INTO public.water_usage_stats (id, created_on, updated_on, version, cold_
 VALUES (nextval('water_usage_stats_id_seq'), now(), now(), 0, 40.000, 60.000, '2023-09-01', 2);
 INSERT INTO public.water_usage_stats (id, created_on, updated_on, version, cold_water_usage, hot_water_usage, year_month, apartment_id)
 VALUES (nextval('water_usage_stats_id_seq'), now(), now(), 0, 40.000, 60.000, '2023-10-01', 2);
-INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date, entity_consistence_assurance_id)
-values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-05-01', '2023-11-30', (SELECT id FROM public.entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
+INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date,
+                          entity_consistence_assurance_id)
+values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-05-01', '2023-11-30',
+        (SELECT id FROM public.entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
 INSERT INTO public.water_meter_check(id, version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
 values (nextval('water_meter_check_id_seq'), 0, now(), null, now(), null, 120.000, '2023-09-16', true, 1);
 INSERT INTO public.water_meter_check(id, version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
