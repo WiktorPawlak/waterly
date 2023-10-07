@@ -57,10 +57,12 @@ public class Apartment extends AbstractEntity {
     @JoinColumn(name = "owner_id", nullable = false)
     private Account owner;
 
+    @Builder.Default
     @ToString.Exclude
     @OneToMany(mappedBy = "apartment", fetch = FetchType.LAZY)
     private List<WaterUsageStats> waterUsageStats = new ArrayList<>();
 
+    @Builder.Default
     @Setter
     @ToString.Exclude
     @OneToMany(mappedBy = "apartment", fetch = FetchType.LAZY)

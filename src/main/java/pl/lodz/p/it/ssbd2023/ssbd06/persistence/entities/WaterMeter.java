@@ -72,6 +72,7 @@ public class WaterMeter extends AbstractEntity {
     private BigDecimal expectedDailyUsage;
     @Column(nullable = false)
     private boolean active;
+    @Builder.Default
     @ToString.Exclude
     @OneToMany(mappedBy = "waterMeter", fetch = LAZY)
     private List<WaterMeterCheck> waterMeterChecks = new ArrayList<>();
