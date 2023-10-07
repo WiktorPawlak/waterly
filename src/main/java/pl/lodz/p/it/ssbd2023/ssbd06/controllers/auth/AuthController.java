@@ -5,11 +5,12 @@ import static jakarta.security.enterprise.identitystore.CredentialValidationResu
 import java.time.LocalDateTime;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.resteasy.spi.HttpRequest;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
@@ -33,6 +34,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.JwtProvider;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
+@Transactional
 public class AuthController {
 
     @Inject
@@ -40,7 +42,7 @@ public class AuthController {
     @Inject
     private AccountIdentityStore accountIdentityStore;
     @Context
-    private HttpServletRequest httpServletRequest;
+    private HttpRequest httpServletRequest;
     @Inject
     private AccountEndpoint accountEndpoint;
 
@@ -75,9 +77,9 @@ public class AuthController {
 
         String authenticationIpAddress = "";
         if ("header".equals(ipResolvingStrategy)) {
-            authenticationIpAddress = httpServletRequest.getHeader(realIpHeaderName);
+            authenticationIpAddress = httpServletRequest.getHttpHeaders().getHeaderString(realIpHeaderName);
         } else {
-            authenticationIpAddress = httpServletRequest.getRemoteAddr();
+            authenticationIpAddress = httpServletRequest.getRemoteAddress();
         }
 
         accountEndpoint.saveSuccessfulAuthAttempt(LocalDateTime.now(), credentials.getLogin(), authenticationIpAddress);

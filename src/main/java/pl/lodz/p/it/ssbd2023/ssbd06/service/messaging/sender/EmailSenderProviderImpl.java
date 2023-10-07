@@ -4,7 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import jakarta.ejb.Asynchronous;
+import io.quarkus.mailer.Mail;
+import io.quarkus.mailer.Mailer;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.mail.Authenticator;
@@ -12,11 +13,9 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
-import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.config.EmailConfig;
-import pl.lodz.p.it.ssbd2023.ssbd06.service.messaging.sender.exceptions.EmailSenderException;
 
 @RequestScoped
 public class EmailSenderProviderImpl implements EmailSenderProvider {
@@ -26,19 +25,12 @@ public class EmailSenderProviderImpl implements EmailSenderProvider {
     @Inject
     private EmailConfig emailConfig;
 
+    @Inject Mailer mailer;
+
     @Override
-    @Asynchronous
     public void sendEmail(final String receiversEmail, final String subject, final String body) {
-        try {
-            Message message = prepareMail(receiversEmail, subject, body);
-            Transport.send(message);
-            log.info(() -> "Email with subject: \"" + subject + "\" has been sent to user with email: " + receiversEmail);
-        } catch (final UnsupportedEncodingException | MessagingException e) {
-            String errorMsg = "Exception while sending email with subject: \"" + subject
-                    + "\" to user with email: " + receiversEmail + ". Cause: " + e.getMessage();
-            log.severe(() -> errorMsg);
-            throw new EmailSenderException(errorMsg, e);
-        }
+        mailer.send(Mail.withText(receiversEmail, subject, body));
+        log.info(() -> "Email with subject: \"" + subject + "\" has been sent to user with email: " + receiversEmail);
     }
 
 

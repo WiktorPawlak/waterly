@@ -135,6 +135,12 @@
             <version>${jose-jwt.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-mailer</artifactId>
+            <version>3.4.2</version>
+        </dependency>
+
         <!--    arqullian-->
         <dependency>
             <groupId>fish.payara.arquillian</groupId>
