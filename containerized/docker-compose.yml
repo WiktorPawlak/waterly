@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  proxy:
+    build: ./proxy
+    restart: on-failure
+    ports:
+      - '80:80'
+      - '443:443'
+    networks:
+      - internal
+
+  db:
+    image: mariadb:11.1
+    restart: always
+    environment:
+      - MARIADB_ROOT_HOST=admin
+      - MARIADB_ROOT_PASSWORD=admin
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/docker-init.sql:/docker-entrypoint-initdb.d/docker-init.sql
+    networks:
+      - internal
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  internal:
+    driver: bridge
