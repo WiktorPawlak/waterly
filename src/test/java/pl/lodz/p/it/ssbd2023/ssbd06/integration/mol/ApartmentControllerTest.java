@@ -460,13 +460,18 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
         @ParameterizedTest
         @MethodSource("pl.lodz.p.it.ssbd2023.ssbd06.integration.mol.ApartmentControllerTest#provideTokensForParameterizedTests")
         void shouldReturnForbiddenWhenAccountNotHaveFacilityMangerPermission(String token) {
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             EditApartmentDetailsDto editApartmentDto = EditApartmentDetailsDto.builder()
+                    .id(apartmentWithEtag._1.getId())
+                    .version(apartmentWithEtag._1.getVersion())
                     .area(BigDecimal.valueOf(24.44))
                     .number("60b")
                     .build();
 
             given()
                     .header(AUTHORIZATION, token)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(editApartmentDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID)
