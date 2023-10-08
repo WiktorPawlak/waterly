@@ -16,7 +16,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -37,8 +36,6 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProviderImpl;
 
-
-@Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IntegrationTestsConfig {
 
