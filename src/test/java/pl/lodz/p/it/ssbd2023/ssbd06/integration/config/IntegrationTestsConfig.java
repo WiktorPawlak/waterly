@@ -110,14 +110,12 @@ public class IntegrationTestsConfig {
 
     protected DatabaseConnector databaseConnector;
 
-    @BeforeAll
-    protected void tokensSetup() {
+    protected IntegrationTestsConfig() {
         RestAssured.requestSpecification = new RequestSpecBuilder()
                 .setBasePath("/api")
                 .setPort(8082)
                 .setContentType(JSON)
                 .build();
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
         FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
         OWNER_TOKEN = getToken(OWNER_CREDENTIALS);
