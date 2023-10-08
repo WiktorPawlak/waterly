@@ -289,7 +289,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
             changeOwnerDto.setNewOwnerId(NEW_OWNER_ID);
 
             given()
-                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -306,7 +306,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
             given()
                     .header(AUTHORIZATION, OWNER_TOKEN)
-                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -350,11 +350,11 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                     OWNER_ID,
                     List.of(
                             WaterMeterExpectedUsagesDto.of(waterMetedId, expectedMonthlyUsage)
-                    ), 0, apartmentWithEtag._1().getId());
+                    ), 0, apartmentWithEtag._1.getId());
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._1)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(changeOwnerDto)
                     .when()
                     .put(APARTMENT_PATH + "/" + APARTMENT_ID + CHANGE_OWNER_PATH)
@@ -411,16 +411,21 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
                 "2,12   a",
         })
         void shouldReturnBadRequestWhenBodyHaveWrongForm(BigDecimal area, String number) {
+            Tuple2<ApartmentDto, String> apartmentWithEtag = getApartmentWithEtag(APARTMENT_ID);
+
             EditApartmentDetailsDto dto = EditApartmentDetailsDto.builder()
+                    .id(apartmentWithEtag._1.getId())
+                    .version(apartmentWithEtag._1.getVersion())
                     .area(area)
                     .number(number)
                     .build();
 
             given()
                     .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
+                    .header(IF_MATCH_HEADER_NAME, apartmentWithEtag._2)
                     .body(dto)
                     .when()
-                    .put(APARTMENT_PATH + "/" + APARTMENT_ID)
+                    .put(APARTMENT_PATH + "/" + apartmentWithEtag._1.getId())
                     .then()
                     .statusCode(BAD_REQUEST.getStatusCode())
                     .body("[0].field", notNullValue())
