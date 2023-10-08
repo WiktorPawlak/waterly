@@ -14,6 +14,7 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation
 import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +44,10 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
             WaterMeterCheckDto.of(COLD_WATER_METER_ID, COLD_WATER_METER_READING),
             WaterMeterCheckDto.of(HOT_WATER_METER_ID, HOT_WATER_METER_READING)
     ), "2023-06-14", true);
+    public static final WaterMeterChecksDto FM_CHECKS_DTO_2 = WaterMeterChecksDto.of(List.of(
+            WaterMeterCheckDto.of(COLD_WATER_METER_ID, COLD_WATER_METER_READING),
+            WaterMeterCheckDto.of(HOT_WATER_METER_ID, HOT_WATER_METER_READING)
+    ), LocalDate.now().toString(), true);
     public static final WaterMeterChecksDto OWNER_CHECKS_DTO = WaterMeterChecksDto.of(List.of(
             WaterMeterCheckDto.of(COLD_WATER_METER_ID, COLD_WATER_METER_READING),
             WaterMeterCheckDto.of(HOT_WATER_METER_ID, HOT_WATER_METER_READING)
@@ -96,7 +101,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
         //given
         given()
                 .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                .body(FM_CHECKS_DTO)
+                .body(FM_CHECKS_DTO_2)
                 .when()
                 .post(WATERMETER_PATH + "/water-meter-checks")
                 .then()
