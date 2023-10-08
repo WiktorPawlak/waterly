@@ -1,5 +1,7 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.config;
 
+import lombok.SneakyThrows;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,14 +26,9 @@ public class DatabaseConnector {
         connection = connect();
     }
 
+    @SneakyThrows
     private Connection connect() {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-        } catch (SQLException e) {
-            log.severe("Failed to connect db: " + e.getMessage());
-        }
-        return connection;
+        return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);;
     }
 
     public ResultSet executeQuery(String query) {

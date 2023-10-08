@@ -117,9 +117,18 @@ public class IntegrationTestsConfig {
                 .setContentType(JSON)
                 .build();
         RestAssured.defaultParser = Parser.JSON;
-        ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
-        FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
-        OWNER_TOKEN = getToken(OWNER_CREDENTIALS);
+        if(ADMINISTRATOR_TOKEN == null) {
+            ADMINISTRATOR_TOKEN =  getToken(ADMIN_CREDENTIALS);
+        }
+
+        if (FACILITY_MANAGER_TOKEN == null) {
+            FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
+        }
+
+        if (OWNER_TOKEN == null) {
+            OWNER_TOKEN = getToken(OWNER_CREDENTIALS);
+        }
+
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
