@@ -5,11 +5,10 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 
 import java.util.Optional;
 
-import jakarta.annotation.Resource;
+import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.SecurityContext;
 import lombok.extern.java.Log;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ResourceNotFoundException;
@@ -26,8 +25,8 @@ public class MolAccountService {
 
     @Inject
     private ReadOnlyAccountFacade readOnlyAccountFacade;
-    @Resource
-    private SecurityContext securityContext;
+    @Inject
+    private SecurityIdentity securityContext;
 
     @RolesAllowed(FACILITY_MANAGER)
     public Account getOwnerAccountById(final long id) {
@@ -48,7 +47,7 @@ public class MolAccountService {
 
     @RolesAllowed({FACILITY_MANAGER, OWNER})
     public long getPrincipalId() {
-        return readOnlyAccountFacade.findByLogin(securityContext.getCallerPrincipal().getName()).orElseThrow().getId();
+        return readOnlyAccountFacade.findByLogin(securityContext.getPrincipal().getName()).orElseThrow().getId();
     }
 
     private Account findOwnerById(final long id) {
