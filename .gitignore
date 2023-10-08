@@ -6,7 +6,6 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/
 HELP.md
 !**/src/main/**/target/
 !**/src/test/**/target/
