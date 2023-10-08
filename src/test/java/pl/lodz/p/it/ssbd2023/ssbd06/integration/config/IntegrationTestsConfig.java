@@ -13,12 +13,12 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.parsing.Parser;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
@@ -116,6 +116,7 @@ public class IntegrationTestsConfig {
                 .setPort(8082)
                 .setContentType(JSON)
                 .build();
+        RestAssured.defaultParser = Parser.JSON;
         ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
         FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
         OWNER_TOKEN = getToken(OWNER_CREDENTIALS);

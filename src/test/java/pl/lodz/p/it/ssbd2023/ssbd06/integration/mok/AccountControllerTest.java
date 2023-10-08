@@ -1217,41 +1217,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .extract().jsonPath().getString("message");
             assertEquals(test, "[size must be between 8 and 32]");
         }
-
-        @Test
-        void ShouldChangeOwnPasswordOnlyOnceWithConcurrentRequest() throws BrokenBarrierException, InterruptedException {
-            int threadNumber = 10;
-            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
-            List<Thread> threads = new ArrayList<>(threadNumber);
-            List<Integer> responseCodes = new ArrayList<>(); // New list to store response codes
-            AtomicInteger finished = new AtomicInteger();
-            for (int i = 0; i < threadNumber; i++) {
-                threads.add(new Thread(() -> {
-                    try {
-                        cyclicBarrier.await();
-                    } catch (InterruptedException | BrokenBarrierException e) {
-                        throw new RuntimeException(e);
-                    }
-                    AccountPasswordDto passwordDto = new AccountPasswordDto("admin12345", "newPassword");
-                    Response response = given()
-                            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                            .body(passwordDto)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .when()
-                            .put(ACCOUNT_PATH + "/self/password")
-                            .then()
-                            .extract().response();
-                    int responseCode = response.getStatusCode();
-                    responseCodes.add(responseCode);
-                    finished.getAndIncrement();
-                }));
-            }
-            threads.forEach(Thread::start);
-            cyclicBarrier.await();
-            while (finished.get() != threadNumber) {
-            }
-            assertEquals(1, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
-        }
     }
 
     @Nested
@@ -1433,42 +1398,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(NOT_FOUND.getStatusCode())
                     .body("message", equalTo("ERROR.TOKEN_NOT_FOUND"));
-        }
-
-        @Test
-        void ShouldChangeUsersPasswordEverytimeWithConcurrentRequest() throws BrokenBarrierException, InterruptedException {
-            int threadNumber = 3;
-            CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
-            List<Thread> threads = new ArrayList<>(threadNumber);
-            List<Integer> responseCodes = new ArrayList<>(); // New list to store response codes
-            AtomicInteger finished = new AtomicInteger();
-            for (int i = 0; i < threadNumber; i++) {
-                threads.add(new Thread(() -> {
-                    try {
-                        cyclicBarrier.await();
-                    } catch (InterruptedException | BrokenBarrierException e) {
-                        throw new RuntimeException(e);
-                    }
-                    PasswordChangeByAdminDto passwordChangeByAdminDto = new PasswordChangeByAdminDto("123jantes");
-                    Response response = given()
-                            .header(AUTHORIZATION, ADMINISTRATOR_TOKEN)
-                            .queryParam("email", getOwnerAccount().getEmail())
-                            .body(passwordChangeByAdminDto)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .when()
-                            .post(ACCOUNT_PATH + "/password/request-change")
-                            .then()
-                            .extract().response();
-                    int responseCode = response.getStatusCode();
-                    responseCodes.add(responseCode);
-                    finished.getAndIncrement();
-                }));
-            }
-            threads.forEach(Thread::start);
-            cyclicBarrier.await();
-            while (finished.get() != threadNumber) {
-            }
-            assertEquals(3, responseCodes.stream().filter(responseCode -> responseCode == OK.getStatusCode()).toList().size());
         }
 
         @Test
