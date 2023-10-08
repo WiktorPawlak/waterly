@@ -61,7 +61,7 @@ public class WaterMeterService {
         waterMeterFacade.update(waterMeter);
     }
 
-    @RolesAllowed(FACILITY_MANAGER)
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
     public void updateWaterMeter(final WaterMeter waterMeter) {
         waterMeterFacade.update(waterMeter);
     }

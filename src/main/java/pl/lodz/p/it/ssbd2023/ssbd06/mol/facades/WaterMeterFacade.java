@@ -89,7 +89,7 @@ public class WaterMeterFacade extends AbstractFacade<WaterMeter> {
         getEntityManager().lock(entity.getEntityConsistenceAssurance(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
     }
 
-    @RolesAllowed(FACILITY_MANAGER)
+    @RolesAllowed({FACILITY_MANAGER, OWNER})
     @Override
     public WaterMeter update(final WaterMeter entity) {
         return super.update(entity);
