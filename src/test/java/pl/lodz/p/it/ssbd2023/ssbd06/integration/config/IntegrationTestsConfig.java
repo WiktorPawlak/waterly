@@ -36,6 +36,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProvider;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.time.TimeProviderImpl;
 
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IntegrationTestsConfig {
 
