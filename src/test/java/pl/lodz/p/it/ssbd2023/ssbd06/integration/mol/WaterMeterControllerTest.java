@@ -498,11 +498,21 @@ public class WaterMeterControllerTest extends IntegrationTestsConfig {
             // given
             Tuple2<WaterMeterDto, String> waterMeterWithEtag = getWaterMeterWithEtag(COLD_WATER_METER_ID);
 
+            UpdateWaterMeterDto updateWaterMeterDto = UpdateWaterMeterDto.of(
+                    waterMeterWithEtag._1.getId(),
+                    SERIAL_NUMBER,
+                    BigDecimal.valueOf(10),
+                    TEST_DATE,
+                    "12",
+                    SECOND_APARTMENT_ID,
+                    waterMeterWithEtag._1.getVersion()
+            );
+
             // then
             given()
                     .header(AUTHORIZATION, token)
                     .header(IF_MATCH_HEADER_NAME, waterMeterWithEtag._2)
-                    .body(UPDATE_WATER_METER_DTO)
+                    .body(updateWaterMeterDto)
                     .when()
                     .put(WATERMETER_PATH + "/" + COLD_WATER_METER_ID)
                     .then()
