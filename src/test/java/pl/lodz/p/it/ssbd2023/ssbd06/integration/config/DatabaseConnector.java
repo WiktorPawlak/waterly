@@ -28,7 +28,7 @@ public class DatabaseConnector {
 
     @SneakyThrows
     private Connection connect() {
-        return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);;
+        return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
     }
 
     public ResultSet executeQuery(String query) {
