@@ -7,13 +7,12 @@ import java.util.List;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -124,7 +123,7 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
         }
 
         if (ownerId != null) {
-            predicate = cb.and(predicate, cb.equal(apartmentRoot.get("owner"), ownerId));
+            predicate = cb.and(predicate, cb.equal(apartmentRoot.get("owner").get("id"), ownerId));
         }
 
         query.where(predicate);
@@ -147,7 +146,8 @@ public class ApartmentFacade extends AbstractFacade<Apartment> {
         }
 
         if (ownerId != null) {
-            predicate = cb.and(predicate, cb.equal(apartment.get("owner"), ownerId));
+            Expression<Long> ownerIdExpression = apartment.get("owner").get("id").as(Long.class);
+            predicate = cb.and(predicate, cb.equal(ownerIdExpression, ownerId));
         }
 
         query.where(predicate);

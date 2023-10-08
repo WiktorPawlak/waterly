@@ -172,7 +172,7 @@ public class AccountService {
         addAccountEmailToUpdate(account, email);
     }
 
-    @RolesAllowed({OWNER, FACILITY_MANAGER, ADMINISTRATOR})
+    @PermitAll
     public void changePassword(final Account account, final String hashedPassword) {
         account.setPassword(hashedPassword);
         accountFacade.update(account);

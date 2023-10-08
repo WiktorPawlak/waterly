@@ -123,6 +123,7 @@ public class IntegrationTestsConfig {
         ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
         FACILITY_MANAGER_TOKEN = getToken(FACILITY_MANAGER_CREDENTIALS);
         OWNER_TOKEN = getToken(OWNER_CREDENTIALS);
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
     protected String getToken(final Credentials credentials) {

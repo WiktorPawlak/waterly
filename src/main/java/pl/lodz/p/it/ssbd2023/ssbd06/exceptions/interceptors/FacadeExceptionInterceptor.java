@@ -41,9 +41,8 @@ public class FacadeExceptionInterceptor {
         } catch (final OptimisticLockException ole) {
             throw ApplicationBaseException.optimisticLockException();
         } catch (final PersistenceException | java.sql.SQLException e) {
-            if (e.getCause() instanceof ConstraintViolationException constraintViolationException) {
-                constraintViolationException = (ConstraintViolationException) e.getCause();
-                String constraintKey = getConstraintKeyFromException(constraintViolationException.getCause().getMessage());
+            if (e instanceof ConstraintViolationException constraintViolationException) {
+                String constraintKey = getConstraintKeyFromException(constraintViolationException.getMessage());
                 throw ApplicationBaseException.persistenceConstraintException(mapConstraintToErrorCode(constraintKey));
             }
             throw ApplicationBaseException.persistenceException(e);

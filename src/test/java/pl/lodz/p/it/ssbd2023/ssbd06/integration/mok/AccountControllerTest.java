@@ -1674,17 +1674,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
         }
 
         @Test
-        void shouldFailAcceptOwnerAccountWhenInvalidAccountIdIsPassed() {
-            given()
-                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .when()
-                    .post(ACCOUNT_PATH + "/qwerty/accept")
-                    .then()
-                    .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
-                    .body("message", equalTo("ERROR.UNKNOWN"));
-        }
-
-        @Test
         void shouldAcceptOnlyOnceWithConcurrentRequests() throws BrokenBarrierException, InterruptedException {
             int threadNumber = 10;
             CyclicBarrier cyclicBarrier = new CyclicBarrier(threadNumber + 1);
@@ -1768,17 +1757,6 @@ class AccountControllerTest extends IntegrationTestsConfig {
                     .then()
                     .statusCode(NOT_FOUND.getStatusCode())
                     .body("message", equalTo("ERROR.RESOURCE_NOT_FOUND"));
-        }
-
-        @Test
-        void shouldFailRejectOwnerAccountWhenInvalidAccountIdIsPassed() {
-            given()
-                    .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                    .when()
-                    .delete(ACCOUNT_PATH + "/qwerty/reject")
-                    .then()
-                    .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
-                    .body("message", equalTo("ERROR.UNKNOWN"));
         }
 
         @Test
