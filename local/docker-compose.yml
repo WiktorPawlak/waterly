@@ -1,16 +1,22 @@
 version: '3.8'
 services:
   db:
-    image: postgres:15.2-alpine
+    image: mariadb:11.1
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - '5432:5432'
+      - MARIADB_ROOT_PASSWORD=admin
     volumes:
-      - db:/var/lib/postgresql/data
+      - db:/var/lib/mysql
       - ./docker-init.sql:/docker-entrypoint-initdb.d/docker-init.sql
+    networks:
+      - internal
+    ports:
+      - 3306:3306
+
 volumes:
   db:
     driver: local
+
+networks:
+  internal:
+    driver: bridge
