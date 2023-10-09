@@ -1,13 +1,13 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.config;
 
-import lombok.SneakyThrows;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
+
+import lombok.SneakyThrows;
 
 public class DatabaseConnector {
 
@@ -20,7 +20,7 @@ public class DatabaseConnector {
     private final Connection connection;
 
     public DatabaseConnector(final String dbPort) {
-        DB_URL = "jdbc:postgresql://localhost:" + dbPort + "/ssbd06";
+        DB_URL = "jdbc:mariadb://localhost:" + dbPort + "/ssbd06";
         DB_USERNAME = "ssbd06admin";
         DB_PASSWORD = "12345";
         connection = connect();

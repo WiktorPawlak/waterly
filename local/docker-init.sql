@@ -7,4 +7,4 @@ CREATE DATABASE ssbd06;
 
 USE ssbd06;
 
-GRANT ALL PRIVILEGES ON ssbd06.* TO 'ssbd06admin'@'%';
+GRANT ALL PRIVILEGES ON ssbd06.* TO 'ssbd06admin'@'%' WITH GRANT OPTION;

@@ -31,12 +31,12 @@ import io.restassured.config.ObjectMapperConfig;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
-import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.PostgresDBTestResource;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.MariaDBTestResource;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
 
 @QuarkusTest
-@QuarkusTestResource(value = PostgresDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
 public class InvoiceControllerTest extends IntegrationTestsConfig {
 
     @Nested

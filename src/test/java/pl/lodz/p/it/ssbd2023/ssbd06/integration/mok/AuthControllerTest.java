@@ -22,11 +22,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
-import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.PostgresDBTestResource;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.MariaDBTestResource;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 @QuarkusTest
-@QuarkusTestResource(value = PostgresDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
 @Order(5)
 class AuthControllerTest extends IntegrationTestsConfig {
 

@@ -32,7 +32,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
-import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.PostgresDBTestResource;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.MariaDBTestResource;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ApartmentDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ChangeApartmentOwnerDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateApartmentDto;
@@ -41,7 +41,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterExpectedUsagesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 @QuarkusTest
-@QuarkusTestResource(value = PostgresDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
 @Order(6)
 class ApartmentControllerTest extends IntegrationTestsConfig {
     public static final BigDecimal EXPECTED_USAGE = BigDecimal.valueOf(300.000);

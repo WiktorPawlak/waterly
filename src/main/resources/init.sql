@@ -1,56 +1,56 @@
 --ssbd06admin
-GRANT ALL ON SCHEMA public TO ssbd06admin;
+GRANT ALL PRIVILEGES ON ssbd06.* TO ssbd06admin;
 
 --ssbd06auth
-GRANT SELECT ON TABLE account TO ssbd06auth;
-GRANT SELECT ON TABLE role TO ssbd06auth;
-GRANT SELECT ON TABLE auth_info TO ssbd06auth;
+GRANT SELECT ON account TO ssbd06auth;
+GRANT SELECT ON role TO ssbd06auth;
+GRANT SELECT ON auth_info TO ssbd06auth;
 
 --ssbd06mok
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE account TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE account_details TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE administrator TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE owner TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE facility_manager TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE role TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE verification_token TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE auth_info TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE list_search_preferences TO ssbd06mok;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE two_factor_authentication TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON account TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON account_details TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON administrator TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON owner TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON facility_manager TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON role TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON verification_token TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON auth_info TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON list_search_preferences TO ssbd06mok;
+GRANT SELECT, INSERT, UPDATE, DELETE ON two_factor_authentication TO ssbd06mok;
 
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_details_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE auth_info_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE role_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE verification_token_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE list_search_preferences_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE two_factor_authentication_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON account_details_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON account_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON auth_info_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON role_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON verification_token_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON list_search_preferences_id_seq TO ssbd06mok;
+GRANT USAGE, SELECT, UPDATE ON two_factor_authentication_id_seq TO ssbd06mok;
 
 
 --ssbd06mol
-GRANT SELECT ON TABLE account TO ssbd06mol;
-GRANT SELECT ON TABLE role TO ssbd06mol;
-GRANT SELECT ON TABLE account_details TO ssbd06mol;
-GRANT SELECT ON TABLE auth_info to ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE apartment TO ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bill TO ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE invoice TO ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE tariff TO ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE usage_report TO ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_meter TO ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_meter_check TO ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE water_usage_stats TO ssbd06mol;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE entity_consistence_assurance TO ssbd06mol;
+GRANT SELECT ON account TO ssbd06mol;
+GRANT SELECT ON role TO ssbd06mol;
+GRANT SELECT ON account_details TO ssbd06mol;
+GRANT SELECT ON auth_info to ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON apartment TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON bill TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON invoice TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON tariff TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON usage_report TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON water_meter TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON water_meter_check TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON water_usage_stats TO ssbd06mol;
+GRANT SELECT, INSERT, UPDATE, DELETE ON entity_consistence_assurance TO ssbd06mol;
 
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE apartment_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE bill_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE invoice_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE tariff_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE usage_report_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_meter_check_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_meter_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_usage_stats_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE entity_consistence_assurance_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON apartment_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON bill_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON invoice_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON tariff_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON usage_report_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON water_meter_check_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON water_meter_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON water_usage_stats_id_seq TO ssbd06mol;
+GRANT USAGE, SELECT, UPDATE ON entity_consistence_assurance_id_seq TO ssbd06mol;
 
 -- add first administrator password admin12345
 INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on) VALUES (nextval('account_details_id_seq'), 0, 'kontomat@gmail.com', 'Mateusz', 'Strzelecki', '123456789', now(), now());

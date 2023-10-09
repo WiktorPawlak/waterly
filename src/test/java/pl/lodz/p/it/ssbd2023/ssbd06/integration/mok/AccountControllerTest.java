@@ -40,7 +40,7 @@ import io.restassured.response.Response;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
-import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.PostgresDBTestResource;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.MariaDBTestResource;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.CreateAccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountDetailsDto;
@@ -49,7 +49,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 
 @QuarkusTest
-@QuarkusTestResource(value = PostgresDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
 @Order(4)
 class AccountControllerTest extends IntegrationTestsConfig {
 

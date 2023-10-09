@@ -39,7 +39,7 @@ import io.restassured.response.Response;
 import io.vavr.Tuple2;
 import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
-import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.PostgresDBTestResource;
+import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.MariaDBTestResource;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateMainWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.ReplaceWaterMeterDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.UpdateWaterMeterDto;
@@ -48,7 +48,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 @QuarkusTest
-@QuarkusTestResource(value = PostgresDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
 @Order(9)
 public class WaterMeterControllerTest extends IntegrationTestsConfig {
 

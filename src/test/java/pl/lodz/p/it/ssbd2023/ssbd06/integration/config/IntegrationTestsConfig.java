@@ -118,8 +118,8 @@ public class IntegrationTestsConfig {
                 .setContentType(JSON)
                 .build();
         RestAssured.defaultParser = Parser.JSON;
-        if(ADMINISTRATOR_TOKEN == null) {
-            ADMINISTRATOR_TOKEN =  getToken(ADMIN_CREDENTIALS);
+        if (ADMINISTRATOR_TOKEN == null) {
+            ADMINISTRATOR_TOKEN = getToken(ADMIN_CREDENTIALS);
         }
 
         if (FACILITY_MANAGER_TOKEN == null) {
@@ -207,7 +207,7 @@ public class IntegrationTestsConfig {
     @BeforeEach
     @SneakyThrows
     void reinitializeDbAfterEachTest() {
-        String url = "jdbc:postgresql://localhost:" + firstMapperPort + "/ssbd06?loggerLevel=OFF";
+        String url = "jdbc:mariadb://localhost:" + firstMapperPort + "/ssbd06?loggerLevel=OFF";
         databaseConnector = new DatabaseConnector(firstMapperPort);
 
         try (Connection conn = DriverManager.getConnection(url, dbUsername, dbPassword)) {
