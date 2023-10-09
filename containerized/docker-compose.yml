@@ -29,6 +29,8 @@ services:
   db:
     image: mariadb:11.1
     restart: always
+    ports:
+      - '3306:3306'
     environment:
       - MARIADB_ROOT_HOST=admin
       - MARIADB_ROOT_PASSWORD=admin

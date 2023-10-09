@@ -45,7 +45,7 @@ public class WaterUsageStats extends AbstractEntity {
     @JoinColumn(name = "apartment_id", nullable = false, foreignKey = @ForeignKey(name = "water_usage_stats_apartment_fk"))
     private Apartment apartment;
     @NotNull
-    @Column(name = "year_month", columnDefinition = "date")
+    @Column(name = "date", columnDefinition = "date")
     @Convert(converter = YearMonthDateAttributeConverter.class)
     private YearMonth yearMonth;
     @Setter
