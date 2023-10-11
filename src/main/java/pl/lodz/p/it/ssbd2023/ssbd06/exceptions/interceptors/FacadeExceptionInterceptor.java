@@ -54,7 +54,7 @@ public class FacadeExceptionInterceptor {
     }
 
     private String getConstraintKeyFromException(final String string) {
-        Pattern pattern = Pattern.compile("constraint\\s+\"([^\"]+)\"");
+        Pattern pattern = Pattern.compile("for key '([^']+)'");
         Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
             return matcher.group(1);

@@ -216,7 +216,10 @@ public class IntegrationTestsConfig {
             String sqlQuery = new Scanner(inputStream, StandardCharsets.UTF_8).useDelimiter("\\A").next();
 
             try (Statement stmt = conn.createStatement()) {
-                stmt.execute(sqlQuery);
+                String[] sqlStatements = sqlQuery.split(";");
+                for (String sql : sqlStatements) {
+                    stmt.execute(sql);
+                }
             }
         }
     }

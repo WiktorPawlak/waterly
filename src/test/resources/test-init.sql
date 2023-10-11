@@ -1,41 +1,43 @@
-DELETE
-FROM account;
-DELETE
-FROM apartment;
-DELETE
-FROM verification_token;
-DELETE
-FROM bill;
-DELETE
-FROM invoice;
-DELETE
-FROM tariff;
-DELETE
-FROM usage_report;
-DELETE
-FROM water_meter;
-DELETE
-FROM water_meter_check;
-DELETE
-FROM water_usage_stats;
-DELETE
-FROM account_details;
-DELETE
-FROM owner;
-DELETE
-FROM administrator;
-DELETE
-FROM facility_manager;
-DELETE
-FROM role;
-DELETE
-FROM auth_info;
-DELETE
-FROM list_search_preferences;
-DELETE
-FROM two_factor_authentication;
-DELETE
-FROM entity_consistence_assurance;
+SET FOREIGN_KEY_CHECKS=0;
+DELETE FROM account;
+TRUNCATE account;
+DELETE FROM apartment;
+TRUNCATE apartment;
+DELETE FROM verification_token;
+TRUNCATE verification_token;
+DELETE FROM bill;
+TRUNCATE bill;
+DELETE FROM invoice;
+TRUNCATE invoice;
+DELETE FROM tariff;
+TRUNCATE tariff;
+DELETE FROM usage_report;
+TRUNCATE usage_report;
+DELETE FROM water_meter;
+TRUNCATE water_meter;
+DELETE FROM water_meter_check;
+TRUNCATE water_meter_check;
+DELETE FROM water_usage_stats;
+TRUNCATE water_usage_stats;
+DELETE FROM account_details;
+TRUNCATE account_details;
+DELETE FROM owner;
+TRUNCATE owner;
+DELETE FROM administrator;
+TRUNCATE administrator;
+DELETE FROM facility_manager;
+TRUNCATE facility_manager;
+DELETE FROM role;
+TRUNCATE role;
+DELETE FROM auth_info;
+TRUNCATE auth_info;
+DELETE FROM list_search_preferences;
+TRUNCATE list_search_preferences;
+DELETE FROM two_factor_authentication;
+TRUNCATE two_factor_authentication;
+DELETE FROM entity_consistence_assurance;
+TRUNCATE entity_consistence_assurance;
+SET FOREIGN_KEY_CHECKS=1;
 
 GRANT ALL PRIVILEGES ON ssbd06.* TO ssbd06admin;
 
@@ -74,11 +76,11 @@ INSERT INTO account (version, active, login, password, locale, account_state, ac
                      otp_secret)
 VALUES (0, true, 'admin', '$2a$04$m9vbbL2RTbV/XNC44TEZ0e.t9WH2Q6hjtyEem/siFCdNS564hW68q', 'en_US', 'CONFIRMED', 1, NOW(), NOW(),
         false, '610cc564-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('ADMINISTRATOR', true, 0, 1, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('FACILITY_MANAGER', false, 0, 1, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('OWNER', false, 0, 1, NOW(), NOW());
 INSERT INTO administrator (id)
 VALUES (1);
@@ -94,11 +96,11 @@ INSERT INTO account (version, active, login, password, locale, account_state, ac
                      otp_secret)
 VALUES (0, true, 'new', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 2, NOW(), NOW(), false,
         '7a1dbcfc-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('OWNER', true, 0, 2, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('FACILITY_MANAGER', false, 0, 2, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('ADMINISTRATOR', false, 0, 2, NOW(), NOW());
 INSERT INTO owner (id)
 VALUES (4);
@@ -114,11 +116,11 @@ INSERT INTO account (version, active, login, password, locale, account_state, ac
                      otp_secret)
 VALUES (0, true, 'tomdut', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 3, NOW(), NOW(),
         false, '81250e56-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('FACILITY_MANAGER', true, 0, 3, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('OWNER', false, 0, 3, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('ADMINISTRATOR', false, 0, 3, NOW(), NOW());
 INSERT INTO facility_manager (id)
 VALUES (7);
@@ -135,11 +137,11 @@ INSERT INTO account (version, active, login, password, locale, account_state, ac
                      otp_secret)
 VALUES (0, true, 'skulmik', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'TO_CONFIRM', 4, NOW(), NOW(),
         false, '83d7c4cc-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('OWNER', true, 0, 4, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('FACILITY_MANAGER', false, 0, 4, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('ADMINISTRATOR', false, 0, 4, NOW(), NOW());
 INSERT INTO owner (id)
 VALUES (10);
@@ -156,11 +158,11 @@ INSERT INTO account (version, active, login, password, locale, account_state, ac
                      otp_secret)
 VALUES (0, true, 'jerzy', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 5, NOW(), NOW(),
         false, '7a1dbcfc-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('OWNER', true, 0, 5, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('FACILITY_MANAGER', false, 0, 5, NOW(), NOW());
-INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+INSERT INTO role (permission_level, active, version, account_id, created_on, updated_on)
 VALUES ('ADMINISTRATOR', false, 0, 5, NOW(), NOW());
 INSERT INTO owner (id)
 VALUES (13);

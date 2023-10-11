@@ -1,8 +1,6 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.mol.facades;
 
 import jakarta.annotation.security.PermitAll;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

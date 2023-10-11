@@ -594,7 +594,7 @@ class ApartmentControllerTest extends IntegrationTestsConfig {
 
             assertEquals(WaterMeterType.HOT_WATER.name(), type);
             assertEquals("100.000", startingValue);
-            assertEquals(TEST_DATE + " 00:00:00", expiryDate);
+            assertEquals(TEST_DATE + " 00:00:00.000000", expiryDate);
         }
 
         @Test

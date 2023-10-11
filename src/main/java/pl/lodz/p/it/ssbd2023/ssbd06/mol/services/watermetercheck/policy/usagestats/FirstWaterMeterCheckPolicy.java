@@ -6,8 +6,6 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.OWNER;
 import java.math.BigDecimal;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;

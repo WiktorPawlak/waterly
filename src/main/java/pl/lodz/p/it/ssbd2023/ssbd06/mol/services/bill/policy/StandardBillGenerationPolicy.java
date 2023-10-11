@@ -3,8 +3,6 @@ package pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.policy;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.services.bill.AbstractBillService;

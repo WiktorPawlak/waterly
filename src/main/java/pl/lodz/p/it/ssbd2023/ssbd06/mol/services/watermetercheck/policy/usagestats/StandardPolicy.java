@@ -8,8 +8,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;

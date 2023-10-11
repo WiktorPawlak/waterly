@@ -8,8 +8,6 @@ import static pl.lodz.p.it.ssbd2023.ssbd06.service.security.Permission.FACILITY_
 import java.util.Optional;
 
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.interceptors.ServiceExceptionHandler;

@@ -10,8 +10,6 @@ import java.util.Optional;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;

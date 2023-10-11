@@ -8,8 +8,6 @@ import java.util.List;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException;

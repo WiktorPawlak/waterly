@@ -8,8 +8,6 @@ import java.util.Optional;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
@@ -70,9 +68,8 @@ public class WaterMeterCheckFacade extends AbstractFacade<WaterMeterCheck> {
         criteriaQuery.select(root);
 
         Expression<Integer> monthExpression = criteriaBuilder.function(
-                "DATE_PART",
+                "MONTH",
                 Integer.class,
-                criteriaBuilder.literal("MONTH"),
                 root.get("checkDate")
         );
         Predicate monthPredicate = criteriaBuilder.equal(monthExpression, month.getMonthValue());
