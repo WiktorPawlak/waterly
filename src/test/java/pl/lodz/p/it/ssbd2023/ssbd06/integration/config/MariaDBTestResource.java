@@ -16,8 +16,8 @@ public class MariaDBTestResource implements QuarkusTestResourceLifecycleManager 
     MariaDBContainer mariaDB;
     private static final Network network = Network.newNetwork();
     private static final String DB_NAME = "ssbd06";
-    private static final String DB_USERNAME = "ssbd06admin";
-    private static final String DB_PASSWORD = "12345";
+    private static final String DB_USERNAME = "admin";
+    private static final String DB_PASSWORD = "admin";
     private static final DockerImageName MARIADB_IMAGE = DockerImageName
             .parse("mariadb")
             .withTag("11.1");
