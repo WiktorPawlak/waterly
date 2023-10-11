@@ -68,7 +68,7 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
 
         //then
         BigDecimal coldWaterUsage = databaseConnector.executeQuery(
-                "SELECT s.cold_water_usage FROM water_usage_stats s WHERE s.year_month = '2023-06-01'"
+                "SELECT s.cold_water_usage FROM water_usage_stats s WHERE s.date = '2023-06-01'"
         ).getBigDecimal("cold_water_usage");
         assertEquals(BigDecimal.valueOf(1000000).movePointLeft(3), coldWaterUsage);
     }
