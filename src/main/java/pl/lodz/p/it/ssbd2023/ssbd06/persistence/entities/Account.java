@@ -17,6 +17,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -82,7 +83,7 @@ public class Account extends AbstractEntity {
     @ToString.Exclude
     @Setter
     @NotNull
-    @OneToOne(optional = false, fetch = LAZY, cascade = {PERSIST, MERGE, REMOVE})
+    @ManyToOne(optional = false, fetch = LAZY, cascade = {PERSIST, MERGE, REMOVE})
     @JoinColumn(name = "account_details_id")
     private AccountDetails accountDetails;
     @ToString.Exclude

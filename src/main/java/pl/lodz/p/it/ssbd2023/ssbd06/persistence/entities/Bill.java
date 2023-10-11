@@ -16,7 +16,6 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
@@ -72,11 +71,11 @@ public class Bill extends AbstractEntity {
     private Account account;
     @ToString.Exclude
     @NotNull
-    @OneToOne(cascade = {PERSIST, MERGE, REFRESH}, fetch = LAZY)
+    @ManyToOne(cascade = {PERSIST, MERGE, REFRESH}, fetch = LAZY)
     @JoinColumn(name = "advance_usage", nullable = false, foreignKey = @ForeignKey(name = "bill_advance_usage"))
     private UsageReport advanceUsage;
     @ToString.Exclude
-    @OneToOne(cascade = {PERSIST, MERGE, REFRESH}, fetch = LAZY)
+    @ManyToOne(cascade = {PERSIST, MERGE, REFRESH}, fetch = LAZY)
     @JoinColumn(name = "real_usage", foreignKey = @ForeignKey(name = "bill_real_usage_fk"))
     private UsageReport realUsage;
 }

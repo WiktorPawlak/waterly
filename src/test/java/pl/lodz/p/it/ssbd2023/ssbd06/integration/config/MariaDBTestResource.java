@@ -29,6 +29,7 @@ public class MariaDBTestResource implements QuarkusTestResourceLifecycleManager 
                 .withUsername(DB_USERNAME)
                 .withPassword(DB_PASSWORD)
                 .withNetwork(network)
+                .withEnv("MYSQL_LOG_CONSOLE", "1")
                 .withCopyFileToContainer(MountableFile.
                         forClasspathResource("docker-init.sql"), "/docker-entrypoint-initdb.d/init.sql")
                 .withNetworkAliases("mariadb")

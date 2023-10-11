@@ -1,42 +1,41 @@
-DELETE FROM public.account;
-DELETE FROM public.apartment;
-DELETE FROM public.verification_token;
-DELETE FROM public.bill;
-DELETE FROM public.invoice;
-DELETE FROM public.tariff;
-DELETE FROM public.usage_report;
-DELETE FROM public.water_meter;
-DELETE FROM public.water_meter_check;
-DELETE FROM public.water_usage_stats;
-DELETE FROM public.account_details;
-DELETE FROM public.owner;
-DELETE FROM public.administrator;
-DELETE FROM public.facility_manager;
-DELETE FROM public.role;
-DELETE FROM public.auth_info;
-DELETE FROM public.list_search_preferences;
-DELETE FROM public.two_factor_authentication;
-DELETE FROM public.entity_consistence_assurance;
-
-ALTER TABLE public.account AUTO_INCREMENT = 1;
-ALTER TABLE public.apartment AUTO_INCREMENT = 1;
-ALTER TABLE public.verification_token AUTO_INCREMENT = 1;
-ALTER TABLE public.bill AUTO_INCREMENT = 1;
-ALTER TABLE public.invoice AUTO_INCREMENT = 1;
-ALTER TABLE public.tariff AUTO_INCREMENT = 1;
-ALTER TABLE public.usage_report AUTO_INCREMENT = 1;
-ALTER TABLE public.water_meter AUTO_INCREMENT = 1;
-ALTER TABLE public.water_meter_check AUTO_INCREMENT = 1;
-ALTER TABLE public.water_usage_stats AUTO_INCREMENT = 1;
-ALTER TABLE public.account_details AUTO_INCREMENT = 1;
-ALTER TABLE public.owner AUTO_INCREMENT = 1;
-ALTER TABLE public.administrator AUTO_INCREMENT = 1;
-ALTER TABLE public.facility_manager AUTO_INCREMENT = 1;
-ALTER TABLE public.role AUTO_INCREMENT = 1;
-ALTER TABLE public.auth_info AUTO_INCREMENT = 1;
-ALTER TABLE public.list_search_preferences AUTO_INCREMENT = 1;
-ALTER TABLE public.two_factor_authentication AUTO_INCREMENT = 1;
-ALTER TABLE public.entity_consistence_assurance AUTO_INCREMENT = 1;
+DELETE
+FROM account;
+DELETE
+FROM apartment;
+DELETE
+FROM verification_token;
+DELETE
+FROM bill;
+DELETE
+FROM invoice;
+DELETE
+FROM tariff;
+DELETE
+FROM usage_report;
+DELETE
+FROM water_meter;
+DELETE
+FROM water_meter_check;
+DELETE
+FROM water_usage_stats;
+DELETE
+FROM account_details;
+DELETE
+FROM owner;
+DELETE
+FROM administrator;
+DELETE
+FROM facility_manager;
+DELETE
+FROM role;
+DELETE
+FROM auth_info;
+DELETE
+FROM list_search_preferences;
+DELETE
+FROM two_factor_authentication;
+DELETE
+FROM entity_consistence_assurance;
 
 GRANT ALL PRIVILEGES ON ssbd06.* TO ssbd06admin;
 
@@ -56,15 +55,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON list_search_preferences TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON two_factor_authentication TO ssbd06mok;
 GRANT SELECT, INSERT, UPDATE, DELETE ON entity_consistence_assurance TO ssbd06mol;
 
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_details_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE account_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE auth_info_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE role_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE verification_token_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE list_search_preferences_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE two_factor_authentication_id_seq TO ssbd06mok;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE entity_consistence_assurance_id_seq TO ssbd06mol;
-
 GRANT SELECT ON account TO ssbd06mol;
 GRANT SELECT ON role TO ssbd06mol;
 GRANT SELECT ON account_details TO ssbd06mol;
@@ -78,194 +68,185 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON water_meter TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON water_meter_check TO ssbd06mol;
 GRANT SELECT, INSERT, UPDATE, DELETE ON water_usage_stats TO ssbd06mol;
 
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE apartment_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE bill_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE invoice_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE tariff_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE usage_report_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_meter_check_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_meter_id_seq TO ssbd06mol;
-GRANT USAGE, SELECT, UPDATE ON SEQUENCE water_usage_stats_id_seq TO ssbd06mol;
-
-INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on)
-VALUES (nextval('account_details_id_seq'), 0, 'kontomat@gmail.com', 'Mateusz', 'Strzelecki', '123456789', now(), now());
-INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
-                            otp_secret)
-VALUES (nextval('account_id_seq'), 0, true, 'admin', '$2a$04$m9vbbL2RTbV/XNC44TEZ0e.t9WH2Q6hjtyEem/siFCdNS564hW68q', 'en_US', 'CONFIRMED', 1, now(), now(),
+INSERT INTO account_details (version, email, first_name, last_name, phone_number, created_on, updated_on)
+VALUES (0, 'kontomat@gmail.com', 'Mateusz', 'Strzelecki', '123456789', NOW(), NOW());
+INSERT INTO account (version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
+                     otp_secret)
+VALUES (0, true, 'admin', '$2a$04$m9vbbL2RTbV/XNC44TEZ0e.t9WH2Q6hjtyEem/siFCdNS564hW68q', 'en_US', 'CONFIRMED', 1, NOW(), NOW(),
         false, '610cc564-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('ADMINISTRATOR', nextval('role_id_seq'), true, 0, 1, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), false, 0, 1, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('OWNER', nextval('role_id_seq'), false, 0, 1, now(), now());
-INSERT INTO public.administrator (id)
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('ADMINISTRATOR', true, 0, 1, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('FACILITY_MANAGER', false, 0, 1, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('OWNER', false, 0, 1, NOW(), NOW());
+INSERT INTO administrator (id)
 VALUES (1);
-INSERT INTO public.facility_manager (id)
+INSERT INTO facility_manager (id)
 VALUES (2);
-INSERT INTO public.owner (id)
+INSERT INTO owner (id)
 VALUES (3);
-INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
-VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 1);
-INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on)
-VALUES (nextval('account_details_id_seq'), 0, 'kontosz@gmail.com', 'Szymon', 'Ziemecki', '123412341', now(), now());
-INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
-                            otp_secret)
-VALUES (nextval('account_id_seq'), 0, true, 'new', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 2, now(), now(), false,
+INSERT INTO auth_info (last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
+VALUES (null, null, null, 0, NOW(), NOW(), 0, 1);
+INSERT INTO account_details (version, email, first_name, last_name, phone_number, created_on, updated_on)
+VALUES (0, 'kontosz@gmail.com', 'Szymon', 'Ziemecki', '123412341', NOW(), NOW());
+INSERT INTO account (version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
+                     otp_secret)
+VALUES (0, true, 'new', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 2, NOW(), NOW(), false,
         '7a1dbcfc-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('OWNER', nextval('role_id_seq'), true, 0, 2, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), false, 0, 2, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('ADMINISTRATOR', nextval('role_id_seq'), false, 0, 2, now(), now());
-INSERT INTO public.owner (id)
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('OWNER', true, 0, 2, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('FACILITY_MANAGER', false, 0, 2, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('ADMINISTRATOR', false, 0, 2, NOW(), NOW());
+INSERT INTO owner (id)
 VALUES (4);
-INSERT INTO public.administrator (id)
+INSERT INTO administrator (id)
 VALUES (5);
-INSERT INTO public.facility_manager (id)
+INSERT INTO facility_manager (id)
 VALUES (6);
-INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
-VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 2);
-INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on)
-VALUES (nextval('account_details_id_seq'), 0, 'tomdut@gmail.com', 'Tom', 'Dut', '666666666', now(), now());
-INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
-                            otp_secret)
-VALUES (nextval('account_id_seq'), 0, true, 'tomdut', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 3, now(), now(),
+INSERT INTO auth_info (last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
+VALUES (null, null, null, 0, NOW(), NOW(), 0, 2);
+INSERT INTO account_details (version, email, first_name, last_name, phone_number, created_on, updated_on)
+VALUES (0, 'tomdut@gmail.com', 'Tom', 'Dut', '666666666', NOW(), NOW());
+INSERT INTO account (version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
+                     otp_secret)
+VALUES (0, true, 'tomdut', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 3, NOW(), NOW(),
         false, '81250e56-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), true, 0, 3, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('OWNER', nextval('role_id_seq'), false, 0, 3, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('ADMINISTRATOR', nextval('role_id_seq'), false, 0, 3, now(), now());
-INSERT INTO public.facility_manager (id)
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('FACILITY_MANAGER', true, 0, 3, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('OWNER', false, 0, 3, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('ADMINISTRATOR', false, 0, 3, NOW(), NOW());
+INSERT INTO facility_manager (id)
 VALUES (7);
-INSERT INTO public.owner (id)
+INSERT INTO owner (id)
 VALUES (8);
-INSERT INTO public.administrator (id)
+INSERT INTO administrator (id)
 VALUES (9);
-INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
-VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 3);
+INSERT INTO auth_info (last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
+VALUES (null, null, null, 0, NOW(), NOW(), 0, 3);
 
-INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on)
-VALUES (nextval('account_details_id_seq'), 0, 'skulmikpl@gmail.com', 'Piotr', 'Skonieczny', '725510347', now(), now());
-INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
-                            otp_secret)
-VALUES (nextval('account_id_seq'), 0, true, 'skulmik', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'TO_CONFIRM', 4, now(), now(),
+INSERT INTO account_details (version, email, first_name, last_name, phone_number, created_on, updated_on)
+VALUES (0, 'skulmikpl@gmail.com', 'Piotr', 'Skonieczny', '725510347', NOW(), NOW());
+INSERT INTO account (version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
+                     otp_secret)
+VALUES (0, true, 'skulmik', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'TO_CONFIRM', 4, NOW(), NOW(),
         false, '83d7c4cc-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('OWNER', nextval('role_id_seq'), true, 0, 4, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), false, 0, 4, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('ADMINISTRATOR', nextval('role_id_seq'), false, 0, 4, now(), now());
-INSERT INTO public.owner (id)
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('OWNER', true, 0, 4, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('FACILITY_MANAGER', false, 0, 4, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('ADMINISTRATOR', false, 0, 4, NOW(), NOW());
+INSERT INTO owner (id)
 VALUES (10);
-INSERT INTO public.facility_manager (id)
+INSERT INTO facility_manager (id)
 VALUES (11);
-INSERT INTO public.administrator (id)
+INSERT INTO administrator (id)
 VALUES (12);
-INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
-VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 4);
+INSERT INTO auth_info (last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
+VALUES (null, null, null, 0, NOW(), NOW(), 0, 4);
 
-INSERT INTO public.account_details (id, version, email, first_name, last_name, phone_number, created_on, updated_on)
-VALUES (nextval('account_details_id_seq'), 0, 'mol-owner@gmail.com', 'Jerzy', 'Białowieży', '698667546', now(), now());
-INSERT INTO public.account (id, version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
-                            otp_secret)
-VALUES (nextval('account_id_seq'), 0, true, 'jerzy', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 5, now(), now(),
+INSERT INTO account_details (version, email, first_name, last_name, phone_number, created_on, updated_on)
+VALUES (0, 'mol-owner@gmail.com', 'Jerzy', 'Białowieży', '698667546', NOW(), NOW());
+INSERT INTO account (version, active, login, password, locale, account_state, account_details_id, created_on, updated_on, two_factor_enabled,
+                     otp_secret)
+VALUES (0, true, 'jerzy', '$2a$04$j/yqCtlHxKmdxHMWxaji4OD1w591LIMNDGBqUbCpD6HTM4aj2uLiS', 'en_US', 'CONFIRMED', 5, NOW(), NOW(),
         false, '7a1dbcfc-f5bf-11ed-b67e-0242ac120002');
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('OWNER', nextval('role_id_seq'), true, 0, 5, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('FACILITY_MANAGER', nextval('role_id_seq'), false, 0, 5, now(), now());
-INSERT INTO public.role (permission_level, id, active, version, account_id, created_on, updated_on)
-VALUES ('ADMINISTRATOR', nextval('role_id_seq'), false, 0, 5, now(), now());
-INSERT INTO public.owner (id)
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('OWNER', true, 0, 5, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('FACILITY_MANAGER', false, 0, 5, NOW(), NOW());
+INSERT INTO role (permission_level, id, active, version, account_id, created_on, updated_on)
+VALUES ('ADMINISTRATOR', false, 0, 5, NOW(), NOW());
+INSERT INTO owner (id)
 VALUES (13);
-INSERT INTO public.administrator (id)
+INSERT INTO administrator (id)
 VALUES (14);
-INSERT INTO public.facility_manager (id)
+INSERT INTO facility_manager (id)
 VALUES (15);
-INSERT INTO public.auth_info (id, last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
-VALUES (nextval('auth_info_id_seq'), null, null, null, 0, now(), now(), 0, 5);
+INSERT INTO auth_info (last_ip_address, last_success_auth, last_incorrect_auth, incorrect_auth_count, created_on, updated_on, version, account_id)
+VALUES (null, null, null, 0, NOW(), NOW(), 0, 5);
 
-INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id)
-VALUES (nextval('apartment_id_seq'), 0, '12a', now(), now(), 40.00, 2);
-INSERT INTO public.apartment (id, version, number, created_on, updated_on, area, owner_id)
-VALUES (nextval('apartment_id_seq'), 0, '12b', now(), now(), 40.00, 2);
-INSERT INTO public.entity_consistence_assurance (id, topic, version, created_on, updated_on)
-VALUES (nextval('entity_consistence_assurance_id_seq'), 'MAIN_WATER_METER_PERSISTENCE', 0, now(), now());
-INSERT INTO public.entity_consistence_assurance (id, topic, version, created_on, updated_on)
-VALUES (nextval('entity_consistence_assurance_id_seq'), 'TARIFF_PERSISTENCE', 0, now(), now());
-INSERT INTO public.water_meter (id, version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on,
-                                updated_on)
-VALUES (nextval('water_meter_id_seq'), 0, true, '1234567 A', now() + INTERVAL '360 days', 100.000, 500.000, 'HOT_WATER', 1, now(), now());
-INSERT INTO public.water_meter (id, version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on,
-                                updated_on)
-VALUES (nextval('water_meter_id_seq'), 0, true, '1234567 B', now() + INTERVAL '360 days', 100.000, 50.000, 'COLD_WATER', 1, now(), now());
-INSERT INTO public.water_meter (id, version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id,
-                                entity_consistence_assurance_id, created_on, updated_on)
-VALUES (nextval('water_meter_id_seq'), 0, true, '123456789 C', now() + INTERVAL '360 days', 0.000, 0.000, 'MAIN', null,
-        (SELECT id FROM public.entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'), now(), now());
-INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
-                                 unbilled_water_amount, unbilled_water_cost)
-VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
-INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
-                                 unbilled_water_amount, unbilled_water_cost)
-VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 11, 12, 13, 14, 15, 16, 17);
-INSERT INTO public.bill (id, version, created_on, updated_on, balance, date, advance_usage, apartment_id, owner_id, real_usage)
-VALUES (nextval('bill_id_seq'), 0, now(), now(), 9.02, now(), 1, 1, 2, 2);
-INSERT INTO public.water_usage_stats (id, created_on, updated_on, version, cold_water_usage, hot_water_usage, year_month, apartment_id)
-VALUES (nextval('water_usage_stats_id_seq'), now(), now(), 0, 40.000, 60.000, '2023-06-01', 1);
-INSERT INTO public.water_usage_stats (id, created_on, updated_on, version, cold_water_usage, hot_water_usage, year_month, apartment_id)
-VALUES (nextval('water_usage_stats_id_seq'), now(), now(), 0, 40.000, 60.000, '2023-09-01', 1);
-INSERT INTO public.water_usage_stats (id, created_on, updated_on, version, cold_water_usage, hot_water_usage, year_month, apartment_id)
-VALUES (nextval('water_usage_stats_id_seq'), now(), now(), 0, 40.000, 60.000, '2023-10-01', 1);
-INSERT INTO public.water_usage_stats (id, created_on, updated_on, version, cold_water_usage, hot_water_usage, year_month, apartment_id)
-VALUES (nextval('water_usage_stats_id_seq'), now(), now(), 0, 40.000, 60.000, '2023-09-01', 2);
-INSERT INTO public.water_usage_stats (id, created_on, updated_on, version, cold_water_usage, hot_water_usage, year_month, apartment_id)
-VALUES (nextval('water_usage_stats_id_seq'), now(), now(), 0, 40.000, 60.000, '2023-10-01', 2);
-INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date,
-                          entity_consistence_assurance_id)
-values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2023-05-01', '2023-11-30',
-        (SELECT id FROM public.entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
-INSERT INTO public.water_meter_check(id, version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
-values (nextval('water_meter_check_id_seq'), 0, now(), null, now(), null, 120.000, '2023-09-16', true, 1);
-INSERT INTO public.water_meter_check(id, version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
-values (nextval('water_meter_check_id_seq'), 0, now(), null, now(), null, 120.000, '2023-09-16', true, 2);
+INSERT INTO apartment (version, number, created_on, updated_on, area, owner_id)
+VALUES (0, '12a', NOW(), NOW(), 40.00, 2);
+INSERT INTO apartment (version, number, created_on, updated_on, area, owner_id)
+VALUES (0, '12b', NOW(), NOW(), 40.00, 2);
+INSERT INTO entity_consistence_assurance (topic, version, created_on, updated_on)
+VALUES ('MAIN_WATER_METER_PERSISTENCE', 0, NOW(), NOW());
+INSERT INTO entity_consistence_assurance (topic, version, created_on, updated_on)
+VALUES ('TARIFF_PERSISTENCE', 0, NOW(), NOW());
+INSERT INTO water_meter (version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on,
+                         updated_on)
+VALUES (0, true, '1234567 A', NOW() + INTERVAL 360 day, 100.000, 500.000, 'HOT_WATER', 1, NOW(), NOW());
+INSERT INTO water_meter (version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id, created_on,
+                         updated_on)
+VALUES (0, true, '1234567 B', NOW() + INTERVAL 360 day, 100.000, 50.000, 'COLD_WATER', 1, NOW(), NOW());
+INSERT INTO water_meter (version, active, serial_number, expiry_date, starting_value, expected_daily_usage, type, apartment_id,
+                         entity_consistence_assurance_id, created_on, updated_on)
+VALUES (0, true, '123456789 C', NOW() + INTERVAL 360 day, 0.000, 0.000, 'MAIN', null,
+        (SELECT id FROM entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'), NOW(), NOW());
+INSERT INTO usage_report (created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                          unbilled_water_amount, unbilled_water_cost)
+VALUES (NOW(), NOW(), 0, 10, 10, 10, 10, 10, 10, 10);
+INSERT INTO usage_report (created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                          unbilled_water_amount, unbilled_water_cost)
+VALUES (NOW(), NOW(), 0, 11, 12, 13, 14, 15, 16, 17);
+INSERT INTO bill (version, created_on, updated_on, balance, date, advance_usage, apartment_id, owner_id, real_usage)
+VALUES (0, NOW(), NOW(), 9.02, NOW(), 1, 1, 2, 2);
+INSERT INTO water_usage_stats (created_on, updated_on, version, cold_water_usage, hot_water_usage, date, apartment_id)
+VALUES (NOW(), NOW(), 0, 40.000, 60.000, '2023-06-01', 1);
+INSERT INTO water_usage_stats (created_on, updated_on, version, cold_water_usage, hot_water_usage, date, apartment_id)
+VALUES (NOW(), NOW(), 0, 40.000, 60.000, '2023-09-01', 1);
+INSERT INTO water_usage_stats (created_on, updated_on, version, cold_water_usage, hot_water_usage, date, apartment_id)
+VALUES (NOW(), NOW(), 0, 40.000, 60.000, '2023-10-01', 1);
+INSERT INTO water_usage_stats (created_on, updated_on, version, cold_water_usage, hot_water_usage, date, apartment_id)
+VALUES (NOW(), NOW(), 0, 40.000, 60.000, '2023-09-01', 2);
+INSERT INTO water_usage_stats (created_on, updated_on, version, cold_water_usage, hot_water_usage, date, apartment_id)
+VALUES (NOW(), NOW(), 0, 40.000, 60.000, '2023-10-01', 2);
+INSERT INTO tariff(version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date,
+                   entity_consistence_assurance_id)
+values (0, NOW(), null, NOW(), null, 9.81, 9.02, 2.22, '2023-05-01', '2023-11-30',
+        (SELECT id FROM entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
+INSERT INTO water_meter_check(version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
+values (0, NOW(), null, NOW(), null, 120.000, '2023-09-16', true, 1);
+INSERT INTO water_meter_check(version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
+values (0, NOW(), null, NOW(), null, 120.000, '2023-09-16', true, 2);
 
-INSERT INTO public.water_meter_check(id, version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
-values (nextval('water_meter_check_id_seq'), 0, now(), null, now(), null, 120.000, '2031-11-16', true, 1);
-INSERT INTO public.water_meter_check(id, version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
-values (nextval('water_meter_check_id_seq'), 0, now(), null, now(), null, 120.000, '2031-11-16', true, 2);
-INSERT INTO public.water_meter_check(id, version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
-values (nextval('water_meter_check_id_seq'), 0, now(), null, now(), null, 120.000, '2031-11-16', true, 3);
-INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date,
-                          entity_consistence_assurance_id)
-values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2031-07-01', '2031-08-30',
-        (SELECT id FROM public.entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
+INSERT INTO water_meter_check(version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
+values (0, NOW(), null, NOW(), null, 120.000, '2031-11-16', true, 1);
+INSERT INTO water_meter_check(version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
+values (0, NOW(), null, NOW(), null, 120.000, '2031-11-16', true, 2);
+INSERT INTO water_meter_check(version, created_on, created_by, updated_on, updated_by, meter_reading, check_date, manager_authored, water_meter_id)
+values (0, NOW(), null, NOW(), null, 120.000, '2031-11-16', true, 3);
+INSERT INTO tariff(version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date,
+                   entity_consistence_assurance_id)
+values (0, NOW(), null, NOW(), null, 9.81, 9.02, 2.22, '2031-07-01', '2031-08-30',
+        (SELECT id FROM entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
 
-INSERT INTO public.tariff(id, version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date,
-                          entity_consistence_assurance_id)
-values (nextval('tariff_id_seq'), 0, now(), null, now(), null, 9.81, 9.02, 2.22, '2031-04-01', '2031-06-30',
-        (SELECT id FROM public.entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
-INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
-                                 unbilled_water_amount, unbilled_water_cost)
-VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
+INSERT INTO tariff(version, created_on, created_by, updated_on, updated_by, cold_water_price, hot_water_price, trash_price, start_date, end_date,
+                   entity_consistence_assurance_id)
+values (0, NOW(), null, NOW(), null, 9.81, 9.02, 2.22, '2031-04-01', '2031-06-30',
+        (SELECT id FROM entity_consistence_assurance WHERE topic = 'MAIN_WATER_METER_PERSISTENCE'));
+INSERT INTO usage_report (created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                          unbilled_water_amount, unbilled_water_cost)
+VALUES (NOW(), NOW(), 0, 10, 10, 10, 10, 10, 10, 10);
 
-INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
-                                 unbilled_water_amount, unbilled_water_cost)
-VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
-INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
-                                 unbilled_water_amount, unbilled_water_cost)
-VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
+INSERT INTO usage_report (created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                          unbilled_water_amount, unbilled_water_cost)
+VALUES (NOW(), NOW(), 0, 10, 10, 10, 10, 10, 10, 10);
+INSERT INTO usage_report (created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                          unbilled_water_amount, unbilled_water_cost)
+VALUES (NOW(), NOW(), 0, 10, 10, 10, 10, 10, 10, 10);
 
-INSERT INTO public.usage_report (id, created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
-                                 unbilled_water_amount, unbilled_water_cost)
-VALUES (nextval('usage_report_id_seq'), now(), now(), 0, 10, 10, 10, 10, 10, 10, 10);
+INSERT INTO usage_report (created_on, updated_on, version, cold_water_cost, cold_water__usage, garbage_cost, hot_water_cost, hot_water_usage,
+                          unbilled_water_amount, unbilled_water_cost)
+VALUES (NOW(), NOW(), 0, 10, 10, 10, 10, 10, 10, 10);
 
-INSERT INTO public.bill(id, created_on, updated_on, version, date, balance, apartment_id, owner_id, advance_usage, real_usage)
-VALUES (nextval('bill_id_seq'), now(), now(), 0, '2023-09-01', 1000.00, 1, 2, 2, 3);
-INSERT INTO public.bill(id, created_on, updated_on, version, date, balance, apartment_id, owner_id, advance_usage, real_usage)
-VALUES (nextval('bill_id_seq'), now(), now(), 0, '2023-09-01', 1000.00, 2, 2, 4, 5);
+INSERT INTO bill(created_on, updated_on, version, date, balance, apartment_id, owner_id, advance_usage, real_usage)
+VALUES (NOW(), NOW(), 0, '2023-09-01', 1000.00, 1, 2, 2, 3);
+INSERT INTO bill(created_on, updated_on, version, date, balance, apartment_id, owner_id, advance_usage, real_usage)
+VALUES (NOW(), NOW(), 0, '2023-09-01', 1000.00, 2, 2, 4, 5);
