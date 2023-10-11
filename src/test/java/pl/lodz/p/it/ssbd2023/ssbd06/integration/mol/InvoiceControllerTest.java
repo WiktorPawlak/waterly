@@ -36,7 +36,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateInvoiceDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.InvoicesDto;
 
 @QuarkusTest
-@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class)
 public class InvoiceControllerTest extends IntegrationTestsConfig {
 
     @Nested

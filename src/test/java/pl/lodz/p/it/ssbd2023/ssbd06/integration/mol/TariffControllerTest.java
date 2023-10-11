@@ -45,7 +45,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.CreateTariffDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.TariffsDto;
 
 @QuarkusTest
-@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class)
 @Order(7)
 public class TariffControllerTest extends IntegrationTestsConfig {
     @Nested

@@ -48,7 +48,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.PasswordResetDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.service.security.jwt.Credentials;
 
 @QuarkusTest
-@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class)
 @Order(4)
 public class AccountControllerTest2BecauseOfMaxConnectionPool extends IntegrationTestsConfig {
     @Nested

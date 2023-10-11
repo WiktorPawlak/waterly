@@ -49,7 +49,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditEmailDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.AccountState;
 
 @QuarkusTest
-@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class)
 @Order(4)
 class AccountControllerTest extends IntegrationTestsConfig {
 

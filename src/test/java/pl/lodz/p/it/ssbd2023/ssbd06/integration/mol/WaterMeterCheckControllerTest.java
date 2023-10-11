@@ -34,7 +34,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
 
 @QuarkusTest
-@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class)
 @Order(8)
 class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
 

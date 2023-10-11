@@ -48,7 +48,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeter;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 @QuarkusTest
-@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class)
 @Order(9)
 public class WaterMeterControllerTest extends IntegrationTestsConfig {
 

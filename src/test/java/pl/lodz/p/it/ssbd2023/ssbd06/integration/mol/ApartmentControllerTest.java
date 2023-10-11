@@ -41,7 +41,7 @@ import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterExpectedUsagesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.persistence.entities.WaterMeterType;
 
 @QuarkusTest
-@QuarkusTestResource(value = MariaDBTestResource.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = MariaDBTestResource.class)
 @Order(6)
 class ApartmentControllerTest extends IntegrationTestsConfig {
     public static final BigDecimal EXPECTED_USAGE = BigDecimal.valueOf(300.000);
