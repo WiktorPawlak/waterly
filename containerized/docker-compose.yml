@@ -9,7 +9,24 @@ services:
     networks:
       - internal
 
-  app:
+  app1:
+    build:
+      context: ../
+      dockerfile: ./containerized/app/Dockerfile
+    restart: on-failure
+    environment:
+      - DB_URL=jdbc:mariadb://db:3306/ssbd06
+      - DB_ADMIN_PASSWORD=12345
+      - DB_AUTH_PASSWORD=12345
+      - DB_MOK_PASSWORD=12345
+      - DB_MOL_PASSWORD=12345
+    networks:
+      - internal
+    depends_on:
+      - proxy
+      - db
+
+  app2:
     build:
       context: ../
       dockerfile: ./containerized/app/Dockerfile
