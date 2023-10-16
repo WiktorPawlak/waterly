@@ -8,8 +8,10 @@ services:
       - '443:443'
     networks:
       - internal
+    depends_on:
+      - app
 
-  app1:
+  app:
     build:
       context: ../
       dockerfile: ./containerized/app/Dockerfile
@@ -23,31 +25,11 @@ services:
     networks:
       - internal
     depends_on:
-      - proxy
-      - db
-
-  app2:
-    build:
-      context: ../
-      dockerfile: ./containerized/app/Dockerfile
-    restart: on-failure
-    environment:
-      - DB_URL=jdbc:mariadb://db:3306/ssbd06
-      - DB_ADMIN_PASSWORD=12345
-      - DB_AUTH_PASSWORD=12345
-      - DB_MOK_PASSWORD=12345
-      - DB_MOL_PASSWORD=12345
-    networks:
-      - internal
-    depends_on:
-      - proxy
       - db
 
   db:
     image: mariadb:11.1
     restart: always
-    ports:
-      - '3306:3306'
     environment:
       - MARIADB_ROOT_HOST=admin
       - MARIADB_ROOT_PASSWORD=admin
