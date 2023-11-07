@@ -235,6 +235,11 @@
             <artifactId>smallrye-jwt</artifactId>
             <version>4.3.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-openshift</artifactId>
+            <version>3.5.0</version>
+        </dependency>
     </dependencies>
 
     <build>
