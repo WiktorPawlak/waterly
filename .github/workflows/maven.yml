@@ -1,0 +1,30 @@
+name: Java CI with Maven
+
+on: [ push ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set execute permissions
+        run: |
+          chmod +x ./mvnw &&
+          chmod +x ./containerized/build_and_push_images.sh
+
+      - name: Build with Maven
+        run: mvn --batch-mode package --file pom.xml
+
+      - name: Run tests
+        run: mvn -B test --file pom.xml
+
+      - name: Build image
+        run: ./containerized/build_and_push_images.sh ${{ secrets.DOCKERHUB_SECRET }} 1.0.1
