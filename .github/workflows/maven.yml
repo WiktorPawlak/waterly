@@ -14,17 +14,38 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
       - name: Set execute permissions
-        run: |
-          chmod +x ./mvnw &&
-          chmod +x ./containerized/build_and_push_images.sh
+        run: chmod +x ./containerized/build_and_push_images.sh
 
       - name: Build with Maven
-        run: mvn --batch-mode package --file pom.xml
+        run: mvn --batch-mode clean package --file pom.xml
 
-      - name: Run tests
-        run: mvn -B test --file pom.xml
+      #      - name: Build and push Docker images
+      #        uses: docker/build-push-action@v5.0.0
+      #        with:
+      #          context: .
+      #          no-cache: true
+      #          file: Dockerfile
+      #          tags: 1.0.1-test-workflow
 
-      - name: Build image
-        run: ./containerized/build_and_push_images.sh ${{ secrets.DOCKERHUB_SECRET }} 1.0.1
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: matino1/ssbd06
+          tags: 1.0.1-test-workflow
+          registry: docker.io
+          dockerfile: containerized/app/Dockerfile
+          username: matino1
+          password: ${{ secrets.DOCKERHUB_SECRET }}
+
+#      - name: Build image
+#        working-directory: containerized
+#        run: |
+#          pwd &&
+#          echo 'przed wejściem w containerized'
+#          ls -la .
+#          echo 'POOOO wejściu w containerized'
+#          ls -la . &&
+#          ./build_and_push_images.sh ${{ secrets.DOCKERHUB_SECRET }} 1.0.1
