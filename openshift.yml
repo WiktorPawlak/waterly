@@ -1,0 +1,98 @@
+#Database
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-storage
+  labels:
+    app.kubernetes.io/name: ssbd06-db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ssbd06-db
+  labels:
+    app.kubernetes.io/name: ssbd06-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ssbd06-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ssbd06-db
+    spec:
+      imagePullSecrets:
+        - name: matino-registry
+      containers:
+        - name: ssbd06-db
+          image: matino1/ssbd06:db-02
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: db
+              mountPath: /var/lib/mysql
+      restartPolicy: Always
+      volumes:
+        - name: db
+          persistentVolumeClaim:
+            claimName: db-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    app.kubernetes.io/name: ssbd06-db
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app.kubernetes.io/name: ssbd06-db
+  clusterIP: None
+
+#Prometheus
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    team: backend
+  name: service-monitor
+spec:
+  endpoints:
+    - interval: 15s
+      scheme: http
+  selector:
+    matchLabels:
+      app: api
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+spec:
+  serviceMonitorSelector:
+    matchLabels:
+      team: backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  type: NodePort
+  ports:
+    - port: 9090
+      nodePort: 30900
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    name: prometheus
