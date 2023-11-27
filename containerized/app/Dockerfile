@@ -28,8 +28,6 @@ ARG RUN_JAVA_VERSION=1.3.8
 
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 
-# Install stress
-RUN apt-get update && apt-get install -y stress
 
 # Install java and the run-java script
 # Also set up permissions for user `1001`
