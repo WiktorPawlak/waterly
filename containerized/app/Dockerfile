@@ -28,6 +28,9 @@ ARG RUN_JAVA_VERSION=1.3.8
 
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 
+# Install stress
+RUN apt-get update && apt-get install -y stress
+
 # Install java and the run-java script
 # Also set up permissions for user `1001`
 RUN yum install -y curl ca-certificates ${JAVA_PACKAGE} make gcc \
@@ -37,7 +40,7 @@ RUN yum install -y curl ca-certificates ${JAVA_PACKAGE} make gcc \
     && chown 1001 /deployments \
     && chmod "g+rwX" /deployments \
     && chown 1001:root /deployments \
-    && curl -L https://repo1.maven.org/maven2/io/fabric8/run-java-sh/${RUN_JAVA_VERSION}/run-java-sh-${RUN_JAVA_VERSION}-sh.sh -o /deployments/run-java.sh \
+    && curl https://repo1.maven.org/maven2/io/fabric8/run-java-sh/${RUN_JAVA_VERSION}/run-java-sh-${RUN_JAVA_VERSION}-sh.sh -o /deployments/run-java.sh \
     && chown 1001 /deployments/run-java.sh \
     && chmod 540 /deployments/run-java.sh \
     && echo "securerandom.source=file:/dev/urandom" >> /etc/alternatives/jre/lib/security/java.security
