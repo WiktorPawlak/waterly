@@ -9,7 +9,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.java.Log;
 
+@Log
 @Path("/health")
 @RequestScoped
 public class HealthCheckController {
@@ -27,5 +29,19 @@ public class HealthCheckController {
     public Response exitApplication() {
         System.exit(999);
         return Response.ok("Exited successfully").build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/stress")
+    @OnlyGuest
+    public Response stressApplication() {
+        while (true) {
+            // This loop performs a simple calculation to generate CPU load
+            for (int i = 0; i < 100000; i++) {
+                double result = Math.sin(i) * Math.cos(i);
+                log.info(() -> String.valueOf(result));
+            }
+        }
     }
 }
