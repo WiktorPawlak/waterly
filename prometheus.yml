@@ -14,8 +14,11 @@ data:
     scrape_configs:
       - job_name: 'backend'
         metrics_path: '/metrics'
+        scheme: https
         static_configs:
-          - targets: [ 'ssbd06-waterly.apps.okd.cti.p.lodz.pl' ]
+          - targets: [ 'ssbd06.waterly.svc.cluster.local:80' ]
+        tls_config:
+          insecure_skip_verify: true
 ---
 apiVersion: apps/v1
 kind: Deployment
