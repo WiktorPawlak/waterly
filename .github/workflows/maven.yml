@@ -48,7 +48,7 @@ jobs:
           OC_USERNAME: ${{ secrets.OC_USERNAME }}
           OC_PASSWORD: ${{ secrets.OC_PASSWORD }}
         run: |
-          oc login -u "${OC_USERNAME}" -p "${OC_PASSWORD}" "${OC_LOGIN_SERVER}"
+          oc login -u "${OC_USERNAME}" -p "${OC_PASSWORD}" "${OC_LOGIN_SERVER}" --insecure-skip-tls-verify
 
       - name: Trigger OpenShift build with built image
         run: |
