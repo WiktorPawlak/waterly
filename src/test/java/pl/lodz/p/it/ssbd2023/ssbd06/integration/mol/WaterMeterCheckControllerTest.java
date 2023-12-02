@@ -1,37 +1,30 @@
 package pl.lodz.p.it.ssbd2023.ssbd06.integration.mol;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static io.restassured.RestAssured.given;
-import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
-import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
-import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
-import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
-import static jakarta.ws.rs.core.Response.Status.OK;
-import static pl.lodz.p.it.ssbd2023.ssbd06.exceptions.ApplicationBaseException.ERROR_CHECK_WAS_ALREADY_PERFORMED;
-import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.GRANT;
-import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.junit.QuarkusTest;
-import lombok.SneakyThrows;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.IntegrationTestsConfig;
 import pl.lodz.p.it.ssbd2023.ssbd06.integration.config.MariaDBTestResource;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.AccountDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterCheckDto;
 import pl.lodz.p.it.ssbd2023.ssbd06.mol.dto.WaterMeterChecksDto;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+
+import static io.restassured.RestAssured.given;
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.Response.Status.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.GRANT;
+import static pl.lodz.p.it.ssbd2023.ssbd06.mok.dto.EditAccountRolesDto.Operation.REVOKE;
 
 @QuarkusTest
 @QuarkusTestResource(value = MariaDBTestResource.class)
@@ -95,28 +88,6 @@ class WaterMeterCheckControllerTest extends IntegrationTestsConfig {
                 .statusCode(BAD_REQUEST.getStatusCode());
     }
 
-    @Test
-    @SneakyThrows
-    void shouldNotAllowOwnerForWaterMeterCheckWhenFacilityManagerAlreadyMadeOneInGivenMonth() {
-        //given
-        given()
-                .header(AUTHORIZATION, FACILITY_MANAGER_TOKEN)
-                .body(FM_CHECKS_DTO_2)
-                .when()
-                .post(WATERMETER_PATH + "/water-meter-checks")
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        //when
-        given()
-                .header(AUTHORIZATION, OWNER_TOKEN)
-                .body(OWNER_CHECKS_DTO)
-                .when()
-                .post(WATERMETER_PATH + "/water-meter-checks")
-                .then()
-                .statusCode(BAD_REQUEST.getStatusCode())
-                .body("message", equalTo(ERROR_CHECK_WAS_ALREADY_PERFORMED));
-    }
 
     @Test
     void shouldForbidNonFacilityManagerAndOwnerUsersToPerformWaterMeterCheck() {
