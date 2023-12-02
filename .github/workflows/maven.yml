@@ -7,6 +7,9 @@ jobs:
 
     runs-on: ubuntu-20.04
 
+    env:
+      DOCKER_TAG: ${{ github.run_number }}  # Using GitHub's run number as the tag
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -22,30 +25,31 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode clean package --file pom.xml
 
-      #      - name: Build and push Docker images
-      #        uses: docker/build-push-action@v5.0.0
-      #        with:
-      #          context: .
-      #          no-cache: true
-      #          file: Dockerfile
-      #          tags: 1.0.1-test-workflow
-
       - name: Build & push Docker image
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: matino1/ssbd06
-          tags: $(date +%s)
+          tags: ${{ env.DOCKER_TAG }}
           registry: docker.io
           dockerfile: containerized/app/Dockerfile
           username: matino1
           password: ${{ secrets.DOCKERHUB_SECRET }}
 
-#      - name: Build image
-#        working-directory: containerized
-#        run: |
-#          pwd &&
-#          echo 'przed wejściem w containerized'
-#          ls -la .
-#          echo 'POOOO wejściu w containerized'
-#          ls -la . &&
-#          ./build_and_push_images.sh ${{ secrets.DOCKERHUB_SECRET }} 1.0.1
+      - name: Install OpenShift CLI
+        run: |
+          wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+          tar -xvf openshift-client-linux.tar.gz
+          sudo mv oc /usr/local/bin/
+          sudo mv kubectl /usr/local/bin/
+
+      - name: Login to OpenShift Cluster
+        env:
+          OC_LOGIN_SERVER: ${{ secrets.OC_LOGIN_SERVER }}
+          OC_USERNAME: ${{ secrets.OC_USERNAME }}
+          OC_PASSWORD: ${{ secrets.OC_PASSWORD }}
+        run: |
+          oc login -u "${OC_USERNAME}" -p "${OC_PASSWORD}" "${OC_LOGIN_SERVER}"
+
+      - name: Trigger OpenShift build with built image
+        run: |
+          mvn quarkus:deploy -D"quarkus.container-image.tag"=${{ env.DOCKER_TAG }} -D"quarkus.kubernetes.deploy"=true
