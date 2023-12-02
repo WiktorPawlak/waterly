@@ -49,6 +49,7 @@ jobs:
           OC_PASSWORD: ${{ secrets.OC_PASSWORD }}
         run: |
           oc login -u "${OC_USERNAME}" -p "${OC_PASSWORD}" "${OC_LOGIN_SERVER}" --insecure-skip-tls-verify
+          oc project waterly-sina
 
       - name: Trigger OpenShift build with built image
         run: |
