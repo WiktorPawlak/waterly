@@ -48,7 +48,10 @@ jobs:
           OC_USERNAME: ${{ secrets.OC_USERNAME }}
           OC_PASSWORD: ${{ secrets.OC_PASSWORD }}
         run: |
-          oc login -u "${OC_USERNAME}" -p "${OC_PASSWORD}" "${OC_LOGIN_SERVER}" --insecure-skip-tls-verify &&
+          oc login -u "${OC_USERNAME}" -p "${OC_PASSWORD}" "${OC_LOGIN_SERVER}" --insecure-skip-tls-verify
+
+      - name: Switch OpenShift project to waterly-sina
+        run: |
           oc project waterly-sina
 
       - name: Trigger OpenShift build with built image
