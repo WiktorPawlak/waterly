@@ -19,21 +19,21 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-#      - name: Set execute permissions
-#        run: chmod +x ./containerized/build_and_push_images.sh
-#
-#      - name: Build with Maven
-#        run: mvn --batch-mode clean package --file pom.xml
-#
-#      - name: Build & push Docker image
-#        uses: mr-smithers-excellent/docker-build-push@v6
-#        with:
-#          image: matino1/ssbd06
-#          tags: ${{ env.DOCKER_TAG }}
-#          registry: docker.io
-#          dockerfile: containerized/app/Dockerfile
-#          username: matino1
-#          password: ${{ secrets.DOCKERHUB_SECRET }}
+      - name: Set execute permissions
+        run: chmod +x ./containerized/build_and_push_images.sh
+
+      - name: Build with Maven
+        run: mvn --batch-mode clean package --file pom.xml
+
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: matino1/ssbd06
+          tags: ${{ env.DOCKER_TAG }}
+          registry: docker.io
+          dockerfile: containerized/app/Dockerfile
+          username: matino1
+          password: ${{ secrets.DOCKERHUB_SECRET }}
 
       - name: Install OpenShift CLI
         run: |
@@ -48,12 +48,16 @@ jobs:
           OC_USERNAME: ${{ secrets.OC_USERNAME }}
           OC_PASSWORD: ${{ secrets.OC_PASSWORD }}
         run: |
-          oc login -u "${OC_USERNAME}" -p "${OC_PASSWORD}" "${OC_LOGIN_SERVER}"
+          oc login -u "${OC_USERNAME}" -p "${OC_PASSWORD}" "${OC_LOGIN_SERVER}" --insecure-skip-tls-verify
 
-#      - name: Switch OpenShift project to waterly-sina
-#        run: |
-#          oc project waterly-sina
+      - name: Switch OpenShift project to waterly-sina
+        run: |
+          oc project waterly-sina
 
       - name: Trigger OpenShift build with built image
         run: |
           mvn quarkus:deploy -D"quarkus.container-image.tag"=${{ env.DOCKER_TAG }} -D"quarkus.kubernetes.deploy"=true
+
+      - name: Logout from OpenShift Cluster
+        run: |
+          oc logout
